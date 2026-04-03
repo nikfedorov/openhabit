@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "nunomaduro/laravel-starter-kit",
+    "name": "nikfedorov/openhabit",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Habit tracker with AI integration.",
     "keywords": [
         "laravel",
         "framework"
@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.5.0",
         "laravel/framework": "^13.3.0",
+        "laravel/sail": "^1.56",
         "nunomaduro/essentials": "^1.2.0"
     },
     "require-dev": {
@@ -24,10 +25,11 @@
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.2",
         "nunomaduro/pao": "0.x-dev",
-        "pestphp/pest": "^5.0",
-        "pestphp/pest-plugin-browser": "^5.0",
-        "pestphp/pest-plugin-laravel": "^5.0",
-        "pestphp/pest-plugin-type-coverage": "^5.0",
+        "pestphp/pest": "^4.4.3",
+        "pestphp/pest-plugin-browser": "^4.3.0",
+        "pestphp/pest-plugin-laravel": "^4.1.0",
+        "pestphp/pest-plugin-livewire": "^4.1.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0.3",
         "rector/rector": "^2.3.9",
         "roave/security-advisories": "dev-latest"
     },
@@ -82,10 +84,10 @@
             "pint --parallel",
             "bun run lint"
         ],
-        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:type-coverage": "pest --type-coverage --min=100 --compact",
         "test:lint": [
             "pint --parallel --test",
-            "rector --dry-run",
+            "rector",
             "bun run test:lint"
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
