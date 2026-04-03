@@ -5,9 +5,16 @@
     "guidelines": true,
     "mcp": true,
     "nightwatch_mcp": false,
+    "packages": [
+        "filament/filament"
+    ],
     "sail": true,
     "skills": [
         "laravel-best-practices",
+        "configuring-horizon",
+        "wayfinder-development",
+        "livewire-development",
+        "pest-testing",
         "tailwindcss-development"
     ]
 }

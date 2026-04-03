@@ -10,10 +10,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.5.0",
+        "filament/filament": "^5.4",
+        "inertiajs/inertia-laravel": "^3.0.1",
         "laravel/framework": "^13.3.0",
+        "laravel/horizon": "^5.45",
         "laravel/sail": "^1.56",
+        "laravel/wayfinder": "^0.1.15",
+        "livewire/livewire": "^4.2",
         "nunomaduro/essentials": "^1.2.0",
-        "spatie/phpunit-watcher": "^1.24"
+        "nutgram/laravel": "^1.7",
+        "rlanvin/php-rrule": "^2.6",
+        "spatie/phpunit-watcher": "^1.24.4"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.2.0",
