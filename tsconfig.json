@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "jsx": "preserve",
+        "jsxImportSource": "vue",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "paths": {
+            "@/*": ["./resources/js/*"]
+        },
+        "types": ["vite/client"],
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "noEmit": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true
+    }
+}

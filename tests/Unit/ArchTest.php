@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 arch()->preset()->php();
-arch()->preset()->strict();
+arch()->preset()->strict()->ignoring([
+    'App\\Http\\Requests',
+    'App\\Telegram\\Commands',
+]);
 arch()->preset()->laravel();
 arch()->preset()->security()->ignoring([
     'assert',

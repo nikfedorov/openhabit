@@ -27,6 +27,17 @@ final class UserFactory extends Factory
         ];
     }
 
+    public function telegram(): self
+    {
+        return $this->state(fn (array $attributes): array => [
+            'telegram_id' => (string) fake()->unique()->randomNumber(9),
+            'locale' => fake()->randomElement(['en', 'ru', 'uk']),
+            'email' => null,
+            'email_verified_at' => null,
+            'password' => null,
+        ]);
+    }
+
     public function unverified(): self
     {
         return $this->state(fn (array $attributes): array => [

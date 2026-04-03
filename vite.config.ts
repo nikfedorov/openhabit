@@ -1,6 +1,8 @@
-import laravel from 'laravel-vite-plugin';
+import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
-import {defineConfig} from 'vite-plus';
+import vue from '@vitejs/plugin-vue';
+import laravel from 'laravel-vite-plugin';
+import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
     fmt: {
@@ -11,27 +13,49 @@ export default defineConfig({
         singleQuote: true,
         overrides: [
             {
-                files: ["**/*.yml"],
+                files: ['**/*.yml'],
                 options: {
                     tabWidth: 2,
                 },
             },
         ],
         sortTailwindcss: {
-            functions: ["clsx", "cn"],
-            stylesheet: "resources/css/app.css",
+            functions: ['clsx', 'cn'],
+            stylesheet: 'resources/css/app.css',
         },
         sortImports: {
-            groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
+            groups: [
+                'builtin',
+                'external',
+                'internal',
+                'parent',
+                'sibling',
+                'index',
+            ],
             newlinesBetween: false,
         },
-        ignorePatterns: ["resources/views/mail/*"],
+        ignorePatterns: [
+            'resources/views/mail/*',
+            'resources/js/actions/*',
+            'resources/js/routes/*',
+            'resources/js/wayfinder/*',
+        ],
     },
     plugins: [
         laravel({
-            input: ["resources/css/app.css", "resources/js/app.js"],
+            input: ['resources/js/app.ts'],
+            ssr: 'resources/js/ssr.ts',
             refresh: true,
         }),
         tailwindcss(),
+        wayfinder(),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
+        }),
     ],
 });
