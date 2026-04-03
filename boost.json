@@ -1,19 +1,20 @@
 {
     "agents": [
-        "claude_code",
-        "cursor",
-        "opencode",
-        "junie",
-        "copilot",
-        "gemini",
-        "codex",
-        "amp"
+        "copilot"
     ],
     "guidelines": true,
     "mcp": true,
     "nightwatch_mcp": false,
-    "sail": false,
+    "packages": [
+        "filament/filament"
+    ],
+    "sail": true,
     "skills": [
-        "laravel-best-practices"
+        "laravel-best-practices",
+        "configuring-horizon",
+        "wayfinder-development",
+        "livewire-development",
+        "pest-testing",
+        "tailwindcss-development"
     ]
 }

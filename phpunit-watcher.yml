@@ -1,0 +1,16 @@
+watch:
+  directories:
+    - app
+    - bootstrap
+    - config
+    - database
+    - resources
+    - routes
+    - tests
+  fileMask: '*.php'
+notifications:
+  passingTests: false
+  failingTests: false
+phpunit:
+  binaryPath: vendor/bin/pest
+  timeout: 180
