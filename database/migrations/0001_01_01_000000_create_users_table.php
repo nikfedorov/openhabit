@@ -12,12 +12,35 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table): void {
             $table->uuid('id')->primary();
+
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('telegram_id')->unique()->nullable();
+            $table->timestamp('telegram_bot_blocked_at')->nullable();
+            $table->timestamp('telegram_user_deleted_at')->nullable();
+
+            $table->string('email')->unique()->nullable();
+            $table->string('password')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->boolean('is_admin')->default(false);
+            $table->timestamp('subscription_expires_at')->nullable();
+
+            $table->string('theme')->default('system');
+            $table->string('timezone')->default('UTC');
+            $table->string('locale', 10)->nullable();
+
+            $table->time('day_starts_at')->default('03:00:00');
+            $table->boolean('move_completed_to_end')->default(true);
+            $table->date('birthdate')->nullable();
+
+            $table->string('ai_digest_time', 5)->nullable();
+            $table->foreignId('ai_tone_id')->nullable();
+
+            $table->timestamp('last_active_at')->nullable();
+            $table->timestamp('trial_banner_dismissed_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table): void {
