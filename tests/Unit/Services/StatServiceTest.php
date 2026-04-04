@@ -178,14 +178,3 @@ test('recalculateYearlyStat updates existing yearly stat', function (): void {
 
     expect(Stat::query()->where('user_id', $user->id)->where('period', StatPeriod::Yearly)->count())->toBe(1);
 });
-
-test('calculateIntensity returns correct levels', function (int $completed, int $total, int $expected): void {
-    expect($this->service->calculateIntensity($completed, $total))->toBe($expected);
-})->with([
-    [0, 0, 0],
-    [0, 10, 0],
-    [1, 10, 1],
-    [3, 10, 2],
-    [5, 10, 3],
-    [8, 10, 4],
-]);

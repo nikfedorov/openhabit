@@ -24,10 +24,11 @@ final class Setting extends Model
 
     /**
      * Get trial period in days from settings.
+     * Cached per-request to avoid repeated DB queries from User::hasPremium().
      */
     public static function trialPeriodDays(): int
     {
-        return (int) self::getValue('trial_period_days', '14');
+        return (int) once(fn (): ?string => self::getValue('trial_period_days', '14'));
     }
 
     /**

@@ -24,8 +24,7 @@ final readonly class StatService
     ) {}
 
     /**
-     * Recalculate both daily and weekly stats for a user on a given date.
-     * Loads habits once and reuses for both calculations.
+     * Recalculate daily, weekly, and (if birthdate set) yearly stats for a user on a given date.
      */
     public function recalculateForDate(User $user, CarbonInterface $date): void
     {
@@ -47,27 +46,14 @@ final readonly class StatService
     public function recalculateDailyStat(User $user, CarbonInterface $date, ?Collection $habits = null): Stat
     {
         $habits ??= $this->getActiveHabitsWithRRule($user);
-        $plannedCount = $this->countPlannedHabitsForDateWithHabits($habits, $date);
-        $completedCount = $this->countCompletedHabitsForDate($user, $date);
 
-        $stat = Stat::query()
-            ->where('user_id', $user->id)
-            ->where('period', StatPeriod::Daily)
-            ->whereDate('period_start', $date)
-            ->first();
-
-        if ($stat === null) {
-            $stat = new Stat;
-            $stat->user_id = $user->id;
-            $stat->period = StatPeriod::Daily;
-            $stat->period_start = $date->toDateString();
-        }
-
-        $stat->planned_count = $plannedCount;
-        $stat->completed_count = $completedCount;
-        $stat->save();
-
-        return $stat;
+        return $this->upsertStat(
+            $user,
+            StatPeriod::Daily,
+            $date,
+            $this->countPlannedHabitsForDateWithHabits($habits, $date),
+            $this->countCompletedHabits($user, $date),
+        );
     }
 
     /**
@@ -81,86 +67,18 @@ final readonly class StatService
         $weekEnd = $date->copy()->endOfWeek();
 
         $habits ??= $this->getActiveHabitsWithRRule($user);
-        $plannedCount = $this->countPlannedHabitsForRangeWithHabits($habits, $weekStart, $weekEnd);
-        $completedCount = $this->countCompletedHabitsForRange($user, $weekStart, $weekEnd);
 
-        $stat = Stat::query()
-            ->where('user_id', $user->id)
-            ->where('period', StatPeriod::Weekly)
-            ->whereDate('period_start', $weekStart)
-            ->first();
-
-        if ($stat === null) {
-            $stat = new Stat;
-            $stat->user_id = $user->id;
-            $stat->period = StatPeriod::Weekly;
-            $stat->period_start = $weekStart->toDateString();
-        }
-
-        $stat->planned_count = $plannedCount;
-        $stat->completed_count = $completedCount;
-        $stat->save();
-
-        return $stat;
-    }
-
-    /**
-     * Count how many habits are planned for a specific date based on rrule.
-     */
-    public function countPlannedHabitsForDate(User $user, CarbonInterface $date): int
-    {
-        return $this->countPlannedHabitsForDateWithHabits(
-            $this->getActiveHabitsWithRRule($user),
-            $date
+        return $this->upsertStat(
+            $user,
+            StatPeriod::Weekly,
+            $weekStart,
+            $this->countPlannedHabitsForRangeWithHabits($habits, $weekStart, $weekEnd),
+            $this->countCompletedHabits($user, $weekStart, $weekEnd),
         );
-    }
-
-    /**
-     * Count how many habits were completed on a specific date.
-     * Only counts habits that are fully completed (current_iteration >= iterations_required).
-     */
-    public function countCompletedHabitsForDate(User $user, CarbonInterface $date): int
-    {
-        return HabitCompletion::query()
-            ->where('user_id', $user->id)
-            ->whereDate('completed_at', $date)
-            ->whereHas('habit', function (Builder $query): void {
-                $query->whereColumn('habit_completions.current_iteration', '>=', 'habits.iterations_required');
-            })
-            ->count();
-    }
-
-    /**
-     * Count how many habits are planned for a date range based on rrule.
-     */
-    public function countPlannedHabitsForRange(User $user, CarbonInterface $start, CarbonInterface $end): int
-    {
-        return $this->countPlannedHabitsForRangeWithHabits(
-            $this->getActiveHabitsWithRRule($user),
-            $start,
-            $end
-        );
-    }
-
-    /**
-     * Count how many habits were completed in a date range.
-     * Only counts habits that are fully completed (current_iteration >= iterations_required).
-     */
-    public function countCompletedHabitsForRange(User $user, CarbonInterface $start, CarbonInterface $end): int
-    {
-        return HabitCompletion::query()
-            ->where('user_id', $user->id)
-            ->whereDate('completed_at', '>=', $start)
-            ->whereDate('completed_at', '<=', $end)
-            ->whereHas('habit', function (Builder $query): void {
-                $query->whereColumn('habit_completions.current_iteration', '>=', 'habits.iterations_required');
-            })
-            ->count();
     }
 
     /**
      * Recalculate yearly stat for a user for the life year containing the given date.
-     * A life year starts on the Monday on or after the birthday.
      */
     public function recalculateYearlyStat(User $user, CarbonInterface $date, CarbonInterface $birthdate): Stat
     {
@@ -176,20 +94,74 @@ final readonly class StatService
             ->selectRaw('SUM(completed_count) as completed, SUM(planned_count) as total')
             ->first();
 
-        $completedCount = (int) ($weeklyStats->completed ?? 0);
-        $plannedCount = (int) ($weeklyStats->total ?? 0);
+        return $this->upsertStat(
+            $user,
+            StatPeriod::Yearly,
+            $yearStart,
+            (int) ($weeklyStats->total ?? 0),
+            (int) ($weeklyStats->completed ?? 0),
+        );
+    }
 
+    /**
+     * Count how many habits are planned for a specific date based on rrule.
+     */
+    public function countPlannedHabitsForDate(User $user, CarbonInterface $date): int
+    {
+        return $this->countPlannedHabitsForDateWithHabits(
+            $this->getActiveHabitsWithRRule($user),
+            $date,
+        );
+    }
+
+    /**
+     * Count how many habits were completed on a specific date.
+     * Only counts habits that are fully completed (current_iteration >= iterations_required).
+     */
+    public function countCompletedHabitsForDate(User $user, CarbonInterface $date): int
+    {
+        return $this->countCompletedHabits($user, $date);
+    }
+
+    /**
+     * Count how many habits are planned for a date range based on rrule.
+     */
+    public function countPlannedHabitsForRange(User $user, CarbonInterface $start, CarbonInterface $end): int
+    {
+        return $this->countPlannedHabitsForRangeWithHabits(
+            $this->getActiveHabitsWithRRule($user),
+            $start,
+            $end,
+        );
+    }
+
+    /**
+     * Count how many habits were completed in a date range.
+     * Only counts habits that are fully completed (current_iteration >= iterations_required).
+     */
+    public function countCompletedHabitsForRange(User $user, CarbonInterface $start, CarbonInterface $end): int
+    {
+        return $this->countCompletedHabits($user, $start, $end);
+    }
+
+    // ─── Private Helpers ────────────────────────────────────────
+
+    /**
+     * Find-or-create a Stat record and update its counts.
+     */
+    private function upsertStat(User $user, StatPeriod $period, CarbonInterface $periodStart, int $plannedCount, int $completedCount): Stat
+    {
         $stat = Stat::query()
             ->where('user_id', $user->id)
-            ->where('period', StatPeriod::Yearly)
-            ->whereDate('period_start', $yearStart)
+            ->where('period', $period)
+            ->whereDate('period_start', $periodStart)
             ->first();
 
         if ($stat === null) {
             $stat = new Stat;
             $stat->user_id = $user->id;
-            $stat->period = StatPeriod::Yearly;
-            $stat->period_start = $yearStart->toDateString();
+            $stat->period = $period;
+            $stat->period_start = $periodStart->toDateString();
         }
 
         $stat->planned_count = $plannedCount;
@@ -200,27 +172,25 @@ final readonly class StatService
     }
 
     /**
-     * Calculate intensity level (0-4) based on completion rate.
+     * Count completed habits for a single date or date range.
      */
-    public function calculateIntensity(int $completed, int $total): int
+    private function countCompletedHabits(User $user, CarbonInterface $start, ?CarbonInterface $end = null): int
     {
-        if ($total === 0 || $completed === 0) {
-            return 0;
-        }
-
-        $rate = $completed / $total;
-
-        return match (true) {
-            $rate >= 0.75 => 4,
-            $rate >= 0.5 => 3,
-            $rate >= 0.25 => 2,
-            $rate > 0 => 1,
-            default => 0,
-        };
+        return HabitCompletion::query()
+            ->where('user_id', $user->id)
+            ->when(
+                $end instanceof CarbonInterface,
+                fn (Builder $q) => $q->whereDate('completed_at', '>=', $start)->whereDate('completed_at', '<=', $end),
+                fn (Builder $q) => $q->whereDate('completed_at', $start),
+            )
+            ->whereHas('habit', function (Builder $query): void {
+                $query->whereColumn('habit_completions.current_iteration', '>=', 'habits.iterations_required');
+            })
+            ->count();
     }
 
     /**
-     * Count how many habits are planned for a specific date using pre-loaded habits.
+     * Count planned habits for a specific date using pre-loaded habits.
      *
      * @param  Collection<int, Habit>  $habits
      */
@@ -240,7 +210,7 @@ final readonly class StatService
     }
 
     /**
-     * Count how many habits are planned for a date range using pre-loaded habits.
+     * Count planned habits for a date range using pre-loaded habits.
      *
      * @param  Collection<int, Habit>  $habits
      */
@@ -251,8 +221,7 @@ final readonly class StatService
         foreach ($habits as $habit) {
             /** @var string $rrule */
             $rrule = $habit->rrule;
-            $occurrences = $this->rruleService->getOccurrencesBetween($rrule, $start, $end);
-            $count += count($occurrences);
+            $count += count($this->rruleService->getOccurrencesBetween($rrule, $start, $end));
         }
 
         return $count;

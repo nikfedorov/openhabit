@@ -28,6 +28,7 @@ final readonly class HabitCompletionObserver
 
     private function recalculate(HabitCompletion $completion): void
     {
+        $completion->loadMissing('user');
         $user = $completion->user;
 
         if ($user === null) {

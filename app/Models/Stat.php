@@ -30,9 +30,6 @@ final class Stat extends Model
     /** @use HasFactory<StatFactory> */
     use HasFactory;
 
-    /** @var array<int, string> */
-    protected $guarded = [];
-
     /**
      * Calculate the intensity level based on completion ratio.
      */
