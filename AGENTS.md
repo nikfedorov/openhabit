@@ -1,4 +1,36 @@
 <laravel-boost-guidelines>
+# App/Actions guidelines
+
+- This application uses the Action pattern and prefers for much logic to live in reusable and composable Action classes.
+- Actions live in `app/Actions`, they are named based on what they do, with no suffix.
+- Actions will be called from many different places: jobs, commands, HTTP requests, API requests, MCP requests, and more.
+- Create dedicated Action classes for business logic with a single `handle()` method.
+- Inject dependencies via constructor using private properties.
+- Create new actions with `php artisan make:action "{name}" --no-interaction`
+- Wrap complex operations in `DB::transaction()` within actions when multiple models are involved.
+- Some actions won't require dependencies via `__construct` and they can use just the `handle()` method.
+
+@boostsnippet('Example action class', 'php')
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+final readonly class CreateFavorite
+{
+    public function __construct(private FavoriteService $favorites)
+    {
+        //
+    }
+
+    public function handle(User $user, string $favorite): bool
+    {
+        return $this->favorites->add($user, $favorite);
+    }
+}
+@endboostsnippet
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -39,6 +71,8 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
 - `tailwindcss-development` — Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS.
 - `vitest-vue-testing` — Use this skill for Vue component testing with Vitest and Vue Test Utils. Trigger whenever writing, editing, fixing, or refactoring Vue component tests — including mounting components, testing props/slots/emits, mocking dependencies, stubbing child components, and testing Inertia.js pages. Activate when the user mentions Vue tests, component tests, vitest, test:vue, or references resources/js/**/*.test.ts files. Covers: mount/shallowMount, wrapper API, vi.mock/vi.fn, Inertia page testing, coverage. Do not use for Pest PHP tests or backend testing.
+- `vue` — Vue 3 Composition API, script setup macros, reactivity system, and built-in components. Use when writing Vue SFCs, defineProps/defineEmits/defineModel, watchers, or using Transition/Teleport/Suspense/KeepAlive.
+- `vitest` — Vitest fast unit testing framework powered by Vite with Jest-compatible API. Use when writing tests, mocking, configuring coverage, or working with test filtering and fixtures.
 
 ## Conventions
 

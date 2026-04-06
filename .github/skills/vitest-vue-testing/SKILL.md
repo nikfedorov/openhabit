@@ -13,17 +13,17 @@ metadata:
 This project uses Vitest (via `vite-plus`) with `@vue/test-utils` for Vue component testing.
 
 - Config: `vitest.config.ts`
-- Test files: `resources/js/**/*.test.ts`
+- Test files: `resources/js/tests/**/*.test.ts`
 - Run: `vendor/bin/sail bun run test:vue`
 - Coverage: 100% required (lines, functions, branches, statements)
 
 ## Creating Tests
 
-Place test files alongside components with `.test.ts` suffix:
+Place test files in the `resources/js/tests/` directory, mirroring the application structure:
 
 ```
 resources/js/pages/Dashboard.vue
-resources/js/pages/Dashboard.test.ts
+resources/js/tests/pages/Dashboard.test.ts
 ```
 
 ## Basic Test Structure
