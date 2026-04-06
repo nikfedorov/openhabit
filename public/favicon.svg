@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <style>
+    .bg { fill: #171717; }
+    .t1 { fill: #14532d; }
+    .t2 { fill: #15803d; }
+    .t3 { fill: #16a34a; }
+    .t4 { fill: #22c55e; }
+    @media (prefers-color-scheme: light) {
+      .bg { fill: #ffffff; }
+      .t1 { fill: #bbf7d0; }
+      .t2 { fill: #86efac; }
+      .t3 { fill: #4ade80; }
+      .t4 { fill: #22c55e; }
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" class="bg"/>
+
+  <!-- Top-left: Level 3 -->
+  <rect x="80" y="80" width="160" height="160" rx="24" class="t3"/>
+  <!-- Top-right: Level 4 (brightest) -->
+  <rect x="272" y="80" width="160" height="160" rx="24" class="t4"/>
+  <!-- Bottom-left: Level 1 (most faded) -->
+  <rect x="80" y="272" width="160" height="160" rx="24" class="t1"/>
+  <!-- Bottom-right: Level 2 -->
+  <rect x="272" y="272" width="160" height="160" rx="24" class="t2"/>
+</svg>
