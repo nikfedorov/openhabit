@@ -101,12 +101,15 @@
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
         "test:types": "phpstan",
-        "test:vue": "bun run test:vue",
+        "test:vue": [
+            "@php artisan wayfinder:generate",
+            "bun run test:vue"
+        ],
         "test": [
             "@test:type-coverage",
+            "@test:lint",
             "@test:unit",
             "@test:vue",
-            "@test:lint",
             "@test:types"
         ],
         "watch": "vendor/bin/phpunit-watcher watch --filter models"

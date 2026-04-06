@@ -24,7 +24,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'period', 'period_start']);
-            $table->index(['user_id', 'period', 'period_start']);
         });
     }
 
