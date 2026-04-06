@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import Dashboard from '../../pages/Dashboard.vue';
+import Dashboard from '@/pages/Dashboard.vue';
 
 const mockUser = {
     id: '1',

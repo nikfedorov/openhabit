@@ -1,7 +1,24 @@
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
+import type { AttributeNode, ElementNode, NodeTransform } from '@vue/compiler-core';
 import { defineConfig } from 'vite-plus';
+
+/**
+ * Strips `data-testid` attributes from production builds.
+ */
+const stripTestIds: NodeTransform = (node) => {
+    if (process.env.NODE_ENV !== 'production') return;
+    if (node.type !== 1 /* NodeTypes.ELEMENT */) return;
+
+    (node as ElementNode).props = (node as ElementNode).props.filter(
+        (p) =>
+            !(
+                p.type === 6 /* NodeTypes.ATTRIBUTE */ &&
+                (p as AttributeNode).name === 'data-testid'
+            ),
+    );
+};
 
 export default defineConfig({
     fmt: {
@@ -48,6 +65,9 @@ export default defineConfig({
                 transformAssetUrls: {
                     base: null,
                     includeAbsolute: false,
+                },
+                compilerOptions: {
+                    nodeTransforms: [stripTestIds],
                 },
             },
         }),
