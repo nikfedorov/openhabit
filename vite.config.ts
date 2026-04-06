@@ -36,9 +36,6 @@ export default defineConfig({
         },
         ignorePatterns: [
             'resources/views/mail/*',
-            'resources/js/actions/*',
-            'resources/js/routes/*',
-            'resources/js/wayfinder/*',
         ],
     },
     plugins: [
