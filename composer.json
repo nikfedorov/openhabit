@@ -89,14 +89,14 @@
             "bunx npm-check-updates -u"
         ],
         "lint": [
-            "rector",
-            "pint --parallel",
+            "rector --output-format=json",
+            "pint --parallel --format agent",
             "bun run lint"
         ],
         "test:type-coverage": "pest --type-coverage --min=100 --compact",
         "test:lint": [
-            "pint --parallel --test",
-            "rector",
+            "pint --parallel --format agent",
+            "rector --output-format=json",
             "bun run test:lint"
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
