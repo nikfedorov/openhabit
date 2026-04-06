@@ -9,8 +9,8 @@ beforeEach(function (): void {
 });
 
 test('sets app locale from authenticated user locale', function (): void {
-    $this->actingAs($this->user)
-        ->get(route('dashboard'))
+    $this->actingAs($this->user, 'sanctum')
+        ->getJson('/api/track')
         ->assertOk();
 
     expect(app()->getLocale())->toBe('ru');
@@ -22,10 +22,10 @@ test('keeps default locale for missing, invalid, or unauthenticated locale', fun
     }
 
     $request = $method === 'authenticated'
-        ? $this->actingAs($this->user)->get(route('dashboard'))
-        : $this->get(route('dashboard'));
+        ? $this->actingAs($this->user, 'sanctum')->getJson('/api/track')
+        : $this->getJson('/api/track');
 
-    $method === 'authenticated' ? $request->assertOk() : $request->assertRedirect();
+    $method === 'authenticated' ? $request->assertOk() : $request->assertUnauthorized();
 
     expect(app()->getLocale())->toBe('en');
 })->with([
