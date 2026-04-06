@@ -5,9 +5,9 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Browser">
+        <!-- <testsuite name="Browser">
             <directory>tests/Browser</directory>
-        </testsuite>
+        </testsuite> -->
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>

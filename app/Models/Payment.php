@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Carbon\CarbonInterface;
 use Database\Factories\PaymentFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,18 +43,22 @@ final class Payment extends Model
 
     /**
      * Check if this payment has been refunded.
+     *
+     * @return Attribute<bool, never>
      */
-    protected function getIsRefundedAttribute(): bool
+    protected function isRefunded(): Attribute
     {
-        return $this->refunded_at !== null;
+        return Attribute::get(fn (): bool => $this->refunded_at !== null);
     }
 
     /**
      * Get a formatted display of the payment amount in stars.
+     *
+     * @return Attribute<lowercase-string&non-falsy-string&uppercase-string, never>
      */
-    protected function getFormattedAmountAttribute(): string
+    protected function formattedAmount(): Attribute
     {
-        return $this->total_amount.' ⭐';
+        return Attribute::get(fn (): string => $this->total_amount.' ⭐');
     }
 
     /**

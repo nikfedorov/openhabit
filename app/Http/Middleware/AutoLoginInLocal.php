@@ -20,7 +20,7 @@ final class AutoLoginInLocal
     public function handle(Request $request, Closure $next): Response
     {
         if (config('app.env') === 'local' && ! Auth::check()) {
-            $user = User::query()->first();
+            $user = User::query()->oldest()->first();
 
             if ($user !== null) {
                 Auth::login($user);

@@ -7,15 +7,17 @@ use App\Models\HabitTemplate;
 
 test('toHabitArray returns correct structure', function (): void {
     $template = HabitTemplate::factory()->create([
-        'name' => 'Test Habit',
-        'description' => 'A description',
+        'name' => ['en' => 'Test Habit'],
+        'description' => ['en' => 'A description'],
+        'sort_order' => 5,
         'rrule' => 'FREQ=DAILY',
         'iterations_required' => 3,
     ]);
 
     expect($template->toHabitArray())->toBe([
-        'name' => 'Test Habit',
-        'description' => 'A description',
+        'name' => ['en' => 'Test Habit'],
+        'description' => ['en' => 'A description'],
+        'sort_order' => 5,
         'rrule' => 'FREQ=DAILY',
         'iterations_required' => 3,
     ]);

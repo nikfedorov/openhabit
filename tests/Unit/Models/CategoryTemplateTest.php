@@ -7,13 +7,17 @@ use App\Models\HabitTemplate;
 
 test('toCategoryArray returns correct structure', function (): void {
     $template = CategoryTemplate::factory()->create([
-        'name' => 'Test',
+        'name' => ['en' => 'Test'],
+        'description' => ['en' => 'A description'],
         'slug' => 'test-slug',
+        'sort_order' => 3,
     ]);
 
     expect($template->toCategoryArray())->toBe([
-        'name' => 'Test',
+        'name' => ['en' => 'Test'],
+        'description' => ['en' => 'A description'],
         'slug' => 'test-slug',
+        'sort_order' => 3,
     ]);
 });
 

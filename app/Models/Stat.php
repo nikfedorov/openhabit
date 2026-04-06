@@ -9,6 +9,7 @@ use Carbon\CarbonInterface;
 use Database\Factories\StatFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,22 +61,28 @@ final class Stat extends Model
 
     /**
      * Get the completion rate as a percentage.
+     *
+     * @return Attribute<float, never>
      */
-    protected function getCompletionRateAttribute(): float
+    protected function completionRate(): Attribute
     {
-        if ($this->planned_count === 0) {
-            return 0.0;
-        }
+        return Attribute::get(function (): float {
+            if ($this->planned_count === 0) {
+                return 0.0;
+            }
 
-        return round(($this->completed_count / $this->planned_count) * 100, 1);
+            return round(($this->completed_count / $this->planned_count) * 100, 1);
+        });
     }
 
     /**
      * Get the intensity level (0-4).
+     *
+     * @return Attribute<int, never>
      */
-    protected function getIntensityLevelAttribute(): int
+    protected function intensityLevel(): Attribute
     {
-        return self::calculateIntensity($this->completed_count, $this->planned_count);
+        return Attribute::get(fn (): int => self::calculateIntensity($this->completed_count, $this->planned_count));
     }
 
     /**

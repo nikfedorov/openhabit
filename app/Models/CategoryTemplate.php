@@ -37,13 +37,23 @@ final class CategoryTemplate extends Model
     /**
      * Convert to a category-creation array.
      *
-     * @return array{name: string, slug: string|null}
+     * Copies all translations so the category works in every locale.
+     *
+     * @return array{name: array<string, string>, description: array<string, string|null>, slug: string|null, sort_order: int}
      */
     public function toCategoryArray(): array
     {
+        /** @var array<string, string> $name */
+        $name = $this->getTranslations('name');
+
+        /** @var array<string, string|null> $description */
+        $description = $this->getTranslations('description');
+
         return [
-            'name' => $this->name,
+            'name' => $name,
+            'description' => $description,
             'slug' => $this->slug,
+            'sort_order' => $this->sort_order,
         ];
     }
 

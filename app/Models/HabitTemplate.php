@@ -41,13 +41,22 @@ final class HabitTemplate extends Model
     /**
      * Convert to a habit-creation array.
      *
-     * @return array{name: string, description: string|null, rrule: string|null, iterations_required: int}
+     * Copies all translations so the habit works in every locale.
+     *
+     * @return array{name: array<string, string>, description: array<string, string|null>, sort_order: int, rrule: string|null, iterations_required: int}
      */
     public function toHabitArray(): array
     {
+        /** @var array<string, string> $name */
+        $name = $this->getTranslations('name');
+
+        /** @var array<string, string|null> $description */
+        $description = $this->getTranslations('description');
+
         return [
-            'name' => $this->name,
-            'description' => $this->description,
+            'name' => $name,
+            'description' => $description,
+            'sort_order' => $this->sort_order,
             'rrule' => $this->rrule,
             'iterations_required' => $this->iterations_required,
         ];
