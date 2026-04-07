@@ -92,16 +92,18 @@ test('telegram miniapp auth creates user and logs in', function (): void {
         'X-Telegram-Init-Data' => 'fake_init_data',
     ])
         ->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'token',
+        ])
         ->assertJson([
             'success' => true,
-            'redirect' => route('dashboard'),
         ]);
-
-    $this->assertAuthenticated();
 
     $user = User::query()->where('telegram_id', '123456789')->first();
     expect($user)->not->toBeNull()
-        ->and($user->name)->toBe('John Doe');
+        ->and($user->name)->toBe('John Doe')
+        ->and($user->tokens()->count())->toBe(1);
 });
 
 test('telegram miniapp auth logs in existing user', function (): void {
@@ -124,26 +126,23 @@ test('telegram miniapp auth logs in existing user', function (): void {
         'X-Telegram-Init-Data' => 'fake_init_data',
     ])
         ->assertOk()
-        ->assertJson(['success' => true]);
+        ->assertJson(['success' => true])
+        ->assertJsonStructure(['token']);
 
-    $this->assertAuthenticatedAs($existingUser);
-
-    expect(User::query()->where('telegram_id', '987654321')->count())->toBe(1);
+    expect(User::query()->where('telegram_id', '987654321')->count())->toBe(1)
+        ->and($existingUser->tokens()->count())->toBe(1);
 });
 
-test('dashboard requires authentication', function (): void {
-    $this->get('/dashboard')
-        ->assertRedirect('/telegram-miniapp');
+test('api user endpoint requires authentication', function (): void {
+    $this->getJson('/api/user')
+        ->assertUnauthorized();
 });
 
-test('dashboard loads for authenticated user', function (): void {
+test('api user endpoint returns authenticated user', function (): void {
     $user = User::factory()->telegram()->create();
 
-    $this->actingAs($user)
-        ->get('/dashboard')
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/user')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Dashboard')
-            ->has('auth.user')
-        );
+        ->assertJsonFragment(['id' => $user->id]);
 });

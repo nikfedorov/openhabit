@@ -1,4 +1,3 @@
-import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
@@ -40,12 +39,10 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ['resources/js/app.ts'],
-            ssr: 'resources/js/ssr.ts',
+            input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
         }),
         tailwindcss(),
-        wayfinder(),
         vue({
             template: {
                 transformAssetUrls: {

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property-read string $id
@@ -51,6 +52,8 @@ use Illuminate\Notifications\Notifiable;
 #[ObservedBy(UserObserver::class)]
 final class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
+    use HasApiTokens;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 

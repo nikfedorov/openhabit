@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\TelegramMiniAppRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 final class TelegramMiniAppController
 {
@@ -23,11 +22,12 @@ final class TelegramMiniAppController
         $user->last_active_at = now();
         $user->save();
 
-        Auth::login($user);
+        /** @var string $token */
+        $token = $user->createToken('telegram-miniapp')->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'redirect' => route('dashboard'),
+            'token' => $token,
         ]);
     }
 }

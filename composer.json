@@ -11,11 +11,10 @@
     "require": {
         "php": "^8.5.0",
         "filament/filament": "^5.4.4",
-        "inertiajs/inertia-laravel": "^3.0.1",
         "laravel/framework": "^13.3.0",
         "laravel/horizon": "^5.45.5",
         "laravel/sail": "^1.56",
-        "laravel/wayfinder": "^0.1.15",
+        "laravel/sanctum": "^4.3.1",
         "livewire/livewire": "^4.2.4",
         "nunomaduro/essentials": "^1.2.0",
         "nutgram/laravel": "^1.7.1",
@@ -101,10 +100,7 @@
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
         "test:types": "phpstan",
-        "test:vue": [
-            "@php artisan wayfinder:generate",
-            "bun run test:vue"
-        ],
+        "test:vue": "bun run test:vue",
         "test": [
             "@test:type-coverage",
             "@test:lint",

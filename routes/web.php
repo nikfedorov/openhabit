@@ -12,6 +12,9 @@ use Inertia\Response;
 
 Route::get('/', fn (): View => view('welcome'));
 
+// Vue SPA shell — all frontend routes handled by Vue router
+Route::get('/app', fn (): View => view('app'))->middleware('auth')->name('app');
+
 // Telegram Mini App auth
 Route::get('/telegram-miniapp', fn (): View => view('telegram-miniapp'))->name('telegram-miniapp');
 Route::post('/telegram-miniapp/auth', TelegramMiniAppController::class)

@@ -105,7 +105,8 @@
                     if (!ok) {
                         throw new Error(data.error || "Authentication failed");
                     }
-                    window.location.href = data.redirect;
+                    localStorage.setItem('api_token', data.token);
+                    window.location.href = '/app';
                 })
                 .catch((error) => {
                     showError(error.message);

@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
+import type { User } from '@/types';
+import { apiFetch } from '@/utils/api';
 
-const page = usePage();
-const user = page.props.auth.user;
+const user = ref<User | null>(null);
+const appName = ref('OpenHabit');
+
+onMounted(async () => {
+    const data = await apiFetch<User>('/api/user');
+    user.value = data;
+});
 </script>
 
 <template>
-    <Head title="Dashboard" />
-
     <div class="min-h-screen bg-gray-50">
         <div class="mx-auto max-w-2xl px-4 py-8">
             <h1 class="mb-6 text-2xl font-bold text-gray-900">
-                {{ $page.props.name }}
+                {{ appName }}
             </h1>
 
-            <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div v-if="user" class="rounded-lg bg-white p-6 shadow-sm">
                 <h2 class="mb-4 text-lg font-semibold text-gray-800">
                     User Information
                 </h2>
