@@ -58,26 +58,56 @@ defineExpose({ progressIntensity, segmentColor });
             </span>
         </div>
 
-        <div
+        <TransitionGroup
             v-if="totalHabits > 0"
-            class="flex h-2 gap-1"
+            tag="div"
+            name="progress-segment"
+            class="flex h-2"
             data-testid="progress-segments"
         >
             <div
                 v-for="i in segmentCount"
                 :key="i"
-                class="flex-1 rounded-sm transition-all duration-300"
-                :class="i <= completedCount ? segmentColor : emptySegmentColor"
+                class="flex-1 overflow-hidden rounded-sm transition-colors duration-300"
+                :class="[
+                    i <= completedCount ? segmentColor : emptySegmentColor,
+                    i > 1 ? 'ml-1' : '',
+                ]"
             />
             <div
                 v-if="totalHabits > 20"
-                class="flex-1 rounded-sm transition-all duration-300"
+                :key="'extra'"
+                class="ml-1 flex-1 overflow-hidden rounded-sm transition-colors duration-300"
                 :class="
                     completedCount >= totalHabits
                         ? segmentColor
                         : emptySegmentColor
                 "
             />
-        </div>
+        </TransitionGroup>
     </div>
 </template>
+
+<style>
+.progress-segment-enter-active,
+.progress-segment-leave-active {
+    overflow: hidden;
+    transition:
+        max-width 0.3s ease-out,
+        margin-left 0.3s ease-out,
+        opacity 0.3s ease-out;
+}
+
+.progress-segment-enter-from,
+.progress-segment-leave-to {
+    max-width: 0 !important;
+    margin-left: 0 !important;
+    opacity: 0;
+}
+
+.progress-segment-enter-to,
+.progress-segment-leave-from {
+    max-width: 10rem;
+    opacity: 1;
+}
+</style>
