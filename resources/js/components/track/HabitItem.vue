@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
-import type { Habit } from '@/types';
+import type { Habit } from '@/types/track';
 
 const props = defineProps<{
     habit: Habit;

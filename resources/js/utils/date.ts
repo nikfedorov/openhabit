@@ -10,3 +10,12 @@ export function addDays(dateStr: string, days: number): string {
 export function todayStr(): string {
     return formatDate(new Date());
 }
+
+export function findMondayOnOrAfter(date: Date): Date {
+    const d = new Date(date);
+    const dayOfWeek = d.getDay();
+    const daysUntilMonday =
+        dayOfWeek === 0 ? 1 : dayOfWeek === 1 ? 0 : 8 - dayOfWeek;
+    d.setDate(d.getDate() + daysUntilMonday);
+    return d;
+}

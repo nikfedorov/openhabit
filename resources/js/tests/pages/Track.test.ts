@@ -4,7 +4,7 @@ import ActivityGraph from '@/components/track/ActivityGraph.vue';
 import HabitItem from '@/components/track/HabitItem.vue';
 import ProgressBar from '@/components/track/ProgressBar.vue';
 import Track from '@/pages/Track.vue';
-import type { ActivityDay, Habit } from '@/types';
+import type { ActivityDay, Habit } from '@/types/track';
 import { addDays, todayStr } from '@/utils/date';
 
 const { mockApiFetch } = vi.hoisted(() => ({
@@ -110,6 +110,7 @@ const defaultData = {
     dailyNoteContent: '',
     activityData: [] as ActivityDay[],
     translations: defaultTranslations,
+    navigationTranslations: { track: 'Track', view: 'View' },
 };
 
 async function mountTrack(data = {}) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { ActivityDay } from '@/types';
+import type { ActivityDay } from '@/types/track';
 import { formatDate } from '@/utils/date';
 import { getIntensityColor } from '@/utils/intensity';
 
