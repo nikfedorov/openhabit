@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => '周',
+    'year' => '年',
+    'life' => '人生',
+    'previous_week' => '上一周',
+    'next_week' => '下一周',
+    'this_week' => '本周',
+    'current_week' => '当前周',
+    'previous_year' => '上一年',
+    'next_year' => '下一年',
+    'this_year' => '今年',
+    'current_year' => '当前年',
+    'age' => ':age 岁',
+    'less' => '少',
+    'more' => '多',
+    'future' => '未来',
+    'habits' => '习惯',
+    'done' => '完成',
+    'partial' => '部分',
+    'missed' => '错过',
+    'no_habits_yet' => '还没有习惯',
+    'create_habits_to_track' => '创建习惯来追踪你的进度',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => '岁',
+    'years_left' => '年剩余',
+    'weeks_lived' => '周已过',
+    'each_square_year' => '每个方块代表一年。点击查看周。',
+    'each_square_week' => '每个方块代表一周。点击查看详情。',
+    'seneca_quote' => '"并非我们拥有的时间太少，而是我们浪费了太多。"',
+    'seneca_author' => '塞涅卡',
+];

@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * @property-read array{date: string, dayName: string, dateFormatted: string, isToday: bool, habits: Collection<int, Habit>, totalHabits: int, completedCount: int, moveCompletedToEnd: bool, dailyNoteContent: string, activityData: array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}>, translations: array<string, string>} $resource
+ * @property-read array{date: string, dayName: string, dateFormatted: string, isToday: bool, habits: Collection<int, Habit>, totalHabits: int, completedCount: int, moveCompletedToEnd: bool, dailyNoteContent: string, activityData: array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}>, translations: array<string, string>, navigationTranslations: array<string, string>} $resource
  */
 final class TrackResource extends JsonResource
 {
@@ -19,7 +19,7 @@ final class TrackResource extends JsonResource
     public static $wrap;
 
     /**
-     * @return array{date: string, dayName: string, dateFormatted: string, isToday: bool, habits: AnonymousResourceCollection, totalHabits: int, completedCount: int, moveCompletedToEnd: bool, dailyNoteContent: string, activityData: array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}>, translations: array<string, string>}
+     * @return array{date: string, dayName: string, dateFormatted: string, isToday: bool, habits: AnonymousResourceCollection, totalHabits: int, completedCount: int, moveCompletedToEnd: bool, dailyNoteContent: string, activityData: array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}>, translations: array<string, string>, navigationTranslations: array<string, string>}
      */
     public function toArray(Request $request): array
     {
@@ -35,6 +35,7 @@ final class TrackResource extends JsonResource
             'dailyNoteContent' => $this->resource['dailyNoteContent'],
             'activityData' => $this->resource['activityData'],
             'translations' => $this->resource['translations'],
+            'navigationTranslations' => $this->resource['navigationTranslations'],
         ];
     }
 }

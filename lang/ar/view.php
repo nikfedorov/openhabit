@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'أسبوع',
+    'year' => 'سنة',
+    'life' => 'حياة',
+    'previous_week' => 'الأسبوع السابق',
+    'next_week' => 'الأسبوع التالي',
+    'this_week' => 'هذا الأسبوع',
+    'current_week' => 'الأسبوع الحالي',
+    'previous_year' => 'السنة السابقة',
+    'next_year' => 'السنة التالية',
+    'this_year' => 'هذه السنة',
+    'current_year' => 'السنة الحالية',
+    'age' => 'العمر :age',
+    'less' => 'أقل',
+    'more' => 'أكثر',
+    'future' => 'المستقبل',
+    'habits' => 'العادات',
+    'done' => 'مكتمل',
+    'partial' => 'جزئي',
+    'missed' => 'فائت',
+    'no_habits_yet' => 'لا توجد عادات بعد',
+    'create_habits_to_track' => 'أنشئ بعض العادات لتتبع تقدمك',
+    'memento_mori' => 'تذكّر الموت',
+    'years_old' => 'سنة',
+    'years_left' => 'سنة متبقية',
+    'weeks_lived' => 'أسبوع عاشه',
+    'each_square_year' => 'كل مربع يمثل سنة واحدة. انقر لرؤية الأسابيع.',
+    'each_square_week' => 'كل مربع يمثل أسبوعًا واحدًا. انقر لعرض التفاصيل.',
+    'seneca_quote' => '"ليس أن لدينا وقتًا قصيرًا للعيش، بل إننا نضيع الكثير منه."',
+    'seneca_author' => 'سينيكا',
+];

@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'Week',
+    'year' => 'Year',
+    'life' => 'Life',
+    'previous_week' => 'Previous week',
+    'next_week' => 'Next week',
+    'this_week' => 'This Week',
+    'current_week' => 'Current Week',
+    'previous_year' => 'Previous year',
+    'next_year' => 'Next year',
+    'this_year' => 'This Year',
+    'current_year' => 'Current Year',
+    'age' => 'Age :age',
+    'less' => 'Less',
+    'more' => 'More',
+    'future' => 'Future',
+    'habits' => 'Habits',
+    'done' => 'Done',
+    'partial' => 'Partial',
+    'missed' => 'Missed',
+    'no_habits_yet' => 'No habits yet',
+    'create_habits_to_track' => 'Create some habits to track your progress',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => 'years old',
+    'years_left' => 'years left',
+    'weeks_lived' => 'weeks lived',
+    'each_square_year' => 'Each square represents one year. Tap to see weeks.',
+    'each_square_week' => 'Each square represents one week. Tap to view details.',
+    'seneca_quote' => '"It is not that we have a short time to live, but that we waste much of it."',
+    'seneca_author' => 'Seneca',
+];

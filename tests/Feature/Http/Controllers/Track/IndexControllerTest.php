@@ -37,7 +37,7 @@ test('track api loads habits with completion state and filters inactive ones', f
         ->assertJsonPath('habits.0.is_completed', true)
         ->assertJsonPath('habits.0.current_iteration', 1)
         ->assertJsonPath('habits.0.sort_order', $habit->sort_order)
-        ->assertJsonStructure(['translations', 'moveCompletedToEnd']);
+        ->assertJsonStructure(['translations', 'moveCompletedToEnd', 'navigationTranslations']);
 });
 
 test('track api supports date navigation and clamps future dates', function (): void {

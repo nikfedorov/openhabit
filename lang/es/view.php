@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'Semana',
+    'year' => 'Año',
+    'life' => 'Vida',
+    'previous_week' => 'Semana anterior',
+    'next_week' => 'Semana siguiente',
+    'this_week' => 'Esta semana',
+    'current_week' => 'Semana actual',
+    'previous_year' => 'Año anterior',
+    'next_year' => 'Año siguiente',
+    'this_year' => 'Este año',
+    'current_year' => 'Año actual',
+    'age' => 'Edad :age',
+    'less' => 'Menos',
+    'more' => 'Más',
+    'future' => 'Futuro',
+    'habits' => 'Hábitos',
+    'done' => 'Hecho',
+    'partial' => 'Parcial',
+    'missed' => 'Perdido',
+    'no_habits_yet' => 'Aún no hay hábitos',
+    'create_habits_to_track' => 'Crea hábitos para seguir tu progreso',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => 'años',
+    'years_left' => 'años restantes',
+    'weeks_lived' => 'semanas vividas',
+    'each_square_year' => 'Cada cuadrado representa un año. Toca para ver semanas.',
+    'each_square_week' => 'Cada cuadrado representa una semana. Toca para ver detalles.',
+    'seneca_quote' => '«No es que tengamos poco tiempo de vida, sino que desperdiciamos mucho de él.»',
+    'seneca_author' => 'Séneca',
+];

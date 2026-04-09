@@ -57,6 +57,7 @@ final readonly class IndexAction
             'dailyNoteContent' => $dailyNoteContent ?? '',
             'activityData' => $this->activityData($user),
             'translations' => $this->translations(),
+            'navigationTranslations' => trans('navigation'),
         ];
     }
 

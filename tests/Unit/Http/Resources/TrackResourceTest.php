@@ -35,6 +35,7 @@ test('it transforms track data with habits as resources', function (): void {
             ['date' => '2025-01-15', 'percentage' => 50.0, 'completed' => 1, 'total' => 2, 'intensity' => 2],
         ],
         'translations' => ['progress' => 'Progress'],
+        'navigationTranslations' => ['track' => 'Track', 'view' => 'View'],
     ];
 
     $resource = new TrackResource($data);
