@@ -6,10 +6,6 @@ const props = defineProps<{
     translations: NavigationTranslations | null;
 }>();
 
-const emit = defineEmits<{
-    navigate: [page: string];
-}>();
-
 const tabs = [
     {
         key: 'track',
@@ -37,17 +33,16 @@ function getLabel(tab: (typeof tabs)[number]): string {
         <div
             class="flex items-center gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800"
         >
-            <button
+            <router-link
                 v-for="tab in tabs"
                 :key="tab.key"
-                type="button"
+                :to="{ name: tab.key }"
                 class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150"
                 :class="
                     activeTab === tab.key
                         ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
                         : 'text-neutral-500 hover:bg-neutral-200/50 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-300'
                 "
-                @click="emit('navigate', tab.key)"
             >
                 <svg
                     class="h-4 w-4"
@@ -63,7 +58,7 @@ function getLabel(tab: (typeof tabs)[number]): string {
                     />
                 </svg>
                 {{ getLabel(tab) }}
-            </button>
+            </router-link>
         </div>
     </nav>
 
@@ -72,17 +67,16 @@ function getLabel(tab: (typeof tabs)[number]): string {
         class="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-neutral-700 dark:bg-neutral-900"
     >
         <div class="flex h-16 items-center justify-around">
-            <button
+            <router-link
                 v-for="tab in tabs"
                 :key="tab.key"
-                type="button"
+                :to="{ name: tab.key }"
                 class="flex h-full flex-1 flex-col items-center justify-center gap-1 transition-colors duration-150"
                 :class="
                     activeTab === tab.key
                         ? 'text-green-600 dark:text-green-500'
                         : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
                 "
-                @click="emit('navigate', tab.key)"
             >
                 <svg
                     class="h-6 w-6"
@@ -98,7 +92,7 @@ function getLabel(tab: (typeof tabs)[number]): string {
                     />
                 </svg>
                 <span class="text-xs font-medium">{{ getLabel(tab) }}</span>
-            </button>
+            </router-link>
         </div>
     </nav>
 </template>

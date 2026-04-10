@@ -12,11 +12,13 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         include: ['resources/js/tests/**/*.test.ts'],
+        setupFiles: ['resources/js/tests/setup.ts'],
         coverage: {
             provider: 'v8',
             include: ['resources/js/**/*.vue', 'resources/js/**/*.ts'],
             exclude: [
                 'resources/js/app.ts',
+                'resources/js/router.ts',
                 'resources/js/ssr.ts',
                 'resources/js/tests/**',
                 'resources/js/actions/**',

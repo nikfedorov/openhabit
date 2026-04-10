@@ -136,11 +136,11 @@ function goToToday() {
 
 <style>
 .date-slide-enter-active {
-    transition: all 0.20s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 .date-slide-leave-active {
-    transition: all 0.20s ease-in-out;
+    transition: all 0.2s ease-in-out;
     position: absolute;
     width: 100%;
 }

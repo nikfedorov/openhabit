@@ -16,16 +16,25 @@ import {
 import type { Habit } from '@/types/track';
 import { addDays, todayStr } from '@/utils/date';
 
-const { mockApiFetch } = vi.hoisted(() => ({
+const { mockApiFetch, mockRouteQuery, mockReplace } = vi.hoisted(() => ({
     mockApiFetch: vi.fn(),
+    mockRouteQuery: { value: {} as Record<string, string> },
+    mockReplace: vi.fn(),
 }));
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
 }));
 
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ query: mockRouteQuery.value }),
+    useRouter: () => ({ replace: mockReplace }),
+}));
+
 beforeEach(() => {
     mockApiFetch.mockReset();
+    mockRouteQuery.value = {};
+    mockReplace.mockReset();
     Element.prototype.animate = vi
         .fn()
         .mockReturnValue({ pause: vi.fn(), cancel: vi.fn() });
@@ -267,10 +276,14 @@ describe('Track - Habits List', () => {
         const habitItem = findByTestId(wrapper, 'habit-item');
         await tapHabit(habitItem);
         await flushPromises();
-        expect(mockApiFetch).toHaveBeenCalledWith('/api/track/toggle', {
-            method: 'POST',
-            body: JSON.stringify({ habit_id: 1, date: '2026-04-06' }),
-        });
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/track/toggle',
+            {
+                method: 'POST',
+                body: JSON.stringify({ habit_id: 1, date: '2026-04-06' }),
+            },
+            { silent: true },
+        );
     });
 
     it('optimistically updates habit on toggle before server responds', async () => {
@@ -894,5 +907,53 @@ describe('Track - Activity Graph', () => {
             ],
         });
         expect(wrapper.text()).toContain(defaultTrackTranslations.activity);
+    });
+});
+
+// ─── URL Sync ───────────────────────────────────────────────────
+
+describe('Track - URL Sync', () => {
+    it('does not add date query when on today', async () => {
+        await mountTrack(mockApiFetch);
+        expect(mockReplace).toHaveBeenCalledWith({ query: {} });
+    });
+
+    it('adds date query when not on today', async () => {
+        await mountTrack(mockApiFetch, { isToday: false, date: '2026-04-05' });
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { date: '2026-04-05' },
+        });
+    });
+
+    it('loads initial date from URL query', async () => {
+        mockRouteQuery.value = { date: '2026-04-01' };
+        await mountTrack(mockApiFetch, { isToday: false, date: '2026-04-01' });
+        expect(mockApiFetch).toHaveBeenCalledWith('/api/track?date=2026-04-01');
+    });
+
+    it('updates URL when navigating to a different date', async () => {
+        const wrapper = await mountTrack(mockApiFetch);
+        mockApiFetch.mockResolvedValueOnce({
+            ...defaultTrackData,
+            date: '2026-04-05',
+            isToday: false,
+        });
+        await findByTestId(wrapper, 'prev-day-btn').trigger('click');
+        await flushPromises();
+        expect(mockReplace).toHaveBeenLastCalledWith({
+            query: { date: '2026-04-05' },
+        });
+    });
+
+    it('clears URL query when navigating back to today', async () => {
+        const wrapper = await mountTrack(mockApiFetch, {
+            isToday: false,
+            date: '2026-04-05',
+        });
+        mockReplace.mockReset();
+        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        await findByTestId(wrapper, 'today-btn').trigger('click');
+        await flushPromises();
+        expect(mockReplace).toHaveBeenCalledWith({ query: {} });
     });
 });

@@ -3,12 +3,17 @@ import { onMounted, ref } from 'vue';
 import type { User } from '@/types/dashboard';
 import { apiFetch } from '@/utils/api';
 
+const emit = defineEmits<{
+    ready: [];
+}>();
+
 const user = ref<User | null>(null);
 const appName = ref('OpenHabit');
 
 onMounted(async () => {
     const data = await apiFetch<User>('/api/user');
     user.value = data;
+    emit('ready');
 });
 </script>
 

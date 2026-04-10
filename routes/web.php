@@ -27,6 +27,22 @@ Route::get('/app', function (): View {
     return view('app', ['devToken' => $devToken]);
 })->name('app');
 
+// Vue Router SPA catch-all — serves the Vue shell for all /app/* paths
+Route::get('/app/{any}', function (): View {
+    $devToken = null;
+
+    if (config('app.env') === 'local') {
+        $user = User::query()->oldest()->first();
+
+        if ($user !== null) {
+            $user->tokens()->where('name', 'dev')->delete();
+            $devToken = $user->createToken('dev')->plainTextToken;
+        }
+    }
+
+    return view('app', ['devToken' => $devToken]);
+})->where('any', '.*')->name('app.spa');
+
 // Telegram Mini App auth
 Route::get('/telegram-miniapp', fn (): View => view('telegram-miniapp'))->name('telegram-miniapp');
 Route::post('/telegram-miniapp/auth', TelegramMiniAppController::class)

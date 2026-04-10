@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import RouteLoadingBar from '@/components/navigation/RouteLoadingBar.vue';
 import TabBar from '@/components/navigation/TabBar.vue';
-import Dashboard from '@/pages/Dashboard.vue';
-import Track from '@/pages/Track.vue';
-import View from '@/pages/View.vue';
+import PageLoader from '@/components/PageLoader.vue';
 import type { NavigationTranslations } from '@/types/navigation';
 
-const currentPage = ref<'dashboard' | 'track' | 'view'>('track');
+const route = useRoute();
+const router = useRouter();
 const navTranslations = ref<NavigationTranslations | null>(null);
+const pageReady = ref(false);
 
-function navigate(page: string) {
-    currentPage.value = page as 'dashboard' | 'track' | 'view';
-}
+router.beforeEach((to, from) => {
+    if (to.name !== from.name) {
+        pageReady.value = false;
+    }
+});
 
 function updateNavTranslations(translations: NavigationTranslations) {
     navTranslations.value = translations;
@@ -20,27 +24,23 @@ function updateNavTranslations(translations: NavigationTranslations) {
 
 <template>
     <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <RouteLoadingBar />
         <div class="mx-auto max-w-2xl px-4 py-6 pb-24">
             <TabBar
-                :active-tab="currentPage"
+                :active-tab="String(route.name)"
                 :translations="navTranslations"
-                @navigate="navigate"
             />
 
-            <Dashboard
-                v-if="currentPage === 'dashboard'"
-                @navigate="navigate"
-            />
-            <View
-                v-else-if="currentPage === 'view'"
-                @navigate="navigate"
-                @navigation-translations="updateNavTranslations"
-            />
-            <Track
-                v-else
-                @navigate="navigate"
-                @navigation-translations="updateNavTranslations"
-            />
+            <router-view v-slot="{ Component }">
+                <PageLoader v-if="!pageReady || !Component" />
+                <component
+                    v-if="Component"
+                    v-show="pageReady"
+                    :is="Component"
+                    @navigation-translations="updateNavTranslations"
+                    @ready="pageReady = true"
+                />
+            </router-view>
         </div>
     </div>
 </template>

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useLoadingBar } from '@/composables/useLoadingBar';
 import { apiFetch, clearToken, getToken, setToken } from '../../utils/api';
 
 const mockLocalStorage: Record<string, string> = {};
@@ -17,6 +18,7 @@ beforeEach(() => {
 
 afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     Object.keys(mockLocalStorage).forEach((k) => delete mockLocalStorage[k]);
 });
 
@@ -155,5 +157,21 @@ describe('apiFetch', () => {
                 'X-Custom': 'value',
             },
         });
+    });
+
+    it('does not trigger loading bar when silent is true', async () => {
+        const { reset } = useLoadingBar();
+        reset();
+        const mockResponse = {
+            ok: true,
+            status: 200,
+            json: vi.fn().mockResolvedValue({}),
+        };
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse));
+
+        const { loading } = useLoadingBar();
+        expect(loading.value).toBe(false);
+        await apiFetch('/api/test', {}, { silent: true });
+        expect(loading.value).toBe(false);
     });
 });

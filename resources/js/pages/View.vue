@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import PageLoader from '@/components/PageLoader.vue';
 import LifeGrid from '@/components/view/LifeGrid.vue';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import WeekGrid from '@/components/view/WeekGrid.vue';
@@ -11,13 +13,32 @@ import type { ViewData } from '@/types/view';
 import { apiFetch } from '@/utils/api';
 import { addDays, findMondayOnOrAfter, formatDate } from '@/utils/date';
 
+const route = useRoute();
+const router = useRouter();
+
 const emit = defineEmits<{
-    navigate: [page: 'dashboard' | 'track' | 'view'];
     'navigation-translations': [translations: NavigationTranslations];
+    ready: [];
 }>();
 
 const data = ref<ViewData | null>(null);
 const loading = ref(false);
+
+function queryParam(key: string): string | undefined {
+    const v = route.query[key];
+    return typeof v === 'string' ? v : undefined;
+}
+
+function buildViewQuery(view: ViewData): Record<string, string> {
+    const query: Record<string, string> = { tab: view.tab };
+    if (view.tab === 'week' && !view.isCurrentWeek) {
+        query.week = view.weekStart;
+    }
+    if (view.tab === 'year' && view.selectedYear !== null) {
+        query.year = String(view.selectedYear);
+    }
+    return query;
+}
 
 async function loadView(params?: {
     tab?: string;
@@ -35,7 +56,9 @@ async function loadView(params?: {
         `/api/view${queryStr ? `?${queryStr}` : ''}`,
     );
     emit('navigation-translations', data.value.navigationTranslations);
+    router.replace({ query: buildViewQuery(data.value) });
     loading.value = false;
+    emit('ready');
 }
 
 function setTab(tab: string) {
@@ -51,14 +74,12 @@ function setTab(tab: string) {
         data.value.selectedYear = data.value.currentAge;
     }
 
-    // Reload data for year/life tabs that need server data
-    if (tab !== 'week') {
-        loadView({
-            tab,
-            week: data.value.weekStart,
-            year: data.value.selectedYear ?? undefined,
-        });
-    }
+    loadView({
+        tab,
+        week: tab === 'week' ? data.value.weekStart : undefined,
+        year:
+            tab === 'year' ? (data.value.selectedYear ?? undefined) : undefined,
+    });
 }
 
 function previousWeek() {
@@ -103,7 +124,18 @@ function selectWeekFromYear(weekNum: number) {
     loadView({ tab: 'week', week: formatDate(monday) });
 }
 
-onMounted(() => loadView());
+onMounted(() => {
+    const tab = queryParam('tab');
+    const week = queryParam('week');
+    const yearStr = queryParam('year');
+    const year = yearStr !== undefined ? Number(yearStr) : undefined;
+
+    loadView({
+        tab,
+        week,
+        year: year !== undefined && !Number.isNaN(year) ? year : undefined,
+    });
+});
 </script>
 
 <template>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import PageLoader from '@/components/PageLoader.vue';
 import ActivityGraph from '@/components/track/ActivityGraph.vue';
 import DailyNote from '@/components/track/DailyNote.vue';
 import DateNavigator from '@/components/track/DateNavigator.vue';
@@ -10,9 +12,12 @@ import type { NavigationTranslations } from '@/types/navigation';
 import type { Habit, TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
 
+const route = useRoute();
+const router = useRouter();
+
 const emit = defineEmits<{
-    navigate: [page: 'dashboard' | 'track' | 'view'];
     'navigation-translations': [translations: NavigationTranslations];
+    ready: [];
 }>();
 
 const data = ref<TrackData | null>(null);
@@ -35,6 +40,11 @@ async function loadTrack(date?: string) {
     const query = date ? `?date=${date}` : '';
     data.value = await apiFetch<TrackData>(`/api/track${query}`);
     emit('navigation-translations', data.value.navigationTranslations);
+    emit('ready');
+
+    router.replace({
+        query: data.value.isToday ? {} : { date: data.value.date },
+    });
 }
 
 function sortHabits(habits: Habit[], moveCompletedToEnd: boolean): Habit[] {
@@ -108,10 +118,17 @@ async function onToggleHabit(habitId: number) {
     startInflight(habitId, snapshot);
 
     try {
-        const response = await apiFetch<TrackData>('/api/track/toggle', {
-            method: 'POST',
-            body: JSON.stringify({ habit_id: habitId, date: snapshot.date }),
-        });
+        const response = await apiFetch<TrackData>(
+            '/api/track/toggle',
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    habit_id: habitId,
+                    date: snapshot.date,
+                }),
+            },
+            { silent: true },
+        );
 
         const allSettled = resolveInflight(habitId);
 
@@ -131,7 +148,11 @@ async function onToggleHabit(habitId: number) {
     }
 }
 
-onMounted(() => loadTrack());
+onMounted(() => {
+    const initialDate =
+        typeof route.query.date === 'string' ? route.query.date : undefined;
+    loadTrack(initialDate);
+});
 </script>
 
 <template>

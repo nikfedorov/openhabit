@@ -15,16 +15,25 @@ import {
 } from '@/tests/helpers/view';
 import type { ViewData } from '@/types/view';
 
-const { mockApiFetch } = vi.hoisted(() => ({
+const { mockApiFetch, mockRouteQuery, mockReplace } = vi.hoisted(() => ({
     mockApiFetch: vi.fn(),
+    mockRouteQuery: { value: {} as Record<string, string> },
+    mockReplace: vi.fn(),
 }));
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
 }));
 
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ query: mockRouteQuery.value }),
+    useRouter: () => ({ replace: mockReplace }),
+}));
+
 beforeEach(() => {
     mockApiFetch.mockReset();
+    mockRouteQuery.value = {};
+    mockReplace.mockReset();
     localStorage.clear();
 });
 
@@ -124,15 +133,18 @@ describe('View - Tab Navigation', () => {
         );
     });
 
-    it('does not reload data when switching to week tab', async () => {
-        const wrapper = await mountView();
+    it('reloads data when switching to week tab', async () => {
+        const wrapper = await mountView({ tab: 'year' });
+        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'week' }));
         const weekBtn = wrapper
             .findAll('button')
             .find((b) => b.text() === 'Week')!;
         await weekBtn.trigger('click');
         await flushPromises();
-        // Only the initial load call
-        expect(mockApiFetch).toHaveBeenCalledTimes(1);
+        expect(mockApiFetch).toHaveBeenCalledTimes(2);
+        expect(mockApiFetch).toHaveBeenLastCalledWith(
+            expect.stringContaining('tab=week'),
+        );
     });
 
     it('emits navigation-translations on load', async () => {
@@ -333,5 +345,83 @@ describe('View - selectWeekFromYear branches', () => {
         await flushPromises();
         // selectedYear stays null since currentAge is also null
         expect(mockApiFetch).toHaveBeenCalledTimes(2);
+    });
+});
+
+// ─── URL Sync ───────────────────────────────────────────────────
+
+describe('View - URL Sync', () => {
+    it('includes tab=week for default state', async () => {
+        await mountView();
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'week' },
+        });
+    });
+
+    it('adds tab query when not on week tab', async () => {
+        await mountView({ tab: 'life' });
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'life' },
+        });
+    });
+
+    it('adds week query when not on current week', async () => {
+        await mountView({ isCurrentWeek: false, weekStart: '2026-03-30' });
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'week', week: '2026-03-30' },
+        });
+    });
+
+    it('adds year query for year tab', async () => {
+        await mountView({ tab: 'year', selectedYear: 25 });
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'year', year: '25' },
+        });
+    });
+
+    it('loads initial params from URL query', async () => {
+        mockRouteQuery.value = { tab: 'year', year: '10' };
+        await mountView({ tab: 'year', selectedYear: 10 });
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            expect.stringContaining('tab=year'),
+        );
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            expect.stringContaining('year=10'),
+        );
+    });
+
+    it('loads week from URL query', async () => {
+        mockRouteQuery.value = { week: '2026-03-30' };
+        await mountView({ isCurrentWeek: false, weekStart: '2026-03-30' });
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            expect.stringContaining('week=2026-03-30'),
+        );
+    });
+
+    it('updates URL when switching tabs', async () => {
+        const wrapper = await mountView();
+        mockReplace.mockReset();
+        mockApiFetch.mockResolvedValueOnce(
+            makeViewData({ tab: 'year', selectedYear: 25 }),
+        );
+        const yearBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Year')!;
+        await yearBtn.trigger('click');
+        await flushPromises();
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'year', year: '25' },
+        });
+    });
+
+    it('clears extra params when returning to default state', async () => {
+        const wrapper = await mountView({ isCurrentWeek: false });
+        mockReplace.mockReset();
+        mockApiFetch.mockResolvedValueOnce(makeViewData());
+        wrapper.findComponent(WeekNavigator).vm.$emit('currentWeek');
+        await flushPromises();
+        expect(mockReplace).toHaveBeenCalledWith({
+            query: { tab: 'week' },
+        });
     });
 });
