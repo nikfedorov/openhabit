@@ -71,13 +71,13 @@ defineExpose({ progressIntensity, segmentColor });
                 class="flex-1 overflow-hidden rounded-sm transition-colors duration-300"
                 :class="[
                     i <= completedCount ? segmentColor : emptySegmentColor,
-                    i > 1 ? 'ml-1' : '',
+                    i > 1 ? 'ms-1' : '',
                 ]"
             />
             <div
                 v-if="totalHabits > 20"
                 :key="'extra'"
-                class="ml-1 flex-1 overflow-hidden rounded-sm transition-colors duration-300"
+                class="ms-1 flex-1 overflow-hidden rounded-sm transition-colors duration-300"
                 :class="
                     completedCount >= totalHabits
                         ? segmentColor
@@ -94,14 +94,14 @@ defineExpose({ progressIntensity, segmentColor });
     overflow: hidden;
     transition:
         max-width 0.3s ease-out,
-        margin-left 0.3s ease-out,
+        margin-inline-start 0.3s ease-out,
         opacity 0.3s ease-out;
 }
 
 .progress-segment-enter-from,
 .progress-segment-leave-to {
     max-width: 0 !important;
-    margin-left: 0 !important;
+    margin-inline-start: 0 !important;
     opacity: 0;
 }
 

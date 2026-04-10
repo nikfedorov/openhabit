@@ -12,9 +12,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class ViewResource extends JsonResource
 {
-    /** @var string|null */
-    public static $wrap;
-
     /**
      * @return array<string, mixed>
      */
@@ -37,7 +34,6 @@ final class ViewResource extends JsonResource
             'weeklyActivityData' => $this->resource['weeklyActivityData'],
             'yearlyActivityData' => $this->resource['yearlyActivityData'],
             'translations' => $this->resource['translations'],
-            'navigationTranslations' => $this->resource['navigationTranslations'],
         ];
     }
 }

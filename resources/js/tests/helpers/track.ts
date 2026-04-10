@@ -24,7 +24,7 @@ export async function mountTrack(
     mockApiFetch: ReturnType<typeof import('vitest').vi.fn>,
     data = {},
 ) {
-    const responseData = { ...defaultTrackData, ...data };
+    const responseData = makeTrackResponse(data);
     mockApiFetch.mockResolvedValueOnce(responseData);
     const wrapper = mount(Track);
     await flushPromises();
@@ -87,7 +87,9 @@ export function makeHabits(count: number, completed: boolean): Habit[] {
     );
 }
 
-export const defaultTrackData = {
+import type { TrackData } from '@/types/track';
+
+export const defaultTrackData: TrackData = {
     date: '2026-04-06',
     dayName: 'Monday',
     dateFormatted: 'April 6, 2026',
@@ -108,5 +110,12 @@ export const defaultTrackData = {
     dailyNoteContent: '',
     activityData: [] as ActivityDay[],
     translations: defaultTrackTranslations,
-    navigationTranslations: { track: 'Track', view: 'View' },
 };
+
+export function makeTrackResponse(overrides: Partial<TrackData> = {}) {
+    return {
+        data: { ...defaultTrackData, ...overrides },
+        locale: 'en',
+        navigationTranslations: { track: 'Track', view: 'View' },
+    };
+}

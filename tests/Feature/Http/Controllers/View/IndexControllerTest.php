@@ -17,15 +17,18 @@ test('show returns view data for authenticated user', function (): void {
         ->getJson('/api/view')
         ->assertOk()
         ->assertJsonStructure([
-            'tab', 'weekStart', 'weekEnd', 'weekStartFormatted', 'weekEndFormatted',
-            'weekEndFormattedFull', 'weekYear', 'isCurrentWeek',
-            'franklinGrid' => ['week_start', 'week_end', 'days', 'regular_habits', 'franklin_habits'],
-            'selectedYear', 'birthdate', 'currentAge', 'lifeStats',
-            'weeklyActivityData', 'yearlyActivityData',
-            'translations', 'navigationTranslations',
+            'data' => [
+                'tab', 'weekStart', 'weekEnd', 'weekStartFormatted', 'weekEndFormatted',
+                'weekEndFormattedFull', 'weekYear', 'isCurrentWeek',
+                'franklinGrid' => ['week_start', 'week_end', 'days', 'regular_habits', 'franklin_habits'],
+                'selectedYear', 'birthdate', 'currentAge', 'lifeStats',
+                'weeklyActivityData', 'yearlyActivityData',
+                'translations',
+            ],
+            'navigationTranslations', 'locale',
         ])
-        ->assertJsonPath('tab', 'week')
-        ->assertJsonPath('isCurrentWeek', true);
+        ->assertJsonPath('data.tab', 'week')
+        ->assertJsonPath('data.isCurrentWeek', true);
 });
 
 test('show accepts tab, week, and year parameters', function (): void {
@@ -34,9 +37,9 @@ test('show accepts tab, week, and year parameters', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/view?tab=year&week=2024-01-08&year=5')
         ->assertOk()
-        ->assertJsonPath('tab', 'year')
-        ->assertJsonPath('weekStart', '2024-01-08')
-        ->assertJsonPath('selectedYear', 5);
+        ->assertJsonPath('data.tab', 'year')
+        ->assertJsonPath('data.weekStart', '2024-01-08')
+        ->assertJsonPath('data.selectedYear', 5);
 });
 
 test('show validates parameters', function (string $query, string $errorField): void {
@@ -58,7 +61,7 @@ test('show returns null life data when user has no birthdate', function (): void
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/view')
         ->assertOk()
-        ->assertJsonPath('birthdate', null)
-        ->assertJsonPath('currentAge', null)
-        ->assertJsonPath('lifeStats', null);
+        ->assertJsonPath('data.birthdate', null)
+        ->assertJsonPath('data.currentAge', null)
+        ->assertJsonPath('data.lifeStats', null);
 });

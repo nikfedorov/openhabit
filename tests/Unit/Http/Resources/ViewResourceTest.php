@@ -23,11 +23,10 @@ test('toArray maps all resource fields', function (): void {
         'weeklyActivityData' => [],
         'yearlyActivityData' => [],
         'translations' => ['week' => 'Week'],
-        'navigationTranslations' => ['track' => 'Track', 'view' => 'View'],
     ];
 
     $resource = new ViewResource($data);
 
     expect($resource->toArray(new Request))->toBe($data)
-        ->and(ViewResource::$wrap)->toBeNull();
+        ->and(ViewResource::$wrap)->toBe('data');
 });

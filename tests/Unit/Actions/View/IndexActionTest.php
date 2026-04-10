@@ -22,15 +22,13 @@ test('handle returns complete data structure with defaults', function (): void {
             'weekEndFormattedFull', 'weekYear', 'isCurrentWeek', 'franklinGrid',
             'selectedYear', 'birthdate', 'currentAge', 'lifeStats',
             'weeklyActivityData', 'yearlyActivityData', 'translations',
-            'navigationTranslations',
         ])
         ->and($result['tab'])->toBe('week')
         ->and($result['isCurrentWeek'])->toBeTrue()
         ->and($result['selectedYear'])->toBe($result['currentAge'])
         ->and($result['franklinGrid'])->toHaveKeys(['week_start', 'week_end', 'days', 'regular_habits', 'franklin_habits'])
         ->and($result['lifeStats'])->toBeArray()
-        ->and($result['translations'])->toBeArray()
-        ->and($result['navigationTranslations'])->toBeArray();
+        ->and($result['translations'])->toBeArray();
 });
 
 test('handle respects tab, week, and year parameters', function (): void {

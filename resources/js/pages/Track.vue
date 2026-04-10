@@ -8,6 +8,7 @@ import DateNavigator from '@/components/track/DateNavigator.vue';
 import EmptyState from '@/components/track/EmptyState.vue';
 import HabitItem from '@/components/track/HabitItem.vue';
 import ProgressBar from '@/components/track/ProgressBar.vue';
+import type { ApiResponse } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import type { Habit, TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
@@ -17,6 +18,7 @@ const router = useRouter();
 
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
+    locale: [locale: string];
     ready: [];
 }>();
 
@@ -38,8 +40,12 @@ async function loadTrack(date?: string) {
     }
 
     const query = date ? `?date=${date}` : '';
-    data.value = await apiFetch<TrackData>(`/api/track${query}`);
-    emit('navigation-translations', data.value.navigationTranslations);
+    const response = await apiFetch<ApiResponse<TrackData>>(
+        `/api/track${query}`,
+    );
+    data.value = response.data;
+    emit('navigation-translations', response.navigationTranslations);
+    emit('locale', response.locale);
     emit('ready');
 
     router.replace({
@@ -118,7 +124,7 @@ async function onToggleHabit(habitId: number) {
     startInflight(habitId, snapshot);
 
     try {
-        const response = await apiFetch<TrackData>(
+        const response = await apiFetch<ApiResponse<TrackData>>(
             '/api/track/toggle',
             {
                 method: 'POST',
@@ -136,7 +142,7 @@ async function onToggleHabit(habitId: number) {
             rollbackSnapshots.delete(habitId);
         }
         if (allSettled) {
-            data.value = response;
+            data.value = response.data;
         }
     } catch {
         const allSettled = resolveInflight(habitId);
@@ -232,21 +238,11 @@ onMounted(() => {
     opacity: 0;
 }
 
-/* Forward navigation: leave to left, enter from right */
-.nav-forward .habit-list-enter-from {
-    transform: translateX(30px);
+.habit-list-enter-from {
+    transform: translateX(var(--slide-enter));
 }
 
-.nav-forward .habit-list-leave-to {
-    transform: translateX(-30px);
-}
-
-/* Backward navigation: leave to right, enter from left */
-.nav-backward .habit-list-enter-from {
-    transform: translateX(-30px);
-}
-
-.nav-backward .habit-list-leave-to {
-    transform: translateX(30px);
+.habit-list-leave-to {
+    transform: translateX(var(--slide-leave));
 }
 </style>

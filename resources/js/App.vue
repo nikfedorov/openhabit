@@ -6,6 +6,8 @@ import TabBar from '@/components/navigation/TabBar.vue';
 import PageLoader from '@/components/PageLoader.vue';
 import type { NavigationTranslations } from '@/types/navigation';
 
+const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
+
 const route = useRoute();
 const router = useRouter();
 const navTranslations = ref<NavigationTranslations | null>(null);
@@ -19,6 +21,12 @@ router.beforeEach((to, from) => {
 
 function updateNavTranslations(translations: NavigationTranslations) {
     navTranslations.value = translations;
+}
+
+function updateLocale(locale: string) {
+    const dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
+    document.documentElement.lang = locale;
 }
 </script>
 
@@ -38,6 +46,7 @@ function updateNavTranslations(translations: NavigationTranslations) {
                     v-show="pageReady"
                     :is="Component"
                     @navigation-translations="updateNavTranslations"
+                    @locale="updateLocale"
                     @ready="pageReady = true"
                 />
             </router-view>

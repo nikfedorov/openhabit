@@ -55,13 +55,20 @@ function makeViewData(overrides: Partial<ViewData> = {}): ViewData {
         weeklyActivityData: [],
         yearlyActivityData: [],
         translations: defaultViewTranslations,
-        navigationTranslations: defaultNavigationTranslations,
         ...overrides,
     };
 }
 
+function makeViewResponse(overrides: Partial<ViewData> = {}) {
+    return {
+        data: makeViewData(overrides),
+        locale: 'en',
+        navigationTranslations: defaultNavigationTranslations,
+    };
+}
+
 async function mountView(data?: Partial<ViewData>) {
-    const responseData = makeViewData(data);
+    const responseData = makeViewResponse(data);
     mockApiFetch.mockResolvedValueOnce(responseData);
     const wrapper = mount(View);
     await flushPromises();
@@ -93,7 +100,7 @@ describe('View - Tab Navigation', () => {
 
     it('switches to year tab on click', async () => {
         const wrapper = await mountView();
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'year' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'year' }));
         const yearBtn = wrapper
             .findAll('button')
             .find((b) => b.text() === 'Year')!;
@@ -105,7 +112,7 @@ describe('View - Tab Navigation', () => {
 
     it('switches to life tab on click', async () => {
         const wrapper = await mountView();
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'life' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'life' }));
         const lifeBtn = wrapper
             .findAll('button')
             .find((b) => b.text() === 'Life')!;
@@ -121,7 +128,7 @@ describe('View - Tab Navigation', () => {
             currentAge: 30,
         });
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({ tab: 'year', selectedYear: 30 }),
+            makeViewResponse({ tab: 'year', selectedYear: 30 }),
         );
         const yearBtn = wrapper
             .findAll('button')
@@ -135,7 +142,7 @@ describe('View - Tab Navigation', () => {
 
     it('reloads data when switching to week tab', async () => {
         const wrapper = await mountView({ tab: 'year' });
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'week' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'week' }));
         const weekBtn = wrapper
             .findAll('button')
             .find((b) => b.text() === 'Week')!;
@@ -162,7 +169,7 @@ describe('View - Week Navigation', () => {
     it('navigates to previous week', async () => {
         const wrapper = await mountView();
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({
+            makeViewResponse({
                 weekStart: '2026-03-30',
                 isCurrentWeek: false,
             }),
@@ -176,7 +183,7 @@ describe('View - Week Navigation', () => {
 
     it('navigates to next week', async () => {
         const wrapper = await mountView({ isCurrentWeek: false });
-        mockApiFetch.mockResolvedValueOnce(makeViewData());
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse());
         wrapper.findComponent(WeekNavigator).vm.$emit('nextWeek');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
@@ -186,7 +193,7 @@ describe('View - Week Navigation', () => {
 
     it('navigates to current week', async () => {
         const wrapper = await mountView({ isCurrentWeek: false });
-        mockApiFetch.mockResolvedValueOnce(makeViewData());
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse());
         wrapper.findComponent(WeekNavigator).vm.$emit('currentWeek');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith('/api/view?tab=week');
@@ -199,7 +206,7 @@ describe('View - Year Navigation', () => {
     it('selects a year via YearNavigator', async () => {
         const wrapper = await mountView({ tab: 'year' });
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({ tab: 'year', selectedYear: 10 }),
+            makeViewResponse({ tab: 'year', selectedYear: 10 }),
         );
         wrapper.findComponent(YearNavigator).vm.$emit('selectYear', 10);
         await flushPromises();
@@ -211,7 +218,7 @@ describe('View - Year Navigation', () => {
     it('selects a higher year via YearNavigator (forward direction)', async () => {
         const wrapper = await mountView({ tab: 'year', selectedYear: 10 });
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({ tab: 'year', selectedYear: 20 }),
+            makeViewResponse({ tab: 'year', selectedYear: 20 }),
         );
         wrapper.findComponent(YearNavigator).vm.$emit('selectYear', 20);
         await flushPromises();
@@ -226,7 +233,7 @@ describe('View - Year Navigation', () => {
             selectedYear: 25,
             birthdate: '2001-03-15',
         });
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'week' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'week' }));
         wrapper.findComponent(YearGrid).vm.$emit('selectWeek', 2);
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
@@ -269,7 +276,7 @@ describe('View - Life Tab', () => {
     it('selects a year from life grid', async () => {
         const wrapper = await mountView({ tab: 'life' });
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({ tab: 'year', selectedYear: 5 }),
+            makeViewResponse({ tab: 'year', selectedYear: 5 }),
         );
         wrapper.findComponent(LifeGrid).vm.$emit('selectYear', 5);
         await flushPromises();
@@ -318,7 +325,7 @@ describe('View - selectWeekFromYear branches', () => {
             birthdate: '2001-03-16',
             selectedYear: 25,
         });
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'week' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'week' }));
         wrapper.findComponent(YearGrid).vm.$emit('selectWeek', 0);
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
@@ -333,7 +340,7 @@ describe('View - selectWeekFromYear branches', () => {
             birthdate: '2001-03-18',
             selectedYear: 25,
         });
-        mockApiFetch.mockResolvedValueOnce(makeViewData({ tab: 'week' }));
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse({ tab: 'week' }));
         wrapper.findComponent(YearGrid).vm.$emit('selectWeek', 2);
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
@@ -370,7 +377,7 @@ describe('View - selectWeekFromYear branches', () => {
             yearlyActivityData: null,
         });
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({
+            makeViewResponse({
                 tab: 'year',
                 selectedYear: null,
                 currentAge: null,
@@ -440,7 +447,7 @@ describe('View - URL Sync', () => {
         const wrapper = await mountView();
         mockReplace.mockReset();
         mockApiFetch.mockResolvedValueOnce(
-            makeViewData({ tab: 'year', selectedYear: 25 }),
+            makeViewResponse({ tab: 'year', selectedYear: 25 }),
         );
         const yearBtn = wrapper
             .findAll('button')
@@ -455,7 +462,7 @@ describe('View - URL Sync', () => {
     it('clears extra params when returning to default state', async () => {
         const wrapper = await mountView({ isCurrentWeek: false });
         mockReplace.mockReset();
-        mockApiFetch.mockResolvedValueOnce(makeViewData());
+        mockApiFetch.mockResolvedValueOnce(makeViewResponse());
         wrapper.findComponent(WeekNavigator).vm.$emit('currentWeek');
         await flushPromises();
         expect(mockReplace).toHaveBeenCalledWith({

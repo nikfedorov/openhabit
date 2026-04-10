@@ -44,9 +44,7 @@ const habitSections = computed<HabitSection[]>(() =>
             allHabits: props.data.franklin_habits,
             visibleHabits: franklinExpanded.value
                 ? props.data.franklin_habits
-                : props.data.franklin_habits.filter(
-                      (h) => h.is_weekly_focus,
-                  ),
+                : props.data.franklin_habits.filter((h) => h.is_weekly_focus),
             collapsible: true,
         },
     ].filter((s) => s.allHabits.length > 0),
@@ -138,13 +136,15 @@ function onRowAfterLeave(el: Element) {
             <button
                 v-else
                 type="button"
-                class="flex w-full items-center justify-between px-3 py-2 text-left"
+                class="flex w-full items-center justify-between px-3 py-2 text-start"
                 @click="toggleFranklin"
             >
                 <div class="flex items-center gap-2">
                     <svg
                         class="h-4 w-4 text-neutral-400 transition-transform duration-150 dark:text-neutral-500"
-                        :class="{ '-rotate-90': !franklinExpanded }"
+                        :class="{
+                            '-rotate-90 rtl:rotate-90': !franklinExpanded,
+                        }"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke-width="2"
@@ -165,10 +165,7 @@ function onRowAfterLeave(el: Element) {
             </button>
 
             <!-- Day headers -->
-            <div
-                class="grid"
-                style="grid-template-columns: 40% repeat(7, 1fr)"
-            >
+            <div class="grid" style="grid-template-columns: 40% repeat(7, 1fr)">
                 <div class="px-3 py-1"></div>
                 <div
                     v-for="day in data.days"

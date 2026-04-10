@@ -8,7 +8,7 @@ vi.mock('@/pages/Track.vue', () => ({
     default: {
         name: 'Track',
         template: '<div data-testid="track">Track</div>',
-        emits: ['navigation-translations', 'ready'],
+        emits: ['navigation-translations', 'locale', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -19,7 +19,7 @@ vi.mock('@/pages/View.vue', () => ({
     default: {
         name: 'View',
         template: '<div data-testid="view">View</div>',
-        emits: ['navigation-translations', 'ready'],
+        emits: ['navigation-translations', 'locale', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -190,6 +190,25 @@ describe('App', () => {
             false,
         );
         expect(wrapper.find('[data-testid="track"]').exists()).toBe(true);
+    });
+
+    it('sets document dir to rtl when locale event emits ar', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('locale', 'ar');
+        await wrapper.vm.$nextTick();
+        expect(document.documentElement.dir).toBe('rtl');
+        expect(document.documentElement.lang).toBe('ar');
+    });
+
+    it('sets document dir to ltr when locale event emits en', async () => {
+        document.documentElement.dir = 'rtl';
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('locale', 'en');
+        await wrapper.vm.$nextTick();
+        expect(document.documentElement.dir).toBe('ltr');
+        expect(document.documentElement.lang).toBe('en');
     });
 
     it('shows PageLoader when route component has not resolved yet', async () => {

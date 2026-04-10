@@ -3,13 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ActivityGraph from '@/components/track/ActivityGraph.vue';
 import HabitItem from '@/components/track/HabitItem.vue';
 import {
-    defaultTrackData,
     defaultTrackTranslations,
     deferredPromise,
     findByTestId,
     getTrackData,
     makeHabit,
     makeHabits,
+    makeTrackResponse,
     mountTrack,
     tapHabit,
 } from '@/tests/helpers/track';
@@ -60,11 +60,12 @@ describe('Track - Date Navigator', () => {
 
     it('navigates to previous day on click', async () => {
         const wrapper = await mountTrack(mockApiFetch);
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-05',
-            isToday: false,
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-05',
+                isToday: false,
+            }),
+        );
         await findByTestId(wrapper, 'prev-day-btn').trigger('click');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenCalledWith('/api/track?date=2026-04-05');
@@ -75,10 +76,11 @@ describe('Track - Date Navigator', () => {
             isToday: false,
             date: '2026-04-05',
         });
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-06',
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-06',
+            }),
+        );
         await findByTestId(wrapper, 'next-day-btn').trigger('click');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenCalledWith('/api/track?date=2026-04-06');
@@ -90,10 +92,11 @@ describe('Track - Date Navigator', () => {
             isToday: false,
             date: yesterday,
         });
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: todayStr(),
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: todayStr(),
+            }),
+        );
         await findByTestId(wrapper, 'next-day-btn').trigger('click');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenCalledWith(
@@ -117,7 +120,7 @@ describe('Track - Date Navigator', () => {
             isToday: false,
             date: '2026-04-03',
         });
-        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
         await findByTestId(wrapper, 'today-btn').trigger('click');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenCalledTimes(2);
@@ -128,10 +131,11 @@ describe('Track - Date Navigator', () => {
             isToday: false,
             date: '2026-04-05',
         });
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-06',
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-06',
+            }),
+        );
         await findByTestId(wrapper, 'next-day-btn').trigger('click');
         await wrapper.vm.$nextTick();
 
@@ -143,11 +147,12 @@ describe('Track - Date Navigator', () => {
 
     it('sets nav-backward class when navigating to previous day', async () => {
         const wrapper = await mountTrack(mockApiFetch);
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-05',
-            isToday: false,
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-05',
+                isToday: false,
+            }),
+        );
         await findByTestId(wrapper, 'prev-day-btn').trigger('click');
         await wrapper.vm.$nextTick();
 
@@ -305,7 +310,7 @@ describe('Track - Habits List', () => {
         });
         expect(wrapper.find('.bg-green-500').exists()).toBe(true);
 
-        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
         const habitItem = findByTestId(wrapper, 'habit-item');
         await tapHabit(habitItem);
         await flushPromises();
@@ -344,17 +349,18 @@ describe('Track - Habits List', () => {
             ),
         ).toBe('true');
 
-        toggle.resolve({
-            ...defaultTrackData,
-            completedCount: 1,
-            habits: [
-                makeHabit({
-                    name: 'Exercise',
-                    is_completed: true,
-                    current_iteration: 1,
-                }),
-            ],
-        });
+        toggle.resolve(
+            makeTrackResponse({
+                completedCount: 1,
+                habits: [
+                    makeHabit({
+                        name: 'Exercise',
+                        is_completed: true,
+                        current_iteration: 1,
+                    }),
+                ],
+            }),
+        );
         await flushPromises();
 
         // Pending shimmer gone after server responds
@@ -378,7 +384,7 @@ describe('Track - Habits List', () => {
         await tapHabit(findByTestId(wrapper, 'habit-item'));
         await wrapper.vm.$nextTick();
 
-        toggle.resolve({ ...defaultTrackData });
+        toggle.resolve(makeTrackResponse());
         await flushPromises();
         await wrapper.vm.$nextTick();
 
@@ -478,19 +484,20 @@ describe('Track - Habits List', () => {
             ],
         });
 
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 1,
-            habits: [
-                makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
-                makeHabit({
-                    name: 'First habit',
-                    is_completed: true,
-                    current_iteration: 1,
-                }),
-            ],
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 1,
+                habits: [
+                    makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
+                    makeHabit({
+                        name: 'First habit',
+                        is_completed: true,
+                        current_iteration: 1,
+                    }),
+                ],
+            }),
+        );
 
         const habitItems = wrapper.findAll('[data-testid="habit-item"]');
         expect(habitItems[0].text()).toContain('First habit');
@@ -518,17 +525,18 @@ describe('Track - Habits List', () => {
             ],
         });
 
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            completedCount: 0,
-            habits: [
-                makeHabit({
-                    name: 'Read',
-                    iterations_required: 3,
-                    current_iteration: 2,
-                }),
-            ],
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                completedCount: 0,
+                habits: [
+                    makeHabit({
+                        name: 'Read',
+                        iterations_required: 3,
+                        current_iteration: 2,
+                    }),
+                ],
+            }),
+        );
 
         await tapHabit(findByTestId(wrapper, 'habit-item'));
         await wrapper.vm.$nextTick();
@@ -551,23 +559,24 @@ describe('Track - Habits List', () => {
             ],
         });
 
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 1,
-            totalHabits: 3,
-            habits: [
-                makeHabit({ name: 'First habit' }),
-                makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
-                makeHabit({
-                    id: 3,
-                    name: 'Third habit',
-                    is_completed: true,
-                    current_iteration: 1,
-                    sort_order: 3,
-                }),
-            ],
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 1,
+                totalHabits: 3,
+                habits: [
+                    makeHabit({ name: 'First habit' }),
+                    makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
+                    makeHabit({
+                        id: 3,
+                        name: 'Third habit',
+                        is_completed: true,
+                        current_iteration: 1,
+                        sort_order: 3,
+                    }),
+                ],
+            }),
+        );
 
         // Click "Third habit" (first in the list) to complete it
         const items = wrapper.findAll('[data-testid="habit-item"]');
@@ -602,7 +611,7 @@ describe('Track - Habits List', () => {
         await habitItem.trigger('click');
         expect(habitItem.classes()).toContain('habit-press');
 
-        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
         await habitItem.trigger('animationend');
         expect(habitItem.classes()).not.toContain('habit-press');
     });
@@ -615,7 +624,7 @@ describe('Track - Habits List', () => {
         // Second click while pressing — should be ignored
         await habitItem.trigger('click');
 
-        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
         await habitItem.trigger('animationend');
         await flushPromises();
 
@@ -664,17 +673,18 @@ describe('Track - Habits List', () => {
         expect(optimistic[2].text()).toContain('Habit C');
 
         // First response arrives (stale: only Habit A completed)
-        first.resolve({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 1,
-            totalHabits: 3,
-            habits: [
-                { ...habits[1], is_completed: false },
-                { ...habits[2], is_completed: false },
-                { ...habits[0], is_completed: true, current_iteration: 1 },
-            ],
-        });
+        first.resolve(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 1,
+                totalHabits: 3,
+                habits: [
+                    { ...habits[1], is_completed: false },
+                    { ...habits[2], is_completed: false },
+                    { ...habits[0], is_completed: true, current_iteration: 1 },
+                ],
+            }),
+        );
         await flushPromises();
 
         // Should NOT apply stale response — optimistic state preserved
@@ -684,17 +694,18 @@ describe('Track - Habits List', () => {
         expect(afterFirst[2].text()).toContain('Habit C');
 
         // Second response arrives (also stale)
-        second.resolve({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 2,
-            totalHabits: 3,
-            habits: [
-                { ...habits[2], is_completed: false },
-                { ...habits[0], is_completed: true, current_iteration: 1 },
-                { ...habits[1], is_completed: true, current_iteration: 1 },
-            ],
-        });
+        second.resolve(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 2,
+                totalHabits: 3,
+                habits: [
+                    { ...habits[2], is_completed: false },
+                    { ...habits[0], is_completed: true, current_iteration: 1 },
+                    { ...habits[1], is_completed: true, current_iteration: 1 },
+                ],
+            }),
+        );
         await flushPromises();
 
         // Should still NOT apply — optimistic state preserved
@@ -709,13 +720,14 @@ describe('Track - Habits List', () => {
             { ...habits[1], is_completed: true, current_iteration: 1 },
             { ...habits[2], is_completed: true, current_iteration: 1 },
         ];
-        third.resolve({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 3,
-            totalHabits: 3,
-            habits: finalHabits,
-        });
+        third.resolve(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 3,
+                totalHabits: 3,
+                habits: finalHabits,
+            }),
+        );
         await flushPromises();
 
         // Final server state applied
@@ -753,13 +765,16 @@ describe('Track - Habits List', () => {
         expect(mockApiFetch).toHaveBeenCalledTimes(3);
 
         // First response arrives (stale: habit completed, would move it to end)
-        first.resolve({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 1,
-            totalHabits: 1,
-            habits: [{ ...habit, is_completed: true, current_iteration: 1 }],
-        });
+        first.resolve(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 1,
+                totalHabits: 1,
+                habits: [
+                    { ...habit, is_completed: true, current_iteration: 1 },
+                ],
+            }),
+        );
         await flushPromises();
 
         // Must NOT apply stale response — data reflects the second toggle's
@@ -768,13 +783,14 @@ describe('Track - Habits List', () => {
         expect(getTrackData(wrapper)?.completedCount).toBe(0);
 
         // Second response arrives (final: habit uncompleted)
-        second.resolve({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 0,
-            totalHabits: 1,
-            habits: [habit],
-        });
+        second.resolve(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 0,
+                totalHabits: 1,
+                habits: [habit],
+            }),
+        );
         await flushPromises();
         await wrapper.vm.$nextTick();
 
@@ -803,16 +819,17 @@ describe('Track - Habits List', () => {
             ],
         });
 
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            moveCompletedToEnd: true,
-            completedCount: 1,
-            totalHabits: 2,
-            habits: [
-                makeHabit({ name: 'Active habit' }),
-                makeHabit({ id: 2, name: 'Done habit', sort_order: 2 }),
-            ],
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                moveCompletedToEnd: true,
+                completedCount: 1,
+                totalHabits: 2,
+                habits: [
+                    makeHabit({ name: 'Active habit' }),
+                    makeHabit({ id: 2, name: 'Done habit', sort_order: 2 }),
+                ],
+            }),
+        );
 
         // Click on the completed "Done habit" to un-complete it
         const items = wrapper.findAll('[data-testid="habit-item"]');
@@ -869,12 +886,13 @@ describe('Track - Daily Note', () => {
             (wrapper.find('textarea').element as HTMLTextAreaElement).value,
         ).toBe('old note');
 
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-05',
-            isToday: false,
-            dailyNoteContent: 'different note',
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-05',
+                isToday: false,
+                dailyNoteContent: 'different note',
+            }),
+        );
         await findByTestId(wrapper, 'prev-day-btn').trigger('click');
         await flushPromises();
         expect(
@@ -966,11 +984,12 @@ describe('Track - URL Sync', () => {
 
     it('updates URL when navigating to a different date', async () => {
         const wrapper = await mountTrack(mockApiFetch);
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultTrackData,
-            date: '2026-04-05',
-            isToday: false,
-        });
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse({
+                date: '2026-04-05',
+                isToday: false,
+            }),
+        );
         await findByTestId(wrapper, 'prev-day-btn').trigger('click');
         await flushPromises();
         expect(mockReplace).toHaveBeenLastCalledWith({
@@ -984,7 +1003,7 @@ describe('Track - URL Sync', () => {
             date: '2026-04-05',
         });
         mockReplace.mockReset();
-        mockApiFetch.mockResolvedValueOnce({ ...defaultTrackData });
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
         await findByTestId(wrapper, 'today-btn').trigger('click');
         await flushPromises();
         expect(mockReplace).toHaveBeenCalledWith({ query: {} });

@@ -15,7 +15,7 @@ test('toggle creates, increments, and deletes completion through full cycle', fu
     $this->actingAs($user, 'sanctum')
         ->postJson('/api/track/toggle', ['habit_id' => $habit->id, 'date' => $date])
         ->assertOk()
-        ->assertJsonStructure(['habits', 'totalHabits', 'completedCount']);
+        ->assertJsonStructure(['data' => ['habits', 'totalHabits', 'completedCount']]);
 
     $this->assertDatabaseHas('habit_completions', [
         'habit_id' => $habit->id,

@@ -45,7 +45,7 @@ function goToToday() {
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-5 w-5 rtl:-scale-x-100"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -89,7 +89,7 @@ function goToToday() {
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
+                        class="h-5 w-5 rtl:-scale-x-100"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -105,7 +105,7 @@ function goToToday() {
             </template>
         </div>
 
-        <Transition name="today-btn">
+        <Transition name="collapse-btn">
             <div v-if="!isToday" class="mt-2 flex justify-center">
                 <button
                     type="button"
@@ -150,41 +150,11 @@ function goToToday() {
     opacity: 0;
 }
 
-.nav-forward .date-slide-enter-from {
-    transform: translateX(30px);
+.date-slide-enter-from {
+    transform: translateX(var(--slide-enter));
 }
 
-.nav-forward .date-slide-leave-to {
-    transform: translateX(-30px);
-}
-
-.nav-backward .date-slide-enter-from {
-    transform: translateX(-30px);
-}
-
-.nav-backward .date-slide-leave-to {
-    transform: translateX(30px);
-}
-
-.today-btn-enter-active,
-.today-btn-leave-active {
-    overflow: hidden;
-    transition:
-        max-height 0.2s ease-in-out,
-        opacity 0.2s ease-in-out,
-        margin-top 0.2s ease-in-out;
-}
-
-.today-btn-enter-from,
-.today-btn-leave-to {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-}
-
-.today-btn-enter-to,
-.today-btn-leave-from {
-    max-height: 3rem;
-    opacity: 1;
+.date-slide-leave-to {
+    transform: translateX(var(--slide-leave));
 }
 </style>

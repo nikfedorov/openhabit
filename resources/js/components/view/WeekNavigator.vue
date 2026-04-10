@@ -31,7 +31,7 @@ const emit = defineEmits<{
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-5 w-5 rtl:-scale-x-100"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -84,7 +84,7 @@ const emit = defineEmits<{
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-5 w-5 rtl:-scale-x-100"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -100,7 +100,7 @@ const emit = defineEmits<{
         </div>
 
         <!-- Current Week Button -->
-        <Transition name="current-nav-btn">
+        <Transition name="collapse-btn">
             <div v-if="!isCurrentWeek" class="mt-2 flex justify-center">
                 <button
                     type="button"

@@ -28,16 +28,16 @@ test('track api loads habits with completion state and filters inactive ones', f
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson([
+        ->assertJson(['data' => [
             'isToday' => true,
             'totalHabits' => 1,
             'completedCount' => 1,
-        ])
-        ->assertJsonCount(1, 'habits')
-        ->assertJsonPath('habits.0.is_completed', true)
-        ->assertJsonPath('habits.0.current_iteration', 1)
-        ->assertJsonPath('habits.0.sort_order', $habit->sort_order)
-        ->assertJsonStructure(['translations', 'moveCompletedToEnd', 'navigationTranslations']);
+        ]])
+        ->assertJsonCount(1, 'data.habits')
+        ->assertJsonPath('data.habits.0.is_completed', true)
+        ->assertJsonPath('data.habits.0.current_iteration', 1)
+        ->assertJsonPath('data.habits.0.sort_order', $habit->sort_order)
+        ->assertJsonStructure(['data' => ['translations', 'moveCompletedToEnd'], 'navigationTranslations', 'locale']);
 });
 
 test('track api supports date navigation and clamps future dates', function (): void {
@@ -51,18 +51,18 @@ test('track api supports date navigation and clamps future dates', function (): 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$yesterday)
         ->assertOk()
-        ->assertJson([
+        ->assertJson(['data' => [
             'date' => $yesterday,
             'isToday' => false,
-        ]);
+        ]]);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$tomorrow)
         ->assertOk()
-        ->assertJson([
+        ->assertJson(['data' => [
             'date' => $today,
             'isToday' => true,
-        ]);
+        ]]);
 });
 
 test('track api includes habits with null rrule alongside daily habits', function (): void {
@@ -73,7 +73,7 @@ test('track api includes habits with null rrule alongside daily habits', functio
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonCount(2, 'habits');
+        ->assertJsonCount(2, 'data.habits');
 });
 
 test('track api preserves sort order when move_completed_to_end is disabled', function (): void {
@@ -91,8 +91,8 @@ test('track api preserves sort order when move_completed_to_end is disabled', fu
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('habits.0.id', $habit1->id)
-        ->assertJsonPath('habits.1.id', $habit2->id);
+        ->assertJsonPath('data.habits.0.id', $habit1->id)
+        ->assertJsonPath('data.habits.1.id', $habit2->id);
 });
 
 test('track api includes daily note and activity data', function (): void {
@@ -114,10 +114,10 @@ test('track api includes daily note and activity data', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('dailyNoteContent', 'My note')
-        ->assertJsonCount(1, 'activityData')
-        ->assertJsonPath('activityData.0.completed', 3)
-        ->assertJsonPath('activityData.0.total', 5);
+        ->assertJsonPath('data.dailyNoteContent', 'My note')
+        ->assertJsonCount(1, 'data.activityData')
+        ->assertJsonPath('data.activityData.0.completed', 3)
+        ->assertJsonPath('data.activityData.0.total', 5);
 });
 
 test('track api uses user locale for translations', function (): void {
@@ -126,6 +126,6 @@ test('track api uses user locale for translations', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('translations.progress', 'Прогресс')
-        ->assertJsonPath('translations.today', 'Сегодня');
+        ->assertJsonPath('data.translations.progress', 'Прогресс')
+        ->assertJsonPath('data.translations.today', 'Сегодня');
 });

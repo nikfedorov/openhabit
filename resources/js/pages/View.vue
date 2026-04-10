@@ -8,6 +8,7 @@ import WeekGrid from '@/components/view/WeekGrid.vue';
 import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
+import type { ApiResponse } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import type { ViewData } from '@/types/view';
 import { apiFetch } from '@/utils/api';
@@ -18,6 +19,7 @@ const router = useRouter();
 
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
+    locale: [locale: string];
     ready: [];
 }>();
 
@@ -53,10 +55,12 @@ async function loadView(params?: {
     if (params?.year !== undefined) query.set('year', String(params.year));
 
     const queryStr = query.toString();
-    data.value = await apiFetch<ViewData>(
+    const response = await apiFetch<ApiResponse<ViewData>>(
         `/api/view${queryStr ? `?${queryStr}` : ''}`,
     );
-    emit('navigation-translations', data.value.navigationTranslations);
+    data.value = response.data;
+    emit('navigation-translations', response.navigationTranslations);
+    emit('locale', response.locale);
     router.replace({ query: buildViewQuery(data.value) });
     loading.value = false;
     emit('ready');
@@ -296,20 +300,12 @@ onMounted(() => {
     opacity: 0;
 }
 
-.nav-forward .view-content-enter-from {
-    transform: translateX(30px);
+.view-content-enter-from {
+    transform: translateX(var(--slide-enter));
 }
 
-.nav-forward .view-content-leave-to {
-    transform: translateX(-30px);
-}
-
-.nav-backward .view-content-enter-from {
-    transform: translateX(-30px);
-}
-
-.nav-backward .view-content-leave-to {
-    transform: translateX(30px);
+.view-content-leave-to {
+    transform: translateX(var(--slide-leave));
 }
 
 /* Navigator slide transitions (shared by WeekNavigator & YearNavigator) */
@@ -328,42 +324,11 @@ onMounted(() => {
     opacity: 0;
 }
 
-.nav-forward .nav-slide-enter-from {
-    transform: translateX(30px);
+.nav-slide-enter-from {
+    transform: translateX(var(--slide-enter));
 }
 
-.nav-forward .nav-slide-leave-to {
-    transform: translateX(-30px);
-}
-
-.nav-backward .nav-slide-enter-from {
-    transform: translateX(-30px);
-}
-
-.nav-backward .nav-slide-leave-to {
-    transform: translateX(30px);
-}
-
-/* "Current week/year" button transitions (shared) */
-.current-nav-btn-enter-active,
-.current-nav-btn-leave-active {
-    overflow: hidden;
-    transition:
-        max-height 0.2s ease-in-out,
-        opacity 0.2s ease-in-out,
-        margin-top 0.2s ease-in-out;
-}
-
-.current-nav-btn-enter-from,
-.current-nav-btn-leave-to {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-}
-
-.current-nav-btn-enter-to,
-.current-nav-btn-leave-from {
-    max-height: 3rem;
-    opacity: 1;
+.nav-slide-leave-to {
+    transform: translateX(var(--slide-leave));
 }
 </style>

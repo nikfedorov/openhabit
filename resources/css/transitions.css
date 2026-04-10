@@ -1,0 +1,59 @@
+/*
+ * Shared directional slide transitions (RTL-aware).
+ *
+ * Usage: wrap the transitioning element in a parent with `.nav-forward`
+ * or `.nav-backward` class, then use any Vue <Transition> name —
+ * just define the base enter/leave rules and add the directional mixin:
+ *
+ *   .my-slide-enter-from  { transform: translateX(var(--slide-enter)); }
+ *   .my-slide-leave-to    { transform: translateX(var(--slide-leave)); }
+ */
+
+/* Direction variables — set by the parent wrapper class */
+.nav-forward {
+    --slide-enter: 30px;
+    --slide-leave: -30px;
+}
+
+.nav-backward {
+    --slide-enter: -30px;
+    --slide-leave: 30px;
+}
+
+/* RTL: reverse the direction */
+:dir(rtl) .nav-forward {
+    --slide-enter: -30px;
+    --slide-leave: 30px;
+}
+
+:dir(rtl) .nav-backward {
+    --slide-enter: 30px;
+    --slide-leave: -30px;
+}
+
+/*
+ * Collapse/expand transition for "go to today/current" buttons.
+ *
+ * Usage: <Transition name="collapse-btn">
+ */
+.collapse-btn-enter-active,
+.collapse-btn-leave-active {
+    overflow: hidden;
+    transition:
+        max-height 0.2s ease-in-out,
+        opacity 0.2s ease-in-out,
+        margin-top 0.2s ease-in-out;
+}
+
+.collapse-btn-enter-from,
+.collapse-btn-leave-to {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.collapse-btn-enter-to,
+.collapse-btn-leave-from {
+    max-height: 3rem;
+    opacity: 1;
+}

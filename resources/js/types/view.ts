@@ -1,5 +1,3 @@
-import type { NavigationTranslations } from './navigation';
-
 export type WeekDay = {
     date: string;
     day_name: string;
@@ -103,5 +101,4 @@ export type ViewData = {
     weeklyActivityData: WeekActivityData[] | null;
     yearlyActivityData: YearActivityData[] | null;
     translations: ViewTranslations;
-    navigationTranslations: NavigationTranslations;
 };

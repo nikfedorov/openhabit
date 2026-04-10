@@ -1,5 +1,3 @@
-import type { NavigationTranslations } from './navigation';
-
 export type Habit = {
     id: number;
     name: string;
@@ -47,5 +45,4 @@ export type TrackData = {
     dailyNoteContent: string;
     activityData: ActivityDay[];
     translations: TrackTranslations;
-    navigationTranslations: NavigationTranslations;
 };

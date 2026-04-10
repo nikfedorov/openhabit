@@ -61,7 +61,6 @@ final readonly class IndexAction
             'currentAge' => $currentAge,
             ...$lifeData,
             'translations' => trans('view'),
-            'navigationTranslations' => trans('navigation'),
         ];
     }
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\View;
 
 use App\Actions\View\IndexAction;
 use App\Http\Requests\View\IndexRequest;
+use App\Http\Resources\CommonResource;
 use App\Http\Resources\ViewResource;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -21,6 +22,6 @@ final readonly class IndexController
             $request->selectedTab(),
             $request->selectedWeek(),
             $request->selectedYear(),
-        ));
+        ))->additional(new CommonResource($user)->resolve());
     }
 }
