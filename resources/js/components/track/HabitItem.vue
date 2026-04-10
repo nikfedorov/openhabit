@@ -152,7 +152,9 @@ watchEffect(
                             cy="18"
                             r="15"
                             :stroke-dasharray="`${(habit.current_iteration / habit.iterations_required) * 94.25} 94.25`"
-                            stroke-linecap="round"
+                            :stroke-linecap="
+                                habit.current_iteration > 0 ? 'round' : 'butt'
+                            "
                         />
                     </svg>
                     <span

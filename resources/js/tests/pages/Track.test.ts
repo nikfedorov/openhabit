@@ -248,6 +248,39 @@ describe('Track - Habits List', () => {
         expect(wrapper.findAll('svg[viewBox="0 0 36 36"]')).toHaveLength(1);
     });
 
+    it('sets stroke-linecap to butt when current_iteration is 0 and round when > 0', async () => {
+        const wrapper = await mountTrack(mockApiFetch, {
+            habits: [
+                makeHabit({
+                    name: 'Zero iterations',
+                    iterations_required: 3,
+                    current_iteration: 0,
+                }),
+            ],
+        });
+
+        const circles = wrapper
+            .find('svg[viewBox="0 0 36 36"]')
+            .findAll('circle');
+        const progressCircle = circles[1];
+        expect(progressCircle.attributes('stroke-linecap')).toBe('butt');
+
+        const wrapperWithProgress = await mountTrack(mockApiFetch, {
+            habits: [
+                makeHabit({
+                    name: 'One iteration',
+                    iterations_required: 3,
+                    current_iteration: 1,
+                }),
+            ],
+        });
+
+        const progressCircles = wrapperWithProgress
+            .find('svg[viewBox="0 0 36 36"]')
+            .findAll('circle');
+        expect(progressCircles[1].attributes('stroke-linecap')).toBe('round');
+    });
+
     it('shows empty state when no habits', async () => {
         const wrapper = await mountTrack(mockApiFetch, {
             habits: [],
