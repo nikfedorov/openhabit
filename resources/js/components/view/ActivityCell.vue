@@ -14,9 +14,6 @@ defineProps<{
     <div
         class="rounded-sm"
         :class="[
-            isCurrent
-                ? 'ring-2 ring-green-500 ring-offset-1 ring-offset-white dark:ring-offset-neutral-800'
-                : '',
             isFuture
                 ? 'border border-dashed border-neutral-300 dark:border-neutral-600'
                 : getIntensityColor(isLived || isCurrent ? intensity : 0),

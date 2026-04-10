@@ -80,6 +80,10 @@ export type ViewTranslations = {
     each_square_week: string;
     seneca_quote: string;
     seneca_author: string;
+    franklins_virtues: string;
+    set_birthdate: string;
+    to_see_year_visualization: string;
+    to_see_life_visualization: string;
 };
 
 export type ViewData = {

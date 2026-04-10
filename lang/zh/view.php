@@ -32,4 +32,8 @@ return [
     'each_square_week' => '每个方块代表一周。点击查看详情。',
     'seneca_quote' => '"并非我们拥有的时间太少，而是我们浪费了太多。"',
     'seneca_author' => '塞涅卡',
+    'franklins_virtues' => '富兰克林美德',
+    'set_birthdate' => '请在设置中填写出生日期',
+    'to_see_year_visualization' => '以查看年度可视化',
+    'to_see_life_visualization' => '以查看生命可视化',
 ];

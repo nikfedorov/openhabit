@@ -32,4 +32,8 @@ return [
     'each_square_week' => 'Each square represents one week. Tap to view details.',
     'seneca_quote' => '"It is not that we have a short time to live, but that we waste much of it."',
     'seneca_author' => 'Seneca',
+    'franklins_virtues' => "Franklin's Virtues",
+    'set_birthdate' => 'Set your birthdate in settings',
+    'to_see_year_visualization' => 'to see your year visualization',
+    'to_see_life_visualization' => 'to see your life visualization',
 ];

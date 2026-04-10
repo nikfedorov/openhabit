@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import PageLoader from '@/components/PageLoader.vue';
+import BirthdateNotice from '@/components/view/BirthdateNotice.vue';
 import LifeGrid from '@/components/view/LifeGrid.vue';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import WeekGrid from '@/components/view/WeekGrid.vue';
@@ -23,6 +23,7 @@ const emit = defineEmits<{
 
 const data = ref<ViewData | null>(null);
 const loading = ref(false);
+const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
 
 function queryParam(key: string): string | undefined {
     const v = route.query[key];
@@ -64,6 +65,12 @@ async function loadView(params?: {
 function setTab(tab: string) {
     /* v8 ignore next */
     if (!data.value) return;
+
+    const tabOrder = ['week', 'year', 'life'];
+    const oldIndex = tabOrder.indexOf(data.value.tab);
+    const newIndex = tabOrder.indexOf(tab);
+    navDirection.value = newIndex >= oldIndex ? 'nav-forward' : 'nav-backward';
+
     data.value.tab = tab;
 
     if (
@@ -85,6 +92,7 @@ function setTab(tab: string) {
 function previousWeek() {
     /* v8 ignore next */
     if (!data.value) return;
+    navDirection.value = 'nav-backward';
     const prev = addDays(data.value.weekStart, -7);
     loadView({ tab: 'week', week: prev });
 }
@@ -92,6 +100,7 @@ function previousWeek() {
 function nextWeek() {
     /* v8 ignore next */
     if (!data.value) return;
+    navDirection.value = 'nav-forward';
     const next = addDays(data.value.weekStart, 7);
     loadView({ tab: 'week', week: next });
 }
@@ -103,6 +112,10 @@ function goToCurrentWeek() {
 function selectYear(year: number) {
     /* v8 ignore next */
     if (!data.value) return;
+    navDirection.value =
+        data.value.selectedYear !== null && year >= data.value.selectedYear
+            ? 'nav-forward'
+            : 'nav-backward';
     data.value.selectedYear = year;
     data.value.tab = 'year';
     loadView({ tab: 'year', week: data.value.weekStart, year });
@@ -139,7 +152,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div v-if="data">
+    <div v-if="data" :class="navDirection">
         <!-- Tab Navigation -->
         <div class="mb-4 flex items-stretch gap-2">
             <div
@@ -164,67 +177,193 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Week Tab -->
-        <template v-if="data.tab === 'week'">
-            <WeekNavigator
-                :week-start-formatted="data.weekStartFormatted"
-                :week-end-formatted="data.weekEndFormatted"
-                :week-end-formatted-full="data.weekEndFormattedFull"
-                :week-year="data.weekYear"
-                :is-current-week="data.isCurrentWeek"
-                :translations="data.translations"
-                @previous-week="previousWeek"
-                @next-week="nextWeek"
-                @current-week="goToCurrentWeek"
-            />
+        <TransitionGroup
+            name="view-content"
+            tag="div"
+            class="grid overflow-hidden"
+        >
+            <!-- Week Tab -->
+            <div
+                v-if="data.tab === 'week'"
+                key="week"
+                class="col-start-1 row-start-1"
+            >
+                <WeekNavigator
+                    :week-start-formatted="data.weekStartFormatted"
+                    :week-end-formatted="data.weekEndFormatted"
+                    :week-end-formatted-full="data.weekEndFormattedFull"
+                    :week-year="data.weekYear"
+                    :is-current-week="data.isCurrentWeek"
+                    :translations="data.translations"
+                    @previous-week="previousWeek"
+                    @next-week="nextWeek"
+                    @current-week="goToCurrentWeek"
+                />
 
-            <WeekGrid
-                v-if="data.franklinGrid"
-                class="mt-4"
-                :data="data.franklinGrid"
-                :translations="data.translations"
-            />
-        </template>
+                <WeekGrid
+                    v-if="data.franklinGrid"
+                    class="mt-4"
+                    :data="data.franklinGrid"
+                    :translations="data.translations"
+                />
+            </div>
 
-        <!-- Year Tab -->
-        <template v-if="data.tab === 'year'">
-            <YearNavigator
-                :selected-year="data.selectedYear"
-                :current-age="data.currentAge"
-                :birthdate="data.birthdate"
-                :translations="data.translations"
-                @select-year="selectYear"
-            />
+            <!-- Year Tab -->
+            <div
+                v-if="data.tab === 'year'"
+                key="year"
+                class="col-start-1 row-start-1"
+            >
+                <YearNavigator
+                    :selected-year="data.selectedYear"
+                    :current-age="data.currentAge"
+                    :birthdate="data.birthdate"
+                    :translations="data.translations"
+                    @select-year="selectYear"
+                />
 
-            <YearGrid
-                v-if="data.birthdate"
-                class="mt-4"
-                :birthdate="data.birthdate"
-                :selected-year="data.selectedYear"
-                :current-age="data.currentAge"
-                :weekly-activity="data.weeklyActivityData"
-                :translations="data.translations"
-                @select-week="selectWeekFromYear"
-            />
-        </template>
+                <YearGrid
+                    v-if="data.birthdate"
+                    class="mt-4"
+                    :birthdate="data.birthdate"
+                    :selected-year="data.selectedYear"
+                    :current-age="data.currentAge"
+                    :weekly-activity="data.weeklyActivityData"
+                    :translations="data.translations"
+                    @select-week="selectWeekFromYear"
+                />
 
-        <!-- Life Tab -->
-        <template v-if="data.tab === 'life'">
-            <LifeHeader
-                v-if="data.lifeStats"
-                :life-stats="data.lifeStats"
-                :translations="data.translations"
-            />
+                <BirthdateNotice
+                    v-else
+                    :title="data.translations.set_birthdate"
+                    :description="data.translations.to_see_year_visualization"
+                />
+            </div>
 
-            <LifeGrid
-                v-if="data.birthdate"
-                class="mt-4"
-                :birthdate="data.birthdate"
-                :current-age="data.currentAge"
-                :yearly-activity="data.yearlyActivityData"
-                :translations="data.translations"
-                @select-year="selectYear"
-            />
-        </template>
+            <!-- Life Tab -->
+            <div
+                v-if="data.tab === 'life'"
+                key="life"
+                class="col-start-1 row-start-1"
+            >
+                <LifeHeader
+                    v-if="data.lifeStats"
+                    :life-stats="data.lifeStats"
+                    :translations="data.translations"
+                />
+
+                <LifeGrid
+                    v-if="data.birthdate"
+                    class="mt-4"
+                    :birthdate="data.birthdate"
+                    :current-age="data.currentAge"
+                    :yearly-activity="data.yearlyActivityData"
+                    :translations="data.translations"
+                    @select-year="selectYear"
+                />
+
+                <BirthdateNotice
+                    v-else
+                    :title="data.translations.set_birthdate"
+                    :description="data.translations.to_see_life_visualization"
+                />
+            </div>
+        </TransitionGroup>
     </div>
 </template>
+
+<style>
+/* Tab content transitions */
+.view-content-move {
+    transition: transform 0.3s ease-in-out;
+}
+
+.view-content-enter-active,
+.view-content-leave-active {
+    transition: all 0.3s ease-in-out;
+}
+
+.view-content-leave-active {
+    z-index: 0;
+}
+
+.view-content-enter-active {
+    z-index: 1;
+}
+
+.view-content-enter-from,
+.view-content-leave-to {
+    opacity: 0;
+}
+
+.nav-forward .view-content-enter-from {
+    transform: translateX(30px);
+}
+
+.nav-forward .view-content-leave-to {
+    transform: translateX(-30px);
+}
+
+.nav-backward .view-content-enter-from {
+    transform: translateX(-30px);
+}
+
+.nav-backward .view-content-leave-to {
+    transform: translateX(30px);
+}
+
+/* Navigator slide transitions (shared by WeekNavigator & YearNavigator) */
+.nav-slide-enter-active {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-slide-leave-active {
+    transition: all 0.2s ease-in-out;
+    position: absolute;
+    width: 100%;
+}
+
+.nav-slide-enter-from,
+.nav-slide-leave-to {
+    opacity: 0;
+}
+
+.nav-forward .nav-slide-enter-from {
+    transform: translateX(30px);
+}
+
+.nav-forward .nav-slide-leave-to {
+    transform: translateX(-30px);
+}
+
+.nav-backward .nav-slide-enter-from {
+    transform: translateX(-30px);
+}
+
+.nav-backward .nav-slide-leave-to {
+    transform: translateX(30px);
+}
+
+/* "Current week/year" button transitions (shared) */
+.current-nav-btn-enter-active,
+.current-nav-btn-leave-active {
+    overflow: hidden;
+    transition:
+        max-height 0.2s ease-in-out,
+        opacity 0.2s ease-in-out,
+        margin-top 0.2s ease-in-out;
+}
+
+.current-nav-btn-enter-from,
+.current-nav-btn-leave-to {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.current-nav-btn-enter-to,
+.current-nav-btn-leave-from {
+    max-height: 3rem;
+    opacity: 1;
+}
+</style>

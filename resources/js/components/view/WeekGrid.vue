@@ -24,9 +24,9 @@ function toggleFranklin() {
 type HabitSection = {
     key: string;
     label: string;
-    habits: GridHabit[];
+    allHabits: GridHabit[];
+    visibleHabits: GridHabit[];
     collapsible: boolean;
-    expanded: boolean;
 };
 
 const habitSections = computed<HabitSection[]>(() =>
@@ -34,18 +34,22 @@ const habitSections = computed<HabitSection[]>(() =>
         {
             key: 'regular',
             label: props.translations.habits,
-            habits: props.data.regular_habits,
+            allHabits: props.data.regular_habits,
+            visibleHabits: props.data.regular_habits,
             collapsible: false,
-            expanded: true,
         },
         {
             key: 'franklin',
-            label: "Franklin's Virtues",
-            habits: props.data.franklin_habits,
+            label: props.translations.franklins_virtues,
+            allHabits: props.data.franklin_habits,
+            visibleHabits: franklinExpanded.value
+                ? props.data.franklin_habits
+                : props.data.franklin_habits.filter(
+                      (h) => h.is_weekly_focus,
+                  ),
             collapsible: true,
-            expanded: franklinExpanded.value,
         },
-    ].filter((s) => s.habits.length > 0),
+    ].filter((s) => s.allHabits.length > 0),
 );
 
 function getCellClass(day: WeekDay, habit: GridHabit): string {
@@ -74,6 +78,44 @@ function isNotScheduled(day: WeekDay, habit: GridHabit): boolean {
     const dayData = habit.days[day.date];
     return dayData !== undefined && !dayData.scheduled;
 }
+
+function onRowEnter(el: Element) {
+    const htmlEl = el as HTMLElement;
+    htmlEl.style.overflow = 'hidden';
+    htmlEl.style.height = '0';
+    htmlEl.style.opacity = '0';
+    void htmlEl.offsetHeight;
+    htmlEl.style.transition = 'height 0.2s ease, opacity 0.2s ease';
+    htmlEl.style.height = `${htmlEl.scrollHeight}px`;
+    htmlEl.style.opacity = '1';
+}
+
+function onRowAfterEnter(el: Element) {
+    const htmlEl = el as HTMLElement;
+    htmlEl.style.height = '';
+    htmlEl.style.overflow = '';
+    htmlEl.style.transition = '';
+    htmlEl.style.opacity = '';
+}
+
+function onRowLeave(el: Element) {
+    const htmlEl = el as HTMLElement;
+    htmlEl.style.overflow = 'hidden';
+    htmlEl.style.height = `${htmlEl.scrollHeight}px`;
+    htmlEl.style.opacity = '1';
+    void htmlEl.offsetHeight;
+    htmlEl.style.transition = 'height 0.2s ease, opacity 0.2s ease';
+    htmlEl.style.height = '0';
+    htmlEl.style.opacity = '0';
+}
+
+function onRowAfterLeave(el: Element) {
+    const htmlEl = el as HTMLElement;
+    htmlEl.style.height = '';
+    htmlEl.style.overflow = '';
+    htmlEl.style.transition = '';
+    htmlEl.style.opacity = '';
+}
 </script>
 
 <template>
@@ -96,99 +138,114 @@ function isNotScheduled(day: WeekDay, habit: GridHabit): boolean {
             <button
                 v-else
                 type="button"
-                class="flex w-full items-center gap-2 px-3 py-2 text-left"
+                class="flex w-full items-center justify-between px-3 py-2 text-left"
                 @click="toggleFranklin"
             >
-                <svg
-                    class="h-4 w-4 text-neutral-400 transition-transform duration-150 dark:text-neutral-500"
-                    :class="{ '-rotate-90': !franklinExpanded }"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                    />
-                </svg>
-                <span
-                    class="text-xs font-medium text-neutral-500 dark:text-neutral-400"
-                >
-                    {{ section.label }}
-                </span>
+                <div class="flex items-center gap-2">
+                    <svg
+                        class="h-4 w-4 text-neutral-400 transition-transform duration-150 dark:text-neutral-500"
+                        :class="{ '-rotate-90': !franklinExpanded }"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                    </svg>
+                    <span
+                        class="text-xs font-medium text-neutral-500 dark:text-neutral-400"
+                    >
+                        {{ section.label }}
+                    </span>
+                </div>
             </button>
 
-            <!-- Shared habit table -->
-            <table v-if="section.expanded" class="w-full table-fixed">
-                <thead>
-                    <tr>
-                        <th class="w-[40%] px-3 py-1 text-start"></th>
-                        <th
-                            v-for="day in data.days"
-                            :key="day.date"
-                            class="px-0.5 py-1 text-center"
-                        >
-                            <div
-                                class="text-[10px] font-medium"
-                                :class="
-                                    day.is_today
-                                        ? 'text-green-600 dark:text-green-400'
-                                        : 'text-neutral-400 dark:text-neutral-500'
-                                "
-                            >
-                                {{ day.day_name }}
-                            </div>
-                            <div
-                                class="text-[10px]"
-                                :class="
-                                    day.is_today
-                                        ? 'font-semibold text-green-600 dark:text-green-400'
-                                        : 'text-neutral-400 dark:text-neutral-500'
-                                "
-                            >
-                                {{ day.day_number }}
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="habit in section.habits"
-                        :key="habit.id"
-                        class="transition-colors hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50"
+            <!-- Day headers -->
+            <div
+                class="grid"
+                style="grid-template-columns: 40% repeat(7, 1fr)"
+            >
+                <div class="px-3 py-1"></div>
+                <div
+                    v-for="day in data.days"
+                    :key="day.date"
+                    class="px-0.5 py-1 text-center"
+                >
+                    <div
+                        class="text-[10px] font-medium"
+                        :class="
+                            day.is_today
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-neutral-400 dark:text-neutral-500'
+                        "
                     >
-                        <td class="px-3 py-1.5">
-                            <div
-                                class="truncate text-sm font-medium text-neutral-900 dark:text-white"
-                                :title="habit.name"
-                            >
-                                {{ habit.name }}
-                            </div>
-                        </td>
-                        <td
-                            v-for="day in data.days"
-                            :key="day.date"
-                            class="px-0.5 py-1.5 text-center"
+                        {{ day.day_name }}
+                    </div>
+                    <div
+                        class="text-[10px]"
+                        :class="
+                            day.is_today
+                                ? 'font-semibold text-green-600 dark:text-green-400'
+                                : 'text-neutral-400 dark:text-neutral-500'
+                        "
+                    >
+                        {{ day.day_number }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Habit rows -->
+            <TransitionGroup
+                v-bind="
+                    section.collapsible
+                        ? {
+                              onEnter: onRowEnter,
+                              onAfterEnter: onRowAfterEnter,
+                              onLeave: onRowLeave,
+                              onAfterLeave: onRowAfterLeave,
+                          }
+                        : {}
+                "
+            >
+                <div
+                    v-for="habit in section.visibleHabits"
+                    :key="habit.id"
+                    class="grid transition-colors hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50"
+                    style="grid-template-columns: 40% repeat(7, 1fr)"
+                >
+                    <div class="px-3 py-1.5">
+                        <div
+                            class="truncate text-sm font-medium text-neutral-900 dark:text-white"
+                            :title="habit.name"
                         >
-                            <div class="flex items-center justify-center">
-                                <div
-                                    v-if="isNotScheduled(day, habit)"
-                                    class="flex h-4 w-4 items-center justify-center text-xs text-neutral-300 dark:text-neutral-600"
-                                >
-                                    –
-                                </div>
-                                <div
-                                    v-else
-                                    class="h-4 w-4 rounded-sm"
-                                    :class="getCellClass(day, habit)"
-                                />
+                            {{ habit.name }}
+                        </div>
+                    </div>
+                    <div
+                        v-for="day in data.days"
+                        :key="day.date"
+                        class="px-0.5 py-1.5 text-center"
+                    >
+                        <div class="flex items-center justify-center">
+                            <div
+                                v-if="isNotScheduled(day, habit)"
+                                class="flex h-4 w-4 items-center justify-center text-xs text-neutral-300 dark:text-neutral-600"
+                            >
+                                –
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <div
+                                v-else
+                                class="h-4 w-4 rounded-sm"
+                                :class="getCellClass(day, habit)"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </TransitionGroup>
         </div>
 
         <!-- Legend -->

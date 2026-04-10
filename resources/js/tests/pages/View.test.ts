@@ -208,6 +208,18 @@ describe('View - Year Navigation', () => {
         );
     });
 
+    it('selects a higher year via YearNavigator (forward direction)', async () => {
+        const wrapper = await mountView({ tab: 'year', selectedYear: 10 });
+        mockApiFetch.mockResolvedValueOnce(
+            makeViewData({ tab: 'year', selectedYear: 20 }),
+        );
+        wrapper.findComponent(YearNavigator).vm.$emit('selectYear', 20);
+        await flushPromises();
+        expect(mockApiFetch).toHaveBeenLastCalledWith(
+            expect.stringContaining('year=20'),
+        );
+    });
+
     it('selects a week from year grid', async () => {
         const wrapper = await mountView({
             tab: 'year',
@@ -234,6 +246,20 @@ describe('View - Year Navigation', () => {
         });
         // No YearGrid rendered since no birthdate
         expect(wrapper.findComponent(YearGrid).exists()).toBe(false);
+    });
+
+    it('shows empty state when birthdate is null on year tab', async () => {
+        const wrapper = await mountView({
+            tab: 'year',
+            birthdate: null,
+            selectedYear: null,
+            currentAge: null,
+            lifeStats: null,
+            weeklyActivityData: null,
+            yearlyActivityData: null,
+        });
+        expect(wrapper.text()).toContain('Set your birthdate in settings');
+        expect(wrapper.text()).toContain('to see your year visualization');
     });
 });
 
@@ -269,6 +295,18 @@ describe('View - Life Tab', () => {
             yearlyActivityData: null,
         });
         expect(wrapper.findComponent(LifeGrid).exists()).toBe(false);
+    });
+
+    it('shows empty state when birthdate is null on life tab', async () => {
+        const wrapper = await mountView({
+            tab: 'life',
+            birthdate: null,
+            lifeStats: null,
+            weeklyActivityData: null,
+            yearlyActivityData: null,
+        });
+        expect(wrapper.text()).toContain('Set your birthdate in settings');
+        expect(wrapper.text()).toContain('to see your life visualization');
     });
 });
 

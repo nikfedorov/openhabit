@@ -32,4 +32,8 @@ return [
     'each_square_week' => 'Cada quadrado representa uma semana. Toque para ver detalhes.',
     'seneca_quote' => '«Não é que tenhamos pouco tempo de vida, mas que desperdiçamos muito dele.»',
     'seneca_author' => 'Sêneca',
+    'franklins_virtues' => 'Virtudes de Franklin',
+    'set_birthdate' => 'Defina sua data de nascimento nas configurações',
+    'to_see_year_visualization' => 'para ver sua visualização anual',
+    'to_see_life_visualization' => 'para ver sua visualização de vida',
 ];

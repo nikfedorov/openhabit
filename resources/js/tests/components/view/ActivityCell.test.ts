@@ -17,11 +17,12 @@ describe('ActivityCell', () => {
         expect(wrapper.html()).toContain('bg-neutral');
     });
 
-    it('renders current ring', () => {
+    it('renders current cell with intensity color', () => {
         const wrapper = mount(ActivityCell, {
             props: { intensity: 0, isCurrent: true },
         });
-        expect(wrapper.html()).toContain('ring-green-500');
+        expect(wrapper.html()).not.toContain('ring-green-500');
+        expect(wrapper.html()).toContain('rounded-sm');
     });
 
     it('renders future border', () => {

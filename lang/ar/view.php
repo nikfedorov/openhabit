@@ -32,4 +32,8 @@ return [
     'each_square_week' => 'كل مربع يمثل أسبوعًا واحدًا. انقر لعرض التفاصيل.',
     'seneca_quote' => '"ليس أن لدينا وقتًا قصيرًا للعيش، بل إننا نضيع الكثير منه."',
     'seneca_author' => 'سينيكا',
+    'franklins_virtues' => 'فضائل فرانكلين',
+    'set_birthdate' => 'حدد تاريخ ميلادك في الإعدادات',
+    'to_see_year_visualization' => 'لمشاهدة عرض السنة الخاص بك',
+    'to_see_life_visualization' => 'لمشاهدة عرض الحياة الخاص بك',
 ];

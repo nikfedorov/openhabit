@@ -98,16 +98,12 @@ describe('WeekGrid', () => {
                 translations: defaultViewTranslations,
             },
         });
-        const cells = wrapper.findAll('td');
-        // cells[0] is the habit name td, data cells start at index 1
-        const completedCell = cells[1]; // Mon (completed)
-        expect(completedCell.html()).toContain('bg-green');
-        // Find unscheduled cell (4th day - Thu)
-        const unscheduledCell = cells[4];
-        expect(unscheduledCell.text()).toContain('–');
-        // Find future cell (6th day - Sat)
-        const futureCell = cells[6];
-        expect(futureCell.html()).toContain('border-dashed');
+        // Completed day renders green
+        expect(wrapper.html()).toContain('bg-green');
+        // Unscheduled day renders dash
+        expect(wrapper.text()).toContain('–');
+        // Future day renders dashed border
+        expect(wrapper.html()).toContain('border-dashed');
     });
 
     it('renders legend', () => {
@@ -121,6 +117,57 @@ describe('WeekGrid', () => {
         expect(wrapper.text()).toContain('Partial');
         expect(wrapper.text()).toContain('Missed');
         expect(wrapper.text()).toContain('Future');
+    });
+
+    it('shows focus virtue when collapsed', () => {
+        const wrapper = mount(WeekGrid, {
+            props: {
+                data: makeFranklinGrid({
+                    franklin_habits: [
+                        makeGridHabit({
+                            id: 2,
+                            name: 'Temperance',
+                            is_weekly_focus: true,
+                        }),
+                        makeGridHabit({
+                            id: 3,
+                            name: 'Silence',
+                            is_weekly_focus: false,
+                        }),
+                    ],
+                }),
+                translations: defaultViewTranslations,
+            },
+        });
+        // Focus virtue is visible even when collapsed
+        expect(wrapper.text()).toContain('Temperance');
+        // Non-focus habit is hidden when collapsed
+        expect(wrapper.text()).not.toContain('Silence');
+    });
+
+    it('shows all franklin habits when expanded', async () => {
+        localStorage.setItem('franklin_virtues_expanded', 'true');
+        const wrapper = mount(WeekGrid, {
+            props: {
+                data: makeFranklinGrid({
+                    franklin_habits: [
+                        makeGridHabit({
+                            id: 2,
+                            name: 'Temperance',
+                            is_weekly_focus: true,
+                        }),
+                        makeGridHabit({
+                            id: 3,
+                            name: 'Silence',
+                            is_weekly_focus: false,
+                        }),
+                    ],
+                }),
+                translations: defaultViewTranslations,
+            },
+        });
+        expect(wrapper.text()).toContain('Temperance');
+        expect(wrapper.text()).toContain('Silence');
     });
 });
 
@@ -151,7 +198,58 @@ describe('WeekGrid - edge cases', () => {
         });
         // The missing day should fall through to the default
         // {completed: false, partial: false, scheduled: true}
-        const cells = wrapper.findAll('td');
-        expect(cells.length).toBeGreaterThan(0);
+        expect(wrapper.text()).toContain('Exercise');
+        expect(wrapper.findAll('.rounded-sm').length).toBeGreaterThan(0);
+    });
+
+    it('animation hooks set and clean inline styles', () => {
+        const wrapper = mount(WeekGrid, {
+            props: {
+                data: makeFranklinGrid({
+                    franklin_habits: [
+                        makeGridHabit({
+                            id: 2,
+                            name: 'Focus',
+                            is_weekly_focus: true,
+                        }),
+                        makeGridHabit({
+                            id: 3,
+                            name: 'Extra',
+                            is_weekly_focus: false,
+                        }),
+                    ],
+                }),
+                translations: defaultViewTranslations,
+            },
+        });
+
+        const { onRowEnter, onRowAfterEnter, onRowLeave, onRowAfterLeave } = (
+            wrapper.vm.$ as unknown as {
+                setupState: Record<string, (el: Element) => void>;
+            }
+        ).setupState;
+
+        const el = document.createElement('div');
+
+        onRowEnter(el);
+        expect(el.style.overflow).toBe('hidden');
+        expect(el.style.opacity).toBe('1');
+
+        onRowAfterEnter(el);
+        expect(el.style.height).toBe('');
+        expect(el.style.overflow).toBe('');
+        expect(el.style.transition).toBe('');
+        expect(el.style.opacity).toBe('');
+
+        onRowLeave(el);
+        expect(el.style.overflow).toBe('hidden');
+        expect(el.style.opacity).toBe('0');
+        expect(el.style.height).toBe('0px');
+
+        onRowAfterLeave(el);
+        expect(el.style.height).toBe('');
+        expect(el.style.overflow).toBe('');
+        expect(el.style.transition).toBe('');
+        expect(el.style.opacity).toBe('');
     });
 });

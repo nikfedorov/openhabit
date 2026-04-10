@@ -66,8 +66,9 @@ describe('LifeGrid', () => {
             },
         });
         const cells = wrapper.findAllComponents(ActivityCell);
-        // Current year cell should have ring
-        expect(cells[25].html()).toContain('ring-green-500');
+        // Current year cell should show activity color (no ring)
+        expect(cells[25].html()).not.toContain('ring-green-500');
+        expect(cells[25].html()).toContain('bg-green');
     });
 
     it('shows year labels on decade markers', () => {
