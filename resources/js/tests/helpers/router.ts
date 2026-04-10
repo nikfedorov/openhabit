@@ -14,11 +14,6 @@ export function createTestRouter(initialRoute = '/') {
                 name: 'view',
                 component: { template: '<div>View</div>' },
             },
-            {
-                path: '/dashboard',
-                name: 'dashboard',
-                component: { template: '<div>Dashboard</div>' },
-            },
         ],
     });
 

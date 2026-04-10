@@ -13,11 +13,6 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/View.vue'),
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        component: () => import('@/pages/Dashboard.vue'),
-    },
-    {
         path: '/:pathMatch(.*)*',
         redirect: { name: 'track' },
     },

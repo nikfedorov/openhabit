@@ -4,17 +4,6 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import App from '@/App.vue';
 import { routes } from '@/router';
 
-vi.mock('@/pages/Dashboard.vue', () => ({
-    default: {
-        name: 'Dashboard',
-        template: '<div data-testid="dashboard">Dashboard</div>',
-        emits: ['ready'],
-        mounted() {
-            this.$emit('ready');
-        },
-    },
-}));
-
 vi.mock('@/pages/Track.vue', () => ({
     default: {
         name: 'Track',
@@ -56,7 +45,6 @@ describe('App', () => {
     it('renders Track by default', async () => {
         const { wrapper } = await mountApp();
         expect(wrapper.find('[data-testid="track"]').exists()).toBe(true);
-        expect(wrapper.find('[data-testid="dashboard"]').exists()).toBe(false);
         expect(wrapper.find('[data-testid="view"]').exists()).toBe(false);
     });
 
@@ -68,12 +56,6 @@ describe('App', () => {
         await viewLink!.trigger('click');
         await flushPromises();
         expect(wrapper.find('[data-testid="view"]').exists()).toBe(true);
-        expect(wrapper.find('[data-testid="track"]').exists()).toBe(false);
-    });
-
-    it('renders dashboard when route is /dashboard', async () => {
-        const { wrapper } = await mountApp('/dashboard');
-        expect(wrapper.find('[data-testid="dashboard"]').exists()).toBe(true);
         expect(wrapper.find('[data-testid="track"]').exists()).toBe(false);
     });
 
