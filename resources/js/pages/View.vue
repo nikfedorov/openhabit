@@ -180,13 +180,13 @@ onMounted(() => {
         <TransitionGroup
             name="view-content"
             tag="div"
-            class="grid overflow-hidden"
+            class="grid grid-cols-1 overflow-hidden"
         >
             <!-- Week Tab -->
             <div
                 v-if="data.tab === 'week'"
                 key="week"
-                class="col-start-1 row-start-1"
+                class="col-start-1 row-start-1 min-w-0"
             >
                 <WeekNavigator
                     :week-start-formatted="data.weekStartFormatted"
@@ -212,7 +212,7 @@ onMounted(() => {
             <div
                 v-if="data.tab === 'year'"
                 key="year"
-                class="col-start-1 row-start-1"
+                class="col-start-1 row-start-1 min-w-0"
             >
                 <YearNavigator
                     :selected-year="data.selectedYear"
@@ -244,7 +244,7 @@ onMounted(() => {
             <div
                 v-if="data.tab === 'life'"
                 key="life"
-                class="col-start-1 row-start-1"
+                class="col-start-1 row-start-1 min-w-0"
             >
                 <LifeHeader
                     v-if="data.lifeStats"
