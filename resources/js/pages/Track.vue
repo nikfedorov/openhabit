@@ -8,9 +8,10 @@ import DateNavigator from '@/components/track/DateNavigator.vue';
 import EmptyState from '@/components/track/EmptyState.vue';
 import HabitItem from '@/components/track/HabitItem.vue';
 import ProgressBar from '@/components/track/ProgressBar.vue';
+import { useHabitToggle } from '@/composables/useHabitToggle';
 import type { ApiResponse } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
-import type { Habit, TrackData } from '@/types/track';
+import type { TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
 
 const route = useRoute();
@@ -24,14 +25,7 @@ const emit = defineEmits<{
 
 const data = ref<TrackData | null>(null);
 const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
-
-// Optimistic update state:
-// - pendingHabitIds: reactive set driving the shimmer UI on pending habits
-// - inflightCount: how many API requests are in flight per habit
-// - rollbackSnapshots: data state before the first toggle per habit (for error recovery)
-const pendingHabitIds = ref(new Set<number>());
-const inflightCount = new Map<number, number>();
-const rollbackSnapshots = new Map<number, TrackData>();
+const { pendingHabitIds, toggle: onToggleHabit } = useHabitToggle(data);
 
 async function loadTrack(date?: string) {
     if (date && data.value) {
@@ -51,107 +45,6 @@ async function loadTrack(date?: string) {
     router.replace({
         query: data.value.isToday ? {} : { date: data.value.date },
     });
-}
-
-function sortHabits(habits: Habit[], moveCompletedToEnd: boolean): Habit[] {
-    if (!moveCompletedToEnd) {
-        return habits;
-    }
-
-    const byOrder = (a: Habit, b: Habit) => a.sort_order - b.sort_order;
-    const uncompleted = habits.filter((h) => !h.is_completed).sort(byOrder);
-    const completed = habits.filter((h) => h.is_completed).sort(byOrder);
-
-    return [...uncompleted, ...completed];
-}
-
-function applyOptimisticToggle(habit: Habit, trackData: TrackData): void {
-    if (habit.is_completed) {
-        habit.is_completed = false;
-        habit.current_iteration = Math.max(0, habit.current_iteration - 1);
-        trackData.completedCount = Math.max(0, trackData.completedCount - 1);
-    } else {
-        habit.current_iteration = Math.min(
-            habit.iterations_required,
-            habit.current_iteration + 1,
-        );
-        habit.is_completed =
-            habit.current_iteration >= habit.iterations_required;
-        if (habit.is_completed) {
-            trackData.completedCount++;
-        }
-    }
-
-    trackData.habits = sortHabits(
-        trackData.habits,
-        trackData.moveCompletedToEnd,
-    );
-}
-
-function startInflight(habitId: number, snapshot: TrackData): void {
-    if (!inflightCount.has(habitId)) {
-        rollbackSnapshots.set(habitId, snapshot);
-    }
-    inflightCount.set(habitId, (inflightCount.get(habitId) ?? 0) + 1);
-    pendingHabitIds.value.add(habitId);
-}
-
-/**
- * Decrements the in-flight counter for a habit.
- * Returns true when no habits have pending requests anymore.
- */
-function resolveInflight(habitId: number): boolean {
-    const count = inflightCount.get(habitId)!;
-    if (count <= 1) {
-        inflightCount.delete(habitId);
-        pendingHabitIds.value.delete(habitId);
-    } else {
-        inflightCount.set(habitId, count - 1);
-    }
-
-    return inflightCount.size === 0;
-}
-
-async function onToggleHabit(habitId: number) {
-    const currentData = data.value;
-    const habit = currentData?.habits.find((h) => h.id === habitId);
-    if (!currentData || !habit) {
-        return;
-    }
-
-    const snapshot = JSON.parse(JSON.stringify(currentData)) as TrackData;
-    applyOptimisticToggle(habit, currentData);
-    startInflight(habitId, snapshot);
-
-    try {
-        const response = await apiFetch<ApiResponse<TrackData>>(
-            '/api/track/toggle',
-            {
-                method: 'POST',
-                body: JSON.stringify({
-                    habit_id: habitId,
-                    date: snapshot.date,
-                }),
-            },
-            { silent: true },
-        );
-
-        const allSettled = resolveInflight(habitId);
-
-        if (!inflightCount.has(habitId)) {
-            rollbackSnapshots.delete(habitId);
-        }
-        if (allSettled) {
-            data.value = response.data;
-        }
-    } catch {
-        const allSettled = resolveInflight(habitId);
-
-        if (allSettled) {
-            data.value = rollbackSnapshots.get(habitId) as TrackData;
-            rollbackSnapshots.delete(habitId);
-        }
-    }
 }
 
 onMounted(() => {

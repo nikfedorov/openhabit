@@ -60,7 +60,7 @@ function goToToday() {
             </button>
 
             <div class="relative flex-1 overflow-hidden text-center">
-                <Transition name="date-slide">
+                <Transition name="nav-slide">
                     <div :key="date">
                         <div
                             class="text-lg font-semibold text-neutral-900 dark:text-white"
@@ -133,28 +133,3 @@ function goToToday() {
         </Transition>
     </div>
 </template>
-
-<style>
-.date-slide-enter-active {
-    transition: all 0.2s ease-in-out;
-}
-
-.date-slide-leave-active {
-    transition: all 0.2s ease-in-out;
-    position: absolute;
-    width: 100%;
-}
-
-.date-slide-enter-from,
-.date-slide-leave-to {
-    opacity: 0;
-}
-
-.date-slide-enter-from {
-    transform: translateX(var(--slide-enter));
-}
-
-.date-slide-leave-to {
-    transform: translateX(var(--slide-leave));
-}
-</style>

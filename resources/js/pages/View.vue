@@ -307,28 +307,4 @@ onMounted(() => {
 .view-content-leave-to {
     transform: translateX(var(--slide-leave));
 }
-
-/* Navigator slide transitions (shared by WeekNavigator & YearNavigator) */
-.nav-slide-enter-active {
-    transition: all 0.2s ease-in-out;
-}
-
-.nav-slide-leave-active {
-    transition: all 0.2s ease-in-out;
-    position: absolute;
-    width: 100%;
-}
-
-.nav-slide-enter-from,
-.nav-slide-leave-to {
-    opacity: 0;
-}
-
-.nav-slide-enter-from {
-    transform: translateX(var(--slide-enter));
-}
-
-.nav-slide-leave-to {
-    transform: translateX(var(--slide-leave));
-}
 </style>

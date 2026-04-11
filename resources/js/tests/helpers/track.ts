@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import Track from '@/pages/Track.vue';
-import type { ActivityDay, Habit } from '@/types/track';
+import type { ActivityDay, Habit, TrackData } from '@/types/track';
 
 type TrackVm = {
     data: { habits: Habit[]; completedCount: number } | null;
@@ -86,8 +86,6 @@ export function makeHabits(count: number, completed: boolean): Habit[] {
         }),
     );
 }
-
-import type { TrackData } from '@/types/track';
 
 export const defaultTrackData: TrackData = {
     date: '2026-04-06',

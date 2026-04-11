@@ -32,6 +32,35 @@
 }
 
 /*
+ * Navigator slide transition for date/week/year displays.
+ *
+ * Usage: <Transition name="nav-slide">
+ *   Wrap in a parent with `.nav-forward` or `.nav-backward`.
+ */
+.nav-slide-enter-active {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-slide-leave-active {
+    transition: all 0.2s ease-in-out;
+    position: absolute;
+    width: 100%;
+}
+
+.nav-slide-enter-from,
+.nav-slide-leave-to {
+    opacity: 0;
+}
+
+.nav-slide-enter-from {
+    transform: translateX(var(--slide-enter));
+}
+
+.nav-slide-leave-to {
+    transform: translateX(var(--slide-leave));
+}
+
+/*
  * Collapse/expand transition for "go to today/current" buttons.
  *
  * Usage: <Transition name="collapse-btn">
