@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import RouteLoadingBar from '@/components/navigation/RouteLoadingBar.vue';
 import TabBar from '@/components/navigation/TabBar.vue';
 import PageLoader from '@/components/PageLoader.vue';
+import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 
 const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
@@ -28,6 +29,22 @@ function updateLocale(locale: string) {
     document.documentElement.dir = dir;
     document.documentElement.lang = locale;
 }
+
+function applyTheme(theme: 'light' | 'dark' | 'system') {
+    const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)',
+    ).matches;
+    const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
+
+    document.documentElement.classList.toggle('dark', isDark);
+}
+
+function updateSettings(settings: UserSettings) {
+    applyTheme(settings.theme);
+}
+
+/* Apply system preference until API responds */
+applyTheme('system');
 </script>
 
 <template>
@@ -47,6 +64,7 @@ function updateLocale(locale: string) {
                     :is="Component"
                     @navigation-translations="updateNavTranslations"
                     @locale="updateLocale"
+                    @settings="updateSettings"
                     @ready="pageReady = true"
                 />
             </router-view>

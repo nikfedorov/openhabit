@@ -64,6 +64,7 @@ function makeViewResponse(overrides: Partial<ViewData> = {}) {
         data: makeViewData(overrides),
         locale: 'en',
         navigationTranslations: defaultNavigationTranslations,
+        settings: { theme: 'system' as const },
     };
 }
 

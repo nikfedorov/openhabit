@@ -10,6 +10,7 @@ import HabitItem from '@/components/track/HabitItem.vue';
 import ProgressBar from '@/components/track/ProgressBar.vue';
 import { useHabitToggle } from '@/composables/useHabitToggle';
 import type { ApiResponse } from '@/types/api';
+import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import type { TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
@@ -20,6 +21,7 @@ const router = useRouter();
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
     locale: [locale: string];
+    settings: [settings: UserSettings];
     ready: [];
 }>();
 
@@ -40,6 +42,7 @@ async function loadTrack(date?: string) {
     data.value = response.data;
     emit('navigation-translations', response.navigationTranslations);
     emit('locale', response.locale);
+    emit('settings', response.settings);
     emit('ready');
 
     router.replace({

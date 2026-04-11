@@ -16,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class CommonResource extends JsonResource
 {
     /**
-     * @return array{locale: string, navigationTranslations: array<string, string>}
+     * @return array{locale: string, navigationTranslations: array<string, string>, settings: array{theme: string}}
      */
     public function toArray(Request $request): array
     {
@@ -26,6 +26,7 @@ final class CommonResource extends JsonResource
         return [
             'locale' => app()->getLocale(),
             'navigationTranslations' => $navigationTranslations,
+            'settings' => new UserSettingResource($this->resource)->toArray($request),
         ];
     }
 }

@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Resources;
+
+use App\Enums\Theme;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * Exposes user-level settings to the frontend.
+ *
+ * @property-read User $resource
+ */
+final class UserSettingResource extends JsonResource
+{
+    /**
+     * @return array{theme: string}
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'theme' => ($this->resource->theme ?? Theme::System)->value,
+        ];
+    }
+}

@@ -31,7 +31,7 @@ onBeforeUnmount(() => {
                 class="h-16 w-16"
                 aria-hidden="true"
             >
-                <rect width="512" height="512" rx="96" fill="#171717" />
+                <rect class="loader-bg" width="512" height="512" rx="96" />
                 <rect
                     x="80"
                     y="272"
@@ -108,5 +108,13 @@ onBeforeUnmount(() => {
 
 .loader-fade-enter-from {
     opacity: 0;
+}
+
+.loader-bg {
+    fill: #f5f5f5;
+}
+
+:where(.dark, .dark *) .loader-bg {
+    fill: #171717;
 }
 </style>

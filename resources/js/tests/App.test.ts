@@ -4,11 +4,25 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import App from '@/App.vue';
 import { routes } from '@/router';
 
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
+
 vi.mock('@/pages/Track.vue', () => ({
     default: {
         name: 'Track',
         template: '<div data-testid="track">Track</div>',
-        emits: ['navigation-translations', 'locale', 'ready'],
+        emits: ['navigation-translations', 'locale', 'settings', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -19,7 +33,7 @@ vi.mock('@/pages/View.vue', () => ({
     default: {
         name: 'View',
         template: '<div data-testid="view">View</div>',
-        emits: ['navigation-translations', 'locale', 'ready'],
+        emits: ['navigation-translations', 'locale', 'settings', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -249,5 +263,31 @@ describe('App', () => {
         await pendingRouter.isReady();
         await flushPromises();
         expect(wrapper.find('[data-testid="pending"]').isVisible()).toBe(true);
+    });
+
+    it('applies dark class when settings emit dark theme', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', { theme: 'dark' });
+        await wrapper.vm.$nextTick();
+        expect(document.documentElement.classList.contains('dark')).toBe(true);
+    });
+
+    it('removes dark class when settings emit light theme', async () => {
+        document.documentElement.classList.add('dark');
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', { theme: 'light' });
+        await wrapper.vm.$nextTick();
+        expect(document.documentElement.classList.contains('dark')).toBe(false);
+    });
+
+    it('respects system preference when settings emit system theme', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', { theme: 'system' });
+        await wrapper.vm.$nextTick();
+        // matchMedia mock returns matches: false, so no dark class
+        expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
 });

@@ -9,6 +9,7 @@ import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
 import type { ApiResponse } from '@/types/api';
+import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import type { ViewData } from '@/types/view';
 import { apiFetch } from '@/utils/api';
@@ -20,6 +21,7 @@ const router = useRouter();
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
     locale: [locale: string];
+    settings: [settings: UserSettings];
     ready: [];
 }>();
 
@@ -61,6 +63,7 @@ async function loadView(params?: {
     data.value = response.data;
     emit('navigation-translations', response.navigationTranslations);
     emit('locale', response.locale);
+    emit('settings', response.settings);
     router.replace({ query: buildViewQuery(data.value) });
     loading.value = false;
     emit('ready');

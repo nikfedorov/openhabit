@@ -115,5 +115,6 @@ export function makeTrackResponse(overrides: Partial<TrackData> = {}) {
         data: { ...defaultTrackData, ...overrides },
         locale: 'en',
         navigationTranslations: { track: 'Track', view: 'View' },
+        settings: { theme: 'system' as const },
     };
 }
