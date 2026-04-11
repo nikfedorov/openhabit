@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.5.0",
+        "dedoc/scramble": "^0.13.18",
         "filament/filament": "^5.4.4",
         "laravel/framework": "^13.3.0",
         "laravel/horizon": "^5.45.5",
@@ -99,12 +100,17 @@
             "bun run test:lint"
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
+        "test:api-schema": [
+            "php artisan scramble:export --no-interaction",
+            "php -r \"file_put_contents('resources/js/api-schema.json', json_encode(json_decode(file_get_contents('resources/js/api-schema.json')), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL);\""
+        ],
         "test:types": "phpstan",
         "test:vue": "bun run test:vue",
         "test": [
             "@test:type-coverage",
             "@test:lint",
             "@test:unit",
+            "@test:api-schema",
             "@test:vue",
             "@test:types"
         ],

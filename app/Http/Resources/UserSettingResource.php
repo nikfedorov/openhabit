@@ -10,23 +10,44 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Exposes user-level settings to the frontend.
+ * User-level application settings.
+ *
+ * Included as additional top-level data in Track and View responses.
  *
  * @property-read User $resource
  */
 final class UserSettingResource extends JsonResource
 {
     /**
-     * @return array{settings: array{locale: string, theme: string, moveCompletedToEnd: bool}}
+     * @return array{locale: string, theme: string, moveCompletedToEnd: bool}
      */
     public function toArray(Request $request): array
     {
         return [
-            'settings' => [
-                'locale' => app()->getLocale(),
-                'theme' => ($this->resource->theme ?? Theme::System)->value,
-                'moveCompletedToEnd' => $this->resource->move_completed_to_end,
-            ],
+            /**
+             * Current locale code.
+             *
+             * @var string
+             *
+             * @example "en"
+             */
+            'locale' => app()->getLocale(),
+
+            /**
+             * UI theme preference.
+             *
+             * @var string
+             *
+             * @example "system"
+             */
+            'theme' => ($this->resource->theme ?? Theme::System)->value,
+
+            /**
+             * Whether completed habits are moved to bottom.
+             *
+             * @var bool
+             */
+            'moveCompletedToEnd' => $this->resource->move_completed_to_end,
         ];
     }
 }

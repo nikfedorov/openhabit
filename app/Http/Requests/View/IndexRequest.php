@@ -15,8 +15,25 @@ final class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * Visualization tab to display.
+             *
+             * @example "week"
+             */
             'tab' => ['nullable', 'string', 'in:week,year,life'],
+
+            /**
+             * Start date of the week to display.
+             *
+             * @example "2026-04-06"
+             */
             'week' => ['nullable', 'date'],
+
+            /**
+             * Year index (age) for the year tab (0–79).
+             *
+             * @example 25
+             */
             'year' => ['nullable', 'integer', 'min:0', 'max:79'],
         ];
     }

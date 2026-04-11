@@ -9,7 +9,7 @@ import EmptyState from '@/components/track/EmptyState.vue';
 import HabitItem from '@/components/track/HabitItem.vue';
 import ProgressBar from '@/components/track/ProgressBar.vue';
 import { useHabitToggle } from '@/composables/useHabitToggle';
-import type { ApiResponse, UserSettings } from '@/types/api';
+import type { TrackApiResponse, UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import type { TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
@@ -24,9 +24,16 @@ const emit = defineEmits<{
 }>();
 
 const data = ref<TrackData | null>(null);
-const settings = ref<UserSettings>({ locale: 'en', theme: 'system', moveCompletedToEnd: false });
+const settings = ref<UserSettings>({
+    locale: 'en',
+    theme: 'system',
+    moveCompletedToEnd: false,
+});
 const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
-const { pendingHabitIds, toggle: onToggleHabit } = useHabitToggle(data, settings);
+const { pendingHabitIds, toggle: onToggleHabit } = useHabitToggle(
+    data,
+    settings,
+);
 
 async function loadTrack(date?: string) {
     if (date && data.value) {
@@ -35,10 +42,12 @@ async function loadTrack(date?: string) {
     }
 
     const query = date ? `?date=${date}` : '';
-    const response = await apiFetch<ApiResponse<TrackData>>(
-        `/api/track${query}`,
-    );
-    data.value = response.data;
+    const response = await apiFetch<TrackApiResponse>(`/api/track${query}`);
+    data.value = {
+        ...response.data,
+        habits: response.habits,
+        activityData: response.activityData,
+    };
     settings.value = response.settings;
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);

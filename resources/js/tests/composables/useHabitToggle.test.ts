@@ -18,9 +18,16 @@ vi.mock('@/utils/api', () => ({
 }));
 
 /** Creates a reactive data ref and a composable instance for a test. */
-function setup(dataOverrides: Parameters<typeof makeTrackResponse>[0] = {}, settingsOverrides: Parameters<typeof makeTrackResponse>[1] = {}) {
+function setup(
+    dataOverrides: Parameters<typeof makeTrackResponse>[0] = {},
+    settingsOverrides: Parameters<typeof makeTrackResponse>[1] = {},
+) {
     const response = makeTrackResponse(dataOverrides, settingsOverrides);
-    const data = ref<TrackData>(response.data);
+    const data = ref<TrackData>({
+        ...response.data,
+        habits: response.habits,
+        activityData: response.activityData,
+    });
     const settings = ref(response.settings);
     const { pendingHabitIds, toggle } = useHabitToggle(data, settings);
     return { data, settings, pendingHabitIds, toggle };
@@ -210,7 +217,11 @@ describe('useHabitToggle - sorting', () => {
                 {
                     completedCount: 1,
                     habits: [
-                        makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
+                        makeHabit({
+                            id: 2,
+                            name: 'Second habit',
+                            sort_order: 2,
+                        }),
                         makeHabit({
                             name: 'First habit',
                             is_completed: true,
@@ -420,7 +431,11 @@ describe('useHabitToggle - inflight deduplication', () => {
                     habits: [
                         habits[1],
                         habits[2],
-                        { ...habits[0], is_completed: true, current_iteration: 1 },
+                        {
+                            ...habits[0],
+                            is_completed: true,
+                            current_iteration: 1,
+                        },
                     ],
                 },
                 { moveCompletedToEnd: true },
@@ -439,8 +454,16 @@ describe('useHabitToggle - inflight deduplication', () => {
                     totalHabits: 3,
                     habits: [
                         habits[2],
-                        { ...habits[0], is_completed: true, current_iteration: 1 },
-                        { ...habits[1], is_completed: true, current_iteration: 1 },
+                        {
+                            ...habits[0],
+                            is_completed: true,
+                            current_iteration: 1,
+                        },
+                        {
+                            ...habits[1],
+                            is_completed: true,
+                            current_iteration: 1,
+                        },
                     ],
                 },
                 { moveCompletedToEnd: true },
@@ -546,7 +569,10 @@ describe('useHabitToggle - edge cases', () => {
 
     it('is a no-op when data is null', async () => {
         const data = ref<TrackData | null>(null);
-        const { toggle } = useHabitToggle(data, ref(makeTrackResponse().settings));
+        const { toggle } = useHabitToggle(
+            data,
+            ref(makeTrackResponse().settings),
+        );
 
         await toggle(1);
 

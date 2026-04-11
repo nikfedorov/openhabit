@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import type { ApiResponse, UserSettings } from '@/types/api';
+import type { TrackApiResponse, UserSettings } from '@/types/api';
 import type { Habit, TrackData } from '@/types/track';
 import { apiFetch } from '@/utils/api';
 
@@ -30,7 +30,11 @@ function sortHabits(habits: Habit[], moveCompletedToEnd: boolean): Habit[] {
  * After mutating the habit, re-sorts the full habits list so the UI
  * immediately reflects the new completed/uncompleted grouping.
  */
-function applyOptimisticToggle(habit: Habit, trackData: TrackData, moveCompletedToEnd: boolean): void {
+function applyOptimisticToggle(
+    habit: Habit,
+    trackData: TrackData,
+    moveCompletedToEnd: boolean,
+): void {
     if (habit.is_completed) {
         // Un-complete: step back one iteration
         habit.is_completed = false;
@@ -50,10 +54,7 @@ function applyOptimisticToggle(habit: Habit, trackData: TrackData, moveCompleted
         }
     }
 
-    trackData.habits = sortHabits(
-        trackData.habits,
-        moveCompletedToEnd,
-    );
+    trackData.habits = sortHabits(trackData.habits, moveCompletedToEnd);
 }
 
 /**
@@ -76,7 +77,10 @@ function applyOptimisticToggle(habit: Habit, trackData: TrackData, moveCompleted
  *   - The snapshot is only cleared once the habit's counter reaches zero,
  *     ensuring it survives for the duration of all concurrent requests.
  */
-export function useHabitToggle(data: Ref<TrackData | null>, settings: Ref<UserSettings>) {
+export function useHabitToggle(
+    data: Ref<TrackData | null>,
+    settings: Ref<UserSettings>,
+) {
     // Reactive set — drives the shimmer/pending indicator in HabitItem
     const pendingHabitIds = ref(new Set<number>());
 
@@ -129,11 +133,15 @@ export function useHabitToggle(data: Ref<TrackData | null>, settings: Ref<UserSe
 
         // Snapshot before any mutation so we can roll back on error
         const snapshot = JSON.parse(JSON.stringify(currentData)) as TrackData;
-        applyOptimisticToggle(habit, currentData, settings.value.moveCompletedToEnd);
+        applyOptimisticToggle(
+            habit,
+            currentData,
+            settings.value.moveCompletedToEnd,
+        );
         startInflight(habitId, snapshot);
 
         try {
-            const response = await apiFetch<ApiResponse<TrackData>>(
+            const response = await apiFetch<TrackApiResponse>(
                 '/api/track/toggle',
                 {
                     method: 'POST',
@@ -156,7 +164,11 @@ export function useHabitToggle(data: Ref<TrackData | null>, settings: Ref<UserSe
             // has settled — prevents a stale earlier response from
             // overwriting a more recent optimistic state.
             if (allSettled) {
-                data.value = response.data;
+                data.value = {
+                    ...response.data,
+                    habits: response.habits,
+                    activityData: response.activityData,
+                };
             }
         } catch {
             const allSettled = resolveInflight(habitId);

@@ -1,0 +1,970 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenHabit",
+        "version": "0.0.1",
+        "description": "OpenHabit API provides endpoints for daily habit tracking, completion toggling, daily journaling, and visualization data (week grid, year heatmap, life grid). All endpoints require Sanctum token authentication."
+    },
+    "servers": [
+        {
+            "url": "https://65f9-205-237-111-91.ngrok-free.app/api"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Track"
+        },
+        {
+            "name": "View"
+        }
+    ],
+    "security": [
+        {
+            "http": []
+        }
+    ],
+    "paths": {
+        "/track": {
+            "get": {
+                "operationId": "track",
+                "description": "Returns habits, completion progress, daily note, and activity heatmap data\nfor a specific date. Defaults to today when no date is provided.",
+                "summary": "Get daily tracking data",
+                "tags": [
+                    "Track"
+                ],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date to retrieve tracking data for. Defaults to today.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        },
+                        "example": "2026-04-06"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TrackResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TrackResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitResource"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitActivityDataResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habits",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/track/toggle": {
+            "post": {
+                "operationId": "track.toggle",
+                "description": "Marks a habit as completed (or uncompleted) for a given date.\nReturns the refreshed daily tracking data.",
+                "summary": "Toggle habit completion",
+                "tags": [
+                    "Track"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ToggleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TrackResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TrackResource"
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitResource"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitActivityDataResource"
+                                            }
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "habits",
+                                        "activityData",
+                                        "navigationTranslations",
+                                        "settings"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/track/daily-note": {
+            "post": {
+                "operationId": "track.daily-note",
+                "description": "Creates or updates the user's journal note for a specific date.\nSend null content to clear the note.",
+                "summary": "Save daily note",
+                "tags": [
+                    "Track"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/view": {
+            "get": {
+                "operationId": "view",
+                "description": "Returns data for the week grid, year heatmap, or life (memento mori)\nvisualization depending on the selected tab.",
+                "summary": "Get visualization data",
+                "tags": [
+                    "View"
+                ],
+                "parameters": [
+                    {
+                        "name": "tab",
+                        "in": "query",
+                        "description": "Visualization tab to display.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "week",
+                                "year",
+                                "life"
+                            ]
+                        },
+                        "example": "week"
+                    },
+                    {
+                        "name": "week",
+                        "in": "query",
+                        "description": "Start date of the week to display.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        },
+                        "example": "2026-04-06"
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Year index (age) for the year tab (0–79).",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "maximum": 79
+                        },
+                        "example": 25
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`ViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "http": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "HabitActivityDataResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "Date of the activity entry (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "description": "Completion percentage for the day (0.0–100.0).",
+                        "examples": [
+                            66.7
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed on this day.",
+                        "examples": [
+                            4
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total number of habits planned for this day.",
+                        "examples": [
+                            6
+                        ]
+                    },
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    }
+                },
+                "required": [
+                    "date",
+                    "percentage",
+                    "completed",
+                    "total",
+                    "intensity"
+                ],
+                "title": "HabitActivityDataResource"
+            },
+            "HabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier."
+                    },
+                    "name": {
+                        "type": "array",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning exercise"
+                        ],
+                        "items": {}
+                    },
+                    "description": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "Do 30 pushups"
+                        ],
+                        "items": {}
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many iterations are needed to complete.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "is_completed": {
+                        "type": "boolean",
+                        "description": "Whether the habit is fully completed for the day."
+                    },
+                    "current_iteration": {
+                        "description": "Number of iterations completed so far today.",
+                        "examples": [
+                            1
+                        ],
+                        "anyOf": [
+                            {},
+                            {
+                                "type": "integer",
+                                "enum": [
+                                    0
+                                ]
+                            }
+                        ]
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Position in the habit list.",
+                        "examples": [
+                            2
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "iterations_required",
+                    "is_completed",
+                    "current_iteration",
+                    "sort_order"
+                ],
+                "title": "HabitResource"
+            },
+            "NavigationTranslationResource": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                },
+                "title": "NavigationTranslationResource"
+            },
+            "NoteRequest": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the note belongs to.",
+                        "example": "2026-04-06"
+                    },
+                    "content": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Note text content. Send null to clear.",
+                        "example": "Great day!",
+                        "maxLength": 5000
+                    }
+                },
+                "required": [
+                    "date"
+                ],
+                "title": "NoteRequest"
+            },
+            "ToggleRequest": {
+                "type": "object",
+                "properties": {
+                    "habit_id": {
+                        "type": "integer",
+                        "description": "The habit to toggle.",
+                        "example": 1
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Completion date (must not be in the future).",
+                        "example": "2026-04-06"
+                    }
+                },
+                "required": [
+                    "habit_id",
+                    "date"
+                ],
+                "title": "ToggleRequest"
+            },
+            "TrackResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "ISO 8601 date string (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "dayName": {
+                        "type": "string",
+                        "description": "Localized day of week name.",
+                        "examples": [
+                            "Monday"
+                        ]
+                    },
+                    "dateFormatted": {
+                        "type": "string",
+                        "description": "Localized full date.",
+                        "examples": [
+                            "April 6, 2026"
+                        ]
+                    },
+                    "isToday": {
+                        "type": "boolean",
+                        "description": "Whether this date is today."
+                    },
+                    "totalHabits": {
+                        "type": "integer",
+                        "description": "Total number of habits scheduled for this day.",
+                        "examples": [
+                            5
+                        ]
+                    },
+                    "completedCount": {
+                        "type": "integer",
+                        "description": "Number of fully completed habits.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "dailyNoteContent": {
+                        "type": "string",
+                        "description": "User's daily note text.",
+                        "examples": [
+                            "Great day!"
+                        ]
+                    },
+                    "translations": {
+                        "type": "object",
+                        "description": "Localized UI strings for the track page.",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "date",
+                    "dayName",
+                    "dateFormatted",
+                    "isToday",
+                    "totalHabits",
+                    "completedCount",
+                    "dailyNoteContent",
+                    "translations"
+                ],
+                "title": "TrackResource"
+            },
+            "UserSettingResource": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string",
+                        "description": "Current locale code.",
+                        "examples": [
+                            "en"
+                        ]
+                    },
+                    "theme": {
+                        "type": "string",
+                        "description": "UI theme preference.",
+                        "examples": [
+                            "system"
+                        ]
+                    },
+                    "moveCompletedToEnd": {
+                        "type": "boolean",
+                        "description": "Whether completed habits are moved to bottom."
+                    }
+                },
+                "required": [
+                    "locale",
+                    "theme",
+                    "moveCompletedToEnd"
+                ],
+                "title": "UserSettingResource"
+            },
+            "ViewResource": {
+                "type": "object",
+                "properties": {
+                    "tab": {
+                        "type": "string",
+                        "description": "Active visualization tab.",
+                        "examples": [
+                            "week"
+                        ]
+                    },
+                    "weekStart": {
+                        "type": "string",
+                        "description": "Week start date (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "weekEnd": {
+                        "type": "string",
+                        "description": "Week end date (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-12"
+                        ]
+                    },
+                    "weekStartFormatted": {
+                        "type": "string",
+                        "description": "Localized short start date.",
+                        "examples": [
+                            "Apr 6"
+                        ]
+                    },
+                    "weekEndFormatted": {
+                        "type": "string",
+                        "description": "Localized short end date.",
+                        "examples": [
+                            "Apr 12"
+                        ]
+                    },
+                    "weekEndFormattedFull": {
+                        "type": "string",
+                        "description": "Localized full end date with year.",
+                        "examples": [
+                            "Apr 12, 2026"
+                        ]
+                    },
+                    "weekYear": {
+                        "type": "string",
+                        "description": "Year of the displayed week.",
+                        "examples": [
+                            "2026"
+                        ]
+                    },
+                    "isCurrentWeek": {
+                        "type": "boolean",
+                        "description": "Whether the displayed week is the current week."
+                    },
+                    "franklinGrid": {
+                        "type": "object",
+                        "description": "Weekly habit grid with day columns and habit rows.",
+                        "properties": {
+                            "week_start": {
+                                "type": "string"
+                            },
+                            "week_end": {
+                                "type": "string"
+                            },
+                            "days": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "date": {
+                                            "type": "string"
+                                        },
+                                        "day_name": {
+                                            "type": "string"
+                                        },
+                                        "day_number": {
+                                            "type": "integer"
+                                        },
+                                        "is_today": {
+                                            "type": "boolean"
+                                        },
+                                        "is_future": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "date",
+                                        "day_name",
+                                        "day_number",
+                                        "is_today",
+                                        "is_future"
+                                    ]
+                                }
+                            },
+                            "regular_habits": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "is_weekly_focus": {
+                                            "type": "boolean"
+                                        },
+                                        "days": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "completed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "partial": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "scheduled": {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "completed",
+                                                    "partial",
+                                                    "scheduled"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "category",
+                                        "is_weekly_focus",
+                                        "days"
+                                    ]
+                                }
+                            },
+                            "franklin_habits": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "is_weekly_focus": {
+                                            "type": "boolean"
+                                        },
+                                        "days": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "completed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "partial": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "scheduled": {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "completed",
+                                                    "partial",
+                                                    "scheduled"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "category",
+                                        "is_weekly_focus",
+                                        "days"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "week_start",
+                            "week_end",
+                            "days",
+                            "regular_habits",
+                            "franklin_habits"
+                        ]
+                    },
+                    "selectedYear": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Selected year index (age) for the year tab.",
+                        "examples": [
+                            25
+                        ]
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's birthdate (YYYY-MM-DD).",
+                        "examples": [
+                            "2001-03-15"
+                        ]
+                    },
+                    "currentAge": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "User's current age in years.",
+                        "examples": [
+                            25
+                        ]
+                    },
+                    "lifeStats": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "description": "Life statistics for the memento mori grid.",
+                        "properties": {
+                            "currentAge": {
+                                "type": "integer"
+                            },
+                            "weeksLived": {
+                                "type": "integer"
+                            },
+                            "yearsRemaining": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "currentAge",
+                            "weeksLived",
+                            "yearsRemaining"
+                        ]
+                    },
+                    "weeklyActivityData": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "description": "Weekly activity data for the year heatmap.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "weekNum": {
+                                    "type": "integer"
+                                },
+                                "intensity": {
+                                    "type": "integer"
+                                },
+                                "completed": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": "integer"
+                                }
+                            },
+                            "required": [
+                                "weekNum",
+                                "intensity",
+                                "completed",
+                                "total"
+                            ]
+                        }
+                    },
+                    "yearlyActivityData": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "description": "Yearly activity data for the life grid.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "year": {
+                                    "type": "integer"
+                                },
+                                "intensity": {
+                                    "type": "integer"
+                                },
+                                "completed": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": "integer"
+                                }
+                            },
+                            "required": [
+                                "year",
+                                "intensity",
+                                "completed",
+                                "total"
+                            ]
+                        }
+                    },
+                    "translations": {
+                        "type": "object",
+                        "description": "Localized UI strings for the view page.",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "tab",
+                    "weekStart",
+                    "weekEnd",
+                    "weekStartFormatted",
+                    "weekEndFormatted",
+                    "weekEndFormattedFull",
+                    "weekYear",
+                    "isCurrentWeek",
+                    "franklinGrid",
+                    "selectedYear",
+                    "birthdate",
+                    "currentAge",
+                    "lifeStats",
+                    "weeklyActivityData",
+                    "yearlyActivityData",
+                    "translations"
+                ],
+                "title": "ViewResource"
+            }
+        },
+        "responses": {
+            "AuthenticationException": {
+                "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            },
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

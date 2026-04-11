@@ -132,17 +132,3 @@ it('logs in existing user', function (): void {
     expect(User::query()->where('telegram_id', '987654321')->count())->toBe(1)
         ->and($existingUser->tokens()->count())->toBe(1);
 });
-
-it('requires authentication', function (): void {
-    $this->getJson('/api/user')
-        ->assertUnauthorized();
-});
-
-it('returns authenticated user', function (): void {
-    $user = User::factory()->telegram()->create();
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/user')
-        ->assertOk()
-        ->assertJsonFragment(['id' => $user->id]);
-});

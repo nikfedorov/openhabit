@@ -110,10 +110,28 @@ export const defaultTrackData: TrackData = {
     translations: defaultTrackTranslations,
 };
 
-export function makeTrackResponse(dataOverrides: Partial<TrackData> = {}, settingsOverrides: Partial<UserSettings> = {}) {
+export function makeTrackResponse(
+    dataOverrides: Partial<TrackData> = {},
+    settingsOverrides: Partial<UserSettings> = {},
+) {
+    const { habits, activityData, ...restOverrides } = dataOverrides;
+    const {
+        habits: defaultHabits,
+        activityData: defaultActivityData,
+        ...defaultBaseData
+    } = defaultTrackData;
+
     return {
-        data: { ...defaultTrackData, ...dataOverrides },
+        data: { ...defaultBaseData, ...restOverrides },
+        habits: habits !== undefined ? habits : defaultHabits,
+        activityData:
+            activityData !== undefined ? activityData : defaultActivityData,
         navigationTranslations: { track: 'Track', view: 'View' },
-        settings: { locale: 'en', theme: 'system' as const, moveCompletedToEnd: false, ...settingsOverrides },
+        settings: {
+            locale: 'en',
+            theme: 'system' as const,
+            moveCompletedToEnd: false,
+            ...settingsOverrides,
+        },
     };
 }

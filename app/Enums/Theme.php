@@ -9,8 +9,11 @@ namespace App\Enums;
  */
 enum Theme: string
 {
+    /** Use a bright background with dark text. */
     case Light = 'light';
+    /** Use a dark background with light text. */
     case Dark = 'dark';
+    /** Follow the operating system theme preference. */
     case System = 'system';
 
     /**

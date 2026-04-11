@@ -15,6 +15,11 @@ final class IndexRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * Date to retrieve tracking data for. Defaults to today.
+             *
+             * @example "2026-04-06"
+             */
             'date' => ['nullable', 'date'],
         ];
     }

@@ -15,7 +15,18 @@ final class NoteRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * Date the note belongs to.
+             *
+             * @example "2026-04-06"
+             */
             'date' => ['required', 'date'],
+
+            /**
+             * Note text content. Send null to clear.
+             *
+             * @example "Great day!"
+             */
             'content' => ['nullable', 'string', 'max:5000'],
         ];
     }

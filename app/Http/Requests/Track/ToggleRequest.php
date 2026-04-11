@@ -15,7 +15,18 @@ final class ToggleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * The habit to toggle.
+             *
+             * @example 1
+             */
             'habit_id' => ['required', 'integer'],
+
+            /**
+             * Completion date (must not be in the future).
+             *
+             * @example "2026-04-06"
+             */
             'date' => ['required', 'date', 'before_or_equal:today'],
         ];
     }
