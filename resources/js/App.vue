@@ -24,7 +24,7 @@ function updateNavTranslations(translations: NavigationTranslations) {
     navTranslations.value = translations;
 }
 
-function updateLocale(locale: string) {
+function applyLocale(locale: string) {
     const dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
     document.documentElement.dir = dir;
     document.documentElement.lang = locale;
@@ -40,6 +40,7 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
 }
 
 function updateSettings(settings: UserSettings) {
+    applyLocale(settings.locale);
     applyTheme(settings.theme);
 }
 
@@ -63,7 +64,6 @@ applyTheme('system');
                     v-show="pageReady"
                     :is="Component"
                     @navigation-translations="updateNavTranslations"
-                    @locale="updateLocale"
                     @settings="updateSettings"
                     @ready="pageReady = true"
                 />

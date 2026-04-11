@@ -17,12 +17,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class UserSettingResource extends JsonResource
 {
     /**
-     * @return array{theme: string}
+     * @return array{settings: array{locale: string, theme: string}}
      */
     public function toArray(Request $request): array
     {
         return [
-            'theme' => ($this->resource->theme ?? Theme::System)->value,
+            'settings' => [
+                'locale' => app()->getLocale(),
+                'theme' => ($this->resource->theme ?? Theme::System)->value,
+            ],
         ];
     }
 }

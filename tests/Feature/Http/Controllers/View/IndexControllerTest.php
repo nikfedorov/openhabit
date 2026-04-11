@@ -25,7 +25,7 @@ test('show returns view data for authenticated user', function (): void {
                 'weeklyActivityData', 'yearlyActivityData',
                 'translations',
             ],
-            'navigationTranslations', 'locale',
+            'navigationTranslations', 'settings' => ['locale', 'theme'],
         ])
         ->assertJsonPath('data.tab', 'week')
         ->assertJsonPath('data.isCurrentWeek', true);

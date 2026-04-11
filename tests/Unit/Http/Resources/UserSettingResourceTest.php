@@ -7,14 +7,18 @@ use App\Http\Resources\UserSettingResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-test('it returns theme setting', function (): void {
+test('it returns locale and theme', function (): void {
     $user = User::factory()->make(['theme' => Theme::Dark]);
+
+    app()->setLocale('ru');
 
     $resource = new UserSettingResource($user);
     $result = $resource->toArray(new Request);
 
     expect($result)
-        ->theme->toBe('dark');
+        ->settings->toBeArray()
+        ->settings->locale->toBe('ru')
+        ->settings->theme->toBe('dark');
 });
 
 test('it defaults to system when theme is null', function (): void {
@@ -24,5 +28,5 @@ test('it defaults to system when theme is null', function (): void {
     $result = $resource->toArray(new Request);
 
     expect($result)
-        ->theme->toBe('system');
+        ->settings->theme->toBe('system');
 });

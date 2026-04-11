@@ -113,8 +113,7 @@ export const defaultTrackData: TrackData = {
 export function makeTrackResponse(overrides: Partial<TrackData> = {}) {
     return {
         data: { ...defaultTrackData, ...overrides },
-        locale: 'en',
         navigationTranslations: { track: 'Track', view: 'View' },
-        settings: { theme: 'system' as const },
+        settings: { locale: 'en', theme: 'system' as const },
     };
 }

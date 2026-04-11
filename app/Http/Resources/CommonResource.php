@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * User-level settings shared across all pages.
- *
- * @property-read User $resource
+ * Navigation translations shared across all pages.
  */
 final class CommonResource extends JsonResource
 {
     /**
-     * @return array{locale: string, navigationTranslations: array<string, string>, settings: array{theme: string}}
+     * @return array{navigationTranslations: array<string, string>}
      */
     public function toArray(Request $request): array
     {
@@ -24,9 +21,7 @@ final class CommonResource extends JsonResource
         $navigationTranslations = trans('navigation');
 
         return [
-            'locale' => app()->getLocale(),
             'navigationTranslations' => $navigationTranslations,
-            'settings' => new UserSettingResource($this->resource)->toArray($request),
         ];
     }
 }

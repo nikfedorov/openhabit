@@ -22,7 +22,7 @@ vi.mock('@/pages/Track.vue', () => ({
     default: {
         name: 'Track',
         template: '<div data-testid="track">Track</div>',
-        emits: ['navigation-translations', 'locale', 'settings', 'ready'],
+        emits: ['navigation-translations', 'settings', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -33,7 +33,7 @@ vi.mock('@/pages/View.vue', () => ({
     default: {
         name: 'View',
         template: '<div data-testid="view">View</div>',
-        emits: ['navigation-translations', 'locale', 'settings', 'ready'],
+        emits: ['navigation-translations', 'settings', 'ready'],
         mounted() {
             this.$emit('ready');
         },
@@ -206,20 +206,20 @@ describe('App', () => {
         expect(wrapper.find('[data-testid="track"]').exists()).toBe(true);
     });
 
-    it('sets document dir to rtl when locale event emits ar', async () => {
+    it('sets document dir to rtl when settings emit ar locale', async () => {
         const { wrapper } = await mountApp();
         const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('locale', 'ar');
+        trackComponent.vm.$emit('settings', { locale: 'ar', theme: 'system' });
         await wrapper.vm.$nextTick();
         expect(document.documentElement.dir).toBe('rtl');
         expect(document.documentElement.lang).toBe('ar');
     });
 
-    it('sets document dir to ltr when locale event emits en', async () => {
+    it('sets document dir to ltr when settings emit en locale', async () => {
         document.documentElement.dir = 'rtl';
         const { wrapper } = await mountApp();
         const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('locale', 'en');
+        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'system' });
         await wrapper.vm.$nextTick();
         expect(document.documentElement.dir).toBe('ltr');
         expect(document.documentElement.lang).toBe('en');
@@ -268,7 +268,7 @@ describe('App', () => {
     it('applies dark class when settings emit dark theme', async () => {
         const { wrapper } = await mountApp();
         const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { theme: 'dark' });
+        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'dark' });
         await wrapper.vm.$nextTick();
         expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
@@ -277,7 +277,7 @@ describe('App', () => {
         document.documentElement.classList.add('dark');
         const { wrapper } = await mountApp();
         const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { theme: 'light' });
+        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'light' });
         await wrapper.vm.$nextTick();
         expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
@@ -285,7 +285,7 @@ describe('App', () => {
     it('respects system preference when settings emit system theme', async () => {
         const { wrapper } = await mountApp();
         const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { theme: 'system' });
+        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'system' });
         await wrapper.vm.$nextTick();
         // matchMedia mock returns matches: false, so no dark class
         expect(document.documentElement.classList.contains('dark')).toBe(false);

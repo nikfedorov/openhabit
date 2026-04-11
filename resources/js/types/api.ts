@@ -1,11 +1,11 @@
 import type { NavigationTranslations } from './navigation';
 
 export type UserSettings = {
+    locale: string;
     theme: 'light' | 'dark' | 'system';
 };
 
 export type CommonData = {
-    locale: string;
     navigationTranslations: NavigationTranslations;
     settings: UserSettings;
 };
