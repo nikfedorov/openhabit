@@ -5,13 +5,13 @@ declare(strict_types=1);
 use App\Models\Habit;
 use App\Models\HabitNotification;
 
-test('belongs to habit', function (): void {
+it('belongs to habit', function (): void {
     $notification = HabitNotification::factory()->create();
 
     expect($notification->habit)->toBeInstanceOf(Habit::class);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $notification = HabitNotification::factory()->create();
 
     expect($notification->id)->toBeInt()

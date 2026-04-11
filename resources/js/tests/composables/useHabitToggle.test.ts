@@ -18,10 +18,12 @@ vi.mock('@/utils/api', () => ({
 }));
 
 /** Creates a reactive data ref and a composable instance for a test. */
-function setup(overrides: Parameters<typeof makeTrackResponse>[0] = {}) {
-    const data = ref<TrackData>(makeTrackResponse(overrides).data);
-    const { pendingHabitIds, toggle } = useHabitToggle(data);
-    return { data, pendingHabitIds, toggle };
+function setup(dataOverrides: Parameters<typeof makeTrackResponse>[0] = {}, settingsOverrides: Parameters<typeof makeTrackResponse>[1] = {}) {
+    const response = makeTrackResponse(dataOverrides, settingsOverrides);
+    const data = ref<TrackData>(response.data);
+    const settings = ref(response.settings);
+    const { pendingHabitIds, toggle } = useHabitToggle(data, settings);
+    return { data, settings, pendingHabitIds, toggle };
 }
 
 beforeEach(() => {
@@ -192,28 +194,32 @@ describe('useHabitToggle - pendingHabitIds', () => {
 
 describe('useHabitToggle - sorting', () => {
     it('moves completed habit to the end when moveCompletedToEnd is true', async () => {
-        const { data, toggle } = setup({
-            moveCompletedToEnd: true,
-            completedCount: 0,
-            habits: [
-                makeHabit({ name: 'First habit', sort_order: 1 }),
-                makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
-            ],
-        });
+        const { data, toggle } = setup(
+            {
+                completedCount: 0,
+                habits: [
+                    makeHabit({ name: 'First habit', sort_order: 1 }),
+                    makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
+                ],
+            },
+            { moveCompletedToEnd: true },
+        );
 
         mockApiFetch.mockResolvedValueOnce(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 1,
-                habits: [
-                    makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
-                    makeHabit({
-                        name: 'First habit',
-                        is_completed: true,
-                        current_iteration: 1,
-                    }),
-                ],
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 1,
+                    habits: [
+                        makeHabit({ id: 2, name: 'Second habit', sort_order: 2 }),
+                        makeHabit({
+                            name: 'First habit',
+                            is_completed: true,
+                            current_iteration: 1,
+                        }),
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
 
         // Do not await — verify optimistic sort before server responds
@@ -227,34 +233,38 @@ describe('useHabitToggle - sorting', () => {
     });
 
     it('preserves sort_order within the same completion group', async () => {
-        const { data, toggle } = setup({
-            moveCompletedToEnd: true,
-            completedCount: 0,
-            totalHabits: 3,
-            habits: [
-                makeHabit({ id: 3, name: 'Third', sort_order: 3 }),
-                makeHabit({ name: 'First', sort_order: 1 }),
-                makeHabit({ id: 2, name: 'Second', sort_order: 2 }),
-            ],
-        });
-
-        mockApiFetch.mockResolvedValueOnce(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 1,
+        const { data, toggle } = setup(
+            {
+                completedCount: 0,
                 totalHabits: 3,
                 habits: [
+                    makeHabit({ id: 3, name: 'Third', sort_order: 3 }),
                     makeHabit({ name: 'First', sort_order: 1 }),
                     makeHabit({ id: 2, name: 'Second', sort_order: 2 }),
-                    makeHabit({
-                        id: 3,
-                        name: 'Third',
-                        is_completed: true,
-                        current_iteration: 1,
-                        sort_order: 3,
-                    }),
                 ],
-            }),
+            },
+            { moveCompletedToEnd: true },
+        );
+
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse(
+                {
+                    completedCount: 1,
+                    totalHabits: 3,
+                    habits: [
+                        makeHabit({ name: 'First', sort_order: 1 }),
+                        makeHabit({ id: 2, name: 'Second', sort_order: 2 }),
+                        makeHabit({
+                            id: 3,
+                            name: 'Third',
+                            is_completed: true,
+                            current_iteration: 1,
+                            sort_order: 3,
+                        }),
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
 
         // Do not await — verify optimistic sort before server responds
@@ -269,32 +279,36 @@ describe('useHabitToggle - sorting', () => {
     });
 
     it('moves un-completed habit back to its sort_order position', async () => {
-        const { data, toggle } = setup({
-            moveCompletedToEnd: true,
-            completedCount: 2,
-            totalHabits: 2,
-            habits: [
-                makeHabit({ name: 'Active habit', sort_order: 1 }),
-                makeHabit({
-                    id: 2,
-                    name: 'Done habit',
-                    is_completed: true,
-                    current_iteration: 1,
-                    sort_order: 2,
-                }),
-            ],
-        });
-
-        mockApiFetch.mockResolvedValueOnce(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 1,
+        const { data, toggle } = setup(
+            {
+                completedCount: 2,
                 totalHabits: 2,
                 habits: [
                     makeHabit({ name: 'Active habit', sort_order: 1 }),
-                    makeHabit({ id: 2, name: 'Done habit', sort_order: 2 }),
+                    makeHabit({
+                        id: 2,
+                        name: 'Done habit',
+                        is_completed: true,
+                        current_iteration: 1,
+                        sort_order: 2,
+                    }),
                 ],
-            }),
+            },
+            { moveCompletedToEnd: true },
+        );
+
+        mockApiFetch.mockResolvedValueOnce(
+            makeTrackResponse(
+                {
+                    completedCount: 1,
+                    totalHabits: 2,
+                    habits: [
+                        makeHabit({ name: 'Active habit', sort_order: 1 }),
+                        makeHabit({ id: 2, name: 'Done habit', sort_order: 2 }),
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
 
         // Do not await — verify optimistic sort before server responds
@@ -380,12 +394,14 @@ describe('useHabitToggle - inflight deduplication', () => {
             makeHabit({ id: 3, name: 'Habit C', sort_order: 3 }),
         ];
 
-        const { data, toggle } = setup({
-            moveCompletedToEnd: true,
-            completedCount: 0,
-            totalHabits: 3,
-            habits,
-        });
+        const { data, toggle } = setup(
+            {
+                completedCount: 0,
+                totalHabits: 3,
+                habits,
+            },
+            { moveCompletedToEnd: true },
+        );
 
         // Toggle all three habits rapidly before any response arrives
         mockApiFetch.mockReturnValueOnce(first.promise);
@@ -397,16 +413,18 @@ describe('useHabitToggle - inflight deduplication', () => {
 
         // Stale first response (only Habit A completed)
         first.resolve(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 1,
-                totalHabits: 3,
-                habits: [
-                    habits[1],
-                    habits[2],
-                    { ...habits[0], is_completed: true, current_iteration: 1 },
-                ],
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 1,
+                    totalHabits: 3,
+                    habits: [
+                        habits[1],
+                        habits[2],
+                        { ...habits[0], is_completed: true, current_iteration: 1 },
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
         await flushPromises();
 
@@ -415,16 +433,18 @@ describe('useHabitToggle - inflight deduplication', () => {
 
         // Stale second response (Habit A + B completed)
         second.resolve(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 2,
-                totalHabits: 3,
-                habits: [
-                    habits[2],
-                    { ...habits[0], is_completed: true, current_iteration: 1 },
-                    { ...habits[1], is_completed: true, current_iteration: 1 },
-                ],
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 2,
+                    totalHabits: 3,
+                    habits: [
+                        habits[2],
+                        { ...habits[0], is_completed: true, current_iteration: 1 },
+                        { ...habits[1], is_completed: true, current_iteration: 1 },
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
         await flushPromises();
 
@@ -433,16 +453,18 @@ describe('useHabitToggle - inflight deduplication', () => {
 
         // Final response — written because all in-flight requests have settled
         third.resolve(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 3,
-                totalHabits: 3,
-                habits: habits.map((h) => ({
-                    ...h,
-                    is_completed: true,
-                    current_iteration: 1,
-                })),
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 3,
+                    totalHabits: 3,
+                    habits: habits.map((h) => ({
+                        ...h,
+                        is_completed: true,
+                        current_iteration: 1,
+                    })),
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
         await flushPromises();
 
@@ -454,12 +476,14 @@ describe('useHabitToggle - inflight deduplication', () => {
         const second = deferredPromise();
         const habit = makeHabit({ name: 'Exercise' });
 
-        const { data, toggle } = setup({
-            moveCompletedToEnd: true,
-            completedCount: 0,
-            totalHabits: 1,
-            habits: [habit],
-        });
+        const { data, toggle } = setup(
+            {
+                completedCount: 0,
+                totalHabits: 1,
+                habits: [habit],
+            },
+            { moveCompletedToEnd: true },
+        );
 
         mockApiFetch.mockReturnValueOnce(first.promise);
         toggle(1); // toggle ON
@@ -469,14 +493,16 @@ describe('useHabitToggle - inflight deduplication', () => {
 
         // Stale first response (habit completed)
         first.resolve(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 1,
-                totalHabits: 1,
-                habits: [
-                    { ...habit, is_completed: true, current_iteration: 1 },
-                ],
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 1,
+                    totalHabits: 1,
+                    habits: [
+                        { ...habit, is_completed: true, current_iteration: 1 },
+                    ],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
         await flushPromises();
 
@@ -486,12 +512,14 @@ describe('useHabitToggle - inflight deduplication', () => {
 
         // Final response (habit un-completed)
         second.resolve(
-            makeTrackResponse({
-                moveCompletedToEnd: true,
-                completedCount: 0,
-                totalHabits: 1,
-                habits: [habit],
-            }),
+            makeTrackResponse(
+                {
+                    completedCount: 0,
+                    totalHabits: 1,
+                    habits: [habit],
+                },
+                { moveCompletedToEnd: true },
+            ),
         );
         await flushPromises();
 
@@ -518,7 +546,7 @@ describe('useHabitToggle - edge cases', () => {
 
     it('is a no-op when data is null', async () => {
         const data = ref<TrackData | null>(null);
-        const { toggle } = useHabitToggle(data);
+        const { toggle } = useHabitToggle(data, ref(makeTrackResponse().settings));
 
         await toggle(1);
 

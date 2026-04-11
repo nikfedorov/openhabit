@@ -7,13 +7,14 @@ use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\Stat;
 use App\Models\User;
+use Illuminate\Testing\Fluent\AssertableJson;
 
-test('track api requires authentication', function (): void {
+it('requires authentication', function (): void {
     $this->getJson('/api/track')
         ->assertUnauthorized();
 });
 
-test('track api loads habits with completion state and filters inactive ones', function (): void {
+it('loads habits with completion state and filters inactive ones', function (): void {
     $user = User::factory()->create();
     $habit = Habit::factory()->daily()->create(['user_id' => $user->id]);
     Habit::factory()->daily()->create(['user_id' => $user->id, 'is_active' => false]);
@@ -28,19 +29,33 @@ test('track api loads habits with completion state and filters inactive ones', f
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(['data' => [
-            'isToday' => true,
-            'totalHabits' => 1,
-            'completedCount' => 1,
-        ]])
-        ->assertJsonCount(1, 'data.habits')
-        ->assertJsonPath('data.habits.0.is_completed', true)
-        ->assertJsonPath('data.habits.0.current_iteration', 1)
-        ->assertJsonPath('data.habits.0.sort_order', $habit->sort_order)
-        ->assertJsonStructure(['data' => ['translations', 'moveCompletedToEnd'], 'navigationTranslations', 'settings' => ['locale', 'theme']]);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('navigationTranslations')
+            ->has('settings', fn (AssertableJson $json): AssertableJson => $json->has('locale')
+                ->has('theme')
+                ->has('moveCompletedToEnd')
+            )
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('isToday', true)
+                ->where('totalHabits', 1)
+                ->where('completedCount', 1)
+                ->has('date')
+                ->has('dayName')
+                ->has('dateFormatted')
+                ->has('dailyNoteContent')
+                ->has('activityData')
+                ->has('translations')
+                ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json->where('is_completed', true)
+                    ->where('current_iteration', 1)
+                    ->where('sort_order', $habit->sort_order)
+                    ->has('id')
+                    ->has('name')
+                    ->has('description')
+                    ->has('iterations_required')
+                )
+            )
+        );
 });
 
-test('track api supports date navigation and clamps future dates', function (): void {
+it('supports date navigation and clamps future dates', function (): void {
     $user = User::factory()->create();
     Habit::factory()->daily()->create(['user_id' => $user->id]);
 
@@ -51,21 +66,25 @@ test('track api supports date navigation and clamps future dates', function (): 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$yesterday)
         ->assertOk()
-        ->assertJson(['data' => [
-            'date' => $yesterday,
-            'isToday' => false,
-        ]]);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $yesterday)
+            ->where('isToday', false)
+            ->etc()
+        )
+            ->etc()
+        );
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$tomorrow)
         ->assertOk()
-        ->assertJson(['data' => [
-            'date' => $today,
-            'isToday' => true,
-        ]]);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $today)
+            ->where('isToday', true)
+            ->etc()
+        )
+            ->etc()
+        );
 });
 
-test('track api includes habits with null rrule alongside daily habits', function (): void {
+it('includes habits with null rrule alongside daily habits', function (): void {
     $user = User::factory()->create();
     Habit::factory()->daily()->create(['user_id' => $user->id]);
     Habit::factory()->create(['user_id' => $user->id, 'rrule' => null]);
@@ -73,10 +92,14 @@ test('track api includes habits with null rrule alongside daily habits', functio
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonCount(2, 'data.habits');
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->has('habits', 2)
+            ->etc()
+        )
+            ->etc()
+        );
 });
 
-test('track api preserves sort order when move_completed_to_end is disabled', function (): void {
+it('preserves sort order when move_completed_to_end is disabled', function (): void {
     $user = User::factory()->create(['move_completed_to_end' => false]);
     $habit1 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => 1]);
     $habit2 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => 2]);
@@ -91,11 +114,16 @@ test('track api preserves sort order when move_completed_to_end is disabled', fu
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('data.habits.0.id', $habit1->id)
-        ->assertJsonPath('data.habits.1.id', $habit2->id);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->has('habits', 2)
+            ->where('habits.0.id', $habit1->id)
+            ->where('habits.1.id', $habit2->id)
+            ->etc()
+        )
+            ->etc()
+        );
 });
 
-test('track api includes daily note and activity data', function (): void {
+it('includes daily note and activity data', function (): void {
     $user = User::factory()->create();
 
     DailyNote::factory()->create([
@@ -114,18 +142,29 @@ test('track api includes daily note and activity data', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('data.dailyNoteContent', 'My note')
-        ->assertJsonCount(1, 'data.activityData')
-        ->assertJsonPath('data.activityData.0.completed', 3)
-        ->assertJsonPath('data.activityData.0.total', 5);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('dailyNoteContent', 'My note')
+            ->has('activityData', 1, fn (AssertableJson $json): AssertableJson => $json->where('completed', 3)
+                ->where('total', 5)
+                ->etc()
+            )
+            ->etc()
+        )
+            ->etc()
+        );
 });
 
-test('track api uses user locale for translations', function (): void {
+it('uses user locale for translations', function (): void {
     $user = User::factory()->create(['locale' => 'ru']);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJsonPath('data.translations.progress', 'Прогресс')
-        ->assertJsonPath('data.translations.today', 'Сегодня');
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->has('translations', fn (AssertableJson $json): AssertableJson => $json->where('progress', 'Прогресс')
+            ->where('today', 'Сегодня')
+            ->etc()
+        )
+            ->etc()
+        )
+            ->etc()
+        );
 });

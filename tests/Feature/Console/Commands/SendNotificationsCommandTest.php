@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Notifications\HabitReminderNotification;
 use Illuminate\Support\Facades\Notification;
 
-test('sends notification within time window', function (): void {
+it('sends notification within time window', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));
@@ -31,7 +31,7 @@ test('sends notification within time window', function (): void {
     Notification::assertSentTo($user, HabitReminderNotification::class);
 });
 
-test('skips notification outside time window', function (): void {
+it('skips notification outside time window', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(10));
@@ -50,7 +50,7 @@ test('skips notification outside time window', function (): void {
     Notification::assertNothingSent();
 });
 
-test('skips already notified today', function (): void {
+it('skips already notified today', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));
@@ -70,7 +70,7 @@ test('skips already notified today', function (): void {
     Notification::assertNothingSent();
 });
 
-test('skips when rrule does not match today', function (): void {
+it('skips when rrule does not match today', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));
@@ -95,7 +95,7 @@ test('skips when rrule does not match today', function (): void {
     Notification::assertNothingSent();
 });
 
-test('sends when habit has no rrule', function (): void {
+it('sends when habit has no rrule', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));
@@ -118,7 +118,7 @@ test('sends when habit has no rrule', function (): void {
     Notification::assertSentTo($user, HabitReminderNotification::class);
 });
 
-test('updates last_notified_at after sending', function (): void {
+it('updates last_notified_at after sending', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));
@@ -136,7 +136,7 @@ test('updates last_notified_at after sending', function (): void {
     expect($notification->refresh()->last_notified_at)->not->toBeNull();
 });
 
-test('skips inactive habit', function (): void {
+it('skips inactive habit', function (): void {
     Notification::fake();
 
     $this->travelTo(today()->addHours(9));

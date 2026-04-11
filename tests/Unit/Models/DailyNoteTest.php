@@ -5,13 +5,13 @@ declare(strict_types=1);
 use App\Models\DailyNote;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $note = DailyNote::factory()->create();
 
     expect($note->user)->toBeInstanceOf(User::class);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $note = DailyNote::factory()->create();
 
     expect($note->id)->toBeInt()

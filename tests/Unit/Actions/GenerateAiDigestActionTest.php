@@ -6,7 +6,7 @@ use App\Actions\GenerateAiDigestAction;
 use App\Models\AiDigest;
 use App\Models\User;
 
-test('returns existing digest for today', function (): void {
+it('returns existing digest for today', function (): void {
     $user = User::factory()->create();
     $digest = AiDigest::factory()->for($user)->create([
         'date' => now()->toDateString(),
@@ -19,7 +19,7 @@ test('returns existing digest for today', function (): void {
         ->and($result->id)->toBe($digest->id);
 });
 
-test('returns null when no digest exists', function (): void {
+it('returns null when no digest exists', function (): void {
     $user = User::factory()->create();
 
     $action = new GenerateAiDigestAction;

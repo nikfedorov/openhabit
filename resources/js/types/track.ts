@@ -41,7 +41,6 @@ export type TrackData = {
     habits: Habit[];
     totalHabits: number;
     completedCount: number;
-    moveCompletedToEnd: boolean;
     dailyNoteContent: string;
     activityData: ActivityDay[];
     translations: TrackTranslations;

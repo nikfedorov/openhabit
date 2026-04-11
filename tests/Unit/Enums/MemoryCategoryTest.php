@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Enums\MemoryCategory;
 
-test('has expected cases', function (): void {
+it('has expected cases', function (): void {
     expect(MemoryCategory::cases())->toHaveCount(6);
 });
 
-test('label returns correct strings', function (MemoryCategory $case, string $expected): void {
+it('returns correct strings', function (MemoryCategory $case, string $expected): void {
     expect($case->label())->toBe($expected);
 })->with([
     [MemoryCategory::LongTerm, 'Long-term observations'],

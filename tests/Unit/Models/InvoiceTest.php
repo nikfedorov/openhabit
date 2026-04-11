@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Invoice;
 
-test('premiumLink returns link for premium invoice', function (): void {
+it('returns link for premium invoice', function (): void {
     Invoice::factory()->create([
         'slug' => 'premium',
         'invoice_link' => 'https://t.me/test-link',
@@ -13,11 +13,11 @@ test('premiumLink returns link for premium invoice', function (): void {
     expect(Invoice::premiumLink())->toBe('https://t.me/test-link');
 });
 
-test('premiumLink returns null when no premium invoice exists', function (): void {
+it('returns null when no premium invoice exists', function (): void {
     expect(Invoice::premiumLink())->toBeNull();
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $invoice = Invoice::factory()->create();
 
     expect($invoice->id)->toBeInt()

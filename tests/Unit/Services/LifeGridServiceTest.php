@@ -12,7 +12,7 @@ beforeEach(function (): void {
     $this->service = resolve(LifeGridService::class);
 });
 
-test('getLifeData returns nulls without birthdate', function (): void {
+it('returns nulls without birthdate', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
 
     $result = $this->service->getLifeData($user, null, 0);
@@ -23,7 +23,7 @@ test('getLifeData returns nulls without birthdate', function (): void {
         ->yearlyActivityData->toBeNull();
 });
 
-test('getLifeData returns 52 weeks and 80 years of data with stats', function (): void {
+it('returns 52 weeks and 80 years of data with stats', function (): void {
     $birthdate = Date::parse('2000-01-15');
     $user = User::factory()->create(['birthdate' => $birthdate->toDateString()]);
     $yearStart = resolve(LifeYearCalculator::class)->getYearStart($birthdate, 0);
@@ -47,7 +47,7 @@ test('getLifeData returns 52 weeks and 80 years of data with stats', function ()
         ->and($result['yearlyActivityData'][0]['total'])->toBe(10);
 });
 
-test('getLifeData returns null weeklyActivityData without selectedYear', function (): void {
+it('returns null weeklyActivityData without selectedYear', function (): void {
     $birthdate = Date::parse('1990-01-01');
     $user = User::factory()->create(['birthdate' => $birthdate->toDateString()]);
 
@@ -57,7 +57,7 @@ test('getLifeData returns null weeklyActivityData without selectedYear', functio
         ->and($result['yearlyActivityData'])->toHaveCount(LifeGridService::TOTAL_LIFE_YEARS);
 });
 
-test('getLifeStats returns correct structure', function (): void {
+it('returns correct structure for life stats', function (): void {
     $birthdate = Date::parse('2000-01-15');
 
     $result = $this->service->getLifeStats($birthdate);

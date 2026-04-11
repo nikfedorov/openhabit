@@ -6,13 +6,13 @@ use App\Enums\StatPeriod;
 use App\Models\Stat;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $stat = Stat::factory()->create();
 
     expect($stat->user)->toBeInstanceOf(User::class);
 });
 
-test('calculateIntensity returns correct levels', function (int $completed, int $total, int $expected): void {
+it('returns correct levels', function (int $completed, int $total, int $expected): void {
     expect(Stat::calculateIntensity($completed, $total))->toBe($expected);
 })->with([
     [0, 0, 0],
@@ -24,46 +24,46 @@ test('calculateIntensity returns correct levels', function (int $completed, int 
     [10, 10, 4],
 ]);
 
-test('completion_rate attribute returns percentage', function (): void {
+it('returns completion rate as percentage', function (): void {
     $stat = Stat::factory()->create(['completed_count' => 5, 'planned_count' => 10]);
 
     expect($stat->completion_rate)->toBe(50.0);
 });
 
-test('completion_rate returns zero when total is zero', function (): void {
+it('returns zero for completion rate when total is zero', function (): void {
     $stat = Stat::factory()->create(['completed_count' => 0, 'planned_count' => 0]);
 
     expect($stat->completion_rate)->toBe(0.0);
 });
 
-test('intensity_level attribute computes from counts', function (): void {
+it('returns intensity level computed from counts', function (): void {
     $stat = Stat::factory()->create(['completed_count' => 9, 'planned_count' => 10]);
 
     expect($stat->intensity_level)->toBe(4);
 });
 
-test('daily scope filters by period', function (): void {
+it('returns daily stats when filtered by daily scope', function (): void {
     Stat::factory()->create(['period' => StatPeriod::Daily]);
     Stat::factory()->create(['period' => StatPeriod::Weekly]);
 
     expect(Stat::query()->daily()->count())->toBe(1);
 });
 
-test('weekly scope filters by period', function (): void {
+it('returns weekly stats when filtered by weekly scope', function (): void {
     Stat::factory()->create(['period' => StatPeriod::Weekly]);
     Stat::factory()->create(['period' => StatPeriod::Daily]);
 
     expect(Stat::query()->weekly()->count())->toBe(1);
 });
 
-test('yearly scope filters by period', function (): void {
+it('returns yearly stats when filtered by yearly scope', function (): void {
     Stat::factory()->create(['period' => StatPeriod::Yearly]);
     Stat::factory()->create(['period' => StatPeriod::Daily]);
 
     expect(Stat::query()->yearly()->count())->toBe(1);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $stat = Stat::factory()->create();
 
     expect($stat->id)->toBeInt()

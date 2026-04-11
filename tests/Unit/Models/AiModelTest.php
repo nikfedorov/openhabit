@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\AiModel;
 
-test('getOrdered returns active models by priority', function (): void {
+it('returns active models by priority on getOrdered', function (): void {
     AiModel::factory()->create(['is_active' => true, 'priority' => 2]);
     AiModel::factory()->create(['is_active' => true, 'priority' => 1]);
     AiModel::factory()->create(['is_active' => false, 'priority' => 0]);
@@ -15,7 +15,7 @@ test('getOrdered returns active models by priority', function (): void {
         ->and($models->first()->priority)->toBe(1);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $model = AiModel::factory()->create();
 
     expect($model->id)->toBeInt()

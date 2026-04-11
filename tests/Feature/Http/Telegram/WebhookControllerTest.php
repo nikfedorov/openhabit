@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use SergiX44\Nutgram\Nutgram;
 
-test('webhook endpoint processes telegram update', function (): void {
+it('processes telegram update', function (): void {
     $nutgram = Mockery::mock(Nutgram::class);
     $nutgram->shouldReceive('setRunningMode')->once();
     $nutgram->shouldReceive('run')->once();

@@ -6,19 +6,19 @@ use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\User;
 
-test('belongs to habit', function (): void {
+it('belongs to habit', function (): void {
     $completion = HabitCompletion::factory()->create();
 
     expect($completion->habit)->toBeInstanceOf(Habit::class);
 });
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $completion = HabitCompletion::factory()->create();
 
     expect($completion->user)->toBeInstanceOf(User::class);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $completion = HabitCompletion::factory()->create();
 
     expect($completion->id)->toBeInt()

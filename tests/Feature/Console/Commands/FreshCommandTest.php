@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use SergiX44\Nutgram\Nutgram;
 
-test('calls setup and generate-invoice-links', function (): void {
+it('calls setup and generate-invoice-links', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('setWebhook')->once();
     $bot->shouldReceive('getMe')->once()->andReturn(null);

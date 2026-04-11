@@ -6,7 +6,7 @@ use App\Http\Resources\HabitResource;
 use App\Models\Habit;
 use Illuminate\Http\Request;
 
-test('it transforms habit model into correct structure', function (): void {
+it('transforms habit model into correct structure', function (): void {
     $habit = Habit::factory()->daily()->make([
         'iterations_required' => 1,
         'sort_order' => 0,
@@ -26,7 +26,7 @@ test('it transforms habit model into correct structure', function (): void {
         ->sort_order->toBe(0);
 });
 
-test('it defaults current_iteration to zero when not set', function (): void {
+it('defaults current_iteration to zero when not set', function (): void {
     $habit = Habit::factory()->daily()->make([
         'iterations_required' => 3,
         'sort_order' => 5,

@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import Track from '@/pages/Track.vue';
+import type { UserSettings } from '@/types/api';
 import type { ActivityDay, Habit, TrackData } from '@/types/track';
 
 type TrackVm = {
@@ -104,16 +105,15 @@ export const defaultTrackData: TrackData = {
     ] as Habit[],
     totalHabits: 2,
     completedCount: 0,
-    moveCompletedToEnd: false,
     dailyNoteContent: '',
     activityData: [] as ActivityDay[],
     translations: defaultTrackTranslations,
 };
 
-export function makeTrackResponse(overrides: Partial<TrackData> = {}) {
+export function makeTrackResponse(dataOverrides: Partial<TrackData> = {}, settingsOverrides: Partial<UserSettings> = {}) {
     return {
-        data: { ...defaultTrackData, ...overrides },
+        data: { ...defaultTrackData, ...dataOverrides },
         navigationTranslations: { track: 'Track', view: 'View' },
-        settings: { locale: 'en', theme: 'system' as const },
+        settings: { locale: 'en', theme: 'system' as const, moveCompletedToEnd: false, ...settingsOverrides },
     };
 }

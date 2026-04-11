@@ -5,8 +5,9 @@ declare(strict_types=1);
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\User;
+use Illuminate\Testing\Fluent\AssertableJson;
 
-test('toggle creates, increments, and deletes completion through full cycle', function (): void {
+it('creates, increments, and deletes completion through full cycle', function (): void {
     $user = User::factory()->create();
     $habit = Habit::factory()->daily()->create(['user_id' => $user->id, 'iterations_required' => 2]);
     $date = now()->toDateString();
@@ -15,7 +16,30 @@ test('toggle creates, increments, and deletes completion through full cycle', fu
     $this->actingAs($user, 'sanctum')
         ->postJson('/api/track/toggle', ['habit_id' => $habit->id, 'date' => $date])
         ->assertOk()
-        ->assertJsonStructure(['data' => ['habits', 'totalHabits', 'completedCount']]);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('navigationTranslations')
+            ->has('settings', fn (AssertableJson $json): AssertableJson => $json->has('locale')
+                ->has('theme')
+                ->has('moveCompletedToEnd')
+            )
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('isToday', true)
+                ->where('totalHabits', 1)
+                ->has('completedCount')
+                ->has('date')
+                ->has('dayName')
+                ->has('dateFormatted')
+                ->has('dailyNoteContent')
+                ->has('activityData')
+                ->has('translations')
+                ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json->where('current_iteration', 1)
+                    ->has('id')
+                    ->has('name')
+                    ->has('description')
+                    ->has('iterations_required')
+                    ->has('is_completed')
+                    ->has('sort_order')
+                )
+            )
+        );
 
     $this->assertDatabaseHas('habit_completions', [
         'habit_id' => $habit->id,
@@ -43,7 +67,7 @@ test('toggle creates, increments, and deletes completion through full cycle', fu
     $this->assertDatabaseMissing('habit_completions', ['id' => $completionId]);
 });
 
-test('toggle rejects unauthorized and invalid requests', function (): void {
+it('rejects unauthorized and invalid requests', function (): void {
     $user = User::factory()->create();
     $otherHabit = Habit::factory()->daily()->create();
     $habit = Habit::factory()->daily()->create(['user_id' => $user->id]);

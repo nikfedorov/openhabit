@@ -10,7 +10,7 @@ use App\Notifications\AiDigestNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
-test('sends notification when digest is generated', function (): void {
+it('sends notification when digest is generated', function (): void {
     Notification::fake();
 
     $user = User::factory()->create(['locale' => 'en']);
@@ -27,7 +27,7 @@ test('sends notification when digest is generated', function (): void {
     Notification::assertSentTo($user, AiDigestNotification::class);
 });
 
-test('does not send notification when no digest generated', function (): void {
+it('does not send notification when no digest generated', function (): void {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -40,7 +40,7 @@ test('does not send notification when no digest generated', function (): void {
     Notification::assertNothingSent();
 });
 
-test('logs warning when user not found', function (): void {
+it('logs warning when user not found', function (): void {
     $action = new GenerateAiDigestAction;
 
     $job = new SendAiDigestJob('00000000-0000-0000-0000-000000000000');
@@ -52,19 +52,19 @@ test('logs warning when user not found', function (): void {
     $job->handle($action);
 });
 
-test('returns correct unique id', function (): void {
+it('returns correct unique id', function (): void {
     $job = new SendAiDigestJob('test-user-id');
 
     expect($job->uniqueId())->toBe('test-user-id');
 });
 
-test('returns correct tags', function (): void {
+it('returns correct tags', function (): void {
     $job = new SendAiDigestJob('test-user-id');
 
     expect($job->tags())->toBe(['ai-digest', 'user:test-user-id']);
 });
 
-test('is dispatched on ai-digests queue', function (): void {
+it('dispatches on ai-digests queue', function (): void {
     $job = new SendAiDigestJob('test-user-id');
 
     expect($job->queue)->toBe('ai-digests');

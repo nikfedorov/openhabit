@@ -8,7 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
-test('dispatches job for eligible user', function (): void {
+it('dispatches job for eligible user', function (): void {
     Queue::fake();
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
@@ -26,7 +26,7 @@ test('dispatches job for eligible user', function (): void {
     Queue::assertPushed(SendAiDigestJob::class, fn (SendAiDigestJob $job): bool => $job->userId === $user->id);
 });
 
-test('skips user without premium', function (): void {
+it('skips user without premium', function (): void {
     Queue::fake();
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
@@ -45,7 +45,7 @@ test('skips user without premium', function (): void {
     Queue::assertNothingPushed();
 });
 
-test('skips user already digested today', function (): void {
+it('skips user already digested today', function (): void {
     Queue::fake();
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
@@ -64,7 +64,7 @@ test('skips user already digested today', function (): void {
     Queue::assertNothingPushed();
 });
 
-test('skips user before digest time', function (): void {
+it('skips user before digest time', function (): void {
     Queue::fake();
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
@@ -82,7 +82,7 @@ test('skips user before digest time', function (): void {
     Queue::assertNothingPushed();
 });
 
-test('skips user without ai_digest_time', function (): void {
+it('skips user without ai_digest_time', function (): void {
     Queue::fake();
 
     User::factory()->telegram()->premium()->create([

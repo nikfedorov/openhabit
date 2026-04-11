@@ -6,46 +6,46 @@ use App\Models\Category;
 use App\Models\Habit;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $category = Category::factory()->create();
 
     expect($category->user)->toBeInstanceOf(User::class);
 });
 
-test('has many habits', function (): void {
+it('has many habits', function (): void {
     $category = Category::factory()->create();
     Habit::factory()->for($category)->create();
 
     expect($category->habits)->toHaveCount(1);
 });
 
-test('isFranklinVirtues returns true for matching slug', function (): void {
+it('returns true for matching slug on isFranklinVirtues', function (): void {
     $category = Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
 
     expect($category->isFranklinVirtues())->toBeTrue();
 });
 
-test('isFranklinVirtues returns false for other slug', function (): void {
+it('returns false for other slug on isFranklinVirtues', function (): void {
     $category = Category::factory()->create(['slug' => 'other']);
 
     expect($category->isFranklinVirtues())->toBeFalse();
 });
 
-test('active scope filters active categories', function (): void {
+it('filters correctly with active scope', function (): void {
     Category::factory()->create(['is_active' => true]);
     Category::factory()->create(['is_active' => false]);
 
     expect(Category::query()->active()->count())->toBe(1);
 });
 
-test('excludingFranklinVirtues scope filters correctly', function (): void {
+it('filters correctly with excludingFranklinVirtues scope', function (): void {
     Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
     Category::factory()->create(['slug' => 'other']);
 
     expect(Category::query()->excludingFranklinVirtues()->count())->toBe(1);
 });
 
-test('ordered scope orders by sort_order', function (): void {
+it('orders correctly with ordered scope', function (): void {
     Category::factory()->create(['sort_order' => 2]);
     Category::factory()->create(['sort_order' => 1]);
 
@@ -54,7 +54,7 @@ test('ordered scope orders by sort_order', function (): void {
     expect($categories->first()->sort_order)->toBe(1);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $category = Category::factory()->create();
 
     expect($category->id)->toBeInt()

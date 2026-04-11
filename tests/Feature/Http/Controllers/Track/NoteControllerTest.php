@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\DailyNote;
 use App\Models\User;
 
-test('daily note can be created, updated, and deleted via empty content', function (): void {
+it('creates, updates, and deletes daily note via empty content', function (): void {
     $user = User::factory()->create();
     $date = now()->toDateString();
 
@@ -38,7 +38,7 @@ test('daily note can be created, updated, and deleted via empty content', functi
     expect(DailyNote::query()->where('user_id', $user->id)->count())->toBe(0);
 });
 
-test('daily note rejects content over 5000 chars', function (): void {
+it('rejects content over 5000 chars', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user, 'sanctum')

@@ -6,7 +6,7 @@ use App\Http\Resources\CommonResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-test('it returns navigation translations', function (): void {
+it('returns navigation translations', function (): void {
     $user = User::factory()->make();
 
     $resource = new CommonResource($user);

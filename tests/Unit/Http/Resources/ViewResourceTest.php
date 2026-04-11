@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Http\Resources\ViewResource;
 use Illuminate\Http\Request;
 
-test('toArray maps all resource fields', function (): void {
+it('maps all resource fields', function (): void {
     $data = [
         'tab' => 'week',
         'weekStart' => '2024-01-08',

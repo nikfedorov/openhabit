@@ -8,59 +8,59 @@ use App\Models\HabitCompletion;
 use App\Models\HabitNotification;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $habit = Habit::factory()->create();
 
     expect($habit->user)->toBeInstanceOf(User::class);
 });
 
-test('belongs to category', function (): void {
+it('belongs to category', function (): void {
     $category = Category::factory()->create();
     $habit = Habit::factory()->for($category)->create();
 
     expect($habit->category)->toBeInstanceOf(Category::class);
 });
 
-test('has many completions', function (): void {
+it('has many completions', function (): void {
     $habit = Habit::factory()->create();
     HabitCompletion::factory()->for($habit)->create();
 
     expect($habit->completions)->toHaveCount(1);
 });
 
-test('has many notifications', function (): void {
+it('has many notifications', function (): void {
     $habit = Habit::factory()->create();
     HabitNotification::factory()->for($habit)->create();
 
     expect($habit->notifications)->toHaveCount(1);
 });
 
-test('isFranklinVirtue returns true when category is franklin virtues', function (): void {
+it('returns true when category is franklin virtues', function (): void {
     $category = Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
     $habit = Habit::factory()->for($category)->create();
 
     expect($habit->isFranklinVirtue())->toBeTrue();
 });
 
-test('isFranklinVirtue returns false without matching category', function (): void {
+it('returns false without matching category', function (): void {
     $habit = Habit::factory()->create(['category_id' => null]);
 
     expect($habit->isFranklinVirtue())->toBeFalse();
 });
 
-test('getTranslation falls back to any available locale', function (): void {
+it('falls back to any available locale on getTranslation', function (): void {
     $habit = Habit::factory()->create(['name' => ['fr' => 'Habitude']]);
 
     expect($habit->getTranslation('name', 'de'))->toBe('Habitude');
 });
 
-test('getTranslation returns empty fallback when all translations empty', function (): void {
+it('returns empty fallback when all translations empty on getTranslation', function (): void {
     $habit = Habit::factory()->create(['name' => ['en' => '']]);
 
     expect($habit->getTranslation('name', 'de'))->toBe('');
 });
 
-test('getTranslation returns normal translation when available', function (): void {
+it('returns normal translation when available on getTranslation', function (): void {
     $habit = Habit::factory()->create();
     $habit->setTranslation('name', 'en', 'My Habit');
     $habit->save();
@@ -68,7 +68,7 @@ test('getTranslation returns normal translation when available', function (): vo
     expect($habit->getTranslation('name', 'en'))->toBe('My Habit');
 });
 
-test('delete force deletes when no completions exist', function (): void {
+it('force deletes when no completions exist', function (): void {
     $habit = Habit::factory()->create();
 
     $habit->delete();
@@ -76,7 +76,7 @@ test('delete force deletes when no completions exist', function (): void {
     expect(Habit::withTrashed()->find($habit->id))->toBeNull();
 });
 
-test('delete soft deletes when completions exist', function (): void {
+it('soft deletes when completions exist', function (): void {
     $habit = Habit::factory()->create();
     HabitCompletion::factory()->for($habit)->create();
 
@@ -86,7 +86,7 @@ test('delete soft deletes when completions exist', function (): void {
         ->and(Habit::query()->find($habit->id))->toBeNull();
 });
 
-test('ordered scope orders by sort_order', function (): void {
+it('orders correctly with ordered scope', function (): void {
     $user = User::factory()->create();
     Habit::factory()->for($user)->create(['sort_order' => 2]);
     Habit::factory()->for($user)->create(['sort_order' => 1]);
@@ -96,7 +96,7 @@ test('ordered scope orders by sort_order', function (): void {
     expect($habits->first()->sort_order)->toBe(1);
 });
 
-test('franklinVirtues scope filters correctly', function (): void {
+it('filters correctly with franklinVirtues scope', function (): void {
     $category = Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
     Habit::factory()->for($category)->create();
     Habit::factory()->create(['category_id' => null]);
@@ -104,7 +104,7 @@ test('franklinVirtues scope filters correctly', function (): void {
     expect(Habit::query()->franklinVirtues()->count())->toBe(1);
 });
 
-test('excludingFranklinVirtues scope filters correctly', function (): void {
+it('filters correctly with excludingFranklinVirtues scope', function (): void {
     $category = Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
     Habit::factory()->for($category)->create();
     Habit::factory()->create(['category_id' => null]);
@@ -112,7 +112,7 @@ test('excludingFranklinVirtues scope filters correctly', function (): void {
     expect(Habit::query()->excludingFranklinVirtues()->count())->toBe(1);
 });
 
-test('activeOrCompletedDuring scope includes active and completed habits', function (): void {
+it('includes active and completed habits with activeOrCompletedDuring scope', function (): void {
     $user = User::factory()->create();
     $active = Habit::factory()->for($user)->create(['is_active' => true]);
     $deleted = Habit::factory()->for($user)->create(['is_active' => false]);
@@ -127,7 +127,7 @@ test('activeOrCompletedDuring scope includes active and completed habits', funct
     expect($count)->toBe(2);
 });
 
-test('franklinVirtuesFirst scope orders correctly', function (): void {
+it('orders correctly with franklinVirtuesFirst scope', function (): void {
     $user = User::factory()->create();
     $franklinCategory = Category::factory()->for($user)->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
     $otherCategory = Category::factory()->for($user)->create(['slug' => 'other']);
@@ -140,7 +140,7 @@ test('franklinVirtuesFirst scope orders correctly', function (): void {
     expect($habits->first()->category_id)->toBe($franklinCategory->id);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $habit = Habit::factory()->create();
 
     expect($habit->id)->toBeInt()

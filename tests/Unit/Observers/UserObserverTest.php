@@ -7,14 +7,14 @@ use App\Models\CategoryTemplate;
 use App\Models\HabitTemplate;
 use App\Models\User;
 
-test('creating event sets ai_tone_id when null', function (): void {
+it('sets ai_tone_id when null', function (): void {
     $tone = AiTone::factory()->create();
     $user = User::factory()->create(['ai_tone_id' => null]);
 
     expect($user->refresh()->ai_tone_id)->toBe($tone->id);
 });
 
-test('creating event preserves existing ai_tone_id', function (): void {
+it('preserves existing ai_tone_id when creating event', function (): void {
     AiTone::factory()->create();
     $tone2 = AiTone::factory()->create();
     $user = User::factory()->create(['ai_tone_id' => $tone2->id]);
@@ -22,7 +22,7 @@ test('creating event preserves existing ai_tone_id', function (): void {
     expect($user->refresh()->ai_tone_id)->toBe($tone2->id);
 });
 
-test('created event applies templates to user', function (): void {
+it('applies templates to user when created', function (): void {
     $categoryTemplate = CategoryTemplate::factory()->create([
         'is_active' => true,
         'copy_by_default' => true,

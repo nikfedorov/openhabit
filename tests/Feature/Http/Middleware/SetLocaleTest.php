@@ -8,7 +8,7 @@ beforeEach(function (): void {
     $this->user = User::factory()->create(['locale' => 'ru']);
 });
 
-test('sets app locale from authenticated user locale', function (): void {
+it('sets app locale from authenticated user locale', function (): void {
     $this->actingAs($this->user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk();
@@ -16,7 +16,7 @@ test('sets app locale from authenticated user locale', function (): void {
     expect(app()->getLocale())->toBe('ru');
 });
 
-test('keeps default locale for missing, invalid, or unauthenticated locale', function (?Closure $setup, string $method): void {
+it('keeps default locale for missing, invalid, or unauthenticated locale', function (?Closure $setup, string $method): void {
     if ($setup instanceof Closure) {
         $setup($this->user);
     }

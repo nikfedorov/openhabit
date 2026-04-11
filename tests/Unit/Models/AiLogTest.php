@@ -5,13 +5,13 @@ declare(strict_types=1);
 use App\Models\AiLog;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $log = AiLog::factory()->create();
 
     expect($log->user)->toBeInstanceOf(User::class);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $log = AiLog::factory()->create();
 
     expect($log->id)->toBeInt()

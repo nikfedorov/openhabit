@@ -30,19 +30,19 @@ function makeWebAppData(WebAppUser $user): WebAppData
     return $data;
 }
 
-test('telegram miniapp page loads', function (): void {
+it('loads telegram miniapp page', function (): void {
     $this->get('/telegram-miniapp')
         ->assertOk()
         ->assertSee('Loading...');
 });
 
-test('telegram miniapp auth rejects missing init data', function (): void {
+it('rejects missing init data', function (): void {
     $this->postJson('/telegram-miniapp/auth')
         ->assertUnauthorized()
         ->assertJson(['error' => 'Missing init data']);
 });
 
-test('telegram miniapp auth rejects invalid init data', function (): void {
+it('rejects invalid init data', function (): void {
     $nutgram = Mockery::mock(Nutgram::class);
     $nutgram->shouldReceive('validateWebAppData')
         ->once()
@@ -57,7 +57,7 @@ test('telegram miniapp auth rejects invalid init data', function (): void {
         ->assertJson(['error' => 'Invalid init data']);
 });
 
-test('telegram miniapp auth rejects data without user', function (): void {
+it('rejects data without user', function (): void {
     $webAppData = new WebAppData;
     $webAppData->user = null;
     $webAppData->auth_date = Date::now()->toDateTime();
@@ -77,7 +77,7 @@ test('telegram miniapp auth rejects data without user', function (): void {
         ->assertJson(['error' => 'User data not found']);
 });
 
-test('telegram miniapp auth creates user and logs in', function (): void {
+it('creates user and logs in', function (): void {
     $webAppUser = makeWebAppUser(123456789, 'John', 'Doe');
     $webAppData = makeWebAppData($webAppUser);
 
@@ -106,7 +106,7 @@ test('telegram miniapp auth creates user and logs in', function (): void {
         ->and($user->tokens()->count())->toBe(1);
 });
 
-test('telegram miniapp auth logs in existing user', function (): void {
+it('logs in existing user', function (): void {
     $existingUser = User::factory()->telegram()->create([
         'telegram_id' => '987654321',
         'name' => 'Existing User',
@@ -133,12 +133,12 @@ test('telegram miniapp auth logs in existing user', function (): void {
         ->and($existingUser->tokens()->count())->toBe(1);
 });
 
-test('api user endpoint requires authentication', function (): void {
+it('requires authentication', function (): void {
     $this->getJson('/api/user')
         ->assertUnauthorized();
 });
 
-test('api user endpoint returns authenticated user', function (): void {
+it('returns authenticated user', function (): void {
     $user = User::factory()->telegram()->create();
 
     $this->actingAs($user, 'sanctum')

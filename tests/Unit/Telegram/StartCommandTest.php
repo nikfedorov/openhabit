@@ -7,7 +7,7 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\User\User as TelegramUser;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
-test('start command creates new user and sends welcome', function (): void {
+it('creates new user and sends welcome', function (): void {
     /** @var FakeNutgram $bot */
     $bot = resolve(Nutgram::class);
 
@@ -18,7 +18,7 @@ test('start command creates new user and sends welcome', function (): void {
     expect(User::query()->count())->toBe(1);
 });
 
-test('start command welcomes back existing user', function (): void {
+it('welcomes back existing user', function (): void {
     /** @var FakeNutgram $bot */
     $bot = resolve(Nutgram::class);
 
@@ -37,7 +37,7 @@ test('start command welcomes back existing user', function (): void {
     expect(User::query()->count())->toBe(1);
 });
 
-test('start command updates blank name and locale for existing user', function (): void {
+it('updates blank name and locale for existing user', function (): void {
     /** @var FakeNutgram $bot */
     $bot = resolve(Nutgram::class);
 

@@ -6,7 +6,7 @@ use App\Http\Resources\TrackResource;
 use App\Models\Habit;
 use Illuminate\Http\Request;
 
-test('it transforms track data with habits as resources', function (): void {
+it('transforms track data with habits as resources', function (): void {
     $habit1 = Habit::factory()->daily()->make([
         'iterations_required' => 1,
         'sort_order' => 0,
@@ -29,7 +29,6 @@ test('it transforms track data with habits as resources', function (): void {
         'habits' => collect([$habit1, $habit2]),
         'totalHabits' => 2,
         'completedCount' => 1,
-        'moveCompletedToEnd' => false,
         'dailyNoteContent' => 'Great day',
         'activityData' => [
             ['date' => '2025-01-15', 'percentage' => 50.0, 'completed' => 1, 'total' => 2, 'intensity' => 2],
@@ -46,13 +45,12 @@ test('it transforms track data with habits as resources', function (): void {
         ->isToday->toBeFalse()
         ->totalHabits->toBe(2)
         ->completedCount->toBe(1)
-        ->moveCompletedToEnd->toBeFalse()
         ->dailyNoteContent->toBe('Great day');
 
     expect($result['activityData'])->toHaveCount(1);
     expect($result['translations'])->toBe(['progress' => 'Progress']);
 });
 
-test('it wraps response in data key', function (): void {
+it('wraps response in data key', function (): void {
     expect(TrackResource::$wrap)->toBe('data');
 });

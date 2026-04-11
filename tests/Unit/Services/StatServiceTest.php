@@ -15,7 +15,7 @@ beforeEach(function (): void {
     $this->service = new StatService(new RRuleService, new LifeYearCalculator);
 });
 
-test('recalculateDailyStat creates daily stat', function (): void {
+it('returns daily stat for recalculateDailyStat', function (): void {
     $user = User::factory()->create();
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
 
@@ -26,7 +26,7 @@ test('recalculateDailyStat creates daily stat', function (): void {
         ->and($stat->completed_count)->toBe(0);
 });
 
-test('recalculateDailyStat updates existing stat', function (): void {
+it('updates existing stat for recalculateDailyStat', function (): void {
     $user = User::factory()->create();
     Stat::factory()->for($user)->create([
         'period' => StatPeriod::Daily,
@@ -42,7 +42,7 @@ test('recalculateDailyStat updates existing stat', function (): void {
     expect(Stat::query()->where('user_id', $user->id)->where('period', StatPeriod::Daily)->count())->toBe(1);
 });
 
-test('recalculateWeeklyStat creates weekly stat', function (): void {
+it('creates weekly stat for recalculateWeeklyStat', function (): void {
     $user = User::factory()->create();
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
 
@@ -52,7 +52,7 @@ test('recalculateWeeklyStat creates weekly stat', function (): void {
         ->and($stat->planned_count)->toBeGreaterThan(0);
 });
 
-test('recalculateWeeklyStat updates existing stat', function (): void {
+it('updates existing stat for recalculateWeeklyStat', function (): void {
     $user = User::factory()->create();
     Stat::factory()->for($user)->create([
         'period' => StatPeriod::Weekly,
@@ -66,7 +66,7 @@ test('recalculateWeeklyStat updates existing stat', function (): void {
     expect($stat->planned_count)->toBeGreaterThan(0);
 });
 
-test('recalculateForDate recalculates daily and weekly', function (): void {
+it('recalculates daily and weekly stats for recalculateForDate', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
 
@@ -75,7 +75,7 @@ test('recalculateForDate recalculates daily and weekly', function (): void {
     expect(Stat::query()->where('user_id', $user->id)->count())->toBe(2);
 });
 
-test('recalculateForDate includes yearly when user has birthdate', function (): void {
+it('includes yearly stat for recalculateForDate when user has birthdate', function (): void {
     $user = User::factory()->create(['birthdate' => now()->subYears(25)]);
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
 
@@ -84,7 +84,7 @@ test('recalculateForDate includes yearly when user has birthdate', function (): 
     expect(Stat::query()->where('user_id', $user->id)->where('period', StatPeriod::Yearly)->count())->toBe(1);
 });
 
-test('countPlannedHabitsForDate counts matching habits', function (): void {
+it('counts planned habits for date', function (): void {
     $user = User::factory()->create();
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => null]);
@@ -93,7 +93,7 @@ test('countPlannedHabitsForDate counts matching habits', function (): void {
     expect($this->service->countPlannedHabitsForDate($user, now()))->toBe(1);
 });
 
-test('countCompletedHabitsForDate counts fully completed habits', function (): void {
+it('counts completed habits for date', function (): void {
     $user = User::factory()->create();
     $habit = Habit::factory()->for($user)->create(['iterations_required' => 1]);
     HabitCompletion::factory()->for($habit)->for($user)->create([
@@ -104,7 +104,7 @@ test('countCompletedHabitsForDate counts fully completed habits', function (): v
     expect($this->service->countCompletedHabitsForDate($user, now()))->toBe(1);
 });
 
-test('countCompletedHabitsForDate ignores partially completed', function (): void {
+it('ignores partially completed habits for countCompletedHabitsForDate', function (): void {
     $user = User::factory()->create();
     $habit = Habit::factory()->for($user)->create(['iterations_required' => 3]);
     HabitCompletion::factory()->for($habit)->for($user)->create([
@@ -115,7 +115,7 @@ test('countCompletedHabitsForDate ignores partially completed', function (): voi
     expect($this->service->countCompletedHabitsForDate($user, now()))->toBe(0);
 });
 
-test('countPlannedHabitsForRange counts across date range', function (): void {
+it('counts planned habits for range', function (): void {
     $user = User::factory()->create();
     Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY']);
 
@@ -125,7 +125,7 @@ test('countPlannedHabitsForRange counts across date range', function (): void {
     expect($this->service->countPlannedHabitsForRange($user, $start, $end))->toBe(7);
 });
 
-test('countCompletedHabitsForRange counts across date range', function (): void {
+it('counts completed habits for range', function (): void {
     $user = User::factory()->create();
     $habit = Habit::factory()->for($user)->create(['iterations_required' => 1]);
     HabitCompletion::factory()->for($habit)->for($user)->create([
@@ -142,7 +142,7 @@ test('countCompletedHabitsForRange counts across date range', function (): void 
     expect($count)->toBe(2);
 });
 
-test('recalculateYearlyStat creates yearly stat from weekly aggregation', function (): void {
+it('creates yearly stat from weekly aggregation for recalculateYearlyStat', function (): void {
     $birthdate = now()->subYears(25);
     $user = User::factory()->create(['birthdate' => $birthdate]);
 
@@ -160,7 +160,7 @@ test('recalculateYearlyStat creates yearly stat from weekly aggregation', functi
         ->and($stat->completed_count)->toBe(5);
 });
 
-test('recalculateYearlyStat updates existing yearly stat', function (): void {
+it('updates existing yearly stat for recalculateYearlyStat', function (): void {
     $birthdate = now()->subYears(25);
     $user = User::factory()->create(['birthdate' => $birthdate]);
     $lifeYearCalc = new LifeYearCalculator;

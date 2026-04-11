@@ -9,7 +9,7 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 use SergiX44\Nutgram\Telegram\Types\User\User as TelegramUser;
 
-test('sets up webhook and saves bot info', function (): void {
+it('sets up webhook and saves bot info', function (): void {
     $telegramUser = Mockery::mock(TelegramUser::class);
     $telegramUser->id = 12345;
     $telegramUser->username = 'test_bot';
@@ -28,7 +28,7 @@ test('sets up webhook and saves bot info', function (): void {
         ->and(Setting::getValue('telegram_bot_username'))->toBe('test_bot');
 });
 
-test('handles connect exception for webhook', function (): void {
+it('handles connect exception for webhook', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('setWebhook')
         ->andThrow(new ConnectException(
@@ -43,7 +43,7 @@ test('handles connect exception for webhook', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles telegram exception for webhook', function (): void {
+it('handles telegram exception for webhook', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('setWebhook')
         ->andThrow(new TelegramException('Bad Request: webhook is already set'));
@@ -55,7 +55,7 @@ test('handles telegram exception for webhook', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles connect exception for bot info', function (): void {
+it('handles connect exception for bot info', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('setWebhook')->once();
     $bot->shouldReceive('getMe')->once()->andThrow(new ConnectException(
@@ -69,7 +69,7 @@ test('handles connect exception for bot info', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles telegram exception for bot info', function (): void {
+it('handles telegram exception for bot info', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('setWebhook')->once();
     $bot->shouldReceive('getMe')->once()->andReturn(null);
@@ -80,7 +80,7 @@ test('handles telegram exception for bot info', function (): void {
         ->assertExitCode(0);
 });
 
-test('includes secret token when safe mode enabled', function (): void {
+it('includes secret token when safe mode enabled', function (): void {
     config(['nutgram.safe_mode' => true]);
 
     $telegramUser = Mockery::mock(TelegramUser::class);

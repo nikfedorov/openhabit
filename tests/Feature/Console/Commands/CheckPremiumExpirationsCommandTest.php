@@ -7,7 +7,7 @@ use App\Models\HabitNotification;
 use App\Models\Setting;
 use App\Models\User;
 
-test('reports zero when no expired users', function (): void {
+it('reports zero when no expired users', function (): void {
     User::factory()->premium()->create();
 
     $this->artisan('app:check-premium-expirations')
@@ -15,7 +15,7 @@ test('reports zero when no expired users', function (): void {
         ->assertExitCode(0);
 });
 
-test('clears ai_digest_time for expired users', function (): void {
+it('clears ai_digest_time for expired users', function (): void {
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
     $user = User::factory()->create([
@@ -30,7 +30,7 @@ test('clears ai_digest_time for expired users', function (): void {
     expect($user->refresh()->ai_digest_time)->toBeNull();
 });
 
-test('deactivates extra notifications for expired users', function (): void {
+it('deactivates extra notifications for expired users', function (): void {
     Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
 
     $user = User::factory()->create([
@@ -49,7 +49,7 @@ test('deactivates extra notifications for expired users', function (): void {
         ->and($notif3->refresh()->is_active)->toBeFalse();
 });
 
-test('ignores users with active premium', function (): void {
+it('ignores users with active premium', function (): void {
     $user = User::factory()->premium()->create([
         'ai_digest_time' => '09:00',
     ]);

@@ -4,45 +4,65 @@ declare(strict_types=1);
 
 use App\Models\Habit;
 use App\Models\User;
+use Illuminate\Testing\Fluent\AssertableJson;
 
-test('show returns 401 for unauthenticated user', function (): void {
+it('returns 401 for unauthenticated user', function (): void {
     $this->getJson('/api/view')->assertUnauthorized();
 });
 
-test('show returns view data for authenticated user', function (): void {
+it('returns view data for authenticated user', function (): void {
     $user = User::factory()->create(['birthdate' => '1990-01-15']);
     Habit::factory()->daily()->create(['user_id' => $user->id]);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/view')
         ->assertOk()
-        ->assertJsonStructure([
-            'data' => [
-                'tab', 'weekStart', 'weekEnd', 'weekStartFormatted', 'weekEndFormatted',
-                'weekEndFormattedFull', 'weekYear', 'isCurrentWeek',
-                'franklinGrid' => ['week_start', 'week_end', 'days', 'regular_habits', 'franklin_habits'],
-                'selectedYear', 'birthdate', 'currentAge', 'lifeStats',
-                'weeklyActivityData', 'yearlyActivityData',
-                'translations',
-            ],
-            'navigationTranslations', 'settings' => ['locale', 'theme'],
-        ])
-        ->assertJsonPath('data.tab', 'week')
-        ->assertJsonPath('data.isCurrentWeek', true);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('navigationTranslations')
+            ->has('settings', fn (AssertableJson $json): AssertableJson => $json->has('locale')
+                ->has('theme')
+                ->has('moveCompletedToEnd')
+            )
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('tab', 'week')
+                ->where('isCurrentWeek', true)
+                ->has('weekStart')
+                ->has('weekEnd')
+                ->has('weekStartFormatted')
+                ->has('weekEndFormatted')
+                ->has('weekEndFormattedFull')
+                ->has('weekYear')
+                ->has('franklinGrid', fn (AssertableJson $json): AssertableJson => $json->has('week_start')
+                    ->has('week_end')
+                    ->has('days')
+                    ->has('regular_habits')
+                    ->has('franklin_habits')
+                )
+                ->has('selectedYear')
+                ->has('birthdate')
+                ->has('currentAge')
+                ->has('lifeStats')
+                ->has('weeklyActivityData')
+                ->has('yearlyActivityData')
+                ->has('translations')
+            )
+        );
 });
 
-test('show accepts tab, week, and year parameters', function (): void {
+it('accepts tab, week, and year parameters', function (): void {
     $user = User::factory()->create(['birthdate' => '1990-01-15']);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/view?tab=year&week=2024-01-08&year=5')
         ->assertOk()
-        ->assertJsonPath('data.tab', 'year')
-        ->assertJsonPath('data.weekStart', '2024-01-08')
-        ->assertJsonPath('data.selectedYear', 5);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('tab', 'year')
+            ->where('weekStart', '2024-01-08')
+            ->where('selectedYear', 5)
+            ->etc()
+        )
+            ->etc()
+        );
 });
 
-test('show validates parameters', function (string $query, string $errorField): void {
+it('validates parameters', function (string $query, string $errorField): void {
     $user = User::factory()->create();
 
     $this->actingAs($user, 'sanctum')
@@ -55,13 +75,17 @@ test('show validates parameters', function (string $query, string $errorField): 
     'invalid week date' => ['week=not-a-date', 'week'],
 ]);
 
-test('show returns null life data when user has no birthdate', function (): void {
+it('returns null life data when user has no birthdate', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/view')
         ->assertOk()
-        ->assertJsonPath('data.birthdate', null)
-        ->assertJsonPath('data.currentAge', null)
-        ->assertJsonPath('data.lifeStats', null);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->whereNull('birthdate')
+            ->whereNull('currentAge')
+            ->whereNull('lifeStats')
+            ->etc()
+        )
+            ->etc()
+        );
 });

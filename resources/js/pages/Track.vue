@@ -24,8 +24,9 @@ const emit = defineEmits<{
 }>();
 
 const data = ref<TrackData | null>(null);
+const settings = ref<UserSettings>({ locale: 'en', theme: 'system', moveCompletedToEnd: false });
 const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
-const { pendingHabitIds, toggle: onToggleHabit } = useHabitToggle(data);
+const { pendingHabitIds, toggle: onToggleHabit } = useHabitToggle(data, settings);
 
 async function loadTrack(date?: string) {
     if (date && data.value) {
@@ -38,6 +39,7 @@ async function loadTrack(date?: string) {
         `/api/track${query}`,
     );
     data.value = response.data;
+    settings.value = response.settings;
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
     emit('ready');

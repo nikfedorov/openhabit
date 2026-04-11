@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Observers\HabitCompletionObserver;
 use App\Services\StatService;
 
-test('creating completion triggers stat recalculation', function (): void {
+it('triggers stat recalculation for created completion', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
     $habit = Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY', 'iterations_required' => 1]);
 
@@ -23,7 +23,7 @@ test('creating completion triggers stat recalculation', function (): void {
         ->and(Stat::query()->where('user_id', $user->id)->where('period', StatPeriod::Weekly)->exists())->toBeTrue();
 });
 
-test('deleting completion triggers stat recalculation', function (): void {
+it('triggers stat recalculation for deleted completion', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
     $habit = Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY', 'iterations_required' => 1]);
     $completion = HabitCompletion::factory()->for($habit)->for($user)->create([
@@ -39,7 +39,7 @@ test('deleting completion triggers stat recalculation', function (): void {
         ->and($dailyStat->completed_count)->toBe(0);
 });
 
-test('updating completion triggers stat recalculation', function (): void {
+it('triggers stat recalculation for updated completion', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
     $habit = Habit::factory()->for($user)->create(['is_active' => true, 'rrule' => 'FREQ=DAILY', 'iterations_required' => 1]);
     $completion = HabitCompletion::factory()->for($habit)->for($user)->create([
@@ -52,7 +52,7 @@ test('updating completion triggers stat recalculation', function (): void {
     expect(Stat::query()->where('user_id', $user->id)->where('period', StatPeriod::Daily)->exists())->toBeTrue();
 });
 
-test('observer handles null user gracefully', function (): void {
+it('handles null user gracefully', function (): void {
     $completion = new HabitCompletion;
     $completion->completed_at = now()->toDateString();
 

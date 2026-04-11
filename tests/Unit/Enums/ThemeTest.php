@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Enums\Theme;
 
-test('has expected cases', function (): void {
+it('has expected cases', function (): void {
     expect(Theme::cases())->toHaveCount(3);
 });
 
-test('getLabel returns correct strings', function (Theme $case, string $expected): void {
+it('returns correct strings', function (Theme $case, string $expected): void {
     expect($case->getLabel())->toBe($expected);
 })->with([
     [Theme::Light, 'Light'],
@@ -16,7 +16,7 @@ test('getLabel returns correct strings', function (Theme $case, string $expected
     [Theme::System, 'System'],
 ]);
 
-test('getIcon returns correct icons', function (Theme $case, string $expected): void {
+it('returns correct icons', function (Theme $case, string $expected): void {
     expect($case->getIcon())->toBe($expected);
 })->with([
     [Theme::Light, 'sun'],

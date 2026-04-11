@@ -10,7 +10,7 @@ beforeEach(function (): void {
     $this->action = resolve(IndexAction::class);
 });
 
-test('handle returns complete data structure with defaults', function (): void {
+it('returns complete data structure with defaults', function (): void {
     $user = User::factory()->create(['birthdate' => '1990-01-15']);
     Habit::factory()->daily()->create(['user_id' => $user->id]);
 
@@ -31,7 +31,7 @@ test('handle returns complete data structure with defaults', function (): void {
         ->and($result['translations'])->toBeArray();
 });
 
-test('handle respects tab, week, and year parameters', function (): void {
+it('respects tab, week, and year parameters', function (): void {
     $user = User::factory()->create(['birthdate' => '1990-01-15']);
 
     $result = $this->action->handle($user, 'year', '2024-01-08', 5);
@@ -42,7 +42,7 @@ test('handle respects tab, week, and year parameters', function (): void {
         ->and($result['selectedYear'])->toBe(5);
 });
 
-test('handle returns null for life data without birthdate', function (): void {
+it('returns null for life data without birthdate', function (): void {
     $user = User::factory()->create(['birthdate' => null]);
 
     $result = $this->action->handle($user);

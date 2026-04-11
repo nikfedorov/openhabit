@@ -6,7 +6,7 @@ use App\Models\AiModel;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-test('fails when api key is not configured', function (): void {
+it('fails when api key is not configured', function (): void {
     config(['services.openrouter.api_key' => null]);
 
     $this->artisan('app:check-ai-models')
@@ -14,7 +14,7 @@ test('fails when api key is not configured', function (): void {
         ->assertExitCode(1);
 });
 
-test('fails when api key is empty string', function (): void {
+it('fails when api key is empty string', function (): void {
     config(['services.openrouter.api_key' => '']);
 
     $this->artisan('app:check-ai-models')
@@ -22,7 +22,7 @@ test('fails when api key is empty string', function (): void {
         ->assertExitCode(1);
 });
 
-test('succeeds when no free models exist', function (): void {
+it('succeeds when no free models exist', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
 
     $this->artisan('app:check-ai-models')
@@ -30,7 +30,7 @@ test('succeeds when no free models exist', function (): void {
         ->assertExitCode(0);
 });
 
-test('enables inactive model when health check passes', function (): void {
+it('enables inactive model when health check passes', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
     config(['services.openrouter.base_url' => 'https://openrouter.test/api/v1']);
 
@@ -48,7 +48,7 @@ test('enables inactive model when health check passes', function (): void {
     expect($model->refresh()->is_active)->toBeTrue();
 });
 
-test('disables active model when health check fails', function (): void {
+it('disables active model when health check fails', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
     config(['services.openrouter.base_url' => 'https://openrouter.test/api/v1']);
 
@@ -64,7 +64,7 @@ test('disables active model when health check fails', function (): void {
     expect($model->refresh()->is_active)->toBeFalse();
 });
 
-test('handles connection exception gracefully', function (): void {
+it('handles connection exception gracefully', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
     config(['services.openrouter.base_url' => 'https://openrouter.test/api/v1']);
 
@@ -80,7 +80,7 @@ test('handles connection exception gracefully', function (): void {
     expect($model->refresh()->is_active)->toBeFalse();
 });
 
-test('keeps already active model when health check passes', function (): void {
+it('keeps already active model when health check passes', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
     config(['services.openrouter.base_url' => 'https://openrouter.test/api/v1']);
 
@@ -99,7 +99,7 @@ test('keeps already active model when health check passes', function (): void {
     expect($model->refresh()->is_active)->toBeTrue();
 });
 
-test('response without content is treated as unhealthy', function (): void {
+it('response without content is treated as unhealthy', function (): void {
     config(['services.openrouter.api_key' => 'test-key']);
     config(['services.openrouter.base_url' => 'https://openrouter.test/api/v1']);
 

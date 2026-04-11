@@ -5,13 +5,13 @@ declare(strict_types=1);
 use App\Models\AiDigest;
 use App\Models\User;
 
-test('belongs to user', function (): void {
+it('belongs to user', function (): void {
     $digest = AiDigest::factory()->create();
 
     expect($digest->user)->toBeInstanceOf(User::class);
 });
 
-test('casts are correct', function (): void {
+it('has correct casts', function (): void {
     $digest = AiDigest::factory()->create();
 
     expect($digest->id)->toBeInt()

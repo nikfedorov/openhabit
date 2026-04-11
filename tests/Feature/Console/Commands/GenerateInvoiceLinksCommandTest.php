@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Request;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
-test('warns when no invoices exist', function (): void {
+it('warns when no invoices exist', function (): void {
     $bot = Mockery::mock(Nutgram::class);
     $this->app->instance(Nutgram::class, $bot);
 
@@ -17,7 +17,7 @@ test('warns when no invoices exist', function (): void {
         ->assertExitCode(0);
 });
 
-test('generates links for invoices', function (): void {
+it('generates links for invoices', function (): void {
     config(['translatable.locales' => ['en']]);
     Invoice::factory()->create();
 
@@ -32,7 +32,7 @@ test('generates links for invoices', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles null link result', function (): void {
+it('handles null link result', function (): void {
     config(['translatable.locales' => ['en']]);
     Invoice::factory()->create();
 
@@ -47,7 +47,7 @@ test('handles null link result', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles connect exception', function (): void {
+it('handles connect exception', function (): void {
     config(['translatable.locales' => ['en']]);
     Invoice::factory()->create();
 
@@ -65,7 +65,7 @@ test('handles connect exception', function (): void {
         ->assertExitCode(0);
 });
 
-test('handles telegram exception', function (): void {
+it('handles telegram exception', function (): void {
     config(['translatable.locales' => ['en']]);
     Invoice::factory()->create();
 
@@ -80,7 +80,7 @@ test('handles telegram exception', function (): void {
         ->assertExitCode(0);
 });
 
-test('generates links for multiple locales', function (): void {
+it('generates links for multiple locales', function (): void {
     config(['translatable.locales' => ['en', 'ru']]);
     Invoice::factory()->create();
 

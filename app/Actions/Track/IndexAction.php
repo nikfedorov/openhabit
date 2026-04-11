@@ -53,7 +53,6 @@ final readonly class IndexAction
             'habits' => $habitsData,
             'totalHabits' => $totalHabits,
             'completedCount' => $completedCount,
-            'moveCompletedToEnd' => $user->move_completed_to_end,
             'dailyNoteContent' => $dailyNoteContent ?? '',
             'activityData' => $this->activityData($user),
             'translations' => $this->translations(),

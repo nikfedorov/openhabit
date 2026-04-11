@@ -22,7 +22,7 @@ function loadHabits(User $user): Collection
     return $user->habits()->with('category')->ordered()->get();
 }
 
-test('getFranklinGridData returns correct structure and separates franklin virtues', function (): void {
+it('returns correct structure and separates franklin virtues', function (): void {
     $category = Category::factory()->create([
         'user_id' => $this->user->id,
         'slug' => Category::FRANKLIN_VIRTUES_SLUG,
@@ -39,7 +39,7 @@ test('getFranklinGridData returns correct structure and separates franklin virtu
         ->and($result['franklin_habits'])->toHaveCount(1);
 });
 
-test('getFranklinGridData tracks completion and partial status', function (): void {
+it('tracks completion and partial status', function (): void {
     $fullyCompleted = Habit::factory()->daily()->create([
         'user_id' => $this->user->id,
         'iterations_required' => 1,
@@ -73,7 +73,7 @@ test('getFranklinGridData tracks completion and partial status', function (): vo
         ->partial->toBeTrue();
 });
 
-test('getFranklinGridData marks today and scheduled days correctly', function (): void {
+it('marks today and scheduled days correctly', function (): void {
     Habit::factory()->create([
         'user_id' => $this->user->id,
         'rrule' => 'FREQ=WEEKLY;BYDAY=MO',
@@ -91,7 +91,7 @@ test('getFranklinGridData marks today and scheduled days correctly', function ()
         ->and($result['regular_habits'][0]['days'][$tuesday]['scheduled'])->toBeFalse();
 });
 
-test('getFranklinGridData returns empty arrays for empty habits and defaults to current week', function (): void {
+it('returns empty arrays for empty habits and defaults to current week', function (): void {
     $result = $this->service->getFranklinGridData(loadHabits($this->user));
 
     expect($result['regular_habits'])->toBeEmpty()

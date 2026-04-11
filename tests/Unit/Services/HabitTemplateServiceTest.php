@@ -12,7 +12,7 @@ beforeEach(function (): void {
     $this->service = new HabitTemplateService;
 });
 
-test('applyTemplatesToUser creates categories and habits', function (): void {
+it('creates categories and habits', function (): void {
     $user = User::factory()->create();
 
     $categoryTemplate = CategoryTemplate::factory()->create([
@@ -31,7 +31,7 @@ test('applyTemplatesToUser creates categories and habits', function (): void {
         ->and($user->habits()->count())->toBe(1);
 });
 
-test('applyTemplatesToUser maps category template to user category', function (): void {
+it('maps category template to user category', function (): void {
     $user = User::factory()->create();
 
     $categoryTemplate = CategoryTemplate::factory()->create([
@@ -51,7 +51,7 @@ test('applyTemplatesToUser maps category template to user category', function ()
     expect($habit->category_id)->toBe($category->id);
 });
 
-test('createCategoriesFromTemplates returns mapping', function (): void {
+it('creates categories from templates', function (): void {
     $user = User::factory()->create();
 
     $template = CategoryTemplate::factory()->create([
@@ -65,7 +65,7 @@ test('createCategoriesFromTemplates returns mapping', function (): void {
         ->and($user->categories()->count())->toBe(1);
 });
 
-test('copyTemplateToUser creates habit without category', function (): void {
+it('creates habit without category when copying template to user', function (): void {
     $template = HabitTemplate::factory()->create();
     $user = User::factory()->create();
 
@@ -75,7 +75,7 @@ test('copyTemplateToUser creates habit without category', function (): void {
         ->and($habit->category_id)->toBeNull();
 });
 
-test('createHabitFromTemplate uses category mapping', function (): void {
+it('uses category mapping when creating habit from template', function (): void {
     $categoryTemplate = CategoryTemplate::factory()->create();
     $template = HabitTemplate::factory()->for($categoryTemplate)->create();
     $user = User::factory()->create();
@@ -88,7 +88,7 @@ test('createHabitFromTemplate uses category mapping', function (): void {
     expect($habit->category_id)->toBe($category->id);
 });
 
-test('createHabitFromTemplate without mapping sets no category', function (): void {
+it('sets no category when creating habit from template without mapping', function (): void {
     $template = HabitTemplate::factory()->create();
     $user = User::factory()->create();
 
