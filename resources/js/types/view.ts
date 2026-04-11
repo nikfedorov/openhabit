@@ -17,15 +17,8 @@ export type GridHabit = {
     name: string;
     category: string | null;
     is_weekly_focus: boolean;
+    is_franklin_virtue: boolean;
     days: Record<string, HabitDayStatus>;
-};
-
-export type FranklinGrid = {
-    week_start: string;
-    week_end: string;
-    days: WeekDay[];
-    regular_habits: GridHabit[];
-    franklin_habits: GridHabit[];
 };
 
 export type WeekActivityData = {
@@ -48,7 +41,7 @@ export type LifeStats = {
     yearsRemaining: number;
 };
 
-export type ViewTranslations = {
+export type WeekTranslations = {
     week: string;
     year: string;
     life: string;
@@ -56,6 +49,18 @@ export type ViewTranslations = {
     next_week: string;
     this_week: string;
     current_week: string;
+    habits: string;
+    franklins_virtues: string;
+    done: string;
+    partial: string;
+    missed: string;
+    future: string;
+};
+
+export type YearTranslations = {
+    week: string;
+    year: string;
+    life: string;
     previous_year: string;
     next_year: string;
     this_year: string;
@@ -64,41 +69,48 @@ export type ViewTranslations = {
     less: string;
     more: string;
     future: string;
-    habits: string;
-    done: string;
-    partial: string;
-    missed: string;
-    no_habits_yet: string;
-    create_habits_to_track: string;
+    each_square_week: string;
+    set_birthdate: string;
+    to_see_year_visualization: string;
+};
+
+export type LifeTranslations = {
+    week: string;
+    year: string;
+    life: string;
     memento_mori: string;
     years_old: string;
     years_left: string;
     weeks_lived: string;
+    less: string;
+    more: string;
+    future: string;
     each_square_year: string;
-    each_square_week: string;
     seneca_quote: string;
     seneca_author: string;
-    franklins_virtues: string;
     set_birthdate: string;
-    to_see_year_visualization: string;
     to_see_life_visualization: string;
 };
 
-export type ViewData = {
-    tab: string;
-    weekStart: string;
-    weekEnd: string;
-    weekStartFormatted: string;
-    weekEndFormatted: string;
-    weekEndFormattedFull: string;
-    weekYear: string;
-    isCurrentWeek: boolean;
-    franklinGrid: FranklinGrid;
-    selectedYear: number | null;
+export type WeekViewData = {
+    start: string;
+    end: string;
+    startFormatted: string;
+    endFormatted: string;
+    endFormattedFull: string;
+    year: string;
+    isCurrent: boolean;
+};
+
+export type YearViewData = {
+    selected: number | null;
     birthdate: string | null;
     currentAge: number | null;
-    lifeStats: LifeStats | null;
-    weeklyActivityData: WeekActivityData[] | null;
-    yearlyActivityData: YearActivityData[] | null;
-    translations: ViewTranslations;
+};
+
+export type LifeViewData = {
+    birthdate: string | null;
+    currentAge: number | null;
+    weeksLived: number | null;
+    yearsRemaining: number | null;
 };

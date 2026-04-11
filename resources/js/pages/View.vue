@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BirthdateNotice from '@/components/view/BirthdateNotice.vue';
 import LifeGrid from '@/components/view/LifeGrid.vue';
@@ -8,9 +8,26 @@ import WeekGrid from '@/components/view/WeekGrid.vue';
 import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
-import type { ApiResponse, UserSettings } from '@/types/api';
+import type {
+    LifeApiResponse,
+    UserSettings,
+    WeekApiResponse,
+    YearApiResponse,
+} from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
-import type { ViewData } from '@/types/view';
+import type {
+    GridHabit,
+    LifeStats,
+    LifeTranslations,
+    WeekActivityData,
+    WeekDay,
+    WeekTranslations,
+    YearActivityData,
+    YearTranslations,
+    WeekViewData,
+    YearViewData,
+    LifeViewData,
+} from '@/types/view';
 import { apiFetch } from '@/utils/api';
 import { addDays, findMondayOnOrAfter, formatDate } from '@/utils/date';
 
@@ -23,7 +40,39 @@ const emit = defineEmits<{
     ready: [];
 }>();
 
-const data = ref<ViewData | null>(null);
+const tab = ref<'week' | 'year' | 'life'>('week');
+const weekData = ref<WeekViewData | null>(null);
+const weekDays = ref<WeekDay[] | null>(null);
+const weekHabits = ref<GridHabit[] | null>(null);
+const yearData = ref<YearViewData | null>(null);
+const yearActivityData = ref<WeekActivityData[] | null>(null);
+const lifeData = ref<LifeViewData | null>(null);
+const lifeActivityData = ref<YearActivityData[] | null>(null);
+const weekTranslations = ref<WeekTranslations | null>(null);
+const yearTranslations = ref<YearTranslations | null>(null);
+const lifeTranslations = ref<LifeTranslations | null>(null);
+const tabTranslations = computed(
+    () =>
+        weekTranslations.value ??
+        yearTranslations.value ??
+        lifeTranslations.value,
+);
+const lifeStats = computed<LifeStats | null>(() => {
+    const d = lifeData.value;
+    if (
+        !d ||
+        d.currentAge === null ||
+        d.weeksLived === null ||
+        d.yearsRemaining === null
+    ) {
+        return null;
+    }
+    return {
+        currentAge: d.currentAge,
+        weeksLived: d.weeksLived,
+        yearsRemaining: d.yearsRemaining,
+    };
+});
 const loading = ref(false);
 const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
 
@@ -32,151 +81,179 @@ function queryParam(key: string): string | undefined {
     return typeof v === 'string' ? v : undefined;
 }
 
-function buildViewQuery(view: ViewData): Record<string, string> {
-    const query: Record<string, string> = { tab: view.tab };
-    if (view.tab === 'week' && !view.isCurrentWeek) {
-        query.week = view.weekStart;
+function buildViewQuery(): Record<string, string> {
+    const query: Record<string, string> = { tab: tab.value };
+    if (tab.value === 'week' && weekData.value && !weekData.value.isCurrent) {
+        query.week = weekData.value.start;
     }
-    if (view.tab === 'year' && view.selectedYear !== null) {
-        query.year = String(view.selectedYear);
+    if (
+        tab.value === 'year' &&
+        yearData.value?.selected !== null &&
+        yearData.value?.selected !== undefined
+    ) {
+        query.year = String(yearData.value.selected);
     }
     return query;
 }
 
-async function loadView(params?: {
-    tab?: string;
-    week?: string;
-    year?: number;
-}) {
-    loading.value = true;
-    const query = new URLSearchParams();
-    if (params?.tab) query.set('tab', params.tab);
-    if (params?.week) query.set('week', params.week);
-    if (params?.year !== undefined) query.set('year', String(params.year));
-
-    const queryStr = query.toString();
-    const response = await apiFetch<ApiResponse<ViewData>>(
-        `/api/view${queryStr ? `?${queryStr}` : ''}`,
-    );
-    data.value = response.data;
+function handleCommonResponse(
+    response: WeekApiResponse | YearApiResponse | LifeApiResponse,
+) {
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
-    router.replace({ query: buildViewQuery(data.value) });
+}
+
+async function loadWeek(params?: { week?: string }) {
+    loading.value = true;
+    const query = new URLSearchParams();
+    if (params?.week) query.set('week', params.week);
+    const queryStr = query.toString();
+    const response = await apiFetch<WeekApiResponse>(
+        `/api/view/week${queryStr ? `?${queryStr}` : ''}`,
+    );
+    weekData.value = response.data;
+    weekDays.value = response.days;
+    weekHabits.value = response.habits;
+    weekTranslations.value = response.translations;
+    tab.value = 'week';
+    handleCommonResponse(response);
+    router.replace({ query: buildViewQuery() });
     loading.value = false;
     emit('ready');
 }
 
-function setTab(tab: string) {
-    /* v8 ignore next */
-    if (!data.value) return;
+async function loadYear(params?: { year?: number }) {
+    loading.value = true;
+    const query = new URLSearchParams();
+    if (params?.year !== undefined) query.set('year', String(params.year));
+    const queryStr = query.toString();
+    const response = await apiFetch<YearApiResponse>(
+        `/api/view/year${queryStr ? `?${queryStr}` : ''}`,
+    );
+    yearData.value = response.data;
+    yearActivityData.value = response.activityData;
+    yearTranslations.value = response.translations;
+    tab.value = 'year';
+    handleCommonResponse(response);
+    router.replace({ query: buildViewQuery() });
+    loading.value = false;
+    emit('ready');
+}
 
+async function loadLife() {
+    loading.value = true;
+    const response = await apiFetch<LifeApiResponse>('/api/view/life');
+    lifeData.value = response.data;
+    lifeActivityData.value = response.activityData;
+    lifeTranslations.value = response.translations;
+    tab.value = 'life';
+    handleCommonResponse(response);
+    router.replace({ query: buildViewQuery() });
+    loading.value = false;
+    emit('ready');
+}
+
+function setTab(newTab: 'week' | 'year' | 'life') {
     const tabOrder = ['week', 'year', 'life'];
-    const oldIndex = tabOrder.indexOf(data.value.tab);
-    const newIndex = tabOrder.indexOf(tab);
+    const oldIndex = tabOrder.indexOf(tab.value);
+    const newIndex = tabOrder.indexOf(newTab);
     navDirection.value = newIndex >= oldIndex ? 'nav-forward' : 'nav-backward';
-
-    data.value.tab = tab;
-
-    if (
-        tab === 'year' &&
-        data.value.selectedYear === null &&
-        data.value.currentAge !== null
-    ) {
-        data.value.selectedYear = data.value.currentAge;
+    tab.value = newTab;
+    if (newTab === 'week') {
+        loadWeek({
+            week: weekData.value?.isCurrent ? undefined : weekData.value?.start,
+        });
+    } else if (newTab === 'year') {
+        loadYear({ year: yearData.value?.selected ?? undefined });
+    } else {
+        loadLife();
     }
-
-    loadView({
-        tab,
-        week: tab === 'week' ? data.value.weekStart : undefined,
-        year:
-            tab === 'year' ? (data.value.selectedYear ?? undefined) : undefined,
-    });
 }
 
 function previousWeek() {
     /* v8 ignore next */
-    if (!data.value) return;
+    if (!weekData.value) return;
     navDirection.value = 'nav-backward';
-    const prev = addDays(data.value.weekStart, -7);
-    loadView({ tab: 'week', week: prev });
+    const prev = addDays(weekData.value.start, -7);
+    loadWeek({ week: prev });
 }
 
 function nextWeek() {
     /* v8 ignore next */
-    if (!data.value) return;
+    if (!weekData.value) return;
     navDirection.value = 'nav-forward';
-    const next = addDays(data.value.weekStart, 7);
-    loadView({ tab: 'week', week: next });
+    const next = addDays(weekData.value.start, 7);
+    loadWeek({ week: next });
 }
 
 function goToCurrentWeek() {
-    loadView({ tab: 'week' });
+    loadWeek();
 }
 
 function selectYear(year: number) {
-    /* v8 ignore next */
-    if (!data.value) return;
     navDirection.value =
-        data.value.selectedYear !== null && year >= data.value.selectedYear
+        yearData.value?.selected !== null &&
+        yearData.value?.selected !== undefined &&
+        year >= yearData.value.selected
             ? 'nav-forward'
             : 'nav-backward';
-    data.value.selectedYear = year;
-    data.value.tab = 'year';
-    loadView({ tab: 'year', week: data.value.weekStart, year });
+    loadYear({ year });
 }
 
 function selectWeekFromYear(weekNum: number) {
     /* v8 ignore next */
-    if (!data.value?.birthdate || data.value.selectedYear === null) return;
+    if (!yearData.value?.birthdate || yearData.value.selected === null) return;
 
-    const birth = new Date(data.value.birthdate);
+    const birth = new Date(yearData.value.birthdate);
     const birthday = new Date(
-        birth.getFullYear() + data.value.selectedYear,
+        birth.getFullYear() + yearData.value.selected,
         birth.getMonth(),
         birth.getDate(),
     );
     const monday = findMondayOnOrAfter(birthday);
     monday.setDate(monday.getDate() + weekNum * 7);
 
-    loadView({ tab: 'week', week: formatDate(monday) });
+    loadWeek({ week: formatDate(monday) });
 }
 
 onMounted(() => {
-    const tab = queryParam('tab');
+    const tabParam = queryParam('tab');
     const week = queryParam('week');
     const yearStr = queryParam('year');
     const year = yearStr !== undefined ? Number(yearStr) : undefined;
 
-    loadView({
-        tab,
-        week,
-        year: year !== undefined && !Number.isNaN(year) ? year : undefined,
-    });
+    if (tabParam === 'year') {
+        loadYear({
+            year: year !== undefined && !Number.isNaN(year) ? year : undefined,
+        });
+    } else if (tabParam === 'life') {
+        loadLife();
+    } else {
+        loadWeek({ week });
+    }
 });
 </script>
 
 <template>
-    <div v-if="data" :class="navDirection">
+    <div v-if="weekData || yearData || lifeData" :class="navDirection">
         <!-- Tab Navigation -->
         <div class="mb-4 flex items-stretch gap-2">
             <div
                 class="flex flex-1 gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
             >
                 <button
-                    v-for="tab in ['week', 'year', 'life'] as const"
-                    :key="tab"
+                    v-for="tabName in ['week', 'year', 'life'] as const"
+                    :key="tabName"
                     type="button"
                     class="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150"
                     :class="
-                        data.tab === tab
+                        tab === tabName
                             ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
                             : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white'
                     "
-                    @click="setTab(tab)"
+                    @click="setTab(tabName)"
                 >
-                    {{
-                        data.translations[tab as keyof typeof data.translations]
-                    }}
+                    {{ tabTranslations?.[tabName] }}
                 </button>
             </div>
         </div>
@@ -188,88 +265,89 @@ onMounted(() => {
         >
             <!-- Week Tab -->
             <div
-                v-if="data.tab === 'week'"
+                v-if="tab === 'week' && weekData"
                 key="week"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <WeekNavigator
-                    :week-start-formatted="data.weekStartFormatted"
-                    :week-end-formatted="data.weekEndFormatted"
-                    :week-end-formatted-full="data.weekEndFormattedFull"
-                    :week-year="data.weekYear"
-                    :is-current-week="data.isCurrentWeek"
-                    :translations="data.translations"
+                    :week-start-formatted="weekData.startFormatted"
+                    :week-end-formatted="weekData.endFormatted"
+                    :week-end-formatted-full="weekData.endFormattedFull"
+                    :week-year="weekData.year"
+                    :is-current-week="weekData.isCurrent"
+                    :translations="weekTranslations!"
                     @previous-week="previousWeek"
                     @next-week="nextWeek"
                     @current-week="goToCurrentWeek"
                 />
 
                 <WeekGrid
-                    v-if="data.franklinGrid"
+                    v-if="weekDays && weekHabits"
                     class="mt-4"
-                    :data="data.franklinGrid"
-                    :translations="data.translations"
+                    :days="weekDays"
+                    :habits="weekHabits"
+                    :translations="weekTranslations!"
                 />
             </div>
 
             <!-- Year Tab -->
             <div
-                v-if="data.tab === 'year'"
+                v-if="tab === 'year' && yearData"
                 key="year"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <YearNavigator
-                    :selected-year="data.selectedYear"
-                    :current-age="data.currentAge"
-                    :birthdate="data.birthdate"
-                    :translations="data.translations"
+                    :selected-year="yearData.selected"
+                    :current-age="yearData.currentAge"
+                    :birthdate="yearData.birthdate"
+                    :translations="yearTranslations!"
                     @select-year="selectYear"
                 />
 
                 <YearGrid
-                    v-if="data.birthdate"
+                    v-if="yearData.birthdate"
                     class="mt-4"
-                    :birthdate="data.birthdate"
-                    :selected-year="data.selectedYear"
-                    :current-age="data.currentAge"
-                    :weekly-activity="data.weeklyActivityData"
-                    :translations="data.translations"
+                    :birthdate="yearData.birthdate"
+                    :selected-year="yearData.selected"
+                    :current-age="yearData.currentAge"
+                    :weekly-activity="yearActivityData"
+                    :translations="yearTranslations!"
                     @select-week="selectWeekFromYear"
                 />
 
                 <BirthdateNotice
                     v-else
-                    :title="data.translations.set_birthdate"
-                    :description="data.translations.to_see_year_visualization"
+                    :title="yearTranslations?.set_birthdate"
+                    :description="yearTranslations?.to_see_year_visualization"
                 />
             </div>
 
             <!-- Life Tab -->
             <div
-                v-if="data.tab === 'life'"
+                v-if="tab === 'life' && lifeData"
                 key="life"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <LifeHeader
-                    v-if="data.lifeStats"
-                    :life-stats="data.lifeStats"
-                    :translations="data.translations"
+                    v-if="lifeStats"
+                    :life-stats="lifeStats"
+                    :translations="lifeTranslations!"
                 />
 
                 <LifeGrid
-                    v-if="data.birthdate"
+                    v-if="lifeData.birthdate"
                     class="mt-4"
-                    :birthdate="data.birthdate"
-                    :current-age="data.currentAge"
-                    :yearly-activity="data.yearlyActivityData"
-                    :translations="data.translations"
+                    :birthdate="lifeData.birthdate"
+                    :current-age="lifeData.currentAge"
+                    :yearly-activity="lifeActivityData"
+                    :translations="lifeTranslations!"
                     @select-year="selectYear"
                 />
 
                 <BirthdateNotice
                     v-else
-                    :title="data.translations.set_birthdate"
-                    :description="data.translations.to_see_life_visualization"
+                    :title="lifeTranslations?.set_birthdate"
+                    :description="lifeTranslations?.to_see_life_visualization"
                 />
             </div>
         </TransitionGroup>

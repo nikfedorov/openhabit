@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import WeekNavigator from '@/components/view/WeekNavigator.vue';
-import { defaultViewTranslations } from '@/tests/helpers/view';
+import { defaultWeekTranslations } from '@/tests/helpers/view';
 
 describe('WeekNavigator', () => {
     it('shows "This Week" when isCurrentWeek is true', () => {
@@ -12,7 +12,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 12, 2026',
                 weekYear: '2026',
                 isCurrentWeek: true,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('This Week');
@@ -28,7 +28,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 5, 2026',
                 weekYear: '2026',
                 isCurrentWeek: false,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('Mar 30');
@@ -45,7 +45,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 12, 2026',
                 weekYear: '2026',
                 isCurrentWeek: true,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).not.toContain('Current week');
@@ -59,7 +59,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 12, 2026',
                 weekYear: '2026',
                 isCurrentWeek: true,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         await wrapper.findAll('button')[0].trigger('click');
@@ -74,7 +74,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 12, 2026',
                 weekYear: '2026',
                 isCurrentWeek: true,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         await wrapper.findAll('button')[1].trigger('click');
@@ -89,7 +89,7 @@ describe('WeekNavigator', () => {
                 weekEndFormattedFull: 'Apr 5, 2026',
                 weekYear: '2026',
                 isCurrentWeek: false,
-                translations: defaultViewTranslations,
+                translations: defaultWeekTranslations,
             },
         });
         const currentBtn = wrapper

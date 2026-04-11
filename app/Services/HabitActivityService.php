@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Data\HabitActivity\FranklinGridData;
+use App\Data\HabitActivity\HabitDayStatus;
+use App\Data\HabitActivity\WeekDay;
+use App\Data\HabitActivity\WeekGridHabit;
 use App\Models\Category;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
@@ -26,18 +30,11 @@ final readonly class HabitActivityService
     ) {}
 
     /**
-     * Get Franklin-style weekly grid data for all habits.
+     * Get weekly grid data for all habits.
      *
      * @param  EloquentCollection<int, Habit>  $habits
-     * @return array{
-     *   week_start: string,
-     *   week_end: string,
-     *   days: array<int, array{date: string, day_name: string, day_number: int, is_today: bool, is_future: bool}>,
-     *   regular_habits: array<int, array{id: int, name: string, category: string|null, is_weekly_focus: bool, days: array<string, array{completed: bool, partial: bool, scheduled: bool}>}>,
-     *   franklin_habits: array<int, array{id: int, name: string, category: string|null, is_weekly_focus: bool, days: array<string, array{completed: bool, partial: bool, scheduled: bool}>}>
-     * }
      */
-    public function getFranklinGridData(EloquentCollection $habits, ?CarbonInterface $weekStart = null): array
+    public function getFranklinGridData(EloquentCollection $habits, ?CarbonInterface $weekStart = null): FranklinGridData
     {
         $weekStart = ($weekStart ?? now())->startOfWeek();
         $weekEnd = $weekStart->copy()->endOfWeek();
@@ -45,33 +42,23 @@ final readonly class HabitActivityService
         $days = $this->buildWeekDays($weekStart);
         $completionsByHabit = $this->loadCompletionsForHabits($habits, $weekStart, $weekEnd);
 
-        $regularHabits = [];
-        $franklinHabits = [];
+        $allHabits = [];
 
         foreach ($habits as $habit) {
             $habitCompletions = $completionsByHabit[$habit->id] ?? collect();
-            $habitData = $this->buildHabitGridData($habit, $habitCompletions, $days);
-
-            if ($habit->category?->slug === Category::FRANKLIN_VIRTUES_SLUG) {
-                $franklinHabits[] = $habitData;
-            } else {
-                $regularHabits[] = $habitData;
-            }
+            $allHabits[] = $this->buildHabitGridData($habit, $habitCompletions, $days);
         }
 
-        return [
-            'week_start' => $weekStart->toDateString(),
-            'week_end' => $weekEnd->toDateString(),
-            'days' => $days,
-            'regular_habits' => $regularHabits,
-            'franklin_habits' => $franklinHabits,
-        ];
+        return new FranklinGridData(
+            days: $days,
+            habits: $allHabits,
+        );
     }
 
     /**
      * Build the week days array with metadata.
      *
-     * @return array<int, array{date: string, day_name: string, day_number: int, is_today: bool, is_future: bool}>
+     * @return array<int, WeekDay>
      */
     private function buildWeekDays(CarbonInterface $weekStart): array
     {
@@ -80,13 +67,13 @@ final readonly class HabitActivityService
 
         for ($i = 0; $i < 7; $i++) {
             $date = $weekStart->copy()->addDays($i)->startOfDay();
-            $days[] = [
-                'date' => $date->toDateString(),
-                'day_name' => $date->isoFormat('dd'),
-                'day_number' => $date->day,
-                'is_today' => $date->isSameDay($today),
-                'is_future' => $date->isAfter($today),
-            ];
+            $days[] = new WeekDay(
+                date: $date->toDateString(),
+                dayName: $date->isoFormat('dd'),
+                dayNumber: $date->day,
+                isToday: $date->isSameDay($today),
+                isFuture: $date->isAfter($today),
+            );
         }
 
         return $days;
@@ -96,34 +83,34 @@ final readonly class HabitActivityService
      * Build grid data for a single habit.
      *
      * @param  Collection<string, HabitCompletion>  $completions
-     * @param  array<int, array{date: string, day_name: string, day_number: int, is_today: bool, is_future: bool}>  $days
-     * @return array{id: int, name: string, category: string|null, is_weekly_focus: bool, days: array<string, array{completed: bool, partial: bool, scheduled: bool}>}
+     * @param  array<int, WeekDay>  $days
      */
-    private function buildHabitGridData(Habit $habit, Collection $completions, array $days): array
+    private function buildHabitGridData(Habit $habit, Collection $completions, array $days): WeekGridHabit
     {
         $daysData = [];
         $isWeeklyFocus = true;
 
         foreach ($days as $day) {
-            $date = Date::parse($day['date']);
-            $completion = $completions->get($day['date']);
+            $date = Date::parse($day->date);
+            $completion = $completions->get($day->date);
             $scheduled = $this->isScheduledForDate($habit, $date);
             $isWeeklyFocus = $isWeeklyFocus && $scheduled;
 
-            $daysData[$day['date']] = [
-                'completed' => $this->isCompleted($completion, $habit),
-                'partial' => $this->isPartial($completion, $habit),
-                'scheduled' => $scheduled,
-            ];
+            $daysData[$day->date] = new HabitDayStatus(
+                completed: $this->isCompleted($completion, $habit),
+                partial: $this->isPartial($completion, $habit),
+                scheduled: $scheduled,
+            );
         }
 
-        return [
-            'id' => $habit->id,
-            'name' => $habit->name,
-            'category' => $habit->category?->name,
-            'is_weekly_focus' => $isWeeklyFocus,
-            'days' => $daysData,
-        ];
+        return new WeekGridHabit(
+            id: $habit->id,
+            name: $habit->name,
+            category: $habit->category?->name,
+            isWeeklyFocus: $isWeeklyFocus,
+            isFranklinVirtue: $habit->category?->slug === Category::FRANKLIN_VIRTUES_SLUG,
+            days: $daysData,
+        );
     }
 
     /**
@@ -144,6 +131,7 @@ final readonly class HabitActivityService
         $habitIds = $habits->pluck('id')->all();
 
         $completions = HabitCompletion::query()
+            ->select(['habit_id', 'current_iteration', 'completed_at'])
             ->whereIn('habit_id', $habitIds)
             ->whereBetween('completed_at', [$weekStart->startOfDay(), $weekEnd->endOfDay()])
             ->get();

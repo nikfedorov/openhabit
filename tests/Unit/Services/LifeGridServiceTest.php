@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Data\LifeGrid\WeeklyActivity;
 use App\Models\Stat;
 use App\Models\User;
 use App\Services\LifeGridService;
@@ -38,13 +39,13 @@ it('returns 52 weeks and 80 years of data with stats', function (): void {
     $result = $this->service->getLifeData($user, $birthdate, 0);
 
     expect($result['weeklyActivityData'])->toHaveCount(52)
-        ->and($result['weeklyActivityData'][0])->toHaveKeys(['weekNum', 'intensity', 'completed', 'total'])
-        ->and($result['weeklyActivityData'][0]['intensity'])->toBe(4)
-        ->and($result['weeklyActivityData'][0]['completed'])->toBe(10)
+        ->and($result['weeklyActivityData'][0])->weekNum->toBe(0)
+        ->and($result['weeklyActivityData'][0])->intensity->toBe(4)
+        ->and($result['weeklyActivityData'][0])->completed->toBe(10)
         ->and($result['yearlyActivityData'])->toHaveCount(LifeGridService::TOTAL_LIFE_YEARS)
-        ->and($result['yearlyActivityData'][0])->toHaveKeys(['year', 'intensity', 'completed', 'total'])
-        ->and($result['yearlyActivityData'][0]['completed'])->toBe(10)
-        ->and($result['yearlyActivityData'][0]['total'])->toBe(10);
+        ->and($result['yearlyActivityData'][0])->year->toBe(0)
+        ->and($result['yearlyActivityData'][0])->completed->toBe(10)
+        ->and($result['yearlyActivityData'][0])->total->toBe(10);
 });
 
 it('returns null weeklyActivityData without selectedYear', function (): void {
@@ -62,7 +63,16 @@ it('returns correct structure for life stats', function (): void {
 
     $result = $this->service->getLifeStats($birthdate);
 
-    expect($result)->toHaveKeys(['currentAge', 'weeksLived', 'yearsRemaining'])
-        ->and($result['currentAge'])->toBeInt()
-        ->and($result['yearsRemaining'])->toBe(LifeGridService::TOTAL_LIFE_YEARS - $result['currentAge']);
+    expect($result->currentAge)->toBeInt()
+        ->and($result->yearsRemaining)->toBe(LifeGridService::TOTAL_LIFE_YEARS - $result->currentAge);
+});
+
+it('getWeeklyActivityData returns 52 weeks for selected year', function (): void {
+    $birthdate = Date::parse('2000-01-15');
+    $user = User::factory()->create(['birthdate' => $birthdate->toDateString()]);
+
+    $result = $this->service->getWeeklyActivityData($user, $birthdate, 0);
+
+    expect($result)->toHaveCount(52)
+        ->and($result[0])->toBeInstanceOf(WeeklyActivity::class);
 });

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { ViewTranslations } from '@/types/view';
+import type { YearTranslations } from '@/types/view';
 
 const props = defineProps<{
     selectedYear: number | null;
     currentAge: number | null;
     birthdate: string | null;
-    translations: ViewTranslations;
+    translations: YearTranslations;
 }>();
 
 const emit = defineEmits<{

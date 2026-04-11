@@ -29,12 +29,14 @@ it('loads habits with completion state and filters inactive ones', function (): 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('navigationTranslations')
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('navigationTranslations')
             ->has('settings', fn (AssertableJson $json): AssertableJson => $json->has('locale')
                 ->has('theme')
                 ->has('moveCompletedToEnd')
             )
-            ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json->where('is_completed', true)
+            ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json
+                ->where('is_completed', true)
                 ->where('current_iteration', 1)
                 ->where('sort_order', $habit->sort_order)
                 ->has('id')
@@ -43,7 +45,8 @@ it('loads habits with completion state and filters inactive ones', function (): 
                 ->has('iterations_required')
             )
             ->has('activityData')
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('isToday', true)
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->where('isToday', true)
                 ->where('totalHabits', 1)
                 ->where('completedCount', 1)
                 ->has('date')
@@ -66,20 +69,22 @@ it('supports date navigation and clamps future dates', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$yesterday)
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $yesterday)
-            ->where('isToday', false)
-            ->etc()
-        )
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $yesterday)
+                ->where('isToday', false)
+                ->etc()
+            )
             ->etc()
         );
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track?date='.$tomorrow)
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $today)
-            ->where('isToday', true)
-            ->etc()
-        )
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $today)
+                ->where('isToday', true)
+                ->etc()
+            )
             ->etc()
         );
 });
@@ -92,7 +97,8 @@ it('includes habits with null rrule alongside daily habits', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('habits', 2)
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('habits', 2)
             ->has('data', fn (AssertableJson $json): AssertableJson => $json->etc())
             ->etc()
         );
@@ -113,10 +119,10 @@ it('preserves sort order when move_completed_to_end is disabled', function (): v
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('habits', 2)
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('habits', 2)
             ->where('habits.0.id', $habit1->id)
             ->where('habits.1.id', $habit2->id)
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->etc())
             ->etc()
         );
 });
@@ -140,12 +146,15 @@ it('includes daily note and activity data', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('activityData', 1, fn (AssertableJson $json): AssertableJson => $json->where('completed', 3)
-            ->where('total', 5)
-            ->etc()
-        )
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('dailyNoteContent', 'My note')
-            ->etc()
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('activityData', 1, fn (AssertableJson $json): AssertableJson => $json
+                ->where('completed', 3)
+                ->where('total', 5)
+                ->etc()
+            )
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->where('dailyNoteContent', 'My note')
+                ->etc()
             )
             ->etc()
         );
@@ -157,12 +166,15 @@ it('uses user locale for translations', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data', fn (AssertableJson $json): AssertableJson => $json->has('translations', fn (AssertableJson $json): AssertableJson => $json->where('progress', 'Прогресс')
-            ->where('today', 'Сегодня')
-            ->etc()
-        )
-            ->etc()
-        )
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->has('translations', fn (AssertableJson $json): AssertableJson => $json
+                    ->where('progress', 'Прогресс')
+                    ->where('today', 'Сегодня')
+                    ->etc()
+                )
+                ->etc()
+            )
             ->etc()
         );
 });

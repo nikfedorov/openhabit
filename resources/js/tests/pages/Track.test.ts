@@ -482,6 +482,8 @@ describe('Track - Daily Note', () => {
 
 describe('Track - Activity Graph', () => {
     it('renders activity graph with legend and week grid', async () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(2026, 3, 4, 12, 0, 0)); // Saturday – ensures null padding days
         const wrapper = await mountTrack(mockApiFetch, { activityData: [] });
         expect(wrapper.text()).toContain(defaultTrackTranslations.activity);
         expect(wrapper.text()).toContain(defaultTrackTranslations.last_n_days);
@@ -495,6 +497,7 @@ describe('Track - Activity Graph', () => {
                 w.some((d) => d === null),
             ),
         ).toBe(true);
+        vi.useRealTimers();
     });
 
     it('fills sparse activity data and handles different weekday alignments', async () => {

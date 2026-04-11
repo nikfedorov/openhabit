@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { LifeStats, ViewTranslations } from '@/types/view';
+import type { LifeStats, LifeTranslations } from '@/types/view';
 
 defineProps<{
     lifeStats: LifeStats;
-    translations: ViewTranslations;
+    translations: LifeTranslations;
 }>();
 </script>
 

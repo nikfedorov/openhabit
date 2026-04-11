@@ -2,13 +2,13 @@
 import { computed } from 'vue';
 import ActivityCell from '@/components/view/ActivityCell.vue';
 import ActivityLegend from '@/components/view/ActivityLegend.vue';
-import type { ViewTranslations, YearActivityData } from '@/types/view';
+import type { LifeTranslations, YearActivityData } from '@/types/view';
 
 const props = defineProps<{
     birthdate: string | null;
     currentAge: number | null;
     yearlyActivity: YearActivityData[] | null;
-    translations: ViewTranslations;
+    translations: LifeTranslations;
 }>();
 
 const emit = defineEmits<{

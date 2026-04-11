@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import ActivityCell from '@/components/view/ActivityCell.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
-import { defaultViewTranslations } from '@/tests/helpers/view';
+import { defaultYearTranslations } from '@/tests/helpers/view';
 import type { WeekActivityData } from '@/types/view';
 
 describe('YearGrid', () => {
@@ -13,7 +13,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const cells = wrapper.findAllComponents(ActivityCell);
@@ -27,7 +27,7 @@ describe('YearGrid', () => {
                 selectedYear: null,
                 currentAge: null,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(0);
@@ -40,7 +40,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const firstCell = wrapper.findComponent(ActivityCell);
@@ -65,7 +65,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: activity,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(52);
@@ -78,7 +78,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.text()).toContain('13');
@@ -94,7 +94,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: activity,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const firstCell = wrapper.findComponent(ActivityCell);
@@ -108,7 +108,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(52);
@@ -121,7 +121,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(52);
@@ -134,7 +134,7 @@ describe('YearGrid', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(52);
@@ -147,7 +147,7 @@ describe('YearGrid', () => {
                 selectedYear: null,
                 currentAge: 25,
                 weeklyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(52);

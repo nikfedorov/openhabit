@@ -126,6 +126,12 @@
                                         "data": {
                                             "$ref": "#/components/schemas/TrackResource"
                                         },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
                                         "habits": {
                                             "type": "array",
                                             "items": {
@@ -137,20 +143,14 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/HabitActivityDataResource"
                                             }
-                                        },
-                                        "navigationTranslations": {
-                                            "$ref": "#/components/schemas/NavigationTranslationResource"
-                                        },
-                                        "settings": {
-                                            "$ref": "#/components/schemas/UserSettingResource"
                                         }
                                     },
                                     "required": [
                                         "data",
-                                        "habits",
-                                        "activityData",
                                         "navigationTranslations",
-                                        "settings"
+                                        "settings",
+                                        "habits",
+                                        "activityData"
                                     ]
                                 }
                             }
@@ -196,32 +196,15 @@
                 }
             }
         },
-        "/view": {
+        "/view/week": {
             "get": {
-                "operationId": "view",
-                "description": "Returns data for the week grid, year heatmap, or life (memento mori)\nvisualization depending on the selected tab.",
-                "summary": "Get visualization data",
+                "operationId": "view.week",
+                "description": "Returns the Franklin virtue grid for the requested week.",
+                "summary": "Get week grid data",
                 "tags": [
                     "View"
                 ],
                 "parameters": [
-                    {
-                        "name": "tab",
-                        "in": "query",
-                        "description": "Visualization tab to display.",
-                        "schema": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
-                            "enum": [
-                                "week",
-                                "year",
-                                "life"
-                            ]
-                        },
-                        "example": "week"
-                    },
                     {
                         "name": "week",
                         "in": "query",
@@ -234,11 +217,83 @@
                             "format": "date-time"
                         },
                         "example": "2026-04-06"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`WeekViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WeekViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the week view, including virtue names and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "days": {
+                                            "type": "array",
+                                            "description": "Week day headers for the grid.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WeekDayResource"
+                                            }
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "description": "Habit rows with daily completion statuses.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WeekGridHabitResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "days",
+                                        "habits"
+                                    ]
+                                }
+                            }
+                        }
                     },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/view/year": {
+            "get": {
+                "operationId": "view.year",
+                "description": "Returns weekly activity data for the selected life year (age).",
+                "summary": "Get year heatmap data",
+                "tags": [
+                    "View"
+                ],
+                "parameters": [
                     {
                         "name": "year",
                         "in": "query",
-                        "description": "Year index (age) for the year tab (0–79).",
+                        "description": "Year index (age) for the year grid (0–79).",
                         "schema": {
                             "type": [
                                 "integer",
@@ -252,26 +307,47 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "`ViewResource`",
+                        "description": "`YearViewResource`",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/ViewResource"
+                                            "$ref": "#/components/schemas/YearViewResource"
                                         },
                                         "navigationTranslations": {
+                                            "description": "Tabbar translations.",
                                             "$ref": "#/components/schemas/NavigationTranslationResource"
                                         },
                                         "settings": {
+                                            "description": "Settings for the current user.",
                                             "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the year view tab.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "description": "Weekly activity data for the selected life year.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/YearActivityResource"
+                                            }
                                         }
                                     },
                                     "required": [
                                         "data",
                                         "navigationTranslations",
-                                        "settings"
+                                        "settings",
+                                        "translations",
+                                        "activityData"
                                     ]
                                 }
                             }
@@ -282,6 +358,68 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/view/life": {
+            "get": {
+                "operationId": "view.life",
+                "description": "Returns yearly activity data and life statistics for the memento mori visualization.",
+                "summary": "Get life (memento mori) grid data",
+                "tags": [
+                    "View"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`LifeViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LifeViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the life view tab.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "description": "Yearly activity data for the life heatmap.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/LifeActivityResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
                     }
                 }
             }
@@ -413,6 +551,98 @@
                     "sort_order"
                 ],
                 "title": "HabitResource"
+            },
+            "LifeActivityResource": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": "integer",
+                        "description": "Life year index (age, 0-based).",
+                        "examples": [
+                            24
+                        ]
+                    },
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed that year.",
+                        "examples": [
+                            120
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total habit occurrences scheduled that year.",
+                        "examples": [
+                            200
+                        ]
+                    }
+                },
+                "required": [
+                    "year",
+                    "intensity",
+                    "completed",
+                    "total"
+                ],
+                "title": "LifeActivityResource"
+            },
+            "LifeViewResource": {
+                "type": "object",
+                "properties": {
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's birthdate (YYYY-MM-DD).",
+                        "examples": [
+                            "2001-03-15"
+                        ]
+                    },
+                    "currentAge": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "User's current age in years.",
+                        "examples": [
+                            25
+                        ]
+                    },
+                    "weeksLived": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Total weeks lived since birth.",
+                        "examples": [
+                            1300
+                        ]
+                    },
+                    "yearsRemaining": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Estimated years remaining (based on 80-year lifespan).",
+                        "examples": [
+                            55
+                        ]
+                    }
+                },
+                "required": [
+                    "birthdate",
+                    "currentAge",
+                    "weeksLived",
+                    "yearsRemaining"
+                ],
+                "title": "LifeViewResource"
             },
             "NavigationTranslationResource": {
                 "type": "object",
@@ -564,221 +794,227 @@
                 ],
                 "title": "UserSettingResource"
             },
-            "ViewResource": {
+            "WeekDayResource": {
                 "type": "object",
                 "properties": {
-                    "tab": {
+                    "date": {
                         "type": "string",
-                        "description": "Active visualization tab.",
+                        "description": "Date in YYYY-MM-DD format.",
                         "examples": [
-                            "week"
+                            "2026-04-06"
                         ]
                     },
-                    "weekStart": {
+                    "day_name": {
+                        "type": "string",
+                        "description": "Short localized day name.",
+                        "examples": [
+                            "Mon"
+                        ]
+                    },
+                    "day_number": {
+                        "type": "integer",
+                        "description": "Day of month number.",
+                        "examples": [
+                            6
+                        ]
+                    },
+                    "is_today": {
+                        "type": "boolean",
+                        "description": "Whether this day is today."
+                    },
+                    "is_future": {
+                        "type": "boolean",
+                        "description": "Whether this day is in the future."
+                    }
+                },
+                "required": [
+                    "date",
+                    "day_name",
+                    "day_number",
+                    "is_today",
+                    "is_future"
+                ],
+                "title": "WeekDayResource"
+            },
+            "WeekGridHabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Habit ID.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Habit name.",
+                        "examples": [
+                            "Exercise"
+                        ]
+                    },
+                    "category": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Category name, if any.",
+                        "examples": [
+                            "Health"
+                        ]
+                    },
+                    "is_weekly_focus": {
+                        "type": "boolean",
+                        "description": "Whether this habit is scheduled every day of the week."
+                    },
+                    "is_franklin_virtue": {
+                        "type": "boolean",
+                        "description": "Whether this habit belongs to Franklin's Virtues category."
+                    },
+                    "days": {
+                        "type": "object",
+                        "description": "Daily completion statuses.",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "completed": {
+                                    "type": "boolean"
+                                },
+                                "partial": {
+                                    "type": "boolean"
+                                },
+                                "scheduled": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "completed",
+                                "partial",
+                                "scheduled"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "category",
+                    "is_weekly_focus",
+                    "is_franklin_virtue",
+                    "days"
+                ],
+                "title": "WeekGridHabitResource"
+            },
+            "WeekViewResource": {
+                "type": "object",
+                "properties": {
+                    "start": {
                         "type": "string",
                         "description": "Week start date (YYYY-MM-DD).",
                         "examples": [
                             "2026-04-06"
                         ]
                     },
-                    "weekEnd": {
+                    "end": {
                         "type": "string",
                         "description": "Week end date (YYYY-MM-DD).",
                         "examples": [
                             "2026-04-12"
                         ]
                     },
-                    "weekStartFormatted": {
+                    "startFormatted": {
                         "type": "string",
                         "description": "Localized short start date.",
                         "examples": [
                             "Apr 6"
                         ]
                     },
-                    "weekEndFormatted": {
+                    "endFormatted": {
                         "type": "string",
                         "description": "Localized short end date.",
                         "examples": [
                             "Apr 12"
                         ]
                     },
-                    "weekEndFormattedFull": {
+                    "endFormattedFull": {
                         "type": "string",
                         "description": "Localized full end date with year.",
                         "examples": [
                             "Apr 12, 2026"
                         ]
                     },
-                    "weekYear": {
+                    "year": {
                         "type": "string",
                         "description": "Year of the displayed week.",
                         "examples": [
                             "2026"
                         ]
                     },
-                    "isCurrentWeek": {
+                    "isCurrent": {
                         "type": "boolean",
                         "description": "Whether the displayed week is the current week."
-                    },
-                    "franklinGrid": {
-                        "type": "object",
-                        "description": "Weekly habit grid with day columns and habit rows.",
-                        "properties": {
-                            "week_start": {
-                                "type": "string"
-                            },
-                            "week_end": {
-                                "type": "string"
-                            },
-                            "days": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "date": {
-                                            "type": "string"
-                                        },
-                                        "day_name": {
-                                            "type": "string"
-                                        },
-                                        "day_number": {
-                                            "type": "integer"
-                                        },
-                                        "is_today": {
-                                            "type": "boolean"
-                                        },
-                                        "is_future": {
-                                            "type": "boolean"
-                                        }
-                                    },
-                                    "required": [
-                                        "date",
-                                        "day_name",
-                                        "day_number",
-                                        "is_today",
-                                        "is_future"
-                                    ]
-                                }
-                            },
-                            "regular_habits": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "category": {
-                                            "type": [
-                                                "string",
-                                                "null"
-                                            ]
-                                        },
-                                        "is_weekly_focus": {
-                                            "type": "boolean"
-                                        },
-                                        "days": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "completed": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "partial": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "scheduled": {
-                                                        "type": "boolean"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "completed",
-                                                    "partial",
-                                                    "scheduled"
-                                                ]
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "id",
-                                        "name",
-                                        "category",
-                                        "is_weekly_focus",
-                                        "days"
-                                    ]
-                                }
-                            },
-                            "franklin_habits": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "category": {
-                                            "type": [
-                                                "string",
-                                                "null"
-                                            ]
-                                        },
-                                        "is_weekly_focus": {
-                                            "type": "boolean"
-                                        },
-                                        "days": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "completed": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "partial": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "scheduled": {
-                                                        "type": "boolean"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "completed",
-                                                    "partial",
-                                                    "scheduled"
-                                                ]
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "id",
-                                        "name",
-                                        "category",
-                                        "is_weekly_focus",
-                                        "days"
-                                    ]
-                                }
-                            }
-                        },
-                        "required": [
-                            "week_start",
-                            "week_end",
-                            "days",
-                            "regular_habits",
-                            "franklin_habits"
+                    }
+                },
+                "required": [
+                    "start",
+                    "end",
+                    "startFormatted",
+                    "endFormatted",
+                    "endFormattedFull",
+                    "year",
+                    "isCurrent"
+                ],
+                "title": "WeekViewResource"
+            },
+            "YearActivityResource": {
+                "type": "object",
+                "properties": {
+                    "weekNum": {
+                        "type": "integer",
+                        "description": "Week number within the life year (1-based).",
+                        "examples": [
+                            12
                         ]
                     },
-                    "selectedYear": {
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed that week.",
+                        "examples": [
+                            5
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total habit occurrences scheduled that week.",
+                        "examples": [
+                            7
+                        ]
+                    }
+                },
+                "required": [
+                    "weekNum",
+                    "intensity",
+                    "completed",
+                    "total"
+                ],
+                "title": "YearActivityResource"
+            },
+            "YearViewResource": {
+                "type": "object",
+                "properties": {
+                    "selected": {
                         "type": [
                             "integer",
                             "null"
                         ],
-                        "description": "Selected year index (age) for the year tab.",
+                        "description": "Selected year index (age) for the year grid.",
                         "examples": [
                             25
                         ]
@@ -802,117 +1038,14 @@
                         "examples": [
                             25
                         ]
-                    },
-                    "lifeStats": {
-                        "type": [
-                            "object",
-                            "null"
-                        ],
-                        "description": "Life statistics for the memento mori grid.",
-                        "properties": {
-                            "currentAge": {
-                                "type": "integer"
-                            },
-                            "weeksLived": {
-                                "type": "integer"
-                            },
-                            "yearsRemaining": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "currentAge",
-                            "weeksLived",
-                            "yearsRemaining"
-                        ]
-                    },
-                    "weeklyActivityData": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "description": "Weekly activity data for the year heatmap.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "weekNum": {
-                                    "type": "integer"
-                                },
-                                "intensity": {
-                                    "type": "integer"
-                                },
-                                "completed": {
-                                    "type": "integer"
-                                },
-                                "total": {
-                                    "type": "integer"
-                                }
-                            },
-                            "required": [
-                                "weekNum",
-                                "intensity",
-                                "completed",
-                                "total"
-                            ]
-                        }
-                    },
-                    "yearlyActivityData": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "description": "Yearly activity data for the life grid.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "year": {
-                                    "type": "integer"
-                                },
-                                "intensity": {
-                                    "type": "integer"
-                                },
-                                "completed": {
-                                    "type": "integer"
-                                },
-                                "total": {
-                                    "type": "integer"
-                                }
-                            },
-                            "required": [
-                                "year",
-                                "intensity",
-                                "completed",
-                                "total"
-                            ]
-                        }
-                    },
-                    "translations": {
-                        "type": "object",
-                        "description": "Localized UI strings for the view page.",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
                     }
                 },
                 "required": [
-                    "tab",
-                    "weekStart",
-                    "weekEnd",
-                    "weekStartFormatted",
-                    "weekEndFormatted",
-                    "weekEndFormattedFull",
-                    "weekYear",
-                    "isCurrentWeek",
-                    "franklinGrid",
-                    "selectedYear",
+                    "selected",
                     "birthdate",
-                    "currentAge",
-                    "lifeStats",
-                    "weeklyActivityData",
-                    "yearlyActivityData",
-                    "translations"
+                    "currentAge"
                 ],
-                "title": "ViewResource"
+                "title": "YearViewResource"
             }
         },
         "responses": {

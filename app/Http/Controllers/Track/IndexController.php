@@ -6,10 +6,10 @@ namespace App\Http\Controllers\Track;
 
 use App\Actions\Track\IndexAction;
 use App\Http\Requests\Track\IndexRequest;
-use App\Http\Resources\HabitActivityDataResource;
-use App\Http\Resources\HabitResource;
 use App\Http\Resources\NavigationTranslationResource;
-use App\Http\Resources\TrackResource;
+use App\Http\Resources\Track\HabitActivityDataResource;
+use App\Http\Resources\Track\HabitResource;
+use App\Http\Resources\Track\TrackResource;
 use App\Http\Resources\UserSettingResource;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
@@ -37,8 +37,8 @@ final readonly class IndexController
             ->additional([
                 'navigationTranslations' => NavigationTranslationResource::make($user),
                 'settings' => UserSettingResource::make($user),
-                'habits' => HabitResource::collection($data['habits']),
-                'activityData' => HabitActivityDataResource::collection($data['activityData']),
+                'habits' => HabitResource::collection($data->habits),
+                'activityData' => HabitActivityDataResource::collection($data->activityData),
             ]);
     }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ViewTranslations } from '@/types/view';
+import type { WeekTranslations } from '@/types/view';
 
 defineProps<{
     weekStartFormatted: string;
@@ -7,7 +7,7 @@ defineProps<{
     weekEndFormattedFull: string;
     weekYear: string;
     isCurrentWeek: boolean;
-    translations: ViewTranslations;
+    translations: WeekTranslations;
 }>();
 
 const emit = defineEmits<{

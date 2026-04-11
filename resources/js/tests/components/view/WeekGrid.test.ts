@@ -2,8 +2,8 @@ import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it } from 'vitest';
 import WeekGrid from '@/components/view/WeekGrid.vue';
 import {
-    defaultViewTranslations,
-    makeFranklinGrid,
+    defaultWeekTranslations,
+    makeDays,
     makeGridHabit,
 } from '@/tests/helpers/view';
 import type { GridHabit } from '@/types/view';
@@ -16,8 +16,9 @@ describe('WeekGrid', () => {
     it('renders habit names and day headers', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid(),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [makeGridHabit()],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('Exercise');
@@ -29,16 +30,17 @@ describe('WeekGrid', () => {
         localStorage.setItem('franklin_virtues_expanded', 'true');
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({
-                    franklin_habits: [
-                        makeGridHabit({
-                            id: 2,
-                            name: 'Temperance',
-                            is_weekly_focus: true,
-                        }),
-                    ],
-                }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [
+                    makeGridHabit(),
+                    makeGridHabit({
+                        id: 2,
+                        name: 'Temperance',
+                        is_weekly_focus: true,
+                        is_franklin_virtue: true,
+                    }),
+                ],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('Temperance');
@@ -48,12 +50,16 @@ describe('WeekGrid', () => {
     it('toggles franklin section on click', async () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({
-                    franklin_habits: [
-                        makeGridHabit({ id: 2, name: 'Temperance' }),
-                    ],
-                }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [
+                    makeGridHabit(),
+                    makeGridHabit({
+                        id: 2,
+                        name: 'Temperance',
+                        is_franklin_virtue: true,
+                    }),
+                ],
+                translations: defaultWeekTranslations,
             },
         });
         // Initially collapsed
@@ -74,8 +80,9 @@ describe('WeekGrid', () => {
     it('does not render regular habits block when empty', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({ regular_habits: [] }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [makeGridHabit({ is_franklin_virtue: true })],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).not.toContain('Habits');
@@ -84,8 +91,9 @@ describe('WeekGrid', () => {
     it('does not render franklin block when empty', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({ franklin_habits: [] }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [makeGridHabit()],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).not.toContain("Franklin's Virtues");
@@ -94,8 +102,9 @@ describe('WeekGrid', () => {
     it('renders cell classes for completed, partial, unscheduled, and future', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid(),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [makeGridHabit()],
+                translations: defaultWeekTranslations,
             },
         });
         // Completed day renders green
@@ -109,8 +118,9 @@ describe('WeekGrid', () => {
     it('renders legend', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid(),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [makeGridHabit()],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('Done');
@@ -122,21 +132,23 @@ describe('WeekGrid', () => {
     it('shows focus virtue when collapsed', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({
-                    franklin_habits: [
-                        makeGridHabit({
-                            id: 2,
-                            name: 'Temperance',
-                            is_weekly_focus: true,
-                        }),
-                        makeGridHabit({
-                            id: 3,
-                            name: 'Silence',
-                            is_weekly_focus: false,
-                        }),
-                    ],
-                }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [
+                    makeGridHabit(),
+                    makeGridHabit({
+                        id: 2,
+                        name: 'Temperance',
+                        is_weekly_focus: true,
+                        is_franklin_virtue: true,
+                    }),
+                    makeGridHabit({
+                        id: 3,
+                        name: 'Silence',
+                        is_weekly_focus: false,
+                        is_franklin_virtue: true,
+                    }),
+                ],
+                translations: defaultWeekTranslations,
             },
         });
         // Focus virtue is visible even when collapsed
@@ -149,21 +161,23 @@ describe('WeekGrid', () => {
         localStorage.setItem('franklin_virtues_expanded', 'true');
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({
-                    franklin_habits: [
-                        makeGridHabit({
-                            id: 2,
-                            name: 'Temperance',
-                            is_weekly_focus: true,
-                        }),
-                        makeGridHabit({
-                            id: 3,
-                            name: 'Silence',
-                            is_weekly_focus: false,
-                        }),
-                    ],
-                }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [
+                    makeGridHabit(),
+                    makeGridHabit({
+                        id: 2,
+                        name: 'Temperance',
+                        is_weekly_focus: true,
+                        is_franklin_virtue: true,
+                    }),
+                    makeGridHabit({
+                        id: 3,
+                        name: 'Silence',
+                        is_weekly_focus: false,
+                        is_franklin_virtue: true,
+                    }),
+                ],
+                translations: defaultWeekTranslations,
             },
         });
         expect(wrapper.text()).toContain('Temperance');
@@ -178,6 +192,7 @@ describe('WeekGrid - edge cases', () => {
             name: 'Exercise',
             category: null,
             is_weekly_focus: false,
+            is_franklin_virtue: false,
             days: {
                 // Only partial day entries — some days missing
                 '2026-04-06': {
@@ -189,11 +204,9 @@ describe('WeekGrid - edge cases', () => {
         };
         const wrapper = mount(WeekGrid, {
             props: {
-                data: {
-                    ...makeFranklinGrid(),
-                    regular_habits: [habitWithMissingDays],
-                },
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [habitWithMissingDays],
+                translations: defaultWeekTranslations,
             },
         });
         // The missing day should fall through to the default
@@ -205,21 +218,23 @@ describe('WeekGrid - edge cases', () => {
     it('animation hooks set and clean inline styles', () => {
         const wrapper = mount(WeekGrid, {
             props: {
-                data: makeFranklinGrid({
-                    franklin_habits: [
-                        makeGridHabit({
-                            id: 2,
-                            name: 'Focus',
-                            is_weekly_focus: true,
-                        }),
-                        makeGridHabit({
-                            id: 3,
-                            name: 'Extra',
-                            is_weekly_focus: false,
-                        }),
-                    ],
-                }),
-                translations: defaultViewTranslations,
+                days: makeDays(),
+                habits: [
+                    makeGridHabit(),
+                    makeGridHabit({
+                        id: 2,
+                        name: 'Focus',
+                        is_weekly_focus: true,
+                        is_franklin_virtue: true,
+                    }),
+                    makeGridHabit({
+                        id: 3,
+                        name: 'Extra',
+                        is_weekly_focus: false,
+                        is_franklin_virtue: true,
+                    }),
+                ],
+                translations: defaultWeekTranslations,
             },
         });
 

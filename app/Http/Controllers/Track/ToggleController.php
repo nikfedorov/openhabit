@@ -7,10 +7,10 @@ namespace App\Http\Controllers\Track;
 use App\Actions\Track\IndexAction;
 use App\Actions\Track\ToggleAction;
 use App\Http\Requests\Track\ToggleRequest;
-use App\Http\Resources\HabitActivityDataResource;
-use App\Http\Resources\HabitResource;
 use App\Http\Resources\NavigationTranslationResource;
-use App\Http\Resources\TrackResource;
+use App\Http\Resources\Track\HabitActivityDataResource;
+use App\Http\Resources\Track\HabitResource;
+use App\Http\Resources\Track\TrackResource;
 use App\Http\Resources\UserSettingResource;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
@@ -41,10 +41,10 @@ final readonly class ToggleController
 
         return new TrackResource($data)
             ->additional([
-                'habits' => HabitResource::collection($data['habits']),
-                'activityData' => HabitActivityDataResource::collection($data['activityData']),
                 'navigationTranslations' => NavigationTranslationResource::make($user),
                 'settings' => UserSettingResource::make($user),
+                'habits' => HabitResource::collection($data->habits),
+                'activityData' => HabitActivityDataResource::collection($data->activityData),
             ]);
     }
 }

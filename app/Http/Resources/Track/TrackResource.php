@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Track;
 
+use App\Data\Track\TrackData;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Daily habit tracking data for a specific date.
  *
- * @property-read array{date: string, dayName: string, dateFormatted: string, isToday: bool, totalHabits: int, completedCount: int, dailyNoteContent: string, translations: array<string, string>} $resource
+ * @property-read TrackData $resource
  */
 final class TrackResource extends JsonResource
 {
@@ -27,7 +28,7 @@ final class TrackResource extends JsonResource
              *
              * @example "2026-04-06"
              */
-            'date' => $this->resource['date'],
+            'date' => $this->resource->date,
 
             /**
              * Localized day of week name.
@@ -36,7 +37,7 @@ final class TrackResource extends JsonResource
              *
              * @example "Monday"
              */
-            'dayName' => $this->resource['dayName'],
+            'dayName' => $this->resource->dayName,
 
             /**
              * Localized full date.
@@ -45,14 +46,14 @@ final class TrackResource extends JsonResource
              *
              * @example "April 6, 2026"
              */
-            'dateFormatted' => $this->resource['dateFormatted'],
+            'dateFormatted' => $this->resource->dateFormatted,
 
             /**
              * Whether this date is today.
              *
              * @var bool
              */
-            'isToday' => $this->resource['isToday'],
+            'isToday' => $this->resource->isToday,
 
             /**
              * Total number of habits scheduled for this day.
@@ -61,7 +62,7 @@ final class TrackResource extends JsonResource
              *
              * @example 5
              */
-            'totalHabits' => $this->resource['totalHabits'],
+            'totalHabits' => $this->resource->totalHabits,
 
             /**
              * Number of fully completed habits.
@@ -70,7 +71,7 @@ final class TrackResource extends JsonResource
              *
              * @example 3
              */
-            'completedCount' => $this->resource['completedCount'],
+            'completedCount' => $this->resource->completedCount,
 
             /**
              * User's daily note text.
@@ -79,14 +80,14 @@ final class TrackResource extends JsonResource
              *
              * @example "Great day!"
              */
-            'dailyNoteContent' => $this->resource['dailyNoteContent'],
+            'dailyNoteContent' => $this->resource->dailyNoteContent,
 
             /**
              * Localized UI strings for the track page.
              *
              * @var array<string, string>
              */
-            'translations' => $this->resource['translations'],
+            'translations' => $this->resource->translations,
         ];
     }
 }

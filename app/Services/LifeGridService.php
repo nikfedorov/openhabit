@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Data\LifeGrid\LifeStats;
+use App\Data\LifeGrid\WeeklyActivity;
+use App\Data\LifeGrid\YearlyActivity;
 use App\Models\Stat;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -27,9 +30,30 @@ final readonly class LifeGridService
     ) {}
 
     /**
+     * Get weekly activity data for a specific life year.
+     *
+     * @return array<int, WeeklyActivity>
+     */
+    public function getWeeklyActivityData(User $user, CarbonInterface $birthdate, int $selectedYear): array
+    {
+        $yearStart = $this->lifeYearCalculator->getYearStart($birthdate, $selectedYear);
+        $yearEnd = $this->lifeYearCalculator->getYearStart($birthdate, $selectedYear + 1);
+
+        $yearStats = $user->stats()
+            ->select(['user_id', 'period_start', 'completed_count', 'planned_count'])
+            ->weekly()
+            ->where('period_start', '>=', $yearStart)
+            ->where('period_start', '<', $yearEnd)
+            ->get()
+            ->keyBy(fn (Stat $stat): string => Date::parse($stat->period_start)->toDateString());
+
+        return $this->buildWeeklyActivityArray($yearStats, $yearStart);
+    }
+
+    /**
      * Get all life-related data in a single pass (one DB query).
      *
-     * @return array{lifeStats: array{currentAge: int, weeksLived: int, yearsRemaining: int}|null, weeklyActivityData: array<int, array{weekNum: int, intensity: int, completed: int, total: int}>|null, yearlyActivityData: array<int, array{year: int, intensity: int, completed: int, total: int}>|null}
+     * @return array{lifeStats: LifeStats|null, weeklyActivityData: array<int, WeeklyActivity>|null, yearlyActivityData: array<int, YearlyActivity>|null}
      */
     public function getLifeData(User $user, ?CarbonInterface $birthdate, ?int $selectedYear): array
     {
@@ -67,26 +91,24 @@ final readonly class LifeGridService
 
     /**
      * Calculate current life stats from birthdate.
-     *
-     * @return array{currentAge: int, weeksLived: int, yearsRemaining: int}
      */
-    public function getLifeStats(CarbonInterface $birthdate): array
+    public function getLifeStats(CarbonInterface $birthdate): LifeStats
     {
         $currentAge = $this->lifeYearCalculator->getCurrentAge($birthdate);
         $weeksLived = $this->lifeYearCalculator->getWeeksLived($birthdate);
 
-        return [
-            'currentAge' => $currentAge,
-            'weeksLived' => $weeksLived,
-            'yearsRemaining' => self::TOTAL_LIFE_YEARS - $currentAge,
-        ];
+        return new LifeStats(
+            currentAge: $currentAge,
+            weeksLived: $weeksLived,
+            yearsRemaining: self::TOTAL_LIFE_YEARS - $currentAge,
+        );
     }
 
     /**
      * Build weekly activity array for a life year.
      *
      * @param  Collection<string, Stat>  $stats
-     * @return array<int, array{weekNum: int, intensity: int, completed: int, total: int}>
+     * @return array<int, WeeklyActivity>
      */
     private function buildWeeklyActivityArray(Collection $stats, CarbonInterface $yearStart): array
     {
@@ -100,12 +122,12 @@ final readonly class LifeGridService
             $completed = $weekStat instanceof Stat ? $weekStat->completed_count : 0;
             $total = $weekStat instanceof Stat ? $weekStat->planned_count : 0;
 
-            $weeklyData[$weekNum] = [
-                'weekNum' => $weekNum,
-                'intensity' => Stat::calculateIntensity($completed, $total),
-                'completed' => $completed,
-                'total' => $total,
-            ];
+            $weeklyData[$weekNum] = new WeeklyActivity(
+                weekNum: $weekNum,
+                intensity: Stat::calculateIntensity($completed, $total),
+                completed: $completed,
+                total: $total,
+            );
 
             $currentDate = $currentDate->addWeek();
         }
@@ -117,7 +139,7 @@ final readonly class LifeGridService
      * Build yearly activity array for life grid.
      *
      * @param  Collection<int, Stat>  $weeklyStats
-     * @return array<int, array{year: int, intensity: int, completed: int, total: int}>
+     * @return array<int, YearlyActivity>
      */
     private function buildYearlyActivityArray(Collection $weeklyStats, CarbonInterface $birthdate): array
     {
@@ -136,12 +158,12 @@ final readonly class LifeGridService
             /** @var int $total */
             $total = $yearWeeklyStats->sum('planned_count');
 
-            $yearlyData[$year] = [
-                'year' => $year,
-                'intensity' => Stat::calculateIntensity($completed, $total),
-                'completed' => $completed,
-                'total' => $total,
-            ];
+            $yearlyData[$year] = new YearlyActivity(
+                year: $year,
+                intensity: Stat::calculateIntensity($completed, $total),
+                completed: $completed,
+                total: $total,
+            );
         }
 
         return $yearlyData;

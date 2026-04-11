@@ -1,5 +1,17 @@
 import type { NavigationTranslations } from './navigation';
 import type { ActivityDay, Habit, TrackData } from './track';
+import type {
+    GridHabit,
+    LifeTranslations,
+    WeekActivityData,
+    WeekDay,
+    WeekTranslations,
+    YearActivityData,
+    YearTranslations,
+    WeekViewData,
+    YearViewData,
+    LifeViewData,
+} from './view';
 
 export type UserSettings = {
     locale: string;
@@ -20,4 +32,23 @@ export type TrackApiResponse = CommonData & {
     data: Omit<TrackData, 'habits' | 'activityData'>;
     habits: Habit[];
     activityData: ActivityDay[];
+};
+
+export type WeekApiResponse = CommonData & {
+    data: WeekViewData;
+    days: WeekDay[];
+    habits: GridHabit[];
+    translations: WeekTranslations;
+};
+
+export type YearApiResponse = CommonData & {
+    data: YearViewData;
+    translations: YearTranslations;
+    activityData: WeekActivityData[] | null;
+};
+
+export type LifeApiResponse = CommonData & {
+    data: LifeViewData;
+    translations: LifeTranslations;
+    activityData: YearActivityData[] | null;
 };

@@ -1,6 +1,13 @@
-import type { FranklinGrid, GridHabit, LifeStats, WeekDay } from '@/types/view';
+import type {
+    GridHabit,
+    LifeStats,
+    LifeTranslations,
+    WeekDay,
+    WeekTranslations,
+    YearTranslations,
+} from '@/types/view';
 
-export const defaultViewTranslations = {
+export const defaultWeekTranslations: WeekTranslations = {
     week: 'Week',
     year: 'Year',
     life: 'Life',
@@ -8,6 +15,18 @@ export const defaultViewTranslations = {
     next_week: 'Next week',
     this_week: 'This Week',
     current_week: 'Current week',
+    habits: 'Habits',
+    franklins_virtues: "Franklin's Virtues",
+    done: 'Done',
+    partial: 'Partial',
+    missed: 'Missed',
+    future: 'Future',
+};
+
+export const defaultYearTranslations: YearTranslations = {
+    week: 'Week',
+    year: 'Year',
+    life: 'Life',
     previous_year: 'Previous year',
     next_year: 'Next year',
     this_year: 'This Year',
@@ -16,23 +35,26 @@ export const defaultViewTranslations = {
     less: 'Less',
     more: 'More',
     future: 'Future',
-    habits: 'Habits',
-    done: 'Done',
-    partial: 'Partial',
-    missed: 'Missed',
-    no_habits_yet: 'No habits yet',
-    create_habits_to_track: 'Create habits to track them here',
+    each_square_week: 'Each square = <strong>1 week</strong>',
+    set_birthdate: 'Set your birthdate in settings',
+    to_see_year_visualization: 'to see your year visualization',
+};
+
+export const defaultLifeTranslations: LifeTranslations = {
+    week: 'Week',
+    year: 'Year',
+    life: 'Life',
     memento_mori: 'Memento Mori',
     years_old: 'years old',
     years_left: 'years left',
     weeks_lived: 'weeks lived',
+    less: 'Less',
+    more: 'More',
+    future: 'Future',
     each_square_year: 'Each square = <strong>1 year</strong>',
-    each_square_week: 'Each square = <strong>1 week</strong>',
     seneca_quote: 'It is not that we have a short time to live...',
     seneca_author: 'Seneca',
-    franklins_virtues: "Franklin's Virtues",
     set_birthdate: 'Set your birthdate in settings',
-    to_see_year_visualization: 'to see your year visualization',
     to_see_life_visualization: 'to see your life visualization',
 };
 
@@ -107,6 +129,7 @@ export function makeGridHabit(overrides: Partial<GridHabit> = {}): GridHabit {
         name: 'Exercise',
         category: null,
         is_weekly_focus: false,
+        is_franklin_virtue: false,
         days: {
             '2026-04-06': { completed: true, partial: false, scheduled: true },
             '2026-04-07': {
@@ -140,19 +163,6 @@ export function makeGridHabit(overrides: Partial<GridHabit> = {}): GridHabit {
                 scheduled: true,
             },
         },
-        ...overrides,
-    };
-}
-
-export function makeFranklinGrid(
-    overrides: Partial<FranklinGrid> = {},
-): FranklinGrid {
-    return {
-        week_start: '2026-04-06',
-        week_end: '2026-04-12',
-        days: makeDays(),
-        regular_habits: [makeGridHabit()],
-        franklin_habits: [],
         ...overrides,
     };
 }

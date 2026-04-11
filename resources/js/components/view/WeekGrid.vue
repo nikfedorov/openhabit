@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { FranklinGrid, GridHabit, WeekDay } from '@/types/view';
-import type { ViewTranslations } from '@/types/view';
+import type { GridHabit, WeekDay, WeekTranslations } from '@/types/view';
 import { getIntensityColor } from '@/utils/intensity';
 
 const props = defineProps<{
-    data: FranklinGrid;
-    translations: ViewTranslations;
+    days: WeekDay[];
+    habits: GridHabit[];
+    translations: WeekTranslations;
 }>();
 
 const franklinExpanded = ref(
@@ -29,26 +29,29 @@ type HabitSection = {
     collapsible: boolean;
 };
 
-const habitSections = computed<HabitSection[]>(() =>
-    [
+const habitSections = computed<HabitSection[]>(() => {
+    const regularHabits = props.habits.filter((h) => !h.is_franklin_virtue);
+    const franklinHabits = props.habits.filter((h) => h.is_franklin_virtue);
+
+    return [
         {
             key: 'regular',
             label: props.translations.habits,
-            allHabits: props.data.regular_habits,
-            visibleHabits: props.data.regular_habits,
+            allHabits: regularHabits,
+            visibleHabits: regularHabits,
             collapsible: false,
         },
         {
             key: 'franklin',
             label: props.translations.franklins_virtues,
-            allHabits: props.data.franklin_habits,
+            allHabits: franklinHabits,
             visibleHabits: franklinExpanded.value
-                ? props.data.franklin_habits
-                : props.data.franklin_habits.filter((h) => h.is_weekly_focus),
+                ? franklinHabits
+                : franklinHabits.filter((h) => h.is_weekly_focus),
             collapsible: true,
         },
-    ].filter((s) => s.allHabits.length > 0),
-);
+    ].filter((s) => s.allHabits.length > 0);
+});
 
 function getCellClass(day: WeekDay, habit: GridHabit): string {
     const dayData = habit.days[day.date] ?? {
@@ -168,7 +171,7 @@ function onRowAfterLeave(el: Element) {
             <div class="grid" style="grid-template-columns: 40% repeat(7, 1fr)">
                 <div class="px-3 py-1"></div>
                 <div
-                    v-for="day in data.days"
+                    v-for="day in days"
                     :key="day.date"
                     class="px-0.5 py-1 text-center"
                 >
@@ -223,7 +226,7 @@ function onRowAfterLeave(el: Element) {
                         </div>
                     </div>
                     <div
-                        v-for="day in data.days"
+                        v-for="day in days"
                         :key="day.date"
                         class="px-0.5 py-1.5 text-center"
                     >

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import YearNavigator from '@/components/view/YearNavigator.vue';
-import { defaultViewTranslations } from '@/tests/helpers/view';
+import { defaultYearTranslations } from '@/tests/helpers/view';
 
 describe('YearNavigator', () => {
     it('shows "This Year" when on current year', () => {
@@ -10,7 +10,7 @@ describe('YearNavigator', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.text()).toContain('This Year');
@@ -22,7 +22,7 @@ describe('YearNavigator', () => {
                 selectedYear: 10,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.text()).toContain('Age 10');
@@ -35,7 +35,7 @@ describe('YearNavigator', () => {
                 selectedYear: 10,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const prevBtn = wrapper.findAll('button')[0];
@@ -49,7 +49,7 @@ describe('YearNavigator', () => {
                 selectedYear: 10,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const buttons = wrapper.findAll('button');
@@ -64,7 +64,7 @@ describe('YearNavigator', () => {
                 selectedYear: 10,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const currentBtn = wrapper
@@ -80,7 +80,7 @@ describe('YearNavigator', () => {
                 selectedYear: 0,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // Only next button and current year button visible
@@ -96,7 +96,7 @@ describe('YearNavigator', () => {
                 selectedYear: 79,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         const buttons = wrapper.findAll('button');
@@ -111,7 +111,7 @@ describe('YearNavigator', () => {
                 selectedYear: null,
                 currentAge: null,
                 birthdate: null,
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         expect(wrapper.text()).toBe('');
@@ -123,7 +123,7 @@ describe('YearNavigator', () => {
                 selectedYear: 25,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // Birth: 2001-03-15, year 25 → 2026-03-15 to 2027-03-14
@@ -139,7 +139,7 @@ describe('YearNavigator - edge cases', () => {
                 selectedYear: 0,
                 currentAge: 25,
                 birthdate: '2000-01-01',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // Both startYear and endYear should be 2000
@@ -153,7 +153,7 @@ describe('YearNavigator - edge cases', () => {
                 selectedYear: null,
                 currentAge: 25,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // displayYear = currentAge (25), isCurrentYear = true
@@ -166,7 +166,7 @@ describe('YearNavigator - edge cases', () => {
                 selectedYear: null,
                 currentAge: null,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // displayYear = 0, isCurrentYear = (0 === null) = false
@@ -179,7 +179,7 @@ describe('YearNavigator - edge cases', () => {
                 selectedYear: 10,
                 currentAge: null,
                 birthdate: '2001-03-15',
-                translations: defaultViewTranslations,
+                translations: defaultYearTranslations,
             },
         });
         // isCurrentYear = (10 === null) = false, so button shows

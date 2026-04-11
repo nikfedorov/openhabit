@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import ActivityCell from '@/components/view/ActivityCell.vue';
 import ActivityLegend from '@/components/view/ActivityLegend.vue';
-import type { ViewTranslations, WeekActivityData } from '@/types/view';
+import type { YearTranslations, WeekActivityData } from '@/types/view';
 import { findMondayOnOrAfter } from '@/utils/date';
 
 const props = defineProps<{
@@ -10,7 +10,7 @@ const props = defineProps<{
     selectedYear: number | null;
     currentAge: number | null;
     weeklyActivity: WeekActivityData[] | null;
-    translations: ViewTranslations;
+    translations: YearTranslations;
 }>();
 
 const emit = defineEmits<{

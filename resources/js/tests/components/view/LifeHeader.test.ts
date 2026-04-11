@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import {
     defaultLifeStats,
-    defaultViewTranslations,
+    defaultLifeTranslations,
 } from '@/tests/helpers/view';
 
 describe('LifeHeader', () => {
@@ -11,7 +11,7 @@ describe('LifeHeader', () => {
         const wrapper = mount(LifeHeader, {
             props: {
                 lifeStats: defaultLifeStats,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         expect(wrapper.text()).toContain('Memento Mori');

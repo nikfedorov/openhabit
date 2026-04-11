@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Data\RRule\OrdinalWeekday;
 use App\Enums\RRuleFrequency;
 use Carbon\CarbonInterface;
 use DateTimeInterface;
@@ -141,19 +142,17 @@ final class RRuleService
 
     /**
      * Parse ordinal weekday from BYDAY (e.g., "1MO" → [ordinal: 1, day: 0]).
-     *
-     * @return array{ordinal: int|null, day: int|null} day in ISO format
      */
-    public function parseOrdinalWeekday(string $rrule): array
+    public function parseOrdinalWeekday(string $rrule): OrdinalWeekday
     {
         if (! preg_match('/BYDAY=(-?\d+)([A-Z]{2})/', $rrule, $m)) {
-            return ['ordinal' => null, 'day' => null];
+            return new OrdinalWeekday(ordinal: null, day: null);
         }
 
-        return [
-            'ordinal' => (int) $m[1],
-            'day' => self::DAY_NUMBERS[$m[2]] ?? null,
-        ];
+        return new OrdinalWeekday(
+            ordinal: (int) $m[1],
+            day: self::DAY_NUMBERS[$m[2]] ?? null,
+        );
     }
 
     /**
@@ -398,16 +397,16 @@ final class RRuleService
 
         $ordinal = $this->parseOrdinalWeekday($rrule);
 
-        if ($ordinal['ordinal'] !== null && $ordinal['day'] !== null) {
+        if ($ordinal->ordinal !== null && $ordinal->day !== null) {
             $ordinalKeys = [
                 1 => 'habit.position_1st', 2 => 'habit.position_2nd',
                 3 => 'habit.position_3rd', 4 => 'habit.position_4th',
                 -1 => 'habit.position_last',
             ];
-            $ordinalName = isset($ordinalKeys[$ordinal['ordinal']])
-                ? __($ordinalKeys[$ordinal['ordinal']])
-                : '#'.$ordinal['ordinal'];
-            $dayName = __(self::DAY_KEYS[$ordinal['day']] ?? 'day');
+            $ordinalName = isset($ordinalKeys[$ordinal->ordinal])
+                ? __($ordinalKeys[$ordinal->ordinal])
+                : '#'.$ordinal->ordinal;
+            $dayName = __(self::DAY_KEYS[$ordinal->day] ?? 'day');
 
             return __('habit.ordinal_weekday_of_month', ['ordinal' => $ordinalName, 'day' => $dayName]);
         }

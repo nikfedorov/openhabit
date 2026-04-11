@@ -32,11 +32,13 @@ it('returns correct structure and separates franklin virtues', function (): void
 
     $result = $this->service->getFranklinGridData(loadHabits($this->user), now()->startOfWeek());
 
-    expect($result)
-        ->toHaveKeys(['week_start', 'week_end', 'days', 'regular_habits', 'franklin_habits'])
-        ->and($result['days'])->toHaveCount(7)
-        ->and($result['regular_habits'])->toHaveCount(1)
-        ->and($result['franklin_habits'])->toHaveCount(1);
+    expect($result->days)->toHaveCount(7)
+        ->and($result->habits)->toHaveCount(2);
+
+    $regular = collect($result->habits)->where('isFranklinVirtue', false);
+    $franklin = collect($result->habits)->where('isFranklinVirtue', true);
+    expect($regular)->toHaveCount(1)
+        ->and($franklin)->toHaveCount(1);
 });
 
 it('tracks completion and partial status', function (): void {
@@ -65,10 +67,10 @@ it('tracks completion and partial status', function (): void {
 
     $result = $this->service->getFranklinGridData(loadHabits($this->user), now()->startOfWeek());
 
-    expect($result['regular_habits'][0]['days'][$today])
+    expect($result->habits[0]->days[$today])
         ->completed->toBeTrue()
         ->partial->toBeFalse()
-        ->and($result['regular_habits'][1]['days'][$today])
+        ->and($result->habits[1]->days[$today])
         ->completed->toBeFalse()
         ->partial->toBeTrue();
 });
@@ -81,20 +83,18 @@ it('marks today and scheduled days correctly', function (): void {
 
     $result = $this->service->getFranklinGridData(loadHabits($this->user), now()->startOfWeek());
 
-    $todayDay = collect($result['days'])->firstWhere('date', now()->toDateString());
-    expect($todayDay['is_today'])->toBeTrue()
-        ->and($todayDay['is_future'])->toBeFalse();
+    $todayDay = collect($result->days)->firstWhere('date', now()->toDateString());
+    expect($todayDay->isToday)->toBeTrue()
+        ->and($todayDay->isFuture)->toBeFalse();
 
     $monday = now()->startOfWeek()->toDateString();
     $tuesday = now()->startOfWeek()->addDay()->toDateString();
-    expect($result['regular_habits'][0]['days'][$monday]['scheduled'])->toBeTrue()
-        ->and($result['regular_habits'][0]['days'][$tuesday]['scheduled'])->toBeFalse();
+    expect($result->habits[0]->days[$monday]->scheduled)->toBeTrue()
+        ->and($result->habits[0]->days[$tuesday]->scheduled)->toBeFalse();
 });
 
-it('returns empty arrays for empty habits and defaults to current week', function (): void {
+it('returns empty arrays for empty habits', function (): void {
     $result = $this->service->getFranklinGridData(loadHabits($this->user));
 
-    expect($result['regular_habits'])->toBeEmpty()
-        ->and($result['franklin_habits'])->toBeEmpty()
-        ->and($result['week_start'])->toBe(now()->startOfWeek()->toDateString());
+    expect($result->habits)->toBeEmpty();
 });

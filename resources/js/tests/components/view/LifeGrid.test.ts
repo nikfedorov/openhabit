@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import ActivityCell from '@/components/view/ActivityCell.vue';
 import LifeGrid from '@/components/view/LifeGrid.vue';
-import { defaultViewTranslations } from '@/tests/helpers/view';
+import { defaultLifeTranslations } from '@/tests/helpers/view';
 import type { YearActivityData } from '@/types/view';
 
 describe('LifeGrid', () => {
@@ -12,7 +12,7 @@ describe('LifeGrid', () => {
                 birthdate: '2001-03-15',
                 currentAge: 25,
                 yearlyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         const cells = wrapper.findAllComponents(ActivityCell);
@@ -26,7 +26,7 @@ describe('LifeGrid', () => {
                 birthdate: null,
                 currentAge: null,
                 yearlyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         expect(wrapper.findAllComponents(ActivityCell)).toHaveLength(0);
@@ -38,7 +38,7 @@ describe('LifeGrid', () => {
                 birthdate: '2001-03-15',
                 currentAge: 25,
                 yearlyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         const firstCell = wrapper.findComponent(ActivityCell);
@@ -62,7 +62,7 @@ describe('LifeGrid', () => {
                 birthdate: '2001-03-15',
                 currentAge: 25,
                 yearlyActivity: activity,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         const cells = wrapper.findAllComponents(ActivityCell);
@@ -77,7 +77,7 @@ describe('LifeGrid', () => {
                 birthdate: '2001-03-15',
                 currentAge: 25,
                 yearlyActivity: null,
-                translations: defaultViewTranslations,
+                translations: defaultLifeTranslations,
             },
         });
         // Year 0, 10, 20, 30, etc. should show labels

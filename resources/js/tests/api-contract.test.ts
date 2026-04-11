@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Habit, TrackData } from '@/types/track';
-import type { ViewData } from '@/types/view';
+import type { LifeViewData, WeekViewData, YearViewData } from '@/types/view';
 import apiSchema from '../api-schema.json';
 
 type SchemaMap = typeof apiSchema.components.schemas;
@@ -55,25 +55,39 @@ describe('API contract', () => {
         expect(schema).toEqual(ts);
     });
 
-    it('ViewResource schema matches ViewData type', () => {
-        const schema = schemaKeys('ViewResource');
-        const ts = typeKeys<ViewData>({
-            tab: true,
-            weekStart: true,
-            weekEnd: true,
-            weekStartFormatted: true,
-            weekEndFormatted: true,
-            weekEndFormattedFull: true,
-            weekYear: true,
-            isCurrentWeek: true,
-            franklinGrid: true,
-            selectedYear: true,
+    it('WeekViewResource schema matches WeekViewData type', () => {
+        const schema = schemaKeys('WeekViewResource');
+        const ts = typeKeys<WeekViewData>({
+            start: true,
+            end: true,
+            startFormatted: true,
+            endFormatted: true,
+            endFormattedFull: true,
+            year: true,
+            isCurrent: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('YearViewResource schema matches YearViewData type', () => {
+        const schema = schemaKeys('YearViewResource');
+        const ts = typeKeys<YearViewData>({
+            selected: true,
             birthdate: true,
             currentAge: true,
-            lifeStats: true,
-            weeklyActivityData: true,
-            yearlyActivityData: true,
-            translations: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('LifeViewResource schema matches LifeViewData type', () => {
+        const schema = schemaKeys('LifeViewResource');
+        const ts = typeKeys<LifeViewData>({
+            birthdate: true,
+            currentAge: true,
+            weeksLived: true,
+            yearsRemaining: true,
         });
 
         expect(schema).toEqual(ts);
@@ -100,6 +114,8 @@ describe('API contract', () => {
         expect(paths).toContain('/track');
         expect(paths).toContain('/track/toggle');
         expect(paths).toContain('/track/daily-note');
-        expect(paths).toContain('/view');
+        expect(paths).toContain('/view/week');
+        expect(paths).toContain('/view/year');
+        expect(paths).toContain('/view/life');
     });
 });

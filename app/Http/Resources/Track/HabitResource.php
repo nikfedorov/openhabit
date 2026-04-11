@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Track;
 
 use App\Models\Habit;
 use Illuminate\Http\Request;

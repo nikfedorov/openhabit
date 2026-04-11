@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Track;
 
+use App\Data\Track\DailyActivity;
+use App\Data\Track\TrackData;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\Stat;
@@ -26,10 +28,7 @@ final readonly class IndexAction
         return sprintf('user:%s:activity_data', $user->id);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function handle(User $user, ?string $dateInput = null): array
+    public function handle(User $user, ?string $dateInput = null): TrackData
     {
         $date = $dateInput !== null ? CarbonImmutable::parse($dateInput) : CarbonImmutable::today();
         if ($date->isFuture()) {
@@ -45,18 +44,18 @@ final readonly class IndexAction
             ->where('date', $date->toDateString())
             ->value('content');
 
-        return [
-            'date' => $date->toDateString(),
-            'dayName' => Str::ucfirst($date->isoFormat('dddd')),
-            'dateFormatted' => $date->isoFormat('LL'),
-            'isToday' => $date->isToday(),
-            'habits' => $habitsData,
-            'totalHabits' => $totalHabits,
-            'completedCount' => $completedCount,
-            'dailyNoteContent' => $dailyNoteContent ?? '',
-            'activityData' => $this->activityData($user),
-            'translations' => $this->translations(),
-        ];
+        return new TrackData(
+            date: $date->toDateString(),
+            dayName: Str::ucfirst($date->isoFormat('dddd')),
+            dateFormatted: $date->isoFormat('LL'),
+            isToday: $date->isToday(),
+            habits: $habitsData,
+            totalHabits: $totalHabits,
+            completedCount: $completedCount,
+            dailyNoteContent: $dailyNoteContent ?? '',
+            activityData: $this->activityData($user),
+            translations: $this->translations(),
+        );
     }
 
     /**
@@ -96,29 +95,33 @@ final readonly class IndexAction
     }
 
     /**
-     * @return array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}>
+     * @return array<int, DailyActivity>
      */
     private function activityData(User $user): array
     {
-        $activityData = $user->stats()
-            ->select(['user_id', 'period_start', 'completed_count', 'planned_count'])
-            ->daily()
-            ->where('period_start', '>=', CarbonImmutable::today()->subDays(self::ACTIVITY_DAYS - 1)->toDateString())
-            ->orderBy('period_start')
-            ->get()
-            ->map(fn (Stat $stat): array => [
-                'date' => $stat->period_start instanceof CarbonInterface ? $stat->period_start->format('Y-m-d') : (string) $stat->period_start,
-                'percentage' => $stat->completion_rate,
-                'completed' => $stat->completed_count,
-                'total' => $stat->planned_count,
-                'intensity' => $stat->intensity_level,
-            ])->all();
-
-        return Cache::remember(
+        /** @var array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}> $cached */
+        $cached = Cache::remember(
             key: self::activityCacheKey($user),
             ttl: 300,
-            callback: fn (): array => $activityData,
+            callback: fn (): array => $user->stats()
+                ->select(['user_id', 'period_start', 'completed_count', 'planned_count'])
+                ->daily()
+                ->where('period_start', '>=', CarbonImmutable::today()->subDays(self::ACTIVITY_DAYS - 1)->toDateString())
+                ->orderBy('period_start')
+                ->get()
+                ->map(fn (Stat $stat): array => new DailyActivity(
+                    date: $stat->period_start instanceof CarbonInterface
+                        ? $stat->period_start->format('Y-m-d')
+                        : (string) $stat->period_start,
+                    percentage: $stat->completion_rate,
+                    completed: $stat->completed_count,
+                    total: $stat->planned_count,
+                    intensity: $stat->intensity_level,
+                )->toArray())
+                ->all(),
         );
+
+        return array_map(DailyActivity::fromArray(...), $cached);
     }
 
     /**
