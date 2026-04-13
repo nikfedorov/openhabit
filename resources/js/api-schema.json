@@ -7,7 +7,8 @@
     },
     "servers": [
         {
-            "url": "https://65f9-205-237-111-91.ngrok-free.app/api"
+            "url": "http://localhost/api",
+            "description": "Local"
         }
     ],
     "tags": [
@@ -16,6 +17,9 @@
         },
         {
             "name": "View"
+        },
+        {
+            "name": "Edit"
         }
     ],
     "security": [
@@ -179,6 +183,287 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/NoteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/{habit}": {
+            "get": {
+                "operationId": "edit.show",
+                "description": "Returns the habit with parsed RRule data for the edit form.",
+                "summary": "Get habit form data",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`HabitFormResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/HabitFormResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "edit.update",
+                "summary": "Update an existing habit",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreHabitRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/EditHabitResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "edit.destroy",
+                "description": "Soft-deletes the habit, or force-deletes if no completions exist.",
+                "summary": "Delete a habit",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits": {
+            "post": {
+                "operationId": "edit.store",
+                "summary": "Create a new habit",
+                "tags": [
+                    "Edit"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreHabitRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/EditHabitResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/{habit}/toggle": {
+            "post": {
+                "operationId": "edit.toggle",
+                "summary": "Toggle habit active/inactive",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/toggle-franklin": {
+            "post": {
+                "operationId": "edit.toggle-franklin",
+                "summary": "Toggle all Franklin virtue habits active/inactive for the authenticated user",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/reorder": {
+            "post": {
+                "operationId": "edit.reorder",
+                "summary": "Reorder habits by providing habit IDs in desired order",
+                "tags": [
+                    "Edit"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReorderHabitsRequest"
                             }
                         }
                     }
@@ -423,6 +708,65 @@
                     }
                 }
             }
+        },
+        "/edit": {
+            "get": {
+                "operationId": "edit",
+                "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
+                "summary": "Get all habits for editing",
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the edit view.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "habitTranslations"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -433,6 +777,75 @@
             }
         },
         "schemas": {
+            "EditHabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning meditation"
+                        ]
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "10 minutes before breakfast"
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether the habit is currently active and shown in the tracker."
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Position in the sorted habit list.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many completions are required per day.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "human_readable": {
+                        "type": "string",
+                        "description": "Human-readable schedule description derived from the RRule.",
+                        "examples": [
+                            "Monday, Wednesday, Friday"
+                        ]
+                    },
+                    "is_franklin_virtue": {
+                        "type": "boolean",
+                        "description": "Whether this habit belongs to the Franklin's Virtues category."
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "is_active",
+                    "sort_order",
+                    "iterations_required",
+                    "human_readable",
+                    "is_franklin_virtue"
+                ],
+                "title": "EditHabitResource"
+            },
             "HabitActivityDataResource": {
                 "type": "object",
                 "properties": {
@@ -480,6 +893,144 @@
                     "intensity"
                 ],
                 "title": "HabitActivityDataResource"
+            },
+            "HabitFormResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning meditation"
+                        ]
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "10 minutes before breakfast"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many completions are required per day.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether the habit is currently active and shown in the tracker."
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "description": "RRule frequency: DAILY, WEEKLY, or MONTHLY.",
+                        "examples": [
+                            "WEEKLY"
+                        ]
+                    },
+                    "weekly_days": {
+                        "type": "array",
+                        "description": "Days of the week the habit repeats (0 = Monday … 6 = Sunday). For WEEKLY habits.",
+                        "examples": [
+                            [
+                                0,
+                                2,
+                                4
+                            ]
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "monthly_days": {
+                        "type": "array",
+                        "description": "Specific calendar days of the month (1–31). For MONTHLY \"day\" mode.",
+                        "examples": [
+                            [
+                                1,
+                                15
+                            ]
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "monthly_mode": {
+                        "type": "string",
+                        "description": "Monthly recurrence mode: \"day\" for specific dates, \"position\" for ordinal weekday.",
+                        "examples": [
+                            "position"
+                        ]
+                    },
+                    "monthly_position": {
+                        "type": "integer",
+                        "description": "Ordinal position within the month (1, 2, 3, 4, or -1 for last). Used when monthly_mode is \"position\".",
+                        "examples": [
+                            2
+                        ]
+                    },
+                    "monthly_weekday": {
+                        "type": "integer",
+                        "description": "Day of the week for ordinal recurrence (0 = Monday … 6 = Sunday). Used when monthly_mode is \"position\".",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "notifications": {
+                        "type": "array",
+                        "description": "Scheduled reminder notifications for this habit.",
+                        "items": {
+                            "$ref": "#/components/schemas/HabitNotificationResource"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "iterations_required",
+                    "is_active",
+                    "frequency",
+                    "weekly_days",
+                    "monthly_days",
+                    "monthly_mode",
+                    "monthly_position",
+                    "monthly_weekday",
+                    "notifications"
+                ],
+                "title": "HabitFormResource"
+            },
+            "HabitNotificationResource": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "type": "string",
+                        "description": "Time of day for the notification in HH:MM format.",
+                        "examples": [
+                            "08:00"
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether this notification is currently enabled."
+                    }
+                },
+                "required": [
+                    "time",
+                    "is_active"
+                ],
+                "title": "HabitNotificationResource"
             },
             "HabitResource": {
                 "type": "object",
@@ -674,6 +1225,123 @@
                     "date"
                 ],
                 "title": "NoteRequest"
+            },
+            "ReorderHabitsRequest": {
+                "type": "object",
+                "properties": {
+                    "ordered_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "ordered_ids"
+                ],
+                "title": "ReorderHabitsRequest"
+            },
+            "StoreHabitRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 1000
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "enum": [
+                            "DAILY",
+                            "WEEKLY",
+                            "MONTHLY"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 99
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "monthly_mode": {
+                        "type": "string",
+                        "enum": [
+                            "day",
+                            "position"
+                        ]
+                    },
+                    "monthly_position": {
+                        "type": "integer",
+                        "enum": [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "-1"
+                        ]
+                    },
+                    "monthly_weekday": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 6
+                    },
+                    "weekly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 6
+                        }
+                    },
+                    "monthly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 31
+                        }
+                    },
+                    "notifications": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "time": {
+                                    "type": "string",
+                                    "pattern": "^\\d{2}:(00|05|10|15|20|25|30|35|40|45|50|55)$"
+                                },
+                                "is_active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "time",
+                                "is_active"
+                            ]
+                        },
+                        "maxItems": 10
+                    }
+                },
+                "required": [
+                    "name",
+                    "frequency",
+                    "iterations_required",
+                    "is_active",
+                    "monthly_mode",
+                    "monthly_position",
+                    "monthly_weekday"
+                ],
+                "title": "StoreHabitRequest"
             },
             "ToggleRequest": {
                 "type": "object",
@@ -1093,6 +1761,44 @@
                             "required": [
                                 "message",
                                 "errors"
+                            ]
+                        }
+                    }
+                }
+            },
+            "ModelNotFoundException": {
+                "description": "Not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            },
+            "AuthorizationException": {
+                "description": "Authorization error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
                             ]
                         }
                     }

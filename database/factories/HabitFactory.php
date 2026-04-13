@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Habit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -49,6 +50,13 @@ final class HabitFactory extends Factory
     {
         return $this->state([
             'rrule' => 'FREQ=DAILY',
+        ]);
+    }
+
+    public function franklinVirtue(): static
+    {
+        return $this->state(fn (): array => [
+            'category_id' => Category::factory()->franklinVirtues(),
         ]);
     }
 }

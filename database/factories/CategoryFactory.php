@@ -34,4 +34,11 @@ final class CategoryFactory extends Factory
             'is_active' => false,
         ]);
     }
+
+    public function franklinVirtues(): static
+    {
+        return $this->state([
+            'slug' => Category::FRANKLIN_VIRTUES_SLUG,
+        ]);
+    }
 }

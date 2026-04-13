@@ -100,19 +100,19 @@
             "bun run test:lint"
         ],
         "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
+        "test:types": "phpstan",
         "test:api-schema": [
             "php artisan scramble:export --no-interaction",
             "php -r \"file_put_contents('resources/js/api-schema.json', json_encode(json_decode(file_get_contents('resources/js/api-schema.json')), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL);\""
         ],
-        "test:types": "phpstan",
         "test:vue": "bun run test:vue",
         "test": [
             "@test:type-coverage",
             "@test:lint",
             "@test:unit",
+            "@test:types",
             "@test:api-schema",
-            "@test:vue",
-            "@test:types"
+            "@test:vue"
         ],
         "watch": "vendor/bin/phpunit-watcher watch --filter models"
     },

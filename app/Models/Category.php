@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read int $sort_order
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at
+ * @property-read bool $is_franklin_virtues
  */
 final class Category extends Model
 {
@@ -63,11 +65,13 @@ final class Category extends Model
     }
 
     /**
-     * Check if this category is the Franklin's Virtues category.
+     * Whether this category is the Franklin's Virtues category.
+     *
+     * @return Attribute<bool, never>
      */
-    public function isFranklinVirtues(): bool
+    protected function isFranklinVirtues(): Attribute
     {
-        return $this->slug === self::FRANKLIN_VIRTUES_SLUG;
+        return Attribute::get(fn (): bool => $this->slug === self::FRANKLIN_VIRTUES_SLUG);
     }
 
     /**

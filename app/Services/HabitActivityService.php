@@ -8,7 +8,6 @@ use App\Data\HabitActivity\FranklinGridData;
 use App\Data\HabitActivity\HabitDayStatus;
 use App\Data\HabitActivity\WeekDay;
 use App\Data\HabitActivity\WeekGridHabit;
-use App\Models\Category;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use Carbon\CarbonInterface;
@@ -108,7 +107,7 @@ final readonly class HabitActivityService
             name: $habit->name,
             category: $habit->category?->name,
             isWeeklyFocus: $isWeeklyFocus,
-            isFranklinVirtue: $habit->category?->slug === Category::FRANKLIN_VIRTUES_SLUG,
+            isFranklinVirtue: $habit->is_franklin_virtue,
             days: $daysData,
         );
     }

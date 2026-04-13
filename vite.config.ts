@@ -52,6 +52,7 @@ export default defineConfig({
         },
         ignorePatterns: [
             'resources/views/mail/*',
+            'resources/js/api-schema.json',
         ],
     },
     plugins: [

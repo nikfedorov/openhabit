@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Database\Factories\HabitFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +35,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read CarbonInterface|null $deleted_at
  * @property-read RRuleFrequency|null $frequency
  * @property-read string $human_readable
+ * @property-read bool $is_franklin_virtue
  */
 final class Habit extends Model
 {
@@ -118,11 +120,13 @@ final class Habit extends Model
     }
 
     /**
-     * Check if this habit belongs to the Franklin's Virtues category.
+     * Whether this habit belongs to the Franklin's Virtues category.
+     *
+     * @return Attribute<bool, never>
      */
-    public function isFranklinVirtue(): bool
+    protected function isFranklinVirtue(): Attribute
     {
-        return $this->category?->isFranklinVirtues() === true;
+        return Attribute::get(fn (): bool => $this->category?->is_franklin_virtues === true);
     }
 
     /**

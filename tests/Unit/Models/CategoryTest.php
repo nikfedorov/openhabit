@@ -6,29 +6,20 @@ use App\Models\Category;
 use App\Models\Habit;
 use App\Models\User;
 
-it('belongs to user', function (): void {
-    $category = Category::factory()->create();
-
-    expect($category->user)->toBeInstanceOf(User::class);
-});
-
-it('has many habits', function (): void {
+it('has correct relationships', function (): void {
     $category = Category::factory()->create();
     Habit::factory()->for($category)->create();
 
-    expect($category->habits)->toHaveCount(1);
+    expect($category->user)->toBeInstanceOf(User::class)
+        ->and($category->habits)->toHaveCount(1);
 });
 
-it('returns true for matching slug on isFranklinVirtues', function (): void {
-    $category = Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
+it('detects franklin virtues slug', function (): void {
+    $franklin = Category::factory()->franklinVirtues()->create();
+    $other = Category::factory()->create(['slug' => 'other']);
 
-    expect($category->isFranklinVirtues())->toBeTrue();
-});
-
-it('returns false for other slug on isFranklinVirtues', function (): void {
-    $category = Category::factory()->create(['slug' => 'other']);
-
-    expect($category->isFranklinVirtues())->toBeFalse();
+    expect($franklin->is_franklin_virtues)->toBeTrue()
+        ->and($other->is_franklin_virtues)->toBeFalse();
 });
 
 it('filters correctly with active scope', function (): void {
@@ -39,8 +30,8 @@ it('filters correctly with active scope', function (): void {
 });
 
 it('filters correctly with excludingFranklinVirtues scope', function (): void {
-    Category::factory()->create(['slug' => Category::FRANKLIN_VIRTUES_SLUG]);
-    Category::factory()->create(['slug' => 'other']);
+    Category::factory()->franklinVirtues()->create();
+    Category::factory()->create();
 
     expect(Category::query()->excludingFranklinVirtues()->count())->toBe(1);
 });
