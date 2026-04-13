@@ -19,12 +19,24 @@ const tabs = [
         icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
         flipRtl: true,
     },
+    {
+        key: 'edit',
+        fallbackLabel: 'Edit',
+        icon: 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10',
+        flipRtl: false,
+    },
 ] as const;
 
 function getLabel(tab: (typeof tabs)[number]): string {
     return (
         props.translations?.[tab.key as keyof NavigationTranslations] ??
         tab.fallbackLabel
+    );
+}
+
+function isActive(tab: (typeof tabs)[number]): boolean {
+    return (
+        props.activeTab === tab.key || props.activeTab.startsWith(`${tab.key}.`)
     );
 }
 </script>
@@ -41,7 +53,7 @@ function getLabel(tab: (typeof tabs)[number]): string {
                 :to="{ name: tab.key }"
                 class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150"
                 :class="
-                    activeTab === tab.key
+                    isActive(tab)
                         ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
                         : 'text-neutral-500 hover:bg-neutral-200/50 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-300'
                 "
@@ -76,7 +88,7 @@ function getLabel(tab: (typeof tabs)[number]): string {
                 :to="{ name: tab.key }"
                 class="flex h-full flex-1 flex-col items-center justify-center gap-1 transition-colors duration-150"
                 :class="
-                    activeTab === tab.key
+                    isActive(tab)
                         ? 'text-green-600 dark:text-green-500'
                         : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
                 "

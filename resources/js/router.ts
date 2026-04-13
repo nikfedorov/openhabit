@@ -13,6 +13,21 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/View.vue'),
     },
     {
+        path: '/edit',
+        name: 'edit',
+        component: () => import('@/pages/Edit.vue'),
+    },
+    {
+        path: '/edit/create',
+        name: 'edit.create',
+        component: () => import('@/pages/HabitForm.vue'),
+    },
+    {
+        path: '/edit/habits/:id',
+        name: 'edit.habit',
+        component: () => import('@/pages/HabitForm.vue'),
+    },
+    {
         path: '/:pathMatch(.*)*',
         redirect: { name: 'track' },
     },

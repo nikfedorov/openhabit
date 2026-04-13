@@ -1,3 +1,9 @@
+import type {
+    EditHabit,
+    EditTranslations,
+    HabitFormData,
+    HabitTranslations,
+} from './edit';
 import type { NavigationTranslations } from './navigation';
 import type { ActivityDay, Habit, TrackData } from './track';
 import type {
@@ -51,4 +57,14 @@ export type LifeApiResponse = CommonData & {
     data: LifeViewData;
     translations: LifeTranslations;
     activityData: YearActivityData[] | null;
+};
+
+export type EditApiResponse = CommonData & {
+    data: EditHabit[];
+    translations: EditTranslations;
+    habitTranslations: HabitTranslations;
+};
+
+export type HabitShowApiResponse = {
+    data: HabitFormData;
 };

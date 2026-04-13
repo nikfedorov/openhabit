@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import type { Habit, TrackData } from '@/types/track';
-import type { LifeViewData, WeekViewData, YearViewData } from '@/types/view';
+import type { UserSettings } from '@/types/api';
+import type { EditHabit, HabitFormData, NotificationTime } from '@/types/edit';
+import type { ActivityDay, Habit, TrackData } from '@/types/track';
+import type {
+    GridHabit,
+    LifeViewData,
+    WeekActivityData,
+    WeekDay,
+    WeekViewData,
+    YearActivityData,
+    YearViewData,
+} from '@/types/view';
 import apiSchema from '../api-schema.json';
 
 type SchemaMap = typeof apiSchema.components.schemas;
@@ -27,6 +37,67 @@ function schemaKeys(name: keyof SchemaMap): string[] {
 function typeKeys<T>(obj: { [K in keyof Required<T>]: true }): string[] {
     return Object.keys(obj).sort();
 }
+
+// ─── Coverage Tracking ──────────────────────────────────────────
+//
+// Every schema in api-schema.json must appear in exactly one of these sets.
+// If a backend resource is added, `api-schema.json` gains a new entry and the
+// coverage test below will fail until the developer adds a type test and lists
+// the schema in TESTED_SCHEMAS, or explicitly marks it as EXCLUDED_SCHEMAS.
+
+/**
+ * Schemas that have a corresponding TypeScript type test in this file.
+ * Every entry here must have an `it('XResource schema matches ...')` below.
+ */
+const TESTED_SCHEMAS = new Set([
+    'EditHabitResource',
+    'HabitActivityDataResource',
+    'HabitFormResource',
+    'HabitNotificationResource',
+    'HabitResource',
+    'LifeActivityResource',
+    'LifeViewResource',
+    'TrackResource',
+    'UserSettingResource',
+    'WeekDayResource',
+    'WeekGridHabitResource',
+    'WeekViewResource',
+    'YearActivityResource',
+    'YearViewResource',
+]);
+
+/**
+ * Schemas intentionally excluded from type matching.
+ * - Request body schemas have no TypeScript response type counterpart.
+ * - Schemas with no enumerable `properties` cannot be compared with typeKeys.
+ */
+const EXCLUDED_SCHEMAS = new Set([
+    'NavigationTranslationResource', // no enumerable properties in schema
+    'NoteRequest', // request body
+    'ReorderHabitsRequest', // request body
+    'StoreHabitRequest', // request body
+    'ToggleRequest', // request body
+]);
+
+/**
+ * All API paths we are aware of.
+ * If a new endpoint is added to the backend, `api-schema.json` gains a new
+ * path and the coverage test below will fail until it is listed here.
+ */
+const KNOWN_PATHS = new Set([
+    '/track',
+    '/track/toggle',
+    '/track/daily-note',
+    '/edit',
+    '/edit/habits/{habit}',
+    '/edit/habits',
+    '/edit/habits/{habit}/toggle',
+    '/edit/toggle-franklin',
+    '/edit/habits/reorder',
+    '/view/week',
+    '/view/year',
+    '/view/life',
+]);
 
 // ─── API Contract Tests ─────────────────────────────────────────
 //
@@ -55,6 +126,34 @@ describe('API contract', () => {
         expect(schema).toEqual(ts);
     });
 
+    it('HabitResource schema matches Habit type', () => {
+        const schema = schemaKeys('HabitResource');
+        const ts = typeKeys<Habit>({
+            id: true,
+            name: true,
+            description: true,
+            iterations_required: true,
+            is_completed: true,
+            current_iteration: true,
+            sort_order: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('HabitActivityDataResource schema matches ActivityDay type', () => {
+        const schema = schemaKeys('HabitActivityDataResource');
+        const ts = typeKeys<ActivityDay>({
+            date: true,
+            percentage: true,
+            completed: true,
+            total: true,
+            intensity: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
     it('WeekViewResource schema matches WeekViewData type', () => {
         const schema = schemaKeys('WeekViewResource');
         const ts = typeKeys<WeekViewData>({
@@ -70,12 +169,51 @@ describe('API contract', () => {
         expect(schema).toEqual(ts);
     });
 
+    it('WeekDayResource schema matches WeekDay type', () => {
+        const schema = schemaKeys('WeekDayResource');
+        const ts = typeKeys<WeekDay>({
+            date: true,
+            day_name: true,
+            day_number: true,
+            is_today: true,
+            is_future: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('WeekGridHabitResource schema matches GridHabit type', () => {
+        const schema = schemaKeys('WeekGridHabitResource');
+        const ts = typeKeys<GridHabit>({
+            id: true,
+            name: true,
+            category: true,
+            is_weekly_focus: true,
+            is_franklin_virtue: true,
+            days: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
     it('YearViewResource schema matches YearViewData type', () => {
         const schema = schemaKeys('YearViewResource');
         const ts = typeKeys<YearViewData>({
             selected: true,
             birthdate: true,
             currentAge: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('YearActivityResource schema matches WeekActivityData type', () => {
+        const schema = schemaKeys('YearActivityResource');
+        const ts = typeKeys<WeekActivityData>({
+            weekNum: true,
+            intensity: true,
+            completed: true,
+            total: true,
         });
 
         expect(schema).toEqual(ts);
@@ -93,29 +231,159 @@ describe('API contract', () => {
         expect(schema).toEqual(ts);
     });
 
-    it('HabitResource schema matches Habit type', () => {
-        const schema = schemaKeys('HabitResource');
-        const ts = typeKeys<Habit>({
-            id: true,
-            name: true,
-            description: true,
-            iterations_required: true,
-            is_completed: true,
-            current_iteration: true,
-            sort_order: true,
+    it('LifeActivityResource schema matches YearActivityData type', () => {
+        const schema = schemaKeys('LifeActivityResource');
+        const ts = typeKeys<YearActivityData>({
+            year: true,
+            intensity: true,
+            completed: true,
+            total: true,
         });
 
         expect(schema).toEqual(ts);
     });
 
-    it('all expected endpoints exist', () => {
-        const paths = Object.keys(apiSchema.paths);
+    it('EditHabitResource schema matches EditHabit type', () => {
+        const schema = schemaKeys('EditHabitResource');
+        const ts = typeKeys<EditHabit>({
+            id: true,
+            name: true,
+            description: true,
+            is_active: true,
+            sort_order: true,
+            iterations_required: true,
+            human_readable: true,
+            is_franklin_virtue: true,
+        });
 
-        expect(paths).toContain('/track');
-        expect(paths).toContain('/track/toggle');
-        expect(paths).toContain('/track/daily-note');
-        expect(paths).toContain('/view/week');
-        expect(paths).toContain('/view/year');
-        expect(paths).toContain('/view/life');
+        expect(schema).toEqual(ts);
+    });
+
+    it('HabitFormResource schema matches HabitFormData type', () => {
+        const schema = schemaKeys('HabitFormResource');
+        const ts = typeKeys<Required<HabitFormData>>({
+            id: true,
+            name: true,
+            description: true,
+            iterations_required: true,
+            is_active: true,
+            frequency: true,
+            weekly_days: true,
+            monthly_days: true,
+            monthly_mode: true,
+            monthly_position: true,
+            monthly_weekday: true,
+            notifications: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('HabitNotificationResource schema matches NotificationTime type', () => {
+        const schema = schemaKeys('HabitNotificationResource');
+        const ts = typeKeys<NotificationTime>({
+            time: true,
+            is_active: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('UserSettingResource schema matches UserSettings type', () => {
+        const schema = schemaKeys('UserSettingResource');
+        const ts = typeKeys<UserSettings>({
+            locale: true,
+            theme: true,
+            moveCompletedToEnd: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('/edit response envelope has correct keys', () => {
+        const editPath = apiSchema.paths['/edit'] as {
+            get: {
+                responses: {
+                    '200': {
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    required: string[];
+                                    properties: Record<string, unknown>;
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        const responseSchema =
+            editPath.get.responses['200'].content['application/json'].schema;
+        const keys = Object.keys(responseSchema.properties).sort();
+
+        expect(keys).toEqual(
+            [
+                'data',
+                'habitTranslations',
+                'navigationTranslations',
+                'settings',
+                'translations',
+            ].sort(),
+        );
+    });
+
+    // ─── Coverage Meta-Tests ──────────────────────────────────────
+    //
+    // These tests ensure that every schema and path in api-schema.json is
+    // accounted for. When the backend adds a new resource or endpoint, the
+    // corresponding entry in api-schema.json will cause these tests to fail,
+    // prompting the developer to add a type test (and add to TESTED_SCHEMAS)
+    // or explicitly mark it as excluded.
+
+    describe('coverage', () => {
+        it('all schemas are tested or explicitly excluded', () => {
+            const allSchemas = Object.keys(apiSchema.components.schemas);
+            const uncovered = allSchemas.filter(
+                (s) => !TESTED_SCHEMAS.has(s) && !EXCLUDED_SCHEMAS.has(s),
+            );
+
+            expect(uncovered).toEqual([]);
+        });
+
+        it('TESTED_SCHEMAS contains only schemas that exist in api-schema.json', () => {
+            const allSchemas = new Set(
+                Object.keys(apiSchema.components.schemas),
+            );
+            const phantom = [...TESTED_SCHEMAS].filter(
+                (s) => !allSchemas.has(s),
+            );
+
+            expect(phantom).toEqual([]);
+        });
+
+        it('EXCLUDED_SCHEMAS contains only schemas that exist in api-schema.json', () => {
+            const allSchemas = new Set(
+                Object.keys(apiSchema.components.schemas),
+            );
+            const phantom = [...EXCLUDED_SCHEMAS].filter(
+                (s) => !allSchemas.has(s),
+            );
+
+            expect(phantom).toEqual([]);
+        });
+
+        it('all API paths are known', () => {
+            const allPaths = Object.keys(apiSchema.paths);
+            const unknown = allPaths.filter((p) => !KNOWN_PATHS.has(p));
+
+            expect(unknown).toEqual([]);
+        });
+
+        it('KNOWN_PATHS contains only paths that exist in api-schema.json', () => {
+            const allPaths = new Set(Object.keys(apiSchema.paths));
+            const phantom = [...KNOWN_PATHS].filter((p) => !allPaths.has(p));
+
+            expect(phantom).toEqual([]);
+        });
     });
 });
