@@ -31,6 +31,7 @@ const translations = ref<EditTranslations | null>(null);
 const habitTranslations = ref<HabitTranslations | null>(null);
 const loading = ref(true);
 const pendingHabitIds = ref(new Set<number>());
+const newHabitIds = ref(new Set<number>());
 
 /** Split all habits into regular and Franklin virtue lists. */
 function updateHabitLists(allHabits: EditHabit[]) {
@@ -117,6 +118,8 @@ async function copyFromTemplate(templateId: number) {
     const template = templateHabits.value.find((t) => t.id === templateId);
     if (!template) return;
 
+    const existingIds = new Set(habits.value.map((h) => h.id));
+
     // Insert optimistic placeholder while the API responds
     const optimisticId = nextOptimisticId--;
     const optimisticHabit: EditHabit = {
@@ -148,6 +151,14 @@ async function copyFromTemplate(templateId: number) {
 
     pendingHabitIds.value.delete(optimisticId);
     updateHabitLists(response.data);
+
+    // Briefly highlight newly added habits
+    for (const habit of habits.value) {
+        if (!existingIds.has(habit.id)) {
+            newHabitIds.value.add(habit.id);
+            setTimeout(() => newHabitIds.value.delete(habit.id), 5000);
+        }
+    }
 }
 
 onMounted(() => {
@@ -249,6 +260,7 @@ onMounted(() => {
                     :habit="habit"
                     :translations="translations"
                     :pending="pendingHabitIds.has(habit.id)"
+                    :is-new="newHabitIds.has(habit.id)"
                     @toggle-active="toggleHabit"
                     @edit="navigateToEdit"
                     @delete="deleteHabit"

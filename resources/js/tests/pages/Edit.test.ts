@@ -352,4 +352,79 @@ describe('Edit Page', () => {
         // Only the initial loadData call, no copy request
         expect(mockApiFetch).toHaveBeenCalledTimes(1);
     });
+
+    it('highlights newly created habits from template copy', async () => {
+        const templates = [
+            makeTemplateHabit({
+                id: 10,
+                name: 'Exercise',
+                sort_order: 5,
+            }),
+        ];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        const serverHabits = [
+            ...defaultApiResponse.data,
+            makeEditHabit({ id: 50, name: 'Exercise' }),
+        ];
+        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
+
+        const templateSection = wrapper.findComponent({
+            name: 'TemplateSection',
+        });
+        templateSection.vm.$emit('copy', 10);
+        await flushPromises();
+
+        const items = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        const newItem = items.find((c) => c.props('habit').id === 50);
+        const existingItem = items.find((c) => c.props('habit').id === 1);
+        expect(newItem?.props('isNew')).toBe(true);
+        expect(existingItem?.props('isNew')).toBe(false);
+    });
+
+    it('clears new habit highlight after timeout', async () => {
+        vi.useFakeTimers();
+
+        const templates = [
+            makeTemplateHabit({
+                id: 10,
+                name: 'Exercise',
+                sort_order: 5,
+            }),
+        ];
+        mockApiFetch.mockResolvedValueOnce({
+            ...defaultApiResponse,
+            templates,
+        });
+        const wrapper = mount(Edit);
+        await vi.advanceTimersByTimeAsync(0);
+
+        const serverHabits = [
+            ...defaultApiResponse.data,
+            makeEditHabit({ id: 50, name: 'Exercise' }),
+        ];
+        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
+
+        const templateSection = wrapper.findComponent({
+            name: 'TemplateSection',
+        });
+        templateSection.vm.$emit('copy', 10);
+        await vi.advanceTimersByTimeAsync(0);
+
+        const findNew = () =>
+            wrapper
+                .findAllComponents({ name: 'EditHabitItem' })
+                .find((c) => c.props('habit').id === 50);
+
+        expect(findNew()?.props('isNew')).toBe(true);
+
+        await vi.advanceTimersByTimeAsync(5000);
+
+        expect(findNew()?.props('isNew')).toBe(false);
+
+        vi.useRealTimers();
+    });
 });

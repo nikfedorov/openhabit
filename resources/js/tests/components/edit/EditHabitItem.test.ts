@@ -172,4 +172,30 @@ describe('EditHabitItem', () => {
         await chevronBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
     });
+
+    it('shows green highlight when isNew', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, isNew: true },
+        });
+        expect(wrapper.find('.bg-green-100').exists()).toBe(true);
+        expect(wrapper.find('.bg-neutral-100').exists()).toBe(false);
+    });
+
+    it('shows pulsing dot when isNew', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, isNew: true },
+        });
+        expect(wrapper.find('.animate-pulse').exists()).toBe(true);
+    });
+
+    it('shows normal background when not isNew', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        expect(wrapper.find('.bg-green-100').exists()).toBe(false);
+        expect(wrapper.find('.bg-neutral-100').exists()).toBe(true);
+    });
 });

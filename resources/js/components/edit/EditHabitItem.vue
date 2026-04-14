@@ -6,6 +6,7 @@ const props = defineProps<{
     habit: EditHabit;
     translations: EditTranslations;
     pending?: boolean;
+    isNew?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -84,7 +85,12 @@ watchEffect(
                 data-testid="edit-habit-item"
             >
                 <div
-                    class="relative flex items-center gap-2 bg-neutral-100 px-4 py-3 dark:bg-neutral-800"
+                    class="relative flex items-center gap-2 px-4 py-3 transition-colors duration-500"
+                    :class="
+                        isNew
+                            ? 'bg-green-100 dark:bg-green-900/30'
+                            : 'bg-neutral-100 dark:bg-neutral-800'
+                    "
                 >
                     <!-- Drag Handle -->
                     <div
@@ -146,6 +152,12 @@ watchEffect(
                     <div
                         class="flex flex-shrink-0 items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500"
                     >
+                        <!-- New habit indicator -->
+                        <span
+                            v-if="isNew"
+                            class="h-2 w-2 animate-pulse rounded-full bg-green-500"
+                        ></span>
+
                         <!-- Iterations -->
                         <span
                             v-if="habit.iterations_required > 1"
