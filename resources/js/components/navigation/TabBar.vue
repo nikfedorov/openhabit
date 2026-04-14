@@ -79,7 +79,7 @@ function isActive(tab: (typeof tabs)[number]): boolean {
 
     <!-- Mobile Tab Bar (fixed bottom) -->
     <nav
-        class="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden dark:border-neutral-700 dark:bg-neutral-900"
+        class="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white pb-safe md:hidden dark:border-neutral-700 dark:bg-neutral-900"
     >
         <div class="flex h-16 items-center justify-around">
             <router-link
