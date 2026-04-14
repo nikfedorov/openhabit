@@ -4,12 +4,14 @@ import { VueDraggable } from 'vue-draggable-plus';
 import { useRouter } from 'vue-router';
 import EditHabitItem from '@/components/edit/EditHabitItem.vue';
 import FranklinSection from '@/components/edit/FranklinSection.vue';
+import TemplateSection from '@/components/edit/TemplateSection.vue';
 import PageLoader from '@/components/PageLoader.vue';
 import type { EditApiResponse, UserSettings } from '@/types/api';
 import type {
     EditHabit,
     EditTranslations,
     HabitTranslations,
+    TemplateHabit,
 } from '@/types/edit';
 import type { NavigationTranslations } from '@/types/navigation';
 import { apiFetch } from '@/utils/api';
@@ -24,14 +26,22 @@ const emit = defineEmits<{
 
 const habits = ref<EditHabit[]>([]);
 const franklinHabits = ref<EditHabit[]>([]);
+const templateHabits = ref<TemplateHabit[]>([]);
 const translations = ref<EditTranslations | null>(null);
 const habitTranslations = ref<HabitTranslations | null>(null);
 const loading = ref(true);
+const pendingHabitIds = ref(new Set<number>());
+
+/** Split all habits into regular and Franklin virtue lists. */
+function updateHabitLists(allHabits: EditHabit[]) {
+    habits.value = allHabits.filter((h) => !h.is_franklin_virtue);
+    franklinHabits.value = allHabits.filter((h) => h.is_franklin_virtue);
+}
 
 async function loadData() {
     const response = await apiFetch<EditApiResponse>('/api/edit');
-    habits.value = response.data.filter((h) => !h.is_franklin_virtue);
-    franklinHabits.value = response.data.filter((h) => h.is_franklin_virtue);
+    updateHabitLists(response.data);
+    templateHabits.value = response.templates;
     translations.value = response.translations;
     habitTranslations.value = response.habitTranslations;
     emit('navigation-translations', response.navigationTranslations);
@@ -99,6 +109,45 @@ function navigateToCreate() {
 
 function navigateToEdit(habitId: number) {
     router.push({ name: 'edit.habit', params: { id: habitId.toString() } });
+}
+
+let nextOptimisticId = -1;
+
+async function copyFromTemplate(templateId: number) {
+    const template = templateHabits.value.find((t) => t.id === templateId);
+    if (!template) return;
+
+    // Insert optimistic placeholder while the API responds
+    const optimisticId = nextOptimisticId--;
+    const optimisticHabit: EditHabit = {
+        id: optimisticId,
+        name: template.name,
+        description: null,
+        is_active: true,
+        sort_order: template.sort_order,
+        iterations_required: template.iterations_required,
+        human_readable: template.human_readable,
+        is_franklin_virtue: false,
+    };
+
+    const insertIndex = habits.value.findIndex(
+        (h) => h.sort_order > template.sort_order,
+    );
+    if (insertIndex === -1) {
+        habits.value.push(optimisticHabit);
+    } else {
+        habits.value.splice(insertIndex, 0, optimisticHabit);
+    }
+    pendingHabitIds.value.add(optimisticId);
+
+    // Replace optimistic data with the server response
+    const response = await apiFetch<{ data: EditHabit[] }>(
+        `/api/edit/templates/${templateId.toString()}/copy`,
+        { method: 'POST' },
+    );
+
+    pendingHabitIds.value.delete(optimisticId);
+    updateHabitLists(response.data);
 }
 
 onMounted(() => {
@@ -199,11 +248,20 @@ onMounted(() => {
                     :key="habit.id"
                     :habit="habit"
                     :translations="translations"
+                    :pending="pendingHabitIds.has(habit.id)"
                     @toggle-active="toggleHabit"
                     @edit="navigateToEdit"
                     @delete="deleteHabit"
                 />
             </VueDraggable>
+
+            <!-- Templates Section -->
+            <TemplateSection
+                v-if="templateHabits.length > 0"
+                :templates="templateHabits"
+                :translations="translations"
+                @copy="copyFromTemplate"
+            />
         </div>
     </div>
 </template>

@@ -2,6 +2,7 @@ import type {
     EditHabit,
     EditTranslations,
     HabitTranslations,
+    TemplateHabit,
 } from '@/types/edit';
 
 export function makeEditTranslations(
@@ -24,6 +25,9 @@ export function makeEditTranslations(
         cancel: 'Cancel',
         time: 'time',
         times: 'times',
+        templates: 'Templates',
+        add_from_library: 'Add from library',
+        added: 'Added!',
         ...overrides,
     };
 }
@@ -97,6 +101,20 @@ export function makeEditHabit(overrides: Partial<EditHabit> = {}): EditHabit {
         iterations_required: 1,
         human_readable: 'Every day',
         is_franklin_virtue: false,
+        ...overrides,
+    };
+}
+
+export function makeTemplateHabit(
+    overrides: Partial<TemplateHabit> = {},
+): TemplateHabit {
+    return {
+        id: 1,
+        name: 'Morning Meditation',
+        human_readable: 'Every day',
+        iterations_required: 1,
+        category: 'Health & Fitness',
+        sort_order: 1,
         ...overrides,
     };
 }

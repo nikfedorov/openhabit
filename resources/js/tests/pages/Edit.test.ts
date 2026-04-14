@@ -5,6 +5,7 @@ import {
     makeEditHabit,
     makeEditTranslations,
     makeHabitTranslations,
+    makeTemplateHabit,
 } from '@/tests/helpers/edit';
 
 const { mockApiFetch, mockRouterPush } = vi.hoisted(() => ({
@@ -41,6 +42,7 @@ const defaultApiResponse = {
     habitTranslations: makeHabitTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
     settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
+    templates: [] as ReturnType<typeof makeTemplateHabit>[],
 };
 
 async function mountEdit(apiResponse = defaultApiResponse) {
@@ -53,6 +55,9 @@ async function mountEdit(apiResponse = defaultApiResponse) {
 beforeEach(() => {
     mockApiFetch.mockReset();
     mockRouterPush.mockReset();
+    Element.prototype.animate = vi
+        .fn()
+        .mockReturnValue({ pause: vi.fn(), cancel: vi.fn() });
 });
 
 describe('Edit Page', () => {
@@ -231,5 +236,120 @@ describe('Edit Page', () => {
             },
             { silent: true },
         );
+    });
+
+    it('renders template section when templates exist', async () => {
+        const templates = [
+            makeTemplateHabit({ id: 1, name: 'Exercise', category: 'Health' }),
+        ];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+        expect(
+            wrapper.findComponent({ name: 'TemplateSection' }).exists(),
+        ).toBe(true);
+    });
+
+    it('hides template section when no templates', async () => {
+        const wrapper = await mountEdit();
+        expect(
+            wrapper.findComponent({ name: 'TemplateSection' }).exists(),
+        ).toBe(false);
+    });
+
+    it('copies template and adds new habit to list', async () => {
+        const templates = [
+            makeTemplateHabit({
+                id: 10,
+                name: 'Exercise',
+                human_readable: 'Every day',
+                iterations_required: 1,
+                sort_order: 5,
+            }),
+        ];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        const serverHabits = [
+            ...defaultApiResponse.data,
+            makeEditHabit({ id: 50, name: 'Exercise' }),
+        ];
+        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
+
+        const templateSection = wrapper.findComponent({
+            name: 'TemplateSection',
+        });
+        templateSection.vm.$emit('copy', 10);
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/edit/templates/10/copy',
+            { method: 'POST' },
+        );
+        // Server response replaces the optimistic habit
+        expect(wrapper.text()).toContain('Exercise');
+    });
+
+    it('inserts optimistic habit at correct sort_order position', async () => {
+        const habit1 = makeEditHabit({ id: 1, name: 'First', sort_order: 1 });
+        const habit2 = makeEditHabit({
+            id: 2,
+            name: 'Third',
+            sort_order: 10,
+        });
+        const templates = [
+            makeTemplateHabit({
+                id: 10,
+                name: 'Second',
+                sort_order: 5,
+            }),
+        ];
+
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            data: [habit1, habit2],
+            templates,
+        });
+
+        const serverHabits = [
+            habit1,
+            makeEditHabit({ id: 50, name: 'Second', sort_order: 5 }),
+            habit2,
+        ];
+        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
+
+        const templateSection = wrapper.findComponent({
+            name: 'TemplateSection',
+        });
+        templateSection.vm.$emit('copy', 10);
+        await wrapper.vm.$nextTick();
+
+        // Before server responds, optimistic habit is inserted between First and Third
+        const items = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        expect(items[0].props('habit').name).toBe('First');
+        expect(items[1].props('habit').name).toBe('Second');
+        expect(items[2].props('habit').name).toBe('Third');
+
+        await flushPromises();
+    });
+
+    it('ignores copy when template is not found', async () => {
+        const templates = [makeTemplateHabit({ id: 10 })];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        const templateSection = wrapper.findComponent({
+            name: 'TemplateSection',
+        });
+        templateSection.vm.$emit('copy', 999);
+        await flushPromises();
+
+        // Only the initial loadData call, no copy request
+        expect(mockApiFetch).toHaveBeenCalledTimes(1);
     });
 });

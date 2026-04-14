@@ -3,6 +3,7 @@ import type {
     EditTranslations,
     HabitFormData,
     HabitTranslations,
+    TemplateHabit,
 } from './edit';
 import type { NavigationTranslations } from './navigation';
 import type { ActivityDay, Habit, TrackData } from './track';
@@ -63,6 +64,7 @@ export type EditApiResponse = CommonData & {
     data: EditHabit[];
     translations: EditTranslations;
     habitTranslations: HabitTranslations;
+    templates: TemplateHabit[];
 };
 
 export type HabitShowApiResponse = {

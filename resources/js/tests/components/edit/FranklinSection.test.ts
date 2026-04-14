@@ -24,18 +24,14 @@ describe('FranklinSection', () => {
             props: { habits, translations },
         });
 
-        // Content should be hidden when collapsed (v-show sets display:none)
-        expect(wrapper.find('.border-t').exists()).toBe(true);
-        expect(
-            (wrapper.find('.border-t').element as HTMLElement).style.display,
-        ).toBe('none');
+        // Content wrapper should have collapsed grid class
+        const grid = wrapper.find('.grid');
+        expect(grid.classes()).toContain('grid-rows-[0fr]');
 
         // Click header to expand
         await wrapper.find('.cursor-pointer').trigger('click');
 
-        expect(
-            (wrapper.find('.border-t').element as HTMLElement).style.display,
-        ).not.toBe('none');
+        expect(grid.classes()).toContain('grid-rows-[1fr]');
         expect(wrapper.text()).toContain('Temperance');
     });
 

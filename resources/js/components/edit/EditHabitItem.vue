@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref, watchEffect } from 'vue';
 import type { EditHabit, EditTranslations } from '@/types/edit';
 
-defineProps<{
+const props = defineProps<{
     habit: EditHabit;
     translations: EditTranslations;
+    pending?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -11,118 +13,183 @@ const emit = defineEmits<{
     edit: [habitId: number];
     delete: [habitId: number];
 }>();
+
+const contentEl = ref<HTMLElement | null>(null);
+const wrapperEl = ref<HTMLElement | null>(null);
+const isEntering = ref(props.pending === true);
+
+onMounted(() => {
+    if (isEntering.value && wrapperEl.value) {
+        void wrapperEl.value.getBoundingClientRect();
+        requestAnimationFrame(() => {
+            isEntering.value = false;
+        });
+    }
+});
+
+watchEffect(
+    (onCleanup) => {
+        const el = contentEl.value;
+        if (!el || !props.pending) return;
+
+        // Reset any leftover styles from a previous cleanup cycle
+        el.style.opacity = '';
+        el.style.transition = '';
+
+        // Pulse opacity while the item is pending (optimistic insert)
+        const animation = el.animate(
+            [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }],
+            { duration: 1200, easing: 'ease-in-out', iterations: Infinity },
+        );
+
+        // When pending ends, smoothly transition from current opacity back to 1
+        onCleanup(() => {
+            // Freeze at the current animated opacity before cancelling
+            animation.pause();
+            el.style.opacity = getComputedStyle(el).opacity;
+            animation.cancel();
+
+            // Force reflow so browser registers the frozen value,
+            // then transition smoothly to full opacity
+            void el.getBoundingClientRect();
+            el.style.transition = 'opacity 500ms ease';
+            el.style.opacity = '1';
+
+            el.addEventListener(
+                'transitionend',
+                () => {
+                    el.style.opacity = '';
+                    el.style.transition = '';
+                },
+                { once: true },
+            );
+        });
+    },
+    { flush: 'post' },
+);
 </script>
 
 <template>
     <div
-        class="relative overflow-hidden rounded-xl"
-        :class="{ 'opacity-50': !habit.is_active }"
+        ref="wrapperEl"
+        class="grid transition-[grid-template-rows] duration-300 ease-out"
+        :class="isEntering ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'"
     >
-        <div
-            class="relative flex items-center gap-2 bg-neutral-100 px-4 py-3 dark:bg-neutral-800"
-        >
-            <!-- Drag Handle -->
+        <div class="overflow-hidden">
             <div
-                class="drag-handle flex-shrink-0 cursor-grab touch-none active:cursor-grabbing"
+                ref="contentEl"
+                class="relative overflow-hidden rounded-xl"
+                :class="{ 'opacity-50': !habit.is_active && !pending }"
+                :data-pending="pending ? 'true' : undefined"
+                data-testid="edit-habit-item"
             >
-                <svg
-                    class="h-5 w-5 text-neutral-300 transition-colors duration-150 dark:text-neutral-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
+                <div
+                    class="relative flex items-center gap-2 bg-neutral-100 px-4 py-3 dark:bg-neutral-800"
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                    />
-                </svg>
-            </div>
-
-            <!-- Status Indicator -->
-            <div class="flex-shrink-0">
-                <button
-                    type="button"
-                    class="h-7 w-7 rounded-md align-middle transition-colors"
-                    :class="
-                        habit.is_active
-                            ? 'bg-green-500 dark:bg-green-500'
-                            : 'bg-neutral-300 dark:bg-neutral-600'
-                    "
-                    :title="
-                        habit.is_active
-                            ? translations.active
-                            : translations.paused
-                    "
-                    @click="emit('toggle-active', habit.id)"
-                ></button>
-            </div>
-
-            <!-- Content -->
-            <button
-                type="button"
-                class="min-w-0 flex-1 text-start transition-opacity hover:opacity-75"
-                @click="emit('edit', habit.id)"
-            >
-                <span
-                    class="block truncate text-sm font-medium text-neutral-900 dark:text-white"
-                >
-                    {{ habit.name }}
-                </span>
-                <p
-                    class="mt-0.5 truncate text-xs text-neutral-400 dark:text-neutral-500"
-                >
-                    {{ habit.human_readable }}
-                </p>
-            </button>
-
-            <!-- Meta Info -->
-            <div
-                class="flex flex-shrink-0 items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500"
-            >
-                <!-- Iterations -->
-                <span
-                    v-if="habit.iterations_required > 1"
-                    class="flex items-center gap-1"
-                    :title="`${habit.iterations_required.toString()} times per day`"
-                >
-                    <svg
-                        class="h-3.5 w-3.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
+                    <!-- Drag Handle -->
+                    <div
+                        class="drag-handle flex-shrink-0 cursor-grab touch-none active:cursor-grabbing"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                        />
-                    </svg>
-                    {{ habit.iterations_required }}×
-                </span>
+                        <svg
+                            class="h-5 w-5 text-neutral-300 transition-colors duration-150 dark:text-neutral-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                            />
+                        </svg>
+                    </div>
 
-                <!-- Chevron -->
-                <button
-                    type="button"
-                    class="h-4 w-4 text-neutral-300 transition-colors hover:text-neutral-400 dark:text-neutral-600 dark:hover:text-neutral-500"
-                    @click="emit('edit', habit.id)"
-                >
-                    <svg
-                        class="h-4 w-4 rtl:rotate-180"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
+                    <!-- Status Indicator -->
+                    <div class="flex-shrink-0">
+                        <button
+                            type="button"
+                            class="h-7 w-7 rounded-md align-middle transition-colors"
+                            :class="
+                                habit.is_active
+                                    ? 'bg-green-500 dark:bg-green-500'
+                                    : 'bg-neutral-300 dark:bg-neutral-600'
+                            "
+                            :title="
+                                habit.is_active
+                                    ? translations.active
+                                    : translations.paused
+                            "
+                            @click="emit('toggle-active', habit.id)"
+                        ></button>
+                    </div>
+
+                    <!-- Content -->
+                    <button
+                        type="button"
+                        class="min-w-0 flex-1 text-start transition-opacity hover:opacity-75"
+                        @click="emit('edit', habit.id)"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                        />
-                    </svg>
-                </button>
+                        <span
+                            class="block truncate text-sm font-medium text-neutral-900 dark:text-white"
+                        >
+                            {{ habit.name }}
+                        </span>
+                        <p
+                            class="mt-0.5 truncate text-xs text-neutral-400 dark:text-neutral-500"
+                        >
+                            {{ habit.human_readable }}
+                        </p>
+                    </button>
+
+                    <!-- Meta Info -->
+                    <div
+                        class="flex flex-shrink-0 items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500"
+                    >
+                        <!-- Iterations -->
+                        <span
+                            v-if="habit.iterations_required > 1"
+                            class="flex items-center gap-1"
+                            :title="`${habit.iterations_required.toString()} times per day`"
+                        >
+                            <svg
+                                class="h-3.5 w-3.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                                />
+                            </svg>
+                            {{ habit.iterations_required }}×
+                        </span>
+
+                        <!-- Chevron -->
+                        <button
+                            type="button"
+                            class="h-4 w-4 text-neutral-300 transition-colors hover:text-neutral-400 dark:text-neutral-600 dark:hover:text-neutral-500"
+                            @click="emit('edit', habit.id)"
+                        >
+                            <svg
+                                class="h-4 w-4 rtl:rotate-180"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

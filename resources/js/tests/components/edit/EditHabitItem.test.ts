@@ -1,9 +1,19 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import EditHabitItem from '@/components/edit/EditHabitItem.vue';
 import { makeEditHabit, makeEditTranslations } from '@/tests/helpers/edit';
 
 const translations = makeEditTranslations();
+
+beforeEach(() => {
+    Element.prototype.animate = vi
+        .fn()
+        .mockReturnValue({ pause: vi.fn(), cancel: vi.fn() });
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        cb(0);
+        return 0;
+    });
+});
 
 describe('EditHabitItem', () => {
     it('renders habit name and schedule', () => {
@@ -37,6 +47,82 @@ describe('EditHabitItem', () => {
             props: { habit, translations },
         });
         expect(wrapper.find('.opacity-50').exists()).toBe(true);
+    });
+
+    it('does not apply opacity for inactive pending habits', () => {
+        const habit = makeEditHabit({ is_active: false });
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, pending: true },
+        });
+        expect(wrapper.find('.opacity-50').exists()).toBe(false);
+    });
+
+    it('sets data-pending attribute when pending', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, pending: true },
+        });
+        expect(
+            wrapper
+                .find('[data-testid="edit-habit-item"]')
+                .attributes('data-pending'),
+        ).toBe('true');
+    });
+
+    it('does not set data-pending attribute when not pending', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        expect(
+            wrapper
+                .find('[data-testid="edit-habit-item"]')
+                .attributes('data-pending'),
+        ).toBeUndefined();
+    });
+
+    it('clears fade styles when transition ends after pending stops', async () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, pending: true },
+        });
+
+        const el = wrapper.find('[data-testid="edit-habit-item"]')
+            .element as HTMLElement;
+
+        // Stop pending — triggers cleanup
+        await wrapper.setProps({ pending: false });
+
+        // Cleanup sets transition and opacity
+        expect(el.style.transition).toBe('opacity 500ms ease');
+        expect(el.style.opacity).toBe('1');
+
+        // Fire transitionend to clear inline styles
+        el.dispatchEvent(new Event('transitionend'));
+
+        expect(el.style.opacity).toBe('');
+        expect(el.style.transition).toBe('');
+    });
+
+    it('animates height expansion for pending items on mount', async () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, pending: true },
+        });
+        await wrapper.vm.$nextTick();
+
+        // After mount + rAF, the wrapper transitions to expanded
+        expect(wrapper.classes()).toContain('grid-rows-[1fr]');
+        expect(wrapper.classes()).not.toContain('grid-rows-[0fr]');
+    });
+
+    it('does not animate height for non-pending items', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+
+        expect(wrapper.classes()).toContain('grid-rows-[1fr]');
     });
 
     it('emits toggle-active on status button click', async () => {

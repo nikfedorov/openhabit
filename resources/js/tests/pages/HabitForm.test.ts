@@ -4,11 +4,13 @@ import { nextTick } from 'vue';
 import HabitForm from '@/pages/HabitForm.vue';
 import { makeHabitTranslations } from '@/tests/helpers/edit';
 
-const { mockApiFetch, mockRouterPush, mockRouteParams } = vi.hoisted(() => ({
-    mockApiFetch: vi.fn(),
-    mockRouterPush: vi.fn(),
-    mockRouteParams: { value: {} as Record<string, string> },
-}));
+const { mockApiFetch, mockRouterPush, mockRouteParams, mockIsTelegram } =
+    vi.hoisted(() => ({
+        mockApiFetch: vi.fn(),
+        mockRouterPush: vi.fn(),
+        mockRouteParams: { value: {} as Record<string, string> },
+        mockIsTelegram: vi.fn(() => false),
+    }));
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
@@ -17,6 +19,11 @@ vi.mock('@/utils/api', () => ({
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: mockRouteParams.value }),
     useRouter: () => ({ push: mockRouterPush }),
+}));
+
+vi.mock('@/composables/useTelegramBackButton', () => ({
+    isTelegram: mockIsTelegram,
+    useTelegramBackButton: vi.fn(),
 }));
 
 const editApiResponse = {
@@ -129,6 +136,19 @@ describe('HabitForm - Create Mode', () => {
         const backBtn = wrapper.findAll('button')[0];
         await backBtn.trigger('click');
         expect(mockRouterPush).toHaveBeenCalledWith({ name: 'edit' });
+    });
+
+    it('hides back button when in Telegram', async () => {
+        mockIsTelegram.mockReturnValue(true);
+        const wrapper = await mountCreateForm();
+        // In non-Telegram mode, the first button is the back arrow.
+        // In Telegram mode, the back button should not render.
+        const buttons = wrapper.findAll('button');
+        const hasBackBtn = buttons.some((b) =>
+            b.find('svg.rtl\\:rotate-180').exists(),
+        );
+        expect(hasBackBtn).toBe(false);
+        mockIsTelegram.mockReturnValue(false);
     });
 });
 

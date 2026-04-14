@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { UserSettings } from '@/types/api';
-import type { EditHabit, HabitFormData, NotificationTime } from '@/types/edit';
+import type {
+    EditHabit,
+    HabitFormData,
+    NotificationTime,
+    TemplateHabit,
+} from '@/types/edit';
 import type { ActivityDay, Habit, TrackData } from '@/types/track';
 import type {
     GridHabit,
@@ -55,6 +60,7 @@ const TESTED_SCHEMAS = new Set([
     'HabitFormResource',
     'HabitNotificationResource',
     'HabitResource',
+    'HabitTemplateResource',
     'LifeActivityResource',
     'LifeViewResource',
     'TrackResource',
@@ -94,6 +100,7 @@ const KNOWN_PATHS = new Set([
     '/edit/habits/{habit}/toggle',
     '/edit/toggle-franklin',
     '/edit/habits/reorder',
+    '/edit/templates/{habitTemplate}/copy',
     '/view/week',
     '/view/year',
     '/view/life',
@@ -300,6 +307,20 @@ describe('API contract', () => {
         expect(schema).toEqual(ts);
     });
 
+    it('HabitTemplateResource schema matches TemplateHabit type', () => {
+        const schema = schemaKeys('HabitTemplateResource');
+        const ts = typeKeys<TemplateHabit>({
+            id: true,
+            name: true,
+            human_readable: true,
+            iterations_required: true,
+            category: true,
+            sort_order: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
     it('/edit response envelope has correct keys', () => {
         const editPath = apiSchema.paths['/edit'] as {
             get: {
@@ -327,6 +348,7 @@ describe('API contract', () => {
                 'habitTranslations',
                 'navigationTranslations',
                 'settings',
+                'templates',
                 'translations',
             ].sort(),
         );

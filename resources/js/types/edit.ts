@@ -29,6 +29,15 @@ export type NotificationTime = {
     is_active: boolean;
 };
 
+export type TemplateHabit = {
+    id: number;
+    name: string;
+    human_readable: string;
+    iterations_required: number;
+    category: string;
+    sort_order: number;
+};
+
 export type EditTranslations = {
     habits: string;
     manage_routines: string;
@@ -46,6 +55,9 @@ export type EditTranslations = {
     cancel: string;
     time: string;
     times: string;
+    templates: string;
+    add_from_library: string;
+    added: string;
 };
 
 export type HabitTranslations = {
