@@ -19,4 +19,7 @@ return [
     'cancel' => 'إلغاء',
     'time' => 'مرة',
     'times' => 'مرات',
+    'templates' => 'قوالب',
+    'add_from_library' => 'أضف من المكتبة',
+    'added' => 'تمت الإضافة!',
 ];

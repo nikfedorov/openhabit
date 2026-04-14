@@ -200,6 +200,76 @@
                 }
             }
         },
+        "/edit": {
+            "get": {
+                "operationId": "edit",
+                "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
+                "summary": "Get all habits for editing",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the edit view.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "templates": {
+                                            "type": "array",
+                                            "description": "Habit templates with category names.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitTemplateResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "habitTranslations",
+                                        "templates"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/edit/habits/{habit}": {
             "get": {
                 "operationId": "edit.show",
@@ -481,6 +551,56 @@
                 }
             }
         },
+        "/edit/templates/{habitTemplate}/copy": {
+            "post": {
+                "operationId": "edit.templates.copy",
+                "description": "Creates a new habit from the given template and returns\nthe updated habit list in edit format.",
+                "summary": "Copy a template to the current user",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habitTemplate",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit template ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/view/week": {
             "get": {
                 "operationId": "view.week",
@@ -698,65 +818,6 @@
                                         "settings",
                                         "translations",
                                         "activityData"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/AuthenticationException"
-                    }
-                }
-            }
-        },
-        "/edit": {
-            "get": {
-                "operationId": "edit",
-                "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
-                "summary": "Get all habits for editing",
-                "responses": {
-                    "200": {
-                        "description": "Array of `EditHabitResource`",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/EditHabitResource"
-                                            }
-                                        },
-                                        "navigationTranslations": {
-                                            "description": "Tabbar translations.",
-                                            "$ref": "#/components/schemas/NavigationTranslationResource"
-                                        },
-                                        "settings": {
-                                            "description": "Settings for the current user.",
-                                            "$ref": "#/components/schemas/UserSettingResource"
-                                        },
-                                        "translations": {
-                                            "type": "object",
-                                            "description": "Translations for the edit view.",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "habitTranslations": {
-                                            "type": "object",
-                                            "description": "Translations for habit attributes, including frequency and day labels.",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "data",
-                                        "navigationTranslations",
-                                        "settings",
-                                        "translations",
-                                        "habitTranslations"
                                     ]
                                 }
                             }
@@ -1102,6 +1163,62 @@
                     "sort_order"
                 ],
                 "title": "HabitResource"
+            },
+            "HabitTemplateResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Habit template identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Localized habit name.",
+                        "examples": [
+                            "Morning Meditation"
+                        ]
+                    },
+                    "human_readable": {
+                        "type": "string",
+                        "description": "Human-readable recurrence rule.",
+                        "examples": [
+                            "Every day"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "Number of iterations required per occurrence.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": "Localized category name.",
+                        "examples": [
+                            "Health & Fitness"
+                        ]
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Sort order within the category.",
+                        "examples": [
+                            1
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "human_readable",
+                    "iterations_required",
+                    "category",
+                    "sort_order"
+                ],
+                "title": "HabitTemplateResource"
             },
             "LifeActivityResource": {
                 "type": "object",

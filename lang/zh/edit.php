@@ -19,4 +19,7 @@ return [
     'cancel' => '取消',
     'time' => '次',
     'times' => '次',
+    'templates' => '模板',
+    'add_from_library' => '从库中添加',
+    'added' => '已添加！',
 ];

@@ -19,4 +19,7 @@ return [
     'cancel' => 'रद्द करें',
     'time' => 'बार',
     'times' => 'बार',
+    'templates' => 'टेम्पलेट',
+    'add_from_library' => 'लाइब्रेरी से जोड़ें',
+    'added' => 'जोड़ा गया!',
 ];

@@ -19,4 +19,7 @@ return [
     'cancel' => 'Cancel',
     'time' => 'time',
     'times' => 'times',
+    'templates' => 'Templates',
+    'add_from_library' => 'Add from library',
+    'added' => 'Added!',
 ];

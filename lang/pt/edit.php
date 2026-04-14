@@ -19,4 +19,7 @@ return [
     'cancel' => 'Cancelar',
     'time' => 'vez',
     'times' => 'vezes',
+    'templates' => 'Modelos',
+    'add_from_library' => 'Adicionar da biblioteca',
+    'added' => 'Adicionado!',
 ];
