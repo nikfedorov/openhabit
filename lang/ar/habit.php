@@ -76,4 +76,6 @@ return [
     'friday' => 'الجمعة',
     'saturday' => 'السبت',
     'sunday' => 'الأحد',
+    'time' => 'مرة',
+    'times' => 'مرات',
 ];

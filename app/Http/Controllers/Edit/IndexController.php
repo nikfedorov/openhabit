@@ -50,13 +50,6 @@ final readonly class IndexController
                 'translations' => trans('edit'),
 
                 /**
-                 * Translations for habit attributes, including frequency and day labels.
-                 *
-                 * @var array<string, string>
-                 */
-                'habitTranslations' => trans('habit'),
-
-                /**
                  * Habit templates with category names.
                  */
                 'templates' => HabitTemplateResource::collection(

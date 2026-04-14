@@ -76,4 +76,6 @@ return [
     'friday' => 'Friday',
     'saturday' => 'Saturday',
     'sunday' => 'Sunday',
+    'time' => 'time',
+    'times' => 'times',
 ];

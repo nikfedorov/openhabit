@@ -7,12 +7,7 @@ import FranklinSection from '@/components/edit/FranklinSection.vue';
 import TemplateSection from '@/components/edit/TemplateSection.vue';
 import PageLoader from '@/components/PageLoader.vue';
 import type { EditApiResponse, UserSettings } from '@/types/api';
-import type {
-    EditHabit,
-    EditTranslations,
-    HabitTranslations,
-    TemplateHabit,
-} from '@/types/edit';
+import type { EditHabit, EditTranslations, TemplateHabit } from '@/types/edit';
 import type { NavigationTranslations } from '@/types/navigation';
 import { apiFetch } from '@/utils/api';
 
@@ -28,7 +23,6 @@ const habits = ref<EditHabit[]>([]);
 const franklinHabits = ref<EditHabit[]>([]);
 const templateHabits = ref<TemplateHabit[]>([]);
 const translations = ref<EditTranslations | null>(null);
-const habitTranslations = ref<HabitTranslations | null>(null);
 const loading = ref(true);
 const pendingHabitIds = ref(new Set<number>());
 const newHabitIds = ref(new Set<number>());
@@ -44,7 +38,6 @@ async function loadData() {
     updateHabitLists(response.data);
     templateHabits.value = response.templates;
     translations.value = response.translations;
-    habitTranslations.value = response.habitTranslations;
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
     loading.value = false;

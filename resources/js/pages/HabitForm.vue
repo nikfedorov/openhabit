@@ -11,7 +11,11 @@ import {
     isTelegram,
     useTelegramBackButton,
 } from '@/composables/useTelegramBackButton';
-import type { HabitShowApiResponse, UserSettings } from '@/types/api';
+import type {
+    HabitCreateApiResponse,
+    HabitShowApiResponse,
+    UserSettings,
+} from '@/types/api';
 import type { HabitFormData, HabitTranslations } from '@/types/edit';
 import type { NavigationTranslations } from '@/types/navigation';
 import { apiFetch } from '@/utils/api';
@@ -57,21 +61,28 @@ useTextareaAutosize({
     input: computed(() => form.value.description ?? ''),
 });
 
-async function loadTranslations() {
-    const response = await apiFetch<{
-        habitTranslations: HabitTranslations;
-        navigationTranslations: NavigationTranslations;
-        settings: UserSettings;
-    }>('/api/edit');
+function applyCommonData(response: {
+    habitTranslations: HabitTranslations;
+    navigationTranslations: NavigationTranslations;
+    settings: UserSettings;
+}) {
     translations.value = response.habitTranslations;
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
 }
 
-async function loadHabit() {
+async function loadCreateData() {
+    const response = await apiFetch<HabitCreateApiResponse>(
+        '/api/edit/habits/create',
+    );
+    applyCommonData(response);
+}
+
+async function loadEditData() {
     const response = await apiFetch<HabitShowApiResponse>(
         `/api/edit/habits/${habitId.value!.toString()}`,
     );
+    applyCommonData(response);
     form.value = { ...response.data };
 }
 
@@ -110,9 +121,10 @@ function goBack() {
 useTelegramBackButton(goBack);
 
 onMounted(async () => {
-    await loadTranslations();
     if (isEditing.value) {
-        await loadHabit();
+        await loadEditData();
+    } else {
+        await loadCreateData();
     }
     loading.value = false;
     emit('ready');

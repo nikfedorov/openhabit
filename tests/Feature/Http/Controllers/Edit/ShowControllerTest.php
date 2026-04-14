@@ -25,6 +25,9 @@ it('returns habit with parsed form data for daily habit', function (): void {
         ->getJson('/api/edit/habits/'.$habit->id)
         ->assertOk()
         ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('navigationTranslations')
+            ->has('settings')
+            ->has('habitTranslations')
             ->has('data', fn (AssertableJson $json): AssertableJson => $json
                 ->where('id', $habit->id)
                 ->has('name')
@@ -58,6 +61,7 @@ it('parses rrule frequency data correctly', function (string $rrule, array $expe
                 ->where($expected['key'], $expected['value'])
                 ->etc()
             )
+            ->etc()
         );
 })->with([
     'weekly days' => ['FREQ=WEEKLY;BYDAY=MO,WE,FR', ['frequency' => 'WEEKLY', 'key' => 'weekly_days', 'value' => [0, 2, 4]]],
@@ -84,6 +88,7 @@ it('includes notifications sorted by time', function (): void {
                 ->where('notifications.1.is_active', true)
                 ->etc()
             )
+            ->etc()
         );
 });
 

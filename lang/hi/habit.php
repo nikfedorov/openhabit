@@ -76,4 +76,6 @@ return [
     'friday' => 'शुक्रवार',
     'saturday' => 'शनिवार',
     'sunday' => 'रविवार',
+    'time' => 'बार',
+    'times' => 'बार',
 ];

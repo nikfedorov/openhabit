@@ -95,6 +95,7 @@ const KNOWN_PATHS = new Set([
     '/track/toggle',
     '/track/daily-note',
     '/edit',
+    '/edit/habits/create',
     '/edit/habits/{habit}',
     '/edit/habits',
     '/edit/habits/{habit}/toggle',
@@ -345,7 +346,6 @@ describe('API contract', () => {
         expect(keys).toEqual(
             [
                 'data',
-                'habitTranslations',
                 'navigationTranslations',
                 'settings',
                 'templates',

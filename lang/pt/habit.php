@@ -76,4 +76,6 @@ return [
     'friday' => 'Sexta-feira',
     'saturday' => 'Sábado',
     'sunday' => 'Domingo',
+    'time' => 'vez',
+    'times' => 'vezes',
 ];

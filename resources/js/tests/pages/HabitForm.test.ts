@@ -26,7 +26,7 @@ vi.mock('@/composables/useTelegramBackButton', () => ({
     useTelegramBackButton: vi.fn(),
 }));
 
-const editApiResponse = {
+const createApiResponse = {
     habitTranslations: makeHabitTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
     settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
@@ -47,11 +47,14 @@ const habitShowResponse = {
         monthly_weekday: 0,
         notifications: [],
     },
+    habitTranslations: makeHabitTranslations(),
+    navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
+    settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
 };
 
 async function mountCreateForm() {
     mockRouteParams.value = {};
-    mockApiFetch.mockResolvedValueOnce(editApiResponse);
+    mockApiFetch.mockResolvedValueOnce(createApiResponse);
     const wrapper = mount(HabitForm, { attachTo: document.body });
     await flushPromises();
     return wrapper;
@@ -59,7 +62,6 @@ async function mountCreateForm() {
 
 async function mountEditForm() {
     mockRouteParams.value = { id: '1' };
-    mockApiFetch.mockResolvedValueOnce(editApiResponse);
     mockApiFetch.mockResolvedValueOnce(habitShowResponse);
     const wrapper = mount(HabitForm, { attachTo: document.body });
     await flushPromises();
@@ -79,7 +81,7 @@ afterEach(() => {
 describe('HabitForm - Create Mode', () => {
     it('loads translations on mount', async () => {
         await mountCreateForm();
-        expect(mockApiFetch).toHaveBeenCalledWith('/api/edit');
+        expect(mockApiFetch).toHaveBeenCalledWith('/api/edit/habits/create');
     });
 
     it('shows new habit title', async () => {
@@ -155,8 +157,8 @@ describe('HabitForm - Create Mode', () => {
 describe('HabitForm - Edit Mode', () => {
     it('loads habit data in edit mode', async () => {
         await mountEditForm();
-        expect(mockApiFetch).toHaveBeenCalledWith('/api/edit');
         expect(mockApiFetch).toHaveBeenCalledWith('/api/edit/habits/1');
+        expect(mockApiFetch).toHaveBeenCalledTimes(1);
     });
 
     it('shows edit habit title', async () => {
@@ -278,8 +280,8 @@ describe('HabitForm - Edit Mode', () => {
 
     it('shows weekly days when frequency is WEEKLY', async () => {
         mockRouteParams.value = { id: '1' };
-        mockApiFetch.mockResolvedValueOnce(editApiResponse);
         mockApiFetch.mockResolvedValueOnce({
+            ...habitShowResponse,
             data: {
                 ...habitShowResponse.data,
                 frequency: 'WEEKLY',
@@ -293,8 +295,8 @@ describe('HabitForm - Edit Mode', () => {
 
     it('shows monthly options when frequency is MONTHLY', async () => {
         mockRouteParams.value = { id: '1' };
-        mockApiFetch.mockResolvedValueOnce(editApiResponse);
         mockApiFetch.mockResolvedValueOnce({
+            ...habitShowResponse,
             data: {
                 ...habitShowResponse.data,
                 frequency: 'MONTHLY',

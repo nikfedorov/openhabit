@@ -237,13 +237,6 @@
                                                 "type": "string"
                                             }
                                         },
-                                        "habitTranslations": {
-                                            "type": "object",
-                                            "description": "Translations for habit attributes, including frequency and day labels.",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        },
                                         "templates": {
                                             "type": "array",
                                             "description": "Habit templates with category names.",
@@ -257,8 +250,54 @@
                                         "navigationTranslations",
                                         "settings",
                                         "translations",
-                                        "habitTranslations",
                                         "templates"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/create": {
+            "get": {
+                "operationId": "edit.create",
+                "description": "Returns translations and settings needed by the habit form\nwhen creating a new habit.",
+                "summary": "Get habit creation form data",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habitTranslations"
                                     ]
                                 }
                             }
@@ -273,7 +312,7 @@
         "/edit/habits/{habit}": {
             "get": {
                 "operationId": "edit.show",
-                "description": "Returns the habit with parsed RRule data for the edit form.",
+                "description": "Returns the habit with parsed RRule data for the edit form,\nalong with translations and settings needed by the habit form.",
                 "summary": "Get habit form data",
                 "tags": [
                     "Edit"
@@ -299,10 +338,28 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/components/schemas/HabitFormResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
                                         }
                                     },
                                     "required": [
-                                        "data"
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habitTranslations"
                                     ]
                                 }
                             }

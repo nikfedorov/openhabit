@@ -63,10 +63,14 @@ export type LifeApiResponse = CommonData & {
 export type EditApiResponse = CommonData & {
     data: EditHabit[];
     translations: EditTranslations;
-    habitTranslations: HabitTranslations;
     templates: TemplateHabit[];
 };
 
-export type HabitShowApiResponse = {
+export type HabitShowApiResponse = CommonData & {
     data: HabitFormData;
+    habitTranslations: HabitTranslations;
+};
+
+export type HabitCreateApiResponse = CommonData & {
+    habitTranslations: HabitTranslations;
 };

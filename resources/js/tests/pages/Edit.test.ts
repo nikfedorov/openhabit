@@ -4,7 +4,6 @@ import Edit from '@/pages/Edit.vue';
 import {
     makeEditHabit,
     makeEditTranslations,
-    makeHabitTranslations,
     makeTemplateHabit,
 } from '@/tests/helpers/edit';
 
@@ -39,7 +38,6 @@ vi.mock('vue-draggable-plus', () => ({
 const defaultApiResponse = {
     data: [makeEditHabit({ id: 1, name: 'Run' })],
     translations: makeEditTranslations(),
-    habitTranslations: makeHabitTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
     settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
     templates: [] as ReturnType<typeof makeTemplateHabit>[],

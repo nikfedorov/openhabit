@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Edit\CreateController;
 use App\Http\Controllers\Edit\DestroyController;
 use App\Http\Controllers\Edit\IndexController as EditIndexController;
 use App\Http\Controllers\Edit\ReorderController;
@@ -28,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/view/life', [LifeController::class, 'show'])->name('api.view.life');
 
     Route::get('/edit', [EditIndexController::class, 'show'])->name('api.edit');
+    Route::get('/edit/habits/create', [CreateController::class, 'show'])->name('api.edit.create');
     Route::get('/edit/habits/{habit}', [ShowController::class, 'show'])->name('api.edit.show');
     Route::post('/edit/habits', [StoreController::class, 'store'])->name('api.edit.store');
     Route::put('/edit/habits/{habit}', [StoreController::class, 'update'])->name('api.edit.update');

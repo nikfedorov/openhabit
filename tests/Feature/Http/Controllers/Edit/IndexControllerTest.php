@@ -23,7 +23,6 @@ it('returns habits and translations', function (): void {
         ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('navigationTranslations')
             ->has('settings')
             ->has('translations')
-            ->has('habitTranslations')
             ->has('templates')
             ->has('data', 1, fn (AssertableJson $json): AssertableJson => $json
                 ->where('id', $habit->id)
