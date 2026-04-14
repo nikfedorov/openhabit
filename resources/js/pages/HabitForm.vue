@@ -7,6 +7,10 @@ import IterationsCounter from '@/components/edit/IterationsCounter.vue';
 import MonthlyOptions from '@/components/edit/MonthlyOptions.vue';
 import NotificationList from '@/components/edit/NotificationList.vue';
 import WeeklyDays from '@/components/edit/WeeklyDays.vue';
+import {
+    isTelegram,
+    useTelegramBackButton,
+} from '@/composables/useTelegramBackButton';
 import type { HabitShowApiResponse, UserSettings } from '@/types/api';
 import type { HabitFormData, HabitTranslations } from '@/types/edit';
 import type { NavigationTranslations } from '@/types/navigation';
@@ -14,6 +18,8 @@ import { apiFetch } from '@/utils/api';
 
 const route = useRoute();
 const router = useRouter();
+
+const inTelegram = isTelegram();
 
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
@@ -99,6 +105,10 @@ function goBack() {
     router.push({ name: 'edit' });
 }
 
+// Register the native Telegram back button.
+// No-op when not running inside Telegram.
+useTelegramBackButton(goBack);
+
 onMounted(async () => {
     await loadTranslations();
     if (isEditing.value) {
@@ -115,6 +125,7 @@ onMounted(async () => {
             <!-- Page Header -->
             <div class="flex items-center gap-3">
                 <button
+                    v-if="!inTelegram"
                     type="button"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                     @click="goBack"

@@ -7,6 +7,9 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="manifest" href="/site.webmanifest">
+    {{-- Required for Telegram Mini App context detection (window.Telegram.WebApp). --}}
+    {{-- Safe to include on all pages: outside Telegram initData is an empty string. --}}
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         document.documentElement.classList.toggle(
             'dark',
