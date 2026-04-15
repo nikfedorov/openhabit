@@ -61,11 +61,11 @@ final class LocaleService
     /**
      * Get the list of configured locale codes.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function codes(): array
     {
-        /** @var array<string> */
+        /** @var list<string> */
         return config('translatable.locales', []);
     }
 }

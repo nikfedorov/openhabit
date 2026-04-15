@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Models\Invoice;
 use App\Models\User;
+use App\Services\LocaleService;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Console\Command;
 use SergiX44\Nutgram\Nutgram;
@@ -28,8 +29,7 @@ final class GenerateInvoiceLinksCommand extends Command
             return self::SUCCESS;
         }
 
-        /** @var array<int, string> $locales */
-        $locales = config('translatable.locales');
+        $locales = LocaleService::codes();
 
         foreach ($invoices as $invoice) {
             $this->generateLinks($bot, $invoice, $locales);
