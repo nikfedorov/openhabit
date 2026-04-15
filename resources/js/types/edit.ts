@@ -51,6 +51,8 @@ export type EditTranslations = {
     active: string;
     paused: string;
     delete: string;
+    delete_habit: string;
+    delete_confirm: string;
     save: string;
     cancel: string;
     time: string;

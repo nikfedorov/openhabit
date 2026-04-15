@@ -15,6 +15,8 @@ return [
     'active' => '活跃',
     'paused' => '已暂停',
     'delete' => '删除',
+    'delete_habit' => '删除习惯',
+    'delete_confirm' => '确定吗？所有完成数据将会丢失。',
     'save' => '保存',
     'cancel' => '取消',
     'time' => '次',

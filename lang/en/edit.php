@@ -15,6 +15,8 @@ return [
     'active' => 'Active',
     'paused' => 'Paused',
     'delete' => 'Delete',
+    'delete_habit' => 'Delete habit',
+    'delete_confirm' => 'Are you sure? All completion data will be lost.',
     'save' => 'Save',
     'cancel' => 'Cancel',
     'time' => 'time',

@@ -15,6 +15,8 @@ return [
     'active' => 'Activo',
     'paused' => 'Pausado',
     'delete' => 'Eliminar',
+    'delete_habit' => 'Eliminar hábito',
+    'delete_confirm' => '¿Estás seguro? Se perderán todos los datos de progreso.',
     'save' => 'Guardar',
     'cancel' => 'Cancelar',
     'time' => 'vez',

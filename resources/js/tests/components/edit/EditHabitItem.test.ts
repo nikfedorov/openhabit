@@ -130,7 +130,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[0];
+        const statusBtn = wrapper.findAll('button')[1];
         await statusBtn.trigger('click');
         expect(wrapper.emitted('toggle-active')?.[0]).toEqual([42]);
     });
@@ -140,7 +140,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const contentBtn = wrapper.findAll('button')[1];
+        const contentBtn = wrapper.findAll('button')[2];
         await contentBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
     });
@@ -150,7 +150,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[0];
+        const statusBtn = wrapper.findAll('button')[1];
         expect(statusBtn.classes()).toContain('bg-green-500');
     });
 
@@ -159,7 +159,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[0];
+        const statusBtn = wrapper.findAll('button')[1];
         expect(statusBtn.classes()).toContain('bg-neutral-300');
     });
 
@@ -168,7 +168,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const chevronBtn = wrapper.findAll('button')[2];
+        const chevronBtn = wrapper.findAll('button')[3];
         await chevronBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
     });
@@ -200,5 +200,65 @@ describe('EditHabitItem', () => {
         });
         expect(wrapper.find('.bg-green-100').exists()).toBe(false);
         expect(wrapper.find('.bg-neutral-100').exists()).toBe(true);
+    });
+
+    it('renders swipe delete button', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        expect(wrapper.find('[data-testid="swipe-delete-btn"]').exists()).toBe(
+            true,
+        );
+    });
+
+    it('emits confirm-delete when swipe delete button is clicked', async () => {
+        const habit = makeEditHabit({ id: 42 });
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        const deleteBtn = wrapper.find('[data-testid="swipe-delete-btn"]');
+        await deleteBtn.trigger('click');
+        expect(wrapper.emitted('confirm-delete')?.[0]).toEqual([42]);
+    });
+
+    it('exposes resetSwipe method', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        expect(typeof wrapper.vm.resetSwipe).toBe('function');
+    });
+
+    it('emits delete on large swipe gesture', async () => {
+        const habit = makeEditHabit({ id: 42 });
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+
+        const swipeEl = wrapper.find('.select-none').element as HTMLElement;
+
+        // Mock offsetWidth via parentElement
+        Object.defineProperty(swipeEl, 'offsetWidth', { value: 400 });
+        const parent = swipeEl.parentElement;
+        if (parent) {
+            Object.defineProperty(parent, 'offsetWidth', { value: 400 });
+        }
+
+        // Simulate a large left swipe (>75% of width)
+        swipeEl.dispatchEvent(
+            new TouchEvent('touchstart', {
+                touches: [{ clientX: 400, clientY: 0 } as Touch],
+            }),
+        );
+        swipeEl.dispatchEvent(
+            new TouchEvent('touchmove', {
+                cancelable: true,
+                touches: [{ clientX: 80, clientY: 0 } as Touch],
+            }),
+        );
+        swipeEl.dispatchEvent(new TouchEvent('touchend'));
+
+        expect(wrapper.emitted('delete')?.[0]).toEqual([42]);
     });
 });

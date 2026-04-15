@@ -45,7 +45,11 @@ const defaultApiResponse = {
 
 async function mountEdit(apiResponse = defaultApiResponse) {
     mockApiFetch.mockResolvedValueOnce(apiResponse);
-    const wrapper = mount(Edit);
+    const wrapper = mount(Edit, {
+        global: {
+            stubs: { Teleport: true },
+        },
+    });
     await flushPromises();
     return wrapper;
 }
@@ -397,7 +401,11 @@ describe('Edit Page', () => {
             ...defaultApiResponse,
             templates,
         });
-        const wrapper = mount(Edit);
+        const wrapper = mount(Edit, {
+            global: {
+                stubs: { Teleport: true },
+            },
+        });
         await vi.advanceTimersByTimeAsync(0);
 
         const serverHabits = [
@@ -424,5 +432,67 @@ describe('Edit Page', () => {
         expect(findNew()?.props('isNew')).toBe(false);
 
         vi.useRealTimers();
+    });
+
+    it('shows confirm dialog when confirm-delete is emitted', async () => {
+        const wrapper = await mountEdit();
+        const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
+        editItem.vm.$emit('confirm-delete', 1);
+        await flushPromises();
+        expect(
+            wrapper.find('[data-testid="delete-confirm-modal"]').exists(),
+        ).toBe(true);
+        expect(wrapper.text()).toContain('Delete Habit');
+    });
+
+    it('deletes habit when confirm button is clicked', async () => {
+        const wrapper = await mountEdit();
+        mockApiFetch.mockResolvedValueOnce(undefined);
+        const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
+        editItem.vm.$emit('confirm-delete', 1);
+        await flushPromises();
+
+        const confirmBtn = wrapper.find('[data-testid="delete-confirm-btn"]');
+        await confirmBtn.trigger('click');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/edit/habits/1',
+            { method: 'DELETE' },
+            { silent: true },
+        );
+        expect(
+            wrapper.find('[data-testid="delete-confirm-modal"]').exists(),
+        ).toBe(false);
+    });
+
+    it('closes confirm dialog on cancel without deleting', async () => {
+        const wrapper = await mountEdit();
+        const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
+        editItem.vm.$emit('confirm-delete', 1);
+        await flushPromises();
+
+        const cancelBtn = wrapper.find('[data-testid="delete-cancel-btn"]');
+        await cancelBtn.trigger('click');
+        await flushPromises();
+
+        expect(
+            wrapper.find('[data-testid="delete-confirm-modal"]').exists(),
+        ).toBe(false);
+        // Should not have made any additional API calls beyond initial load
+        expect(mockApiFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('still deletes directly when delete event is emitted (swipe)', async () => {
+        const wrapper = await mountEdit();
+        mockApiFetch.mockResolvedValueOnce(undefined);
+        const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
+        editItem.vm.$emit('delete', 1);
+        await flushPromises();
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/edit/habits/1',
+            { method: 'DELETE' },
+            { silent: true },
+        );
     });
 });

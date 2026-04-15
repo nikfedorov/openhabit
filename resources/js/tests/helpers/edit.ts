@@ -21,6 +21,8 @@ export function makeEditTranslations(
         active: 'Active',
         paused: 'Paused',
         delete: 'Delete',
+        delete_habit: 'Delete Habit',
+        delete_confirm: 'Are you sure? All completion data will be lost.',
         save: 'Save',
         cancel: 'Cancel',
         time: 'time',
