@@ -79,7 +79,7 @@ watchEffect(
         <div class="overflow-hidden">
             <div
                 ref="contentEl"
-                class="relative overflow-hidden rounded-xl"
+                class="edit-habit-card relative overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800"
                 :class="{ 'opacity-50': !habit.is_active && !pending }"
                 :data-pending="pending ? 'true' : undefined"
                 data-testid="edit-habit-item"
@@ -206,3 +206,18 @@ watchEffect(
         </div>
     </div>
 </template>
+
+<style>
+/*
+ * Fix iOS Safari GPU compositing black-corner glitch.
+ * When SortableJS applies transform to displaced items, overflow:hidden +
+ * border-radius creates black artifacts at rounded corners. Pre-promoting
+ * the element to its own compositing layer avoids this.
+ */
+.edit-habit-card {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+</style>

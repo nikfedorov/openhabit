@@ -179,7 +179,10 @@ describe('EditHabitItem', () => {
             props: { habit, translations, isNew: true },
         });
         expect(wrapper.find('.bg-green-100').exists()).toBe(true);
-        expect(wrapper.find('.bg-neutral-100').exists()).toBe(false);
+        // The inner content div (with transition-colors) should be green, not neutral
+        expect(wrapper.find('.transition-colors.bg-neutral-100').exists()).toBe(
+            false,
+        );
     });
 
     it('shows pulsing dot when isNew', () => {
