@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { WeekTranslations } from '@/types/view';
+import { addDays } from '@/utils/date';
 
-defineProps<{
+const props = defineProps<{
+    weekStart: string;
     weekStartFormatted: string;
     weekEndFormatted: string;
     weekEndFormattedFull: string;
@@ -11,9 +13,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-    previousWeek: [];
-    nextWeek: [];
-    currentWeek: [];
+    selectWeek: [weekStart: string | undefined];
 }>();
 </script>
 
@@ -27,7 +27,7 @@ const emit = defineEmits<{
                 type="button"
                 class="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-500 transition-all duration-150 hover:bg-neutral-200 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
                 :title="translations.previous_week"
-                @click="emit('previousWeek')"
+                @click="emit('selectWeek', addDays(props.weekStart, -7))"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +80,7 @@ const emit = defineEmits<{
                 type="button"
                 class="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-500 transition-all duration-150 hover:bg-neutral-200 hover:text-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
                 :title="translations.next_week"
-                @click="emit('nextWeek')"
+                @click="emit('selectWeek', addDays(props.weekStart, 7))"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +105,7 @@ const emit = defineEmits<{
                 <button
                     type="button"
                     class="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-600 transition-all duration-150 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                    @click="emit('currentWeek')"
+                    @click="emit('selectWeek', undefined)"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

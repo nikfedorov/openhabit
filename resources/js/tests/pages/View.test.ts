@@ -288,7 +288,9 @@ describe('View - Week Navigation', () => {
                 isCurrentWeek: false,
             }),
         );
-        wrapper.findComponent(WeekNavigator).vm.$emit('previousWeek');
+        wrapper
+            .findComponent(WeekNavigator)
+            .vm.$emit('selectWeek', '2026-03-30');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
             expect.stringContaining('week=2026-03-30'),
@@ -298,7 +300,9 @@ describe('View - Week Navigation', () => {
     it('navigates to next week', async () => {
         const wrapper = await mountView({ isCurrentWeek: false });
         mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
-        wrapper.findComponent(WeekNavigator).vm.$emit('nextWeek');
+        wrapper
+            .findComponent(WeekNavigator)
+            .vm.$emit('selectWeek', '2026-04-13');
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith(
             expect.stringContaining('week=2026-04-13'),
@@ -308,9 +312,31 @@ describe('View - Week Navigation', () => {
     it('navigates to current week', async () => {
         const wrapper = await mountView({ isCurrentWeek: false });
         mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
-        wrapper.findComponent(WeekNavigator).vm.$emit('currentWeek');
+        wrapper.findComponent(WeekNavigator).vm.$emit('selectWeek', undefined);
         await flushPromises();
         expect(mockApiFetch).toHaveBeenLastCalledWith('/api/view/week');
+    });
+
+    it('sets forward direction when navigating to current week from a past week', async () => {
+        const wrapper = await mountView({
+            isCurrentWeek: false,
+            weekStart: '2020-01-06',
+        });
+        mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
+        wrapper.findComponent(WeekNavigator).vm.$emit('selectWeek', undefined);
+        await flushPromises();
+        expect(wrapper.find('div').classes()).toContain('nav-forward');
+    });
+
+    it('sets backward direction when navigating to current week from a future week', async () => {
+        const wrapper = await mountView({
+            isCurrentWeek: false,
+            weekStart: '2099-01-07',
+        });
+        mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
+        wrapper.findComponent(WeekNavigator).vm.$emit('selectWeek', undefined);
+        await flushPromises();
+        expect(wrapper.find('div').classes()).toContain('nav-backward');
     });
 });
 
@@ -609,7 +635,7 @@ describe('View - URL Sync', () => {
         const wrapper = await mountView({ isCurrentWeek: false });
         mockReplace.mockReset();
         mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
-        wrapper.findComponent(WeekNavigator).vm.$emit('currentWeek');
+        wrapper.findComponent(WeekNavigator).vm.$emit('selectWeek', undefined);
         await flushPromises();
         expect(mockReplace).toHaveBeenCalledWith({
             query: { tab: 'week' },

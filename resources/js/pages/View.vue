@@ -29,7 +29,7 @@ import type {
     LifeViewData,
 } from '@/types/view';
 import { apiFetch } from '@/utils/api';
-import { addDays, findMondayOnOrAfter, formatDate } from '@/utils/date';
+import { findMondayOnOrAfter, formatDate } from '@/utils/date';
 
 const route = useRoute();
 const router = useRouter();
@@ -170,24 +170,24 @@ function setTab(newTab: 'week' | 'year' | 'life') {
     }
 }
 
-function previousWeek() {
-    /* v8 ignore next */
-    if (!weekData.value) return;
-    navDirection.value = 'nav-backward';
-    const prev = addDays(weekData.value.start, -7);
-    loadWeek({ week: prev });
-}
-
-function nextWeek() {
-    /* v8 ignore next */
-    if (!weekData.value) return;
-    navDirection.value = 'nav-forward';
-    const next = addDays(weekData.value.start, 7);
-    loadWeek({ week: next });
-}
-
-function goToCurrentWeek() {
-    loadWeek();
+function selectWeek(weekStart?: string) {
+    if (weekStart !== undefined) {
+        navDirection.value =
+            weekData.value && weekStart > weekData.value.start
+                ? 'nav-forward'
+                : 'nav-backward';
+        loadWeek({ week: weekStart });
+    } else {
+        /* v8 ignore next */
+        if (weekData.value) {
+            const currentMonday = formatDate(findMondayOnOrAfter(new Date()));
+            navDirection.value =
+                weekData.value.start < currentMonday
+                    ? 'nav-forward'
+                    : 'nav-backward';
+        }
+        loadWeek();
+    }
 }
 
 function selectYear(year: number) {
@@ -270,15 +270,14 @@ onMounted(() => {
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <WeekNavigator
+                    :week-start="weekData.start"
                     :week-start-formatted="weekData.startFormatted"
                     :week-end-formatted="weekData.endFormatted"
                     :week-end-formatted-full="weekData.endFormattedFull"
                     :week-year="weekData.year"
                     :is-current-week="weekData.isCurrent"
                     :translations="weekTranslations!"
-                    @previous-week="previousWeek"
-                    @next-week="nextWeek"
-                    @current-week="goToCurrentWeek"
+                    @select-week="selectWeek"
                 />
 
                 <WeekGrid
