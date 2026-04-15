@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Настройки',
+    'subtitle' => 'Настройте под себя',
+    'appearance' => 'Внешний вид',
+    'theme' => 'Тема',
+    'color_scheme' => 'Цветовая схема',
+    'theme_light' => 'Светлая',
+    'theme_dark' => 'Тёмная',
+    'theme_system' => 'Системная',
+    'language_and_region' => 'Язык и регион',
+    'language' => 'Язык',
+    'display_language' => 'Язык интерфейса',
+    'timezone' => 'Часовой пояс',
+    'your_timezone' => 'Ваш часовой пояс',
+    'search_timezone' => 'Поиск часового пояса...',
+    'no_timezones_found' => 'Часовые пояса не найдены',
+    'personal' => 'Личное',
+    'move_completed_to_end' => 'Выполненные в конец',
+    'completed_habits_sink_to_bottom' => 'Выполненные привычки опускаются вниз',
+    'birthdate' => 'Дата рождения',
+    'for_life_calendar' => 'Для календаря жизни',
+    'day_starts_at' => 'День начинается в',
+    'when_the_day_begins' => 'Начало нового дня',
+    'ai_digest' => 'ИИ-дайджест',
+    'enable_ai_digest' => 'Включить ИИ-дайджест',
+    'daily_ai_summary' => 'Ежедневная ИИ-сводка привычек',
+    'digest_time' => 'Время дайджеста',
+    'when_to_send_the_digest' => 'Когда отправлять дайджест',
+    'ai_tone' => 'Тон ИИ',
+    'tone_of_the_daily_summary' => 'Тон ежедневной сводки',
+];

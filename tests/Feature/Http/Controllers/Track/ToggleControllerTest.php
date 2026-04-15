@@ -22,6 +22,7 @@ it('creates, increments, and deletes completion through full cycle', function ()
                 ->has('locale')
                 ->has('theme')
                 ->has('moveCompletedToEnd')
+                ->etc()
             )
             ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json
                 ->where('current_iteration', 1)

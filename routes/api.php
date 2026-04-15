@@ -11,6 +11,8 @@ use App\Http\Controllers\Edit\StoreController;
 use App\Http\Controllers\Edit\TemplateController;
 use App\Http\Controllers\Edit\ToggleController as EditToggleController;
 use App\Http\Controllers\Edit\ToggleFranklinController;
+use App\Http\Controllers\Settings\IndexController as SettingsIndexController;
+use App\Http\Controllers\Settings\UpdateController as SettingsUpdateController;
 use App\Http\Controllers\Track\IndexController;
 use App\Http\Controllers\Track\NoteController;
 use App\Http\Controllers\Track\ToggleController;
@@ -39,4 +41,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/edit/habits/reorder', [ReorderController::class, 'store'])->name('api.edit.reorder');
 
     Route::post('/edit/templates/{habitTemplate}/copy', [TemplateController::class, 'store'])->name('api.edit.templates.copy');
+
+    Route::get('/settings', [SettingsIndexController::class, 'show'])->name('api.settings');
+    Route::patch('/settings', [SettingsUpdateController::class, 'update'])->name('api.settings.update');
 });

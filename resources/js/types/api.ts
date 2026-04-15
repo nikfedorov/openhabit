@@ -6,6 +6,7 @@ import type {
     TemplateHabit,
 } from './edit';
 import type { NavigationTranslations } from './navigation';
+import type { SettingsTranslations } from './settings';
 import type { ActivityDay, Habit, TrackData } from './track';
 import type {
     GridHabit,
@@ -24,6 +25,11 @@ export type UserSettings = {
     locale: string;
     theme: 'light' | 'dark' | 'system';
     moveCompletedToEnd: boolean;
+    timezone: string | null;
+    dayStartsAt: string | null;
+    birthdate: string | null;
+    aiDigestTime: string | null;
+    aiToneId: number | null;
 };
 
 export type CommonData = {
@@ -74,3 +80,22 @@ export type HabitShowApiResponse = CommonData & {
 export type HabitCreateApiResponse = CommonData & {
     habitTranslations: HabitTranslations;
 };
+
+export type AiTone = {
+    id: number;
+    name: string;
+    description: string | null;
+    icon: string;
+};
+
+export type SettingsApiResponse = {
+    data: UserSettings;
+    navigationTranslations: NavigationTranslations;
+    locales: Record<string, string>;
+    timezones: Record<string, Record<string, string>>;
+    aiTones: AiTone[];
+    hasPremium: boolean;
+    translations: SettingsTranslations;
+};
+
+export type { SettingsTranslations };

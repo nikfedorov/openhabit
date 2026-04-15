@@ -20,6 +20,9 @@
         },
         {
             "name": "Edit"
+        },
+        {
+            "name": "Settings"
         }
     ],
     "security": [
@@ -885,6 +888,116 @@
                     }
                 }
             }
+        },
+        "/settings": {
+            "get": {
+                "operationId": "settings",
+                "summary": "Show the current user's settings along with available options",
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`UserSettingResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "locales": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "timezones": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "aiTones": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AiToneResource"
+                                            }
+                                        },
+                                        "hasPremium": {
+                                            "type": "boolean"
+                                        },
+                                        "translations": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "locales",
+                                        "timezones",
+                                        "aiTones",
+                                        "hasPremium",
+                                        "translations"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "settings.update",
+                "summary": "Update one or more user settings",
+                "tags": [
+                    "Settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSettingsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`UserSettingResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -895,6 +1008,32 @@
             }
         },
         "schemas": {
+            "AiToneResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "array",
+                        "items": {}
+                    },
+                    "description": {
+                        "type": "array",
+                        "items": {}
+                    },
+                    "icon": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "icon"
+                ],
+                "title": "AiToneResource"
+            },
             "EditHabitResource": {
                 "type": "object",
                 "properties": {
@@ -1607,6 +1746,81 @@
                 ],
                 "title": "TrackResource"
             },
+            "UpdateSettingsRequest": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "type": "string",
+                        "description": "UI theme preference.",
+                        "enum": [
+                            "light",
+                            "dark",
+                            "system"
+                        ],
+                        "example": "dark"
+                    },
+                    "locale": {
+                        "type": "string",
+                        "description": "Display language code.",
+                        "enum": [
+                            "en",
+                            "ru",
+                            "es",
+                            "zh",
+                            "hi",
+                            "bn",
+                            "pt",
+                            "ar"
+                        ],
+                        "example": "en"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "description": "IANA timezone identifier.",
+                        "example": "Europe/London"
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time",
+                        "description": "User's date of birth.",
+                        "example": "1990-01-15"
+                    },
+                    "dayStartsAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
+                        "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
+                        "example": "03:00"
+                    },
+                    "moveCompletedToEnd": {
+                        "type": "boolean",
+                        "description": "Whether completed habits are moved to the bottom of the list."
+                    },
+                    "aiDigestTime": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Scheduled time for the daily AI digest (HH:MM). Null disables it.",
+                        "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
+                        "example": "09:00"
+                    },
+                    "aiToneId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "AI tone to use for the digest.",
+                        "example": 1
+                    }
+                },
+                "title": "UpdateSettingsRequest"
+            },
             "UserSettingResource": {
                 "type": "object",
                 "properties": {
@@ -1627,12 +1841,64 @@
                     "moveCompletedToEnd": {
                         "type": "boolean",
                         "description": "Whether completed habits are moved to bottom."
+                    },
+                    "timezone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "IANA timezone identifier.",
+                        "examples": [
+                            "Europe/London"
+                        ]
+                    },
+                    "dayStartsAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
+                        "examples": [
+                            "03:00"
+                        ]
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's date of birth.",
+                        "examples": [
+                            "1990-01-15"
+                        ]
+                    },
+                    "aiDigestTime": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Scheduled time for the daily AI digest (HH:MM). Null means disabled.",
+                        "examples": [
+                            "09:00"
+                        ]
+                    },
+                    "aiToneId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "ID of the AI tone used for the digest."
                     }
                 },
                 "required": [
                     "locale",
                     "theme",
-                    "moveCompletedToEnd"
+                    "moveCompletedToEnd",
+                    "timezone",
+                    "dayStartsAt",
+                    "birthdate",
+                    "aiDigestTime",
+                    "aiToneId"
                 ],
                 "title": "UserSettingResource"
             },

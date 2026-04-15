@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Configurações',
+    'subtitle' => 'Personalize sua experiência',
+    'appearance' => 'Aparência',
+    'theme' => 'Tema',
+    'color_scheme' => 'Esquema de cores',
+    'theme_light' => 'Claro',
+    'theme_dark' => 'Escuro',
+    'theme_system' => 'Sistema',
+    'language_and_region' => 'Idioma e região',
+    'language' => 'Idioma',
+    'display_language' => 'Idioma de exibição',
+    'timezone' => 'Fuso horário',
+    'your_timezone' => 'Seu fuso horário',
+    'search_timezone' => 'Pesquisar fuso horário...',
+    'no_timezones_found' => 'Nenhum fuso horário encontrado',
+    'personal' => 'Pessoal',
+    'move_completed_to_end' => 'Mover concluídos para o final',
+    'completed_habits_sink_to_bottom' => 'Hábitos concluídos vão para o final',
+    'birthdate' => 'Data de nascimento',
+    'for_life_calendar' => 'Para o calendário de vida',
+    'day_starts_at' => 'O dia começa às',
+    'when_the_day_begins' => 'Quando o dia começa',
+    'ai_digest' => 'Resumo IA',
+    'enable_ai_digest' => 'Ativar resumo IA',
+    'daily_ai_summary' => 'Resumo diário IA dos seus hábitos',
+    'digest_time' => 'Hora do resumo',
+    'when_to_send_the_digest' => 'Quando enviar o resumo',
+    'ai_tone' => 'Tom IA',
+    'tone_of_the_daily_summary' => 'Tom do resumo diário',
+];

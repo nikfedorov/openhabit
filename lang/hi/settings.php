@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'सेटिंग्स',
+    'subtitle' => 'अपना अनुभव अनुकूलित करें',
+    'appearance' => 'रूपरंग',
+    'theme' => 'थीम',
+    'color_scheme' => 'रंग योजना',
+    'theme_light' => 'हल्का',
+    'theme_dark' => 'गहरा',
+    'theme_system' => 'सिस्टम',
+    'language_and_region' => 'भाषा और क्षेत्र',
+    'language' => 'भाषा',
+    'display_language' => 'प्रदर्शन भाषा',
+    'timezone' => 'समय क्षेत्र',
+    'your_timezone' => 'आपका समय क्षेत्र',
+    'search_timezone' => 'समय क्षेत्र खोजें...',
+    'no_timezones_found' => 'कोई समय क्षेत्र नहीं मिला',
+    'personal' => 'व्यक्तिगत',
+    'move_completed_to_end' => 'पूर्ण को अंत में ले जाएं',
+    'completed_habits_sink_to_bottom' => 'पूर्ण आदतें नीचे चली जाती हैं',
+    'birthdate' => 'जन्म तिथि',
+    'for_life_calendar' => 'जीवन कैलेंडर के लिए',
+    'day_starts_at' => 'दिन शुरू होता है',
+    'when_the_day_begins' => 'दिन कब शुरू होता है',
+    'ai_digest' => 'AI डाइजेस्ट',
+    'enable_ai_digest' => 'AI डाइजेस्ट सक्षम करें',
+    'daily_ai_summary' => 'आपकी आदतों का दैनिक AI सारांश',
+    'digest_time' => 'डाइजेस्ट समय',
+    'when_to_send_the_digest' => 'डाइजेस्ट कब भेजें',
+    'ai_tone' => 'AI टोन',
+    'tone_of_the_daily_summary' => 'दैनिक सारांश का टोन',
+];

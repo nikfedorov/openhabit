@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'title' => 'Settings',
+    'subtitle' => 'Customize your experience',
+    'appearance' => 'Appearance',
+    'theme' => 'Theme',
+    'color_scheme' => 'Color scheme',
+    'theme_light' => 'Light',
+    'theme_dark' => 'Dark',
+    'theme_system' => 'System',
+    'language_and_region' => 'Language & Region',
+    'language' => 'Language',
+    'display_language' => 'Display language',
+    'timezone' => 'Timezone',
+    'your_timezone' => 'Your timezone',
+    'search_timezone' => 'Search timezone...',
+    'no_timezones_found' => 'No timezones found',
+    'personal' => 'Personal',
+    'move_completed_to_end' => 'Move completed to end',
+    'completed_habits_sink_to_bottom' => 'Completed habits sink to bottom',
+    'birthdate' => 'Birthdate',
+    'for_life_calendar' => 'For life calendar',
+    'day_starts_at' => 'Day starts at',
+    'when_the_day_begins' => 'When the day begins',
+    'ai_digest' => 'AI Digest',
+    'enable_ai_digest' => 'Enable AI digest',
+    'daily_ai_summary' => 'Daily AI summary of your habits',
+    'digest_time' => 'Digest time',
+    'when_to_send_the_digest' => 'When to send the digest',
+    'ai_tone' => 'AI tone',
+    'tone_of_the_daily_summary' => 'Tone of the daily summary',
+];

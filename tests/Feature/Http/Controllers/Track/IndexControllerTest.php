@@ -34,6 +34,7 @@ it('loads habits with completion state and filters inactive ones', function (): 
             ->has('settings', fn (AssertableJson $json): AssertableJson => $json->has('locale')
                 ->has('theme')
                 ->has('moveCompletedToEnd')
+                ->etc()
             )
             ->has('habits', 1, fn (AssertableJson $json): AssertableJson => $json
                 ->where('is_completed', true)

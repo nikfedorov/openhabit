@@ -19,7 +19,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class UserSettingResource extends JsonResource
 {
     /**
-     * @return array{locale: string, theme: string, moveCompletedToEnd: bool}
+     * @return array{
+     *     locale: string,
+     *     theme: string,
+     *     moveCompletedToEnd: bool,
+     *     timezone: string|null,
+     *     dayStartsAt: string|null,
+     *     birthdate: string|null,
+     *     aiDigestTime: string|null,
+     *     aiToneId: int|null,
+     * }
      */
     public function toArray(Request $request): array
     {
@@ -48,6 +57,51 @@ final class UserSettingResource extends JsonResource
              * @var bool
              */
             'moveCompletedToEnd' => $this->resource->move_completed_to_end,
+
+            /**
+             * IANA timezone identifier.
+             *
+             * @var string|null
+             *
+             * @example "Europe/London"
+             */
+            'timezone' => $this->resource->timezone,
+
+            /**
+             * Time of day when the "day" resets for habit tracking (HH:MM).
+             *
+             * @var string|null
+             *
+             * @example "03:00"
+             */
+            'dayStartsAt' => $this->resource->day_starts_at !== null
+                ? mb_substr($this->resource->day_starts_at, 0, 5)
+                : null,
+
+            /**
+             * User's date of birth.
+             *
+             * @var string|null
+             *
+             * @example "1990-01-15"
+             */
+            'birthdate' => $this->resource->birthdate?->format('Y-m-d'),
+
+            /**
+             * Scheduled time for the daily AI digest (HH:MM). Null means disabled.
+             *
+             * @var string|null
+             *
+             * @example "09:00"
+             */
+            'aiDigestTime' => $this->resource->ai_digest_time,
+
+            /**
+             * ID of the AI tone used for the digest.
+             *
+             * @var int|null
+             */
+            'aiToneId' => $this->resource->ai_tone_id,
         ];
     }
 }

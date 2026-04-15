@@ -6,4 +6,5 @@ return [
     'track' => 'Rastrear',
     'view' => 'Visualizar',
     'edit' => 'Editar',
+    'settings' => 'Configurações',
 ];

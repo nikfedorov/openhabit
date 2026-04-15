@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { UserSettings } from '@/types/api';
+import type { AiTone, UserSettings } from '@/types/api';
 import type {
     EditHabit,
     HabitFormData,
@@ -55,6 +55,7 @@ function typeKeys<T>(obj: { [K in keyof Required<T>]: true }): string[] {
  * Every entry here must have an `it('XResource schema matches ...')` below.
  */
 const TESTED_SCHEMAS = new Set([
+    'AiToneResource',
     'EditHabitResource',
     'HabitActivityDataResource',
     'HabitFormResource',
@@ -83,6 +84,7 @@ const EXCLUDED_SCHEMAS = new Set([
     'ReorderHabitsRequest', // request body
     'StoreHabitRequest', // request body
     'ToggleRequest', // request body
+    'UpdateSettingsRequest', // request body
 ]);
 
 /**
@@ -105,6 +107,7 @@ const KNOWN_PATHS = new Set([
     '/view/week',
     '/view/year',
     '/view/life',
+    '/settings',
 ]);
 
 // ─── API Contract Tests ─────────────────────────────────────────
@@ -303,6 +306,23 @@ describe('API contract', () => {
             locale: true,
             theme: true,
             moveCompletedToEnd: true,
+            timezone: true,
+            dayStartsAt: true,
+            birthdate: true,
+            aiDigestTime: true,
+            aiToneId: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('AiToneResource schema matches AiTone type', () => {
+        const schema = schemaKeys('AiToneResource');
+        const ts = typeKeys<AiTone>({
+            id: true,
+            name: true,
+            description: true,
+            icon: true,
         });
 
         expect(schema).toEqual(ts);
