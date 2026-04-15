@@ -18,15 +18,14 @@ trait AuthorizesHabitAccess
 {
     /**
      * Authorize that the current user owns the route-bound habit.
-     *
-     * @param  bool  $allowFranklinVirtues  Whether Franklin virtue habits are allowed.
+     * Franklin virtue habits are never accessible via single-habit endpoints.
      */
-    protected function authorizeHabitAccess(bool $allowFranklinVirtues = false): bool
+    protected function authorizeHabitAccess(): bool
     {
         /** @var Habit $habit */
         $habit = $this->route('habit');
 
         return $this->user()?->id === $habit->user_id
-            && ($allowFranklinVirtues || ! $habit->is_franklin_virtue);
+            && ! $habit->is_franklin_virtue;
     }
 }

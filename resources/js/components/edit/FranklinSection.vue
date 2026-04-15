@@ -9,7 +9,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'toggle-active': [habitId: number];
     'toggle-all-active': [];
 }>();
 
@@ -55,16 +54,14 @@ const anyActive = computed(() => props.habits.some((h) => h.is_active));
             >
                 <!-- Status Indicator -->
                 <div class="mt-1.5 flex-shrink-0">
-                    <button
-                        type="button"
-                        class="h-7 w-7 cursor-pointer rounded-md align-middle transition-colors"
+                    <div
+                        class="h-7 w-7 rounded-md align-middle transition-colors"
                         :class="
                             habit.is_active
                                 ? 'bg-green-500 dark:bg-green-500'
                                 : 'bg-neutral-300 dark:bg-neutral-600'
                         "
-                        @click.stop="emit('toggle-active', habit.id)"
-                    ></button>
+                    ></div>
                 </div>
 
                 <!-- Content -->

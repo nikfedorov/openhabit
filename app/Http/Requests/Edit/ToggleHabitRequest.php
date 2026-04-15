@@ -12,11 +12,11 @@ final class ToggleHabitRequest extends FormRequest
     use AuthorizesHabitAccess;
 
     /**
-     * The user must own the habit (including Franklin virtues).
+     * The user must own the habit. Franklin virtues can only be toggled all at once.
      */
     public function authorize(): bool
     {
-        return $this->authorizeHabitAccess(allowFranklinVirtues: true);
+        return $this->authorizeHabitAccess();
     }
 
     /**

@@ -35,7 +35,7 @@ describe('FranklinSection', () => {
         expect(wrapper.text()).toContain('Temperance');
     });
 
-    it('emits toggle-active when status button is clicked', async () => {
+    it('does not emit toggle-active when individual status indicator is clicked', async () => {
         const habits = [makeEditHabit({ id: 42, name: 'Order' })];
         const wrapper = mount(FranklinSection, {
             props: { habits, translations },
@@ -44,9 +44,10 @@ describe('FranklinSection', () => {
         // Expand first
         await wrapper.find('.cursor-pointer').trigger('click');
 
-        const statusBtn = wrapper.find('.border-t button');
-        await statusBtn.trigger('click');
-        expect(wrapper.emitted('toggle-active')?.[0]).toEqual([42]);
+        // Status indicator is a div, not a button — should not be clickable/emit
+        const statusDiv = wrapper.find('.border-t div.h-7');
+        expect(statusDiv.element.tagName).toBe('DIV');
+        expect(wrapper.emitted('toggle-active')).toBeUndefined();
     });
 
     it('shows opacity for inactive habits', async () => {

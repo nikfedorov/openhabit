@@ -148,31 +148,6 @@ describe('Edit Page', () => {
         expect(wrapper.text()).toContain("Franklin's Virtues");
     });
 
-    it('toggles franklin habit active state', async () => {
-        const wrapper = await mountEdit({
-            ...defaultApiResponse,
-            data: [
-                ...defaultApiResponse.data,
-                makeEditHabit({
-                    id: 99,
-                    name: 'Temperance',
-                    is_franklin_virtue: true,
-                }),
-            ],
-        });
-        mockApiFetch.mockResolvedValueOnce(undefined);
-        const franklinSection = wrapper.findComponent({
-            name: 'FranklinSection',
-        });
-        franklinSection.vm.$emit('toggle-active', 99);
-        await flushPromises();
-        expect(mockApiFetch).toHaveBeenCalledWith(
-            '/api/edit/habits/99/toggle',
-            { method: 'POST' },
-            { silent: true },
-        );
-    });
-
     it('toggles active on habit not found (no-op)', async () => {
         const wrapper = await mountEdit();
         mockApiFetch.mockResolvedValueOnce(undefined);

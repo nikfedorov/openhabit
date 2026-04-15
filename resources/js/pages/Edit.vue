@@ -50,9 +50,7 @@ async function loadData() {
 }
 
 async function toggleHabit(habitId: number) {
-    const habit =
-        habits.value.find((h) => h.id === habitId) ??
-        franklinHabits.value.find((h) => h.id === habitId);
+    const habit = habits.value.find((h) => h.id === habitId);
     if (habit) {
         habit.is_active = !habit.is_active;
     }
@@ -265,7 +263,6 @@ onMounted(() => {
                 v-if="franklinHabits.length > 0"
                 :habits="franklinHabits"
                 :translations="translations"
-                @toggle-active="toggleHabit"
                 @toggle-all-active="toggleFranklinHabits"
             />
 

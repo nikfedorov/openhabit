@@ -40,3 +40,20 @@ it('prevents toggling another user habit', function (): void {
         ->postJson(sprintf('/api/edit/habits/%d/toggle', $otherHabit->id))
         ->assertForbidden();
 });
+
+it('prevents toggling a franklin virtue habit individually', function (): void {
+    $user = User::factory()->create();
+    $habit = Habit::factory()->franklinVirtue()->create([
+        'user_id' => $user->id,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson(sprintf('/api/edit/habits/%d/toggle', $habit->id))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('habits', [
+        'id' => $habit->id,
+        'is_active' => true,
+    ]);
+});
