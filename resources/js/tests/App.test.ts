@@ -290,4 +290,31 @@ describe('App', () => {
         // matchMedia mock returns matches: false, so no dark class
         expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
+
+    it('syncs Telegram WebApp header and background colors when theme changes', async () => {
+        const setHeaderColor = vi.fn();
+        const setBackgroundColor = vi.fn();
+
+        Object.defineProperty(window, 'Telegram', {
+            writable: true,
+            configurable: true,
+            value: {
+                WebApp: {
+                    isVersionAtLeast: vi.fn().mockReturnValue(true),
+                    setHeaderColor,
+                    setBackgroundColor,
+                },
+            },
+        });
+
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'dark' });
+        await wrapper.vm.$nextTick();
+
+        expect(setHeaderColor).toHaveBeenCalledWith('#171717');
+        expect(setBackgroundColor).toHaveBeenCalledWith('#171717');
+
+        delete (window as unknown as Record<string, unknown>).Telegram;
+    });
 });

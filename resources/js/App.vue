@@ -38,6 +38,17 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
 
     document.documentElement.classList.toggle('dark', isDark);
     localStorage.setItem('theme', theme);
+
+    // Fix overscroll bounce revealing wrong background on iOS.
+    const bgColor = isDark ? '#171717' : '#ffffff';
+    document.documentElement.style.backgroundColor = bgColor;
+
+    // Sync Telegram Mini App header and background colors with current theme.
+    const tg = window.Telegram?.WebApp;
+    if (tg?.isVersionAtLeast?.('6.1')) {
+        tg.setHeaderColor?.(bgColor);
+        tg.setBackgroundColor?.(bgColor);
+    }
 }
 
 function updateSettings(settings: UserSettings) {
