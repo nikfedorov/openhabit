@@ -19,6 +19,11 @@ export function createTestRouter(initialRoute = '/') {
                 name: 'edit',
                 component: { template: '<div>Edit</div>' },
             },
+            {
+                path: '/settings',
+                name: 'settings',
+                component: { template: '<div>Settings</div>' },
+            },
         ],
     });
 

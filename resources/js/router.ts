@@ -28,6 +28,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/HabitForm.vue'),
     },
     {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('@/pages/Settings.vue'),
+    },
+    {
         path: '/:pathMatch(.*)*',
         redirect: { name: 'track' },
     },
