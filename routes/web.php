@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\TelegramMiniAppController;
 use App\Http\Controllers\Telegram\WebhookController;
-use App\Models\User;
+use App\Http\Middleware\InjectDevToken;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
@@ -12,36 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn (): View => view('welcome'));
 
 // Vue SPA shell
-Route::get('/app', function (): View {
-    $devToken = null;
-
-    if (config('app.env') === 'local') {
-        $user = User::query()->oldest()->first();
-
-        if ($user !== null) {
-            $user->tokens()->where('name', 'dev')->delete();
-            $devToken = $user->createToken('dev')->plainTextToken;
-        }
-    }
-
-    return view('app', ['devToken' => $devToken]);
-})->name('app');
-
-// Vue Router SPA catch-all — serves the Vue shell for all /app/* paths
-Route::get('/app/{any}', function (): View {
-    $devToken = null;
-
-    if (config('app.env') === 'local') {
-        $user = User::query()->oldest()->first();
-
-        if ($user !== null) {
-            $user->tokens()->where('name', 'dev')->delete();
-            $devToken = $user->createToken('dev')->plainTextToken;
-        }
-    }
-
-    return view('app', ['devToken' => $devToken]);
-})->where('any', '.*')->name('app.spa');
+Route::middleware(InjectDevToken::class)->group(function (): void {
+    Route::get('/app', fn (): View => view('app'))->name('app');
+    Route::get('/app/{any}', fn (): View => view('app'))->where('any', '.*')->name('app.spa');
+});
 
 // Telegram Mini App auth
 Route::get('/telegram-miniapp', fn (): View => view('telegram-miniapp'))->name('telegram-miniapp');

@@ -25,6 +25,10 @@ final class TelegramMiniAppController
         /** @var string $token */
         $token = $user->createToken('telegram-miniapp')->plainTextToken;
 
+        // Mark this session as Telegram-authenticated so the dev token
+        // middleware does not overwrite the legitimate token on redirect.
+        $request->session()->put('telegram_authenticated', true);
+
         return response()->json([
             'success' => true,
             'token' => $token,

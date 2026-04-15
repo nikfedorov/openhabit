@@ -28,7 +28,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.ts'])
     @if($devToken ?? false)
-    <script>if (!localStorage.getItem('api_token')) { localStorage.setItem('api_token', '{{ $devToken }}'); }</script>
+    <script>localStorage.setItem('api_token', '{{ $devToken }}');</script>
     @endif
 </head>
 <body>
