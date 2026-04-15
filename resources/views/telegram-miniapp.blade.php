@@ -9,6 +9,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ config('app.name') }}</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme');
+            var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) document.documentElement.classList.add('dark');
+        })();
+    </script>
     <style>
         * {
             margin: 0;
@@ -16,62 +23,56 @@
             box-sizing: border-box;
         }
 
+        html { background: #fff; }
+        html.dark { background: #171717; }
+
         body {
             font-family:
                 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
                 Ubuntu, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background-color: inherit;
+            color: #000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding-bottom: 20vh;
+        }
+
+        html.dark body {
+            color: #fff;
         }
 
         .loading {
             text-align: center;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--tg-theme-hint-color, #cccccc);
-            border-top-color: var(--tg-theme-button-color, #3390ec);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        #splash-bg { fill: #f5f5f5; }
+        html.dark #splash-bg { fill: #171717; }
 
         .error {
             text-align: center;
             padding: 20px;
+            display: none;
         }
 
         .error-message {
-            color: var(--tg-theme-destructive-text-color, #ff3b30);
+            color: #ff3b30;
         }
 
         .error-hint {
             margin-top: 10px;
-            color: var(--tg-theme-hint-color, #999);
+            color: #999;
         }
     </style>
 </head>
 <body>
     <div id="loading" class="loading">
-        <div class="spinner"></div>
-        <p>Loading...</p>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" width="64" height="64"><rect id="splash-bg" width="512" height="512" rx="96" fill="#f5f5f5"/><rect x="80" y="272" width="160" height="160" rx="24" fill="#14532d"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" begin="0s" repeatCount="indefinite"/></rect><rect x="272" y="272" width="160" height="160" rx="24" fill="#15803d"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" begin="0.2s" repeatCount="indefinite"/></rect><rect x="80" y="80" width="160" height="160" rx="24" fill="#16a34a"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" begin="0.4s" repeatCount="indefinite"/></rect><rect x="272" y="80" width="160" height="160" rx="24" fill="#22c55e"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" begin="0.6s" repeatCount="indefinite"/></rect></svg>
     </div>
 
-    <div id="error" class="error" style="display: none">
+    <div id="error" class="error">
         <p class="error-message" id="error-message"></p>
         <p class="error-hint">Please try again or contact support.</p>
     </div>

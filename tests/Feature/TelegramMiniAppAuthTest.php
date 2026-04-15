@@ -33,7 +33,7 @@ function makeWebAppData(WebAppUser $user): WebAppData
 it('loads telegram miniapp page', function (): void {
     $this->get('/telegram-miniapp')
         ->assertOk()
-        ->assertSee('Loading...');
+        ->assertSee('id="loading"', false);
 });
 
 it('rejects missing init data', function (): void {

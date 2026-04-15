@@ -37,6 +37,7 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
     const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
 
     document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', theme);
 }
 
 function updateSettings(settings: UserSettings) {
@@ -44,8 +45,10 @@ function updateSettings(settings: UserSettings) {
     applyTheme(settings.theme);
 }
 
-/* Apply system preference until API responds */
-applyTheme('system');
+/* Apply saved theme or fall back to system preference */
+applyTheme(
+    (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system',
+);
 </script>
 
 <template>

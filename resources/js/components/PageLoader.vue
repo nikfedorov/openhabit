@@ -19,7 +19,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div
-        class="flex min-h-[calc(100vh-theme(spacing.24)-theme(spacing.12))] items-center justify-center"
+        class="fixed inset-0 flex items-center justify-center pb-[20vh]"
         data-testid="page-loader"
     >
         <transition name="loader-fade">
