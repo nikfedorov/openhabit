@@ -20,11 +20,16 @@ const emit = defineEmits<{
                 v-if="show"
                 class="fixed inset-0 z-50 flex items-center justify-center px-4"
                 data-testid="delete-confirm-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delete-confirm-title"
+                aria-describedby="delete-confirm-message"
                 @click.self="emit('cancel')"
             >
                 <!-- Backdrop -->
                 <div
                     class="fixed inset-0 bg-black/40 dark:bg-black/60"
+                    aria-hidden="true"
                     @click="emit('cancel')"
                 />
 
@@ -42,6 +47,7 @@ const emit = defineEmits<{
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             stroke-width="2"
+                            aria-hidden="true"
                         >
                             <path
                                 stroke-linecap="round"
@@ -53,11 +59,13 @@ const emit = defineEmits<{
 
                     <!-- Text -->
                     <h2
+                        id="delete-confirm-title"
                         class="text-base font-semibold text-neutral-900 dark:text-white"
                     >
                         {{ title }}
                     </h2>
                     <p
+                        id="delete-confirm-message"
                         class="mt-1 text-sm text-neutral-500 dark:text-neutral-400"
                     >
                         {{ message }}

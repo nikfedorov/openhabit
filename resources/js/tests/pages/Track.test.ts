@@ -418,6 +418,50 @@ describe('Track - Habits List', () => {
         // Toggle API called only once, not twice
         expect(mockApiFetch).toHaveBeenCalledTimes(2); // initial load + one toggle
     });
+
+    it('toggles on Space and Enter keys for keyboard users', async () => {
+        const wrapper = await mountTrack(mockApiFetch);
+        const habitItem = findByTestId(wrapper, 'habit-item');
+
+        // Space activates the press animation.
+        await habitItem.trigger('keydown', { key: ' ' });
+        expect(habitItem.classes()).toContain('habit-press');
+
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
+        await habitItem.trigger('animationend');
+        await flushPromises();
+        expect(habitItem.classes()).not.toContain('habit-press');
+
+        // Enter also activates.
+        await habitItem.trigger('keydown', { key: 'Enter' });
+        expect(habitItem.classes()).toContain('habit-press');
+
+        mockApiFetch.mockResolvedValueOnce(makeTrackResponse());
+        await habitItem.trigger('animationend');
+        await flushPromises();
+        expect(habitItem.classes()).not.toContain('habit-press');
+
+        // Other keys are ignored.
+        await habitItem.trigger('keydown', { key: 'a' });
+        expect(habitItem.classes()).not.toContain('habit-press');
+    });
+
+    it('exposes checkbox semantics for screen readers', async () => {
+        const wrapper = await mountTrack(mockApiFetch, {
+            habits: [
+                makeHabit({
+                    name: 'Meditate',
+                    is_completed: true,
+                    current_iteration: 1,
+                }),
+            ],
+        });
+        const habitItem = findByTestId(wrapper, 'habit-item');
+        expect(habitItem.attributes('role')).toBe('checkbox');
+        expect(habitItem.attributes('aria-checked')).toBe('true');
+        expect(habitItem.attributes('aria-label')).toBe('Meditate');
+        expect(habitItem.attributes('tabindex')).toBe('0');
+    });
 });
 
 // ─── Daily Note ─────────────────────────────────────────────────

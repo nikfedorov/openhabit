@@ -80,6 +80,25 @@ function isNotScheduled(day: WeekDay, habit: GridHabit): boolean {
     return dayData !== undefined && !dayData.scheduled;
 }
 
+function getCellLabel(day: WeekDay, habit: GridHabit): string {
+    const dayData = habit.days[day.date];
+    const prefix = `${habit.name}, ${day.day_name} ${day.day_number}`;
+
+    if (day.is_future) {
+        return `${prefix}: ${props.translations.future}`;
+    }
+    if (dayData && !dayData.scheduled) {
+        return `${prefix}: ${props.translations.missed}`;
+    }
+    if (dayData?.completed) {
+        return `${prefix}: ${props.translations.done}`;
+    }
+    if (dayData?.partial) {
+        return `${prefix}: ${props.translations.partial}`;
+    }
+    return `${prefix}: ${props.translations.missed}`;
+}
+
 function onRowEnter(el: Element) {
     const htmlEl = el as HTMLElement;
     htmlEl.style.overflow = 'hidden';
@@ -234,6 +253,7 @@ function onRowAfterLeave(el: Element) {
                             <div
                                 v-if="isNotScheduled(day, habit)"
                                 class="flex h-4 w-4 items-center justify-center text-xs text-neutral-300 dark:text-neutral-600"
+                                :aria-label="getCellLabel(day, habit)"
                             >
                                 –
                             </div>
@@ -241,6 +261,8 @@ function onRowAfterLeave(el: Element) {
                                 v-else
                                 class="h-4 w-4 rounded-sm"
                                 :class="getCellClass(day, habit)"
+                                role="img"
+                                :aria-label="getCellLabel(day, habit)"
                             />
                         </div>
                     </div>

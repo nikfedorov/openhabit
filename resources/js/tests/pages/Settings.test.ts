@@ -541,6 +541,25 @@ describe('Settings - Personal', () => {
         // Only the initial GET call
         expect(mockApiFetch).toHaveBeenCalledTimes(1);
     });
+
+    it('falls back to current dayStartsAt when called without argument', async () => {
+        const wrapper = await mountSettings(mockApiFetch, {
+            dayStartsAt: '04:15',
+        });
+        mockApiFetch.mockResolvedValueOnce({ data: { dayStartsAt: '04:15' } });
+
+        const vm = wrapper.vm as any;
+        await vm.$.setupState.updateDayStartsAt();
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                body: expect.stringContaining('"dayStartsAt":"04:15"'),
+            }),
+            expect.anything(),
+        );
+    });
 });
 
 // ─── AI Digest ────────────────────────────────────────────────

@@ -49,7 +49,7 @@ function isActive(tab: (typeof tabs)[number]): boolean {
 
 <template>
     <!-- Desktop Tab Bar (top) -->
-    <nav class="mb-6 hidden md:block">
+    <nav class="mb-6 hidden md:block" aria-label="Primary">
         <div
             class="flex items-center gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800"
         >
@@ -57,6 +57,7 @@ function isActive(tab: (typeof tabs)[number]): boolean {
                 v-for="tab in tabs"
                 :key="tab.key"
                 :to="{ name: tab.key }"
+                :aria-current="isActive(tab) ? 'page' : undefined"
                 class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150"
                 :class="
                     isActive(tab)
@@ -71,6 +72,7 @@ function isActive(tab: (typeof tabs)[number]): boolean {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
+                    aria-hidden="true"
                 >
                     <path
                         stroke-linecap="round"
@@ -86,12 +88,14 @@ function isActive(tab: (typeof tabs)[number]): boolean {
     <!-- Mobile Tab Bar (fixed bottom) -->
     <nav
         class="pb-safe fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white md:hidden dark:border-neutral-700 dark:bg-neutral-900"
+        aria-label="Primary"
     >
         <div class="flex h-16 items-center justify-around">
             <router-link
                 v-for="tab in tabs"
                 :key="tab.key"
                 :to="{ name: tab.key }"
+                :aria-current="isActive(tab) ? 'page' : undefined"
                 class="flex h-full flex-1 flex-col items-center justify-center gap-1 transition-colors duration-150"
                 :class="
                     isActive(tab)
@@ -106,6 +110,7 @@ function isActive(tab: (typeof tabs)[number]): boolean {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
+                    aria-hidden="true"
                 >
                     <path
                         stroke-linecap="round"

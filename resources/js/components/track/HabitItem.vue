@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 import type { Habit } from '@/types/track';
+import { prefersReducedMotion } from '@/utils/accessibility';
 
 const props = defineProps<{
     habit: Habit;
@@ -27,10 +28,22 @@ function onAnimationEnd() {
     emit('toggle', props.habit.id);
 }
 
+function handleKeydown(event: KeyboardEvent) {
+    if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        handleClick();
+    }
+}
+
 watchEffect(
     (onCleanup) => {
         const el = contentEl.value;
         if (!el || !props.pending) return;
+
+        /* v8 ignore next 3 */
+        if (prefersReducedMotion()) {
+            return;
+        }
 
         el.style.opacity = '';
         el.style.transition = '';
@@ -66,7 +79,13 @@ watchEffect(
         class="group flex cursor-pointer rounded-xl px-4 py-2 transition-all duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-800"
         :class="{ 'habit-press': pressing }"
         data-testid="habit-item"
+        role="checkbox"
+        tabindex="0"
+        :aria-checked="habit.is_completed"
+        :aria-label="habit.name"
+        :aria-busy="pending || undefined"
         @click="handleClick"
+        @keydown="handleKeydown"
         @animationend.self="onAnimationEnd"
     >
         <div
@@ -92,6 +111,7 @@ watchEffect(
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         stroke-width="3"
+                        aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
@@ -133,6 +153,7 @@ watchEffect(
                     <svg
                         class="h-10 w-10 -rotate-90 transform"
                         viewBox="0 0 36 36"
+                        aria-hidden="true"
                     >
                         <circle
                             class="text-neutral-200 dark:text-neutral-700"

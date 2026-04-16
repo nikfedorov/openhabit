@@ -49,7 +49,7 @@ const emit = defineEmits<{
             <div class="relative flex-1 overflow-hidden text-center">
                 <Transition name="nav-slide">
                     <div :key="weekStartFormatted">
-                        <div
+                        <h2
                             class="text-lg font-semibold text-neutral-900 dark:text-white"
                         >
                             <template v-if="isCurrentWeek">
@@ -59,7 +59,7 @@ const emit = defineEmits<{
                                 {{ weekStartFormatted }} –
                                 {{ weekEndFormatted }}
                             </template>
-                        </div>
+                        </h2>
                         <div
                             class="text-sm text-neutral-500 dark:text-neutral-400"
                         >

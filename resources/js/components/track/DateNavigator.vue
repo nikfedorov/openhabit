@@ -62,11 +62,11 @@ function goToToday() {
             <div class="relative flex-1 overflow-hidden text-center">
                 <Transition name="nav-slide">
                     <div :key="date">
-                        <div
+                        <h1
                             class="text-lg font-semibold text-neutral-900 dark:text-white"
                         >
                             {{ dayName }}
-                        </div>
+                        </h1>
                         <div
                             class="text-sm text-neutral-500 dark:text-neutral-400"
                         >

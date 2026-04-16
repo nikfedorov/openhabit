@@ -244,11 +244,18 @@ onMounted(() => {
         <div class="mb-4 flex items-stretch gap-2">
             <div
                 class="flex flex-1 gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+                role="tablist"
+                aria-label="View range"
             >
                 <button
                     v-for="tabName in ['week', 'year', 'life'] as const"
                     :key="tabName"
                     type="button"
+                    role="tab"
+                    :id="`view-tab-${tabName}`"
+                    :aria-selected="tab === tabName"
+                    :aria-controls="`view-panel-${tabName}`"
+                    :tabindex="tab === tabName ? 0 : -1"
                     class="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150"
                     :class="
                         tab === tabName
@@ -271,6 +278,9 @@ onMounted(() => {
             <div
                 v-if="tab === 'week' && weekData"
                 key="week"
+                id="view-panel-week"
+                role="tabpanel"
+                aria-labelledby="view-tab-week"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <WeekNavigator
@@ -297,6 +307,9 @@ onMounted(() => {
             <div
                 v-if="tab === 'year' && yearData"
                 key="year"
+                id="view-panel-year"
+                role="tabpanel"
+                aria-labelledby="view-tab-year"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <YearNavigator
@@ -330,6 +343,9 @@ onMounted(() => {
             <div
                 v-if="tab === 'life' && lifeData"
                 key="life"
+                id="view-panel-life"
+                role="tabpanel"
+                aria-labelledby="view-tab-life"
                 class="col-start-1 row-start-1 min-w-0"
             >
                 <LifeHeader

@@ -64,6 +64,12 @@ applyTheme(
 
 <template>
     <div class="min-h-screen bg-white dark:bg-neutral-900">
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-neutral-900 focus:shadow-lg focus:ring-2 focus:ring-green-500 focus:outline-none dark:focus:bg-neutral-800 dark:focus:text-white"
+        >
+            Skip to main content
+        </a>
         <RouteLoadingBar />
         <div class="mx-auto max-w-2xl px-4 py-6 pb-24">
             <TabBar
@@ -71,17 +77,19 @@ applyTheme(
                 :translations="navTranslations"
             />
 
-            <router-view v-slot="{ Component }">
-                <PageLoader v-if="!pageReady || !Component" />
-                <component
-                    v-if="Component"
-                    v-show="pageReady"
-                    :is="Component"
-                    @navigation-translations="updateNavTranslations"
-                    @settings="updateSettings"
-                    @ready="pageReady = true"
-                />
-            </router-view>
+            <main id="main-content" tabindex="-1">
+                <router-view v-slot="{ Component }">
+                    <PageLoader v-if="!pageReady || !Component" />
+                    <component
+                        v-if="Component"
+                        v-show="pageReady"
+                        :is="Component"
+                        @navigation-translations="updateNavTranslations"
+                        @settings="updateSettings"
+                        @ready="pageReady = true"
+                    />
+                </router-view>
+            </main>
         </div>
     </div>
 </template>
