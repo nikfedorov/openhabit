@@ -118,3 +118,41 @@
 .confirm-modal-leave-to .confirm-modal-panel {
     transform: translateY(8px) scale(0.98);
 }
+
+/*
+ * Life grid cell entrance animation.
+ * Each cell fades in and scales up from a smaller size.
+ * Apply with `animation-delay` inline style for stagger effect.
+ */
+@keyframes cell-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cell-appear {
+    animation: cell-appear 0.25s ease forwards;
+    opacity: 0;
+}
+
+/*
+ * Year grid cell — fade only (no scale).
+ */
+@keyframes cell-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.cell-fade {
+    animation: cell-fade 0.2s ease forwards;
+    opacity: 0;
+}

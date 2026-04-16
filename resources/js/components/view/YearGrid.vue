@@ -115,23 +115,20 @@ function getTooltip(weekNum: number): string {
                 </div>
 
                 <!-- 4 rows × 13 weeks = 52 weeks -->
-                <template v-for="row in 4" :key="`row-${row}`">
-                    <ActivityCell
-                        v-for="col in 13"
-                        :key="`${row}-${col}`"
-                        :intensity="
-                            getWeekData((row - 1) * 13 + (col - 1)).intensity
-                        "
-                        :is-lived="isWeekLived((row - 1) * 13 + (col - 1))"
-                        :is-current="isCurrentWeek((row - 1) * 13 + (col - 1))"
-                        :is-future="isWeekFuture((row - 1) * 13 + (col - 1))"
-                        :is-clickable="true"
-                        class="aspect-square transition-transform"
-                        :title="getTooltip((row - 1) * 13 + (col - 1))"
-                        role="button"
-                        @click="emit('selectWeek', (row - 1) * 13 + (col - 1))"
-                    />
-                </template>
+                <ActivityCell
+                    v-for="i in WEEKS_PER_YEAR"
+                    :key="i - 1"
+                    :intensity="getWeekData(i - 1).intensity"
+                    :is-lived="isWeekLived(i - 1)"
+                    :is-current="isCurrentWeek(i - 1)"
+                    :is-future="isWeekFuture(i - 1)"
+                    :is-clickable="true"
+                    class="cell-fade aspect-square transition-transform"
+                    :style="{ animationDelay: `${(i - 1) * 6}ms` }"
+                    :title="getTooltip(i - 1)"
+                    role="button"
+                    @click="emit('selectWeek', i - 1)"
+                />
             </div>
 
             <!-- Legend -->

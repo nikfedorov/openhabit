@@ -35,13 +35,6 @@ const habitSections = computed<HabitSection[]>(() => {
 
     return [
         {
-            key: 'regular',
-            label: props.translations.habits,
-            allHabits: regularHabits,
-            visibleHabits: regularHabits,
-            collapsible: false,
-        },
-        {
             key: 'franklin',
             label: props.translations.franklins_virtues,
             allHabits: franklinHabits,
@@ -49,6 +42,13 @@ const habitSections = computed<HabitSection[]>(() => {
                 ? franklinHabits
                 : franklinHabits.filter((h) => h.is_weekly_focus),
             collapsible: true,
+        },
+        {
+            key: 'regular',
+            label: props.translations.habits,
+            allHabits: regularHabits,
+            visibleHabits: regularHabits,
+            collapsible: false,
         },
     ].filter((s) => s.allHabits.length > 0);
 });

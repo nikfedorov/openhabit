@@ -41,6 +41,8 @@ const emit = defineEmits<{
 }>();
 
 const tab = ref<'week' | 'year' | 'life'>('week');
+const yearKey = ref(0);
+const lifeKey = ref(0);
 const weekData = ref<WeekViewData | null>(null);
 const weekDays = ref<WeekDay[] | null>(null);
 const weekHabits = ref<GridHabit[] | null>(null);
@@ -134,6 +136,7 @@ async function loadYear(params?: { year?: number }) {
     yearActivityData.value = response.activityData;
     yearTranslations.value = response.translations;
     tab.value = 'year';
+    yearKey.value++;
     handleCommonResponse(response);
     router.replace({ query: buildViewQuery() });
     loading.value = false;
@@ -147,6 +150,7 @@ async function loadLife() {
     lifeActivityData.value = response.activityData;
     lifeTranslations.value = response.translations;
     tab.value = 'life';
+    lifeKey.value++;
     handleCommonResponse(response);
     router.replace({ query: buildViewQuery() });
     loading.value = false;
@@ -305,6 +309,7 @@ onMounted(() => {
 
                 <YearGrid
                     v-if="yearData.birthdate"
+                    :key="yearKey"
                     class="mt-4"
                     :birthdate="yearData.birthdate"
                     :selected-year="yearData.selected"
@@ -335,6 +340,7 @@ onMounted(() => {
 
                 <LifeGrid
                     v-if="lifeData.birthdate"
+                    :key="lifeKey"
                     class="mt-4"
                     :birthdate="lifeData.birthdate"
                     :current-age="lifeData.currentAge"
