@@ -457,13 +457,31 @@ describe('Settings - Personal', () => {
         expect(blurSpy).toHaveBeenCalled();
     });
 
-    it('triggers blur on dayStartsAt input when Enter is pressed', async () => {
+    it('saves dayStartsAt when minute selected from picker', async () => {
         const wrapper = await mountSettings(mockApiFetch);
-        const input = wrapper.find('input[placeholder="HH:MM"]');
-        const blurSpy = vi.spyOn(input.element as HTMLInputElement, 'blur');
-        await input.trigger('keydown.enter');
+        mockApiFetch.mockResolvedValueOnce({ data: { dayStartsAt: '03:30' } });
 
-        expect(blurSpy).toHaveBeenCalled();
+        // Open the time picker
+        const pickerBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text().includes('03') && b.text().includes('00'))!;
+        await pickerBtn.trigger('click');
+
+        // Select minute 30 from the minutes column
+        const minuteColumn = wrapper.findAll('.overflow-y-auto')[1];
+        const min30 = minuteColumn
+            .findAll('button')
+            .find((b) => b.text() === '30')!;
+        await min30.trigger('click');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                body: expect.stringContaining('"dayStartsAt":"03:30"'),
+            }),
+            expect.anything(),
+        );
     });
 
     it('clears birthdate when field is empty', async () => {
@@ -490,17 +508,18 @@ describe('Settings - Personal', () => {
         const wrapper = await mountSettings(mockApiFetch, {
             dayStartsAt: null,
         });
-        const input = wrapper.find('input[placeholder="HH:MM"]');
-        expect((input.element as HTMLInputElement).value).toBe('03:00');
+        const pickerBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text().includes('03'))!;
+        expect(pickerBtn.exists()).toBe(true);
     });
 
-    it('saves valid dayStartsAt on blur', async () => {
+    it('saves valid dayStartsAt via updateDayStartsAt', async () => {
         const wrapper = await mountSettings(mockApiFetch);
         mockApiFetch.mockResolvedValueOnce({ data: { dayStartsAt: '06:00' } });
 
-        const input = wrapper.find('input[placeholder="HH:MM"]');
-        await input.setValue('06:00');
-        await input.trigger('blur');
+        const vm = wrapper.vm as any;
+        await vm.$.setupState.updateDayStartsAt('06:00');
         await flushPromises();
 
         expect(mockApiFetch).toHaveBeenCalledWith(
@@ -514,9 +533,9 @@ describe('Settings - Personal', () => {
 
     it('does not save invalid dayStartsAt format', async () => {
         const wrapper = await mountSettings(mockApiFetch);
-        const input = wrapper.find('input[placeholder="HH:MM"]');
-        await input.setValue('99:99');
-        await input.trigger('blur');
+
+        const vm = wrapper.vm as any;
+        await vm.$.setupState.updateDayStartsAt('99:99');
         await flushPromises();
 
         // Only the initial GET call

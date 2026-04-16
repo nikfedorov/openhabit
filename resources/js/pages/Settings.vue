@@ -239,11 +239,13 @@ async function updateBirthdateFromDisplay() {
     await saveSetting({ birthdate: iso });
 }
 
-async function updateDayStartsAt() {
-    if (!TIME_REGEX.test(dayStartsAt.value)) {
+async function updateDayStartsAt(time?: string) {
+    const value = time ?? dayStartsAt.value;
+    if (!TIME_REGEX.test(value)) {
         return;
     }
-    await saveSetting({ dayStartsAt: dayStartsAt.value });
+    dayStartsAt.value = value;
+    await saveSetting({ dayStartsAt: value });
 }
 
 async function toggleAiDigest() {
@@ -749,35 +751,11 @@ function closeTimezoneDropdown() {
                     </svg>
                 </template>
 
-                <div
-                    class="flex items-center gap-1.5 rounded-lg bg-white px-2 py-2 dark:bg-neutral-700"
-                >
-                    <input
-                        v-model="dayStartsAt"
-                        type="text"
-                        inputmode="numeric"
-                        placeholder="HH:MM"
-                        maxlength="5"
-                        class="w-14 border-0 bg-transparent p-0 text-center text-sm font-medium text-neutral-900 placeholder-neutral-400 focus:ring-0 dark:text-white"
-                        @blur="updateDayStartsAt"
-                        @keydown.enter.prevent="
-                            ($event.target as HTMLInputElement).blur()
-                        "
-                    />
-                    <svg
-                        class="h-4 w-4 shrink-0 text-neutral-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                </div>
+                <TimePickerInput
+                    v-model="dayStartsAt"
+                    align="right"
+                    @select="updateDayStartsAt"
+                />
             </SettingRow>
         </section>
 
