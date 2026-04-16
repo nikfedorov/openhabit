@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { VueDraggable } from 'vue-draggable-plus';
 import { useRouter } from 'vue-router';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal.vue';
 import EditHabitItem from '@/components/edit/EditHabitItem.vue';
@@ -32,11 +31,6 @@ const franklinHabits = ref<EditHabit[]>([]);
 const templateHabits = ref<TemplateHabit[]>([]);
 const translations = ref<EditTranslations | null>(null);
 const loading = ref(true);
-
-// ─── Optimistic UI state ────────────────────────────────────
-
-const pendingHabitIds = ref(new Set<number>());
-const newHabitIds = ref(new Set<number>());
 
 // ─── Delete confirmation ────────────────────────────────────
 
@@ -102,18 +96,6 @@ async function deleteHabit(habitId: number) {
     );
 }
 
-async function saveOrder() {
-    const orderedIds = habits.value.map((h) => h.id);
-    await apiFetch(
-        '/api/edit/habits/reorder',
-        {
-            method: 'POST',
-            body: JSON.stringify({ ordered_ids: orderedIds }),
-        },
-        { silent: true },
-    );
-}
-
 // ─── Delete confirmation flow ───────────────────────────────
 
 function confirmDelete(habitId: number) {
@@ -154,55 +136,18 @@ function navigateToEdit(habitId: number) {
     router.push({ name: 'edit.habit', params: { id: habitId.toString() } });
 }
 
-// ─── Template copy (optimistic) ─────────────────────────────
-
-let nextOptimisticId = -1;
+// ─── Template copy ───────────────────────────────────────────
 
 async function copyFromTemplate(templateId: number) {
     const template = templateHabits.value.find((t) => t.id === templateId);
     if (!template) return;
 
-    const existingIds = new Set(habits.value.map((h) => h.id));
-
-    // Insert optimistic placeholder while the API responds
-    const optimisticId = nextOptimisticId--;
-    const optimisticHabit: EditHabit = {
-        id: optimisticId,
-        name: template.name,
-        description: null,
-        is_active: true,
-        sort_order: template.sort_order,
-        iterations_required: template.iterations_required,
-        human_readable: template.human_readable,
-        is_franklin_virtue: false,
-    };
-
-    const insertIndex = habits.value.findIndex(
-        (h) => h.sort_order > template.sort_order,
-    );
-    if (insertIndex === -1) {
-        habits.value.push(optimisticHabit);
-    } else {
-        habits.value.splice(insertIndex, 0, optimisticHabit);
-    }
-    pendingHabitIds.value.add(optimisticId);
-
-    // Replace optimistic data with the server response
     const response = await apiFetch<{ data: EditHabit[] }>(
         `/api/edit/templates/${templateId.toString()}/copy`,
         { method: 'POST' },
     );
 
-    pendingHabitIds.value.delete(optimisticId);
     updateHabitLists(response.data);
-
-    // Briefly highlight newly added habits
-    for (const habit of habits.value) {
-        if (!existingIds.has(habit.id)) {
-            newHabitIds.value.add(habit.id);
-            setTimeout(() => newHabitIds.value.delete(habit.id), 5000);
-        }
-    }
 }
 
 // ─── Lifecycle ───────────────────────────────────────────────
@@ -289,30 +234,19 @@ onMounted(() => {
             />
 
             <!-- Regular Habits -->
-            <VueDraggable
-                v-if="habits.length > 0"
-                v-model="habits"
-                :animation="200"
-                handle=".drag-handle"
-                ghost-class="drag-ghost"
-                drag-class="drag-active"
-                class="space-y-1"
-                @end="saveOrder"
-            >
+            <div v-if="habits.length > 0" class="space-y-1">
                 <EditHabitItem
                     v-for="habit in habits"
                     :ref="(el: any) => setHabitItemRef(habit.id, el)"
                     :key="habit.id"
                     :habit="habit"
                     :translations="translations"
-                    :pending="pendingHabitIds.has(habit.id)"
-                    :is-new="newHabitIds.has(habit.id)"
                     @toggle-active="toggleHabit"
                     @edit="navigateToEdit"
                     @delete="deleteHabit"
                     @confirm-delete="confirmDelete"
                 />
-            </VueDraggable>
+            </div>
 
             <!-- Templates Section -->
             <TemplateSection
@@ -335,28 +269,3 @@ onMounted(() => {
         />
     </div>
 </template>
-
-<style>
-/*
- * Drag-and-drop transitions for sortable habit lists.
- */
-.drag-ghost {
-    opacity: 0.3;
-}
-
-.drag-active {
-    opacity: 0.9;
-    transform: scale(1.02);
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.1),
-        0 4px 10px -5px rgba(0, 0, 0, 0.04);
-    border-radius: 0.75rem;
-    z-index: 50;
-}
-
-:where(.dark) .drag-active {
-    box-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.4),
-        0 4px 10px -5px rgba(0, 0, 0, 0.2);
-}
-</style>

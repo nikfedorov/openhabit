@@ -1,19 +1,9 @@
 import { mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import EditHabitItem from '@/components/edit/EditHabitItem.vue';
 import { makeEditHabit, makeEditTranslations } from '@/tests/helpers/edit';
 
 const translations = makeEditTranslations();
-
-beforeEach(() => {
-    Element.prototype.animate = vi
-        .fn()
-        .mockReturnValue({ pause: vi.fn(), cancel: vi.fn() });
-    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-        cb(0);
-        return 0;
-    });
-});
 
 describe('EditHabitItem', () => {
     it('renders habit name and schedule', () => {
@@ -47,92 +37,6 @@ describe('EditHabitItem', () => {
             props: { habit, translations },
         });
         expect(wrapper.find('.opacity-50').exists()).toBe(true);
-    });
-
-    it('does not apply opacity for inactive pending habits', () => {
-        const habit = makeEditHabit({ is_active: false });
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, pending: true },
-        });
-        expect(wrapper.find('.opacity-50').exists()).toBe(false);
-    });
-
-    it('sets data-pending attribute when pending', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, pending: true },
-        });
-        expect(
-            wrapper
-                .find('[data-testid="edit-habit-item"]')
-                .attributes('data-pending'),
-        ).toBe('true');
-    });
-
-    it('does not set data-pending attribute when not pending', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations },
-        });
-        expect(
-            wrapper
-                .find('[data-testid="edit-habit-item"]')
-                .attributes('data-pending'),
-        ).toBeUndefined();
-    });
-
-    it('applies animate-pulse class when pending', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, pending: true },
-        });
-        expect(
-            wrapper.find('[data-testid="edit-habit-item"]').classes(),
-        ).toContain('animate-pulse');
-    });
-
-    it('does not apply animate-pulse class when not pending', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations },
-        });
-        expect(
-            wrapper.find('[data-testid="edit-habit-item"]').classes(),
-        ).not.toContain('animate-pulse');
-    });
-
-    it('clears animate-pulse class when pending stops', async () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, pending: true },
-        });
-
-        const el = wrapper.find('[data-testid="edit-habit-item"]');
-        expect(el.classes()).toContain('animate-pulse');
-
-        await wrapper.setProps({ pending: false });
-        expect(el.classes()).not.toContain('animate-pulse');
-    });
-
-    it('animates height expansion for pending items on mount', async () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, pending: true },
-        });
-        await wrapper.vm.$nextTick();
-
-        // After mount + rAF, the wrapper transitions to expanded
-        expect(wrapper.classes()).toContain('grid-rows-[1fr]');
-        expect(wrapper.classes()).not.toContain('grid-rows-[0fr]');
-    });
-
-    it('does not animate height for non-pending items', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations },
-        });
-
-        expect(wrapper.classes()).toContain('grid-rows-[1fr]');
     });
 
     it('emits toggle-active on status button click', async () => {
@@ -181,35 +85,6 @@ describe('EditHabitItem', () => {
         const chevronBtn = wrapper.findAll('button')[3];
         await chevronBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
-    });
-
-    it('shows green highlight when isNew', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, isNew: true },
-        });
-        expect(wrapper.find('.bg-green-100').exists()).toBe(true);
-        // The inner content div (with transition-colors) should be green, not neutral
-        expect(wrapper.find('.transition-colors.bg-neutral-100').exists()).toBe(
-            false,
-        );
-    });
-
-    it('shows pulsing dot when isNew', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations, isNew: true },
-        });
-        expect(wrapper.find('.animate-pulse').exists()).toBe(true);
-    });
-
-    it('shows normal background when not isNew', () => {
-        const habit = makeEditHabit();
-        const wrapper = mount(EditHabitItem, {
-            props: { habit, translations },
-        });
-        expect(wrapper.find('.bg-green-100').exists()).toBe(false);
-        expect(wrapper.find('.bg-neutral-100').exists()).toBe(true);
     });
 
     it('renders swipe delete button', () => {

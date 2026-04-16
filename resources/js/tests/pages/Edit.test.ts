@@ -20,21 +20,6 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ push: mockRouterPush }),
 }));
 
-vi.mock('vue-draggable-plus', () => ({
-    VueDraggable: {
-        name: 'VueDraggable',
-        props: {
-            modelValue: { type: Array, default: () => [] },
-            animation: { type: Number, default: 0 },
-            handle: { type: String, default: '' },
-            ghostClass: { type: String, default: '' },
-            dragClass: { type: String, default: '' },
-        },
-        emits: ['update:modelValue', 'end'],
-        template: '<div><slot /></div>',
-    },
-}));
-
 const defaultApiResponse = {
     data: [makeEditHabit({ id: 1, name: 'Run' })],
     translations: makeEditTranslations(),
@@ -57,9 +42,6 @@ async function mountEdit(apiResponse = defaultApiResponse) {
 beforeEach(() => {
     mockApiFetch.mockReset();
     mockRouterPush.mockReset();
-    Element.prototype.animate = vi
-        .fn()
-        .mockReturnValue({ pause: vi.fn(), cancel: vi.fn() });
 });
 
 describe('Edit Page', () => {
@@ -193,28 +175,6 @@ describe('Edit Page', () => {
         );
     });
 
-    it('saves reorder when drag ends', async () => {
-        const habit1 = makeEditHabit({ id: 1, name: 'Run' });
-        const habit2 = makeEditHabit({ id: 2, name: 'Read' });
-        const wrapper = await mountEdit({
-            ...defaultApiResponse,
-            data: [habit1, habit2],
-        });
-        mockApiFetch.mockResolvedValueOnce(undefined);
-        const draggable = wrapper.findComponent({ name: 'VueDraggable' });
-        draggable.vm.$emit('update:modelValue', [habit2, habit1]);
-        draggable.vm.$emit('end');
-        await flushPromises();
-        expect(mockApiFetch).toHaveBeenCalledWith(
-            '/api/edit/habits/reorder',
-            {
-                method: 'POST',
-                body: JSON.stringify({ ordered_ids: [2, 1] }),
-            },
-            { silent: true },
-        );
-    });
-
     it('renders template section when templates exist', async () => {
         const templates = [
             makeTemplateHabit({ id: 1, name: 'Exercise', category: 'Health' }),
@@ -270,49 +230,6 @@ describe('Edit Page', () => {
         expect(wrapper.text()).toContain('Exercise');
     });
 
-    it('inserts optimistic habit at correct sort_order position', async () => {
-        const habit1 = makeEditHabit({ id: 1, name: 'First', sort_order: 1 });
-        const habit2 = makeEditHabit({
-            id: 2,
-            name: 'Third',
-            sort_order: 10,
-        });
-        const templates = [
-            makeTemplateHabit({
-                id: 10,
-                name: 'Second',
-                sort_order: 5,
-            }),
-        ];
-
-        const wrapper = await mountEdit({
-            ...defaultApiResponse,
-            data: [habit1, habit2],
-            templates,
-        });
-
-        const serverHabits = [
-            habit1,
-            makeEditHabit({ id: 50, name: 'Second', sort_order: 5 }),
-            habit2,
-        ];
-        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
-
-        const templateSection = wrapper.findComponent({
-            name: 'TemplateSection',
-        });
-        templateSection.vm.$emit('copy', 10);
-        await wrapper.vm.$nextTick();
-
-        // Before server responds, optimistic habit is inserted between First and Third
-        const items = wrapper.findAllComponents({ name: 'EditHabitItem' });
-        expect(items[0].props('habit').name).toBe('First');
-        expect(items[1].props('habit').name).toBe('Second');
-        expect(items[2].props('habit').name).toBe('Third');
-
-        await flushPromises();
-    });
-
     it('ignores copy when template is not found', async () => {
         const templates = [makeTemplateHabit({ id: 10 })];
         const wrapper = await mountEdit({
@@ -328,85 +245,6 @@ describe('Edit Page', () => {
 
         // Only the initial loadData call, no copy request
         expect(mockApiFetch).toHaveBeenCalledTimes(1);
-    });
-
-    it('highlights newly created habits from template copy', async () => {
-        const templates = [
-            makeTemplateHabit({
-                id: 10,
-                name: 'Exercise',
-                sort_order: 5,
-            }),
-        ];
-        const wrapper = await mountEdit({
-            ...defaultApiResponse,
-            templates,
-        });
-
-        const serverHabits = [
-            ...defaultApiResponse.data,
-            makeEditHabit({ id: 50, name: 'Exercise' }),
-        ];
-        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
-
-        const templateSection = wrapper.findComponent({
-            name: 'TemplateSection',
-        });
-        templateSection.vm.$emit('copy', 10);
-        await flushPromises();
-
-        const items = wrapper.findAllComponents({ name: 'EditHabitItem' });
-        const newItem = items.find((c) => c.props('habit').id === 50);
-        const existingItem = items.find((c) => c.props('habit').id === 1);
-        expect(newItem?.props('isNew')).toBe(true);
-        expect(existingItem?.props('isNew')).toBe(false);
-    });
-
-    it('clears new habit highlight after timeout', async () => {
-        vi.useFakeTimers();
-
-        const templates = [
-            makeTemplateHabit({
-                id: 10,
-                name: 'Exercise',
-                sort_order: 5,
-            }),
-        ];
-        mockApiFetch.mockResolvedValueOnce({
-            ...defaultApiResponse,
-            templates,
-        });
-        const wrapper = mount(Edit, {
-            global: {
-                stubs: { Teleport: true },
-            },
-        });
-        await vi.advanceTimersByTimeAsync(0);
-
-        const serverHabits = [
-            ...defaultApiResponse.data,
-            makeEditHabit({ id: 50, name: 'Exercise' }),
-        ];
-        mockApiFetch.mockResolvedValueOnce({ data: serverHabits });
-
-        const templateSection = wrapper.findComponent({
-            name: 'TemplateSection',
-        });
-        templateSection.vm.$emit('copy', 10);
-        await vi.advanceTimersByTimeAsync(0);
-
-        const findNew = () =>
-            wrapper
-                .findAllComponents({ name: 'EditHabitItem' })
-                .find((c) => c.props('habit').id === 50);
-
-        expect(findNew()?.props('isNew')).toBe(true);
-
-        await vi.advanceTimersByTimeAsync(5000);
-
-        expect(findNew()?.props('isNew')).toBe(false);
-
-        vi.useRealTimers();
     });
 
     it('shows confirm dialog when confirm-delete is emitted', async () => {
