@@ -613,7 +613,9 @@ describe('Settings - AI Digest', () => {
 
         // Select minute 30 from the minutes column
         const minuteColumn = wrapper.findAll('.overflow-y-auto')[1];
-        const min30 = minuteColumn.findAll('button').find((b) => b.text() === '30')!;
+        const min30 = minuteColumn
+            .findAll('button')
+            .find((b) => b.text() === '30')!;
         await min30.trigger('click');
         await flushPromises();
 
@@ -621,6 +623,45 @@ describe('Settings - AI Digest', () => {
             '/api/settings',
             expect.objectContaining({
                 body: expect.stringContaining('"aiDigestTime":"08:30"'),
+            }),
+            expect.anything(),
+        );
+    });
+
+    it('does not save invalid aiDigestTime format', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            { aiDigestTime: '08:00' },
+            { hasPremium: true },
+        );
+
+        // Call the internal function directly with an invalid time
+        // to cover the regex validation guard
+        const vm = wrapper.vm as any;
+        await vm.$.setupState.updateAiDigestTime('invalid');
+        await flushPromises();
+
+        // Only the initial GET call — no PATCH for invalid time
+        expect(mockApiFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('uses current aiDigestTime when called without argument', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            { aiDigestTime: '08:00' },
+            { hasPremium: true },
+        );
+        mockApiFetch.mockResolvedValueOnce({ data: { aiDigestTime: '08:00' } });
+
+        // Call without argument to cover the ?? fallback branch
+        const vm = wrapper.vm as any;
+        await vm.$.setupState.updateAiDigestTime();
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                body: expect.stringContaining('"aiDigestTime":"08:00"'),
             }),
             expect.anything(),
         );

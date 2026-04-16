@@ -81,27 +81,37 @@ describe('EditHabitItem', () => {
         ).toBeUndefined();
     });
 
-    it('clears fade styles when transition ends after pending stops', async () => {
+    it('applies animate-pulse class when pending', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, pending: true },
+        });
+        expect(
+            wrapper.find('[data-testid="edit-habit-item"]').classes(),
+        ).toContain('animate-pulse');
+    });
+
+    it('does not apply animate-pulse class when not pending', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        expect(
+            wrapper.find('[data-testid="edit-habit-item"]').classes(),
+        ).not.toContain('animate-pulse');
+    });
+
+    it('clears animate-pulse class when pending stops', async () => {
         const habit = makeEditHabit();
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations, pending: true },
         });
 
-        const el = wrapper.find('[data-testid="edit-habit-item"]')
-            .element as HTMLElement;
+        const el = wrapper.find('[data-testid="edit-habit-item"]');
+        expect(el.classes()).toContain('animate-pulse');
 
-        // Stop pending — triggers cleanup
         await wrapper.setProps({ pending: false });
-
-        // Cleanup sets transition and opacity
-        expect(el.style.transition).toBe('opacity 500ms ease');
-        expect(el.style.opacity).toBe('1');
-
-        // Fire transitionend to clear inline styles
-        el.dispatchEvent(new Event('transitionend'));
-
-        expect(el.style.opacity).toBe('');
-        expect(el.style.transition).toBe('');
+        expect(el.classes()).not.toContain('animate-pulse');
     });
 
     it('animates height expansion for pending items on mount', async () => {

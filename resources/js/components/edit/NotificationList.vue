@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { HabitTranslations, NotificationTime } from '@/types/edit';
 import TimePickerInput from '@/components/TimePickerInput.vue';
+import type { HabitTranslations, NotificationTime } from '@/types/edit';
 const model = defineModel<NotificationTime[]>({ required: true });
 
 defineProps<{

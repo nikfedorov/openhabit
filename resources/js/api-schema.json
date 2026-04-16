@@ -908,44 +908,53 @@
                                             "$ref": "#/components/schemas/UserSettingResource"
                                         },
                                         "navigationTranslations": {
+                                            "description": "Tabbar translations.",
                                             "$ref": "#/components/schemas/NavigationTranslationResource"
                                         },
                                         "locales": {
                                             "type": "object",
+                                            "description": "All available locales for the locale select input, in the format:",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "aiTones": {
+                                            "type": "array",
+                                            "description": "AI tones available for the user.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AiToneResource"
+                                            }
+                                        },
+                                        "hasPremium": {
+                                            "type": "boolean",
+                                            "description": "Whether the user has access to premium features."
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the settings view.",
                                             "additionalProperties": {
                                                 "type": "string"
                                             }
                                         },
                                         "timezones": {
                                             "type": "object",
+                                            "description": "Timezone options grouped by region for the timezone select input.",
                                             "additionalProperties": {
                                                 "type": "object",
                                                 "additionalProperties": {
                                                     "type": "string"
                                                 }
                                             }
-                                        },
-                                        "aiTones": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/AiToneResource"
-                                            }
-                                        },
-                                        "hasPremium": {
-                                            "type": "boolean"
-                                        },
-                                        "translations": {
-                                            "type": "string"
                                         }
                                     },
                                     "required": [
                                         "data",
                                         "navigationTranslations",
                                         "locales",
-                                        "timezones",
                                         "aiTones",
                                         "hasPremium",
-                                        "translations"
+                                        "translations",
+                                        "timezones"
                                     ]
                                 }
                             }
@@ -1012,18 +1021,35 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "The AI tone's unique identifier, used for saving the user's selection.",
+                        "examples": [
+                            1
+                        ]
                     },
                     "name": {
-                        "type": "array",
-                        "items": {}
+                        "type": "string",
+                        "description": "The display name of the AI tone.",
+                        "examples": [
+                            "Friendly"
+                        ]
                     },
                     "description": {
-                        "type": "array",
-                        "items": {}
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "A description of the AI tone's style or personality.",
+                        "examples": [
+                            "Provides responses in a warm and approachable manner."
+                        ]
                     },
                     "icon": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "The name of the icon associated with this AI tone, used for display in the UI.",
+                        "examples": [
+                            "sun"
+                        ]
                     }
                 },
                 "required": [

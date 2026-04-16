@@ -102,7 +102,9 @@ describe('TimePickerInput', () => {
         });
         await wrapper.find('button').trigger('click');
         const hourColumn = wrapper.findAll('.overflow-y-auto')[0];
-        const hour16 = hourColumn.findAll('button').find((b) => b.text() === '16')!;
+        const hour16 = hourColumn
+            .findAll('button')
+            .find((b) => b.text() === '16')!;
         await hour16.trigger('click');
 
         expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['16:00']);
@@ -116,7 +118,9 @@ describe('TimePickerInput', () => {
         });
         await wrapper.find('button').trigger('click');
         const minuteColumn = wrapper.findAll('.overflow-y-auto')[1];
-        const min45 = minuteColumn.findAll('button').find((b) => b.text() === '45')!;
+        const min45 = minuteColumn
+            .findAll('button')
+            .find((b) => b.text() === '45')!;
         await min45.trigger('click');
 
         expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['08:45']);

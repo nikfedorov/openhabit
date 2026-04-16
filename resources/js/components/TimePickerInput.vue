@@ -98,7 +98,7 @@ function selectMinute(minute: string) {
                 />
             </svg>
             <span
-                class="text-sm font-medium tabular-nums text-neutral-900 dark:text-white"
+                class="text-sm font-medium text-neutral-900 tabular-nums dark:text-white"
             >
                 {{ getHour(modelValue) }}:{{ getNormalizedMinute(modelValue) }}
             </span>
