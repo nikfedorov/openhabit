@@ -240,6 +240,11 @@
                                                 "type": "string"
                                             }
                                         },
+                                        "minSortOrder": {
+                                            "type": "integer",
+                                            "description": "Minimum sort_order value for regular habits.",
+                                            "const": 101
+                                        },
                                         "templates": {
                                             "type": "array",
                                             "description": "Habit templates with category names.",
@@ -253,6 +258,7 @@
                                         "navigationTranslations",
                                         "settings",
                                         "translations",
+                                        "minSortOrder",
                                         "templates"
                                     ]
                                 }
@@ -444,7 +450,7 @@
             },
             "delete": {
                 "operationId": "edit.destroy",
-                "description": "Soft-deletes the habit, or force-deletes if no completions exist.",
+                "description": "Soft-deletes the habit, or force-deletes if no completions exist.\nReorders remaining habits to close the sort_order gap.",
                 "summary": "Delete a habit",
                 "tags": [
                     "Edit"

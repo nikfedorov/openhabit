@@ -366,6 +366,7 @@ describe('API contract', () => {
         expect(keys).toEqual(
             [
                 'data',
+                'minSortOrder',
                 'navigationTranslations',
                 'settings',
                 'templates',

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Edit;
 
 use App\Actions\Edit\GetHabitTemplatesAction;
 use App\Actions\Edit\GetUserHabitsAction;
+use App\Actions\Edit\ReorderAction;
 use App\Http\Resources\Edit\EditHabitResource;
 use App\Http\Resources\Edit\HabitTemplateResource;
 use App\Http\Resources\NavigationTranslationResource;
@@ -48,6 +49,11 @@ final readonly class IndexController
                  * @var array<string, string>
                  */
                 'translations' => trans('edit'),
+
+                /**
+                 * Minimum sort_order value for regular habits.
+                 */
+                'minSortOrder' => ReorderAction::MIN_SORT_ORDER,
 
                 /**
                  * Habit templates with category names.
