@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import PageLoader from '@/components/PageLoader.vue';
+import SettingRow from '@/components/settings/SettingRow.vue';
+import ToggleSwitch from '@/components/settings/ToggleSwitch.vue';
 import TimePickerInput from '@/components/TimePickerInput.vue';
 import type {
     AiTone,
@@ -82,6 +84,49 @@ const currentTimezoneLabel = computed(() => {
     return timezone.value;
 });
 
+// ─── AI tone icon paths ─────────────────────────────────────
+
+const toneIconPaths: Record<string, string> = {
+    sun: 'M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
+    heart: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z',
+    bolt: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
+    shield: 'M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z',
+};
+
+const fallbackIconPath =
+    'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z';
+
+function toneIconPath(tone: AiTone): string {
+    return toneIconPaths[tone.icon] ?? fallbackIconPath;
+}
+
+// ─── Theme buttons config ────────────────────────────────────
+
+const themeOptions = computed(() => [
+    {
+        value: 'light' as const,
+        title: translations.value.theme_light,
+        icon: 'M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
+    },
+    {
+        value: 'dark' as const,
+        title: translations.value.theme_dark,
+        icon: 'M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z',
+    },
+    {
+        value: 'system' as const,
+        title: translations.value.theme_system,
+        icon: 'M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25',
+    },
+]);
+
+// ─── Dropdown option classes ─────────────────────────────────
+
+const activeOptionClass =
+    'bg-green-50 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400';
+const inactiveOptionClass =
+    'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-600';
+
 // ─── Load page data ──────────────────────────────────────────
 
 async function loadData() {
@@ -140,6 +185,8 @@ function parseDisplayDate(display: string): string | null {
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
+const TIME_REGEX = /^([01]?\d|2[0-3]):[0-5]\d$/;
+
 // ─── Save individual settings ─────────────────────────────────
 
 async function saveSetting(data: Partial<Record<string, unknown>>) {
@@ -160,7 +207,6 @@ async function updateLocale(code: string) {
     locale.value = code;
     localeOpen.value = false;
     await saveSetting({ locale: code });
-    // Reload so UI text refreshes (mirrors virtue behaviour).
     window.location.reload();
 }
 
@@ -194,7 +240,7 @@ async function updateBirthdateFromDisplay() {
 }
 
 async function updateDayStartsAt() {
-    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(dayStartsAt.value)) {
+    if (!TIME_REGEX.test(dayStartsAt.value)) {
         return;
     }
     await saveSetting({ dayStartsAt: dayStartsAt.value });
@@ -214,7 +260,7 @@ async function toggleAiDigest() {
 
 async function updateAiDigestTime(time?: string) {
     const value = time ?? aiDigestTime.value;
-    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(value)) {
+    if (!TIME_REGEX.test(value)) {
         return;
     }
     aiDigestTime.value = value;
@@ -224,12 +270,6 @@ async function updateAiDigestTime(time?: string) {
 async function updateAiTone(id: number) {
     aiToneId.value = id;
     await saveSetting({ aiToneId: id });
-}
-
-// ─── Close dropdowns on outside click ────────────────────────
-
-function closeLocaleDropdown() {
-    localeOpen.value = false;
 }
 
 function closeTimezoneDropdown() {
@@ -258,6 +298,18 @@ function closeTimezoneDropdown() {
 .expand-leave-active > * {
     overflow: hidden;
 }
+
+.dropdown-enter-active {
+    transition: all 0.1s ease-out;
+}
+.dropdown-leave-active {
+    transition: all 0.075s ease-in;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
 </style>
 
 <template>
@@ -274,7 +326,7 @@ function closeTimezoneDropdown() {
             </p>
         </div>
 
-        <!-- Appearance Section -->
+        <!-- ═══ Appearance ═══ -->
         <section
             class="rounded-xl bg-neutral-100 px-4 py-4 dark:bg-neutral-800"
         >
@@ -284,55 +336,41 @@ function closeTimezoneDropdown() {
                 {{ translations.appearance }}
             </h2>
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.theme"
+                :subtitle="translations.color_scheme"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <!-- Lucide sun-moon -->
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 2v2m2.837 12.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4m7-3-1.256 1.256M20 12h2"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.theme }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.color_scheme }}
-                        </p>
-                    </div>
-                </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 2v2m2.837 12.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4m7-3-1.256 1.256M20 12h2"
+                        />
+                    </svg>
+                </template>
 
-                <!-- Theme selector -->
                 <div
                     class="flex gap-1 rounded-lg bg-white p-1 dark:bg-neutral-700"
                 >
-                    <!-- Light -->
                     <button
+                        v-for="opt in themeOptions"
+                        :key="opt.value"
                         type="button"
                         :class="[
                             'flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150',
-                            theme === 'light'
+                            theme === opt.value
                                 ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
                                 : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600',
                         ]"
-                        :title="translations.theme_light"
-                        @click="updateTheme('light')"
+                        :title="opt.title"
+                        @click="updateTheme(opt.value)"
                     >
                         <svg
                             class="h-4 w-4"
@@ -344,67 +382,15 @@ function closeTimezoneDropdown() {
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                            />
-                        </svg>
-                    </button>
-                    <!-- Dark -->
-                    <button
-                        type="button"
-                        :class="[
-                            'flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150',
-                            theme === 'dark'
-                                ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
-                                : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600',
-                        ]"
-                        :title="translations.theme_dark"
-                        @click="updateTheme('dark')"
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-                            />
-                        </svg>
-                    </button>
-                    <!-- System -->
-                    <button
-                        type="button"
-                        :class="[
-                            'flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150',
-                            theme === 'system'
-                                ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
-                                : 'text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600',
-                        ]"
-                        :title="translations.theme_system"
-                        @click="updateTheme('system')"
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"
+                                :d="opt.icon"
                             />
                         </svg>
                     </button>
                 </div>
-            </div>
+            </SettingRow>
         </section>
 
-        <!-- Language & Region Section -->
+        <!-- ═══ Language & Region ═══ -->
         <section
             class="space-y-4 rounded-xl bg-neutral-100 px-4 py-4 dark:bg-neutral-800"
         >
@@ -415,45 +401,31 @@ function closeTimezoneDropdown() {
             </h2>
 
             <!-- Language -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.language"
+                :subtitle="translations.display_language"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.language }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.display_language }}
-                        </p>
-                    </div>
-                </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"
+                        />
+                    </svg>
+                </template>
 
-                <!-- Language dropdown -->
                 <div class="relative">
                     <div
                         v-if="localeOpen"
                         class="fixed inset-0 z-40"
-                        @click="closeLocaleDropdown"
+                        @click="localeOpen = false"
                     />
                     <button
                         type="button"
@@ -477,14 +449,7 @@ function closeTimezoneDropdown() {
                         </svg>
                     </button>
 
-                    <Transition
-                        enter-active-class="transition ease-out duration-100"
-                        enter-from-class="opacity-0 scale-95"
-                        enter-to-class="opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-75"
-                        leave-from-class="opacity-100 scale-100"
-                        leave-to-class="opacity-0 scale-95"
-                    >
+                    <Transition name="dropdown">
                         <div
                             v-if="localeOpen"
                             class="absolute end-0 z-50 mt-2 w-48 rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5 dark:bg-neutral-700 dark:ring-white/10"
@@ -496,8 +461,8 @@ function closeTimezoneDropdown() {
                                 class="w-full px-4 py-2 text-start text-sm transition-colors"
                                 :class="
                                     locale === code
-                                        ? 'bg-green-50 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                        : 'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-600'
+                                        ? activeOptionClass
+                                        : inactiveOptionClass
                                 "
                                 @click="updateLocale(code)"
                             >
@@ -522,43 +487,29 @@ function closeTimezoneDropdown() {
                         </div>
                     </Transition>
                 </div>
-            </div>
+            </SettingRow>
 
             <!-- Timezone -->
-            <div class="flex items-center justify-between gap-4">
-                <div class="flex shrink-0 items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.timezone"
+                :subtitle="translations.your_timezone"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.timezone }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.your_timezone }}
-                        </p>
-                    </div>
-                </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                        />
+                    </svg>
+                </template>
 
-                <!-- Timezone searchable dropdown -->
                 <div class="relative">
                     <div
                         v-if="timezoneOpen"
@@ -587,14 +538,7 @@ function closeTimezoneDropdown() {
                         </svg>
                     </button>
 
-                    <Transition
-                        enter-active-class="transition ease-out duration-100"
-                        enter-from-class="opacity-0 scale-95"
-                        enter-to-class="opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-75"
-                        leave-from-class="opacity-100 scale-100"
-                        leave-to-class="opacity-0 scale-95"
-                    >
+                    <Transition name="dropdown">
                         <div
                             v-if="timezoneOpen"
                             class="absolute end-0 z-50 mt-2 w-72 rounded-lg bg-white shadow-lg ring-1 ring-black/5 dark:bg-neutral-700 dark:ring-white/10"
@@ -646,8 +590,8 @@ function closeTimezoneDropdown() {
                                         class="w-full px-4 py-2 text-start text-sm transition-colors"
                                         :class="
                                             tz === timezone
-                                                ? 'bg-green-50 font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                                : 'text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-600'
+                                                ? activeOptionClass
+                                                : inactiveOptionClass
                                         "
                                         @click="updateTimezone(tz)"
                                     >
@@ -686,10 +630,10 @@ function closeTimezoneDropdown() {
                         </div>
                     </Transition>
                 </div>
-            </div>
+            </SettingRow>
         </section>
 
-        <!-- Personal Section -->
+        <!-- ═══ Personal ═══ -->
         <section
             class="space-y-4 rounded-xl bg-neutral-100 px-4 py-4 dark:bg-neutral-800"
         >
@@ -700,98 +644,53 @@ function closeTimezoneDropdown() {
             </h2>
 
             <!-- Move completed to end -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.move_completed_to_end"
+                :subtitle="translations.completed_habits_sink_to_bottom"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <!-- Heroicons bars-arrow-down -->
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.move_completed_to_end }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.completed_habits_sink_to_bottom }}
-                        </p>
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    role="switch"
-                    :aria-checked="moveCompletedToEnd"
-                    class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none"
-                    :class="
-                        moveCompletedToEnd
-                            ? 'bg-green-500'
-                            : 'bg-neutral-300 dark:bg-neutral-600'
-                    "
-                    @click="
-                        moveCompletedToEnd = !moveCompletedToEnd;
-                        updateMoveCompletedToEnd();
-                    "
-                >
-                    <span
-                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"
-                        :class="
-                            moveCompletedToEnd
-                                ? 'ltr:translate-x-6 rtl:-translate-x-6'
-                                : 'ltr:translate-x-1 rtl:-translate-x-1'
-                        "
-                    />
-                </button>
-            </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+                        />
+                    </svg>
+                </template>
+
+                <ToggleSwitch
+                    v-model="moveCompletedToEnd"
+                    @update:model-value="updateMoveCompletedToEnd"
+                />
+            </SettingRow>
 
             <!-- Birthdate -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.birthdate"
+                :subtitle="translations.for_life_calendar"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513m-3-4.87v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m15-3.38a48.474 48.474 0 00-6-.37c-2.032 0-4.034.125-6 .37m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.17c0 .62-.504 1.124-1.125 1.124H4.125A1.125 1.125 0 013 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 016 13.12M12.265 3.11a.375.375 0 11-.53 0L12 2.845l.265.265zm-3 0a.375.375 0 11-.53 0L9 2.845l.265.265zm6 0a.375.375 0 11-.53 0L15 2.845l.265.265z"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.birthdate }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.for_life_calendar }}
-                        </p>
-                    </div>
-                </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513m-3-4.87v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m15-3.38a48.474 48.474 0 00-6-.37c-2.032 0-4.034.125-6 .37m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.17c0 .62-.504 1.124-1.125 1.124H4.125A1.125 1.125 0 013 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 016 13.12M12.265 3.11a.375.375 0 11-.53 0L12 2.845l.265.265zm-3 0a.375.375 0 11-.53 0L9 2.845l.265.265zm6 0a.375.375 0 11-.53 0L15 2.845l.265.265z"
+                        />
+                    </svg>
+                </template>
+
                 <div
                     class="flex items-center gap-1.5 rounded-lg bg-white px-2 py-2 dark:bg-neutral-700"
                 >
@@ -827,41 +726,29 @@ function closeTimezoneDropdown() {
                         />
                     </svg>
                 </div>
-            </div>
+            </SettingRow>
 
             <!-- Day starts at -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.day_starts_at"
+                :subtitle="translations.when_the_day_begins"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </svg>
-                    </div>
-                    <div>
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.day_starts_at }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.when_the_day_begins }}
-                        </p>
-                    </div>
-                </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                </template>
+
                 <div
                     class="flex items-center gap-1.5 rounded-lg bg-white px-2 py-2 dark:bg-neutral-700"
                 >
@@ -891,10 +778,10 @@ function closeTimezoneDropdown() {
                         />
                     </svg>
                 </div>
-            </div>
+            </SettingRow>
         </section>
 
-        <!-- AI Digest Section -->
+        <!-- ═══ AI Digest ═══ -->
         <section
             class="space-y-4 rounded-xl bg-neutral-100 px-4 py-4 dark:bg-neutral-800"
         >
@@ -905,108 +792,62 @@ function closeTimezoneDropdown() {
             </h2>
 
             <!-- Toggle -->
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex min-w-0 items-center gap-3">
-                    <div
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+            <SettingRow
+                :title="translations.enable_ai_digest"
+                :subtitle="translations.daily_ai_summary"
+            >
+                <template #icon>
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
                     >
-                        <svg
-                            class="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"
-                            />
-                        </svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p
-                            class="text-sm font-medium text-neutral-900 dark:text-white"
-                        >
-                            {{ translations.enable_ai_digest }}
-                        </p>
-                        <p
-                            class="text-xs text-neutral-500 dark:text-neutral-400"
-                        >
-                            {{ translations.daily_ai_summary }}
-                        </p>
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    role="switch"
-                    :aria-checked="aiDigestEnabled"
-                    class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none"
-                    :class="
-                        aiDigestEnabled
-                            ? 'bg-green-500'
-                            : 'bg-neutral-300 dark:bg-neutral-600'
-                    "
-                    @click="
-                        aiDigestEnabled = !aiDigestEnabled;
-                        toggleAiDigest();
-                    "
-                >
-                    <span
-                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"
-                        :class="
-                            aiDigestEnabled
-                                ? 'ltr:translate-x-6 rtl:-translate-x-6'
-                                : 'ltr:translate-x-1 rtl:-translate-x-1'
-                        "
-                    />
-                </button>
-            </div>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"
+                        />
+                    </svg>
+                </template>
+
+                <ToggleSwitch
+                    v-model="aiDigestEnabled"
+                    @update:model-value="toggleAiDigest"
+                />
+            </SettingRow>
 
             <Transition name="expand">
                 <div v-if="aiDigestEnabled">
                     <div class="space-y-4">
                         <!-- Digest time -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+                        <SettingRow
+                            :title="translations.digest_time"
+                            :subtitle="translations.when_to_send_the_digest"
+                        >
+                            <template #icon>
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
                                 >
-                                    <svg
-                                        class="h-5 w-5"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p
-                                        class="text-sm font-medium text-neutral-900 dark:text-white"
-                                    >
-                                        {{ translations.digest_time }}
-                                    </p>
-                                    <p
-                                        class="text-xs text-neutral-500 dark:text-neutral-400"
-                                    >
-                                        {{
-                                            translations.when_to_send_the_digest
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                            </template>
+
                             <TimePickerInput
                                 v-model="aiDigestTime"
                                 align="right"
                                 @select="updateAiDigestTime"
                             />
-                        </div>
+                        </SettingRow>
 
                         <!-- AI tone -->
                         <div v-if="aiTones.length > 0">
@@ -1064,9 +905,7 @@ function closeTimezoneDropdown() {
                                                 : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-600 dark:text-neutral-400'
                                         "
                                     >
-                                        <!-- sun -->
                                         <svg
-                                            v-if="tone.icon === 'sun'"
                                             class="h-4 w-4"
                                             fill="none"
                                             viewBox="0 0 24 24"
@@ -1076,67 +915,7 @@ function closeTimezoneDropdown() {
                                             <path
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
-                                                d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                                            />
-                                        </svg>
-                                        <!-- heart -->
-                                        <svg
-                                            v-else-if="tone.icon === 'heart'"
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                                            />
-                                        </svg>
-                                        <!-- bolt -->
-                                        <svg
-                                            v-else-if="tone.icon === 'bolt'"
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
-                                            />
-                                        </svg>
-                                        <!-- shield -->
-                                        <svg
-                                            v-else-if="tone.icon === 'shield'"
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-                                            />
-                                        </svg>
-                                        <!-- generic fallback -->
-                                        <svg
-                                            v-else
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
+                                                :d="toneIconPath(tone)"
                                             />
                                         </svg>
                                     </div>
