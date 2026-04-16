@@ -504,14 +504,17 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "`EditHabitResource`",
+                        "description": "Array of `EditHabitResource`",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/EditHabitResource"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
                                         }
                                     },
                                     "required": [

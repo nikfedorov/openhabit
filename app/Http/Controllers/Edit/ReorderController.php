@@ -17,7 +17,9 @@ use Illuminate\Http\Response;
 #[Group('Edit', weight: 1)]
 final readonly class ReorderController
 {
-    public function __construct(private ReorderAction $reorderAction) {}
+    public function __construct(
+        private ReorderAction $reorderAction,
+    ) {}
 
     /**
      * Reorder habits by providing habit IDs in desired order.

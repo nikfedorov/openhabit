@@ -40,9 +40,9 @@ it('creates a daily habit with correct response structure', function (): void {
             'name' => 'Morning run',
             'description' => 'Run 5km',
         ]))
-        ->assertCreated()
+        ->assertOk()
         ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', 1, fn (AssertableJson $json): AssertableJson => $json
                 ->where('name', 'Morning run')
                 ->where('description', 'Run 5km')
                 ->where('is_active', true)
@@ -66,7 +66,7 @@ it('creates habits with correct rrule', function (array $overrides, string $expe
 
     $this->actingAs($user, 'sanctum')
         ->postJson('/api/edit/habits', habitPayload($overrides))
-        ->assertCreated();
+        ->assertOk();
 
     $this->assertDatabaseHas('habits', [
         'user_id' => $user->id,
@@ -98,7 +98,7 @@ it('creates a habit with notifications', function (): void {
                 ['time' => '20:00', 'is_active' => false],
             ],
         ]))
-        ->assertCreated();
+        ->assertOk();
 
     $habit = Habit::query()->where('user_id', $user->id)->first();
 

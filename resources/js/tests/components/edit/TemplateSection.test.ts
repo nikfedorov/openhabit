@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import TemplateSection from '@/components/edit/TemplateSection.vue';
 import { makeEditTranslations, makeTemplateHabit } from '@/tests/helpers/edit';
 
@@ -151,5 +151,79 @@ describe('TemplateSection', () => {
         expect(wrapper.text()).toContain('Meditation');
         expect(wrapper.text()).toContain('Learning');
         expect(wrapper.text()).toContain('Read 30 min');
+    });
+
+    it('clears added state after 5 seconds', async () => {
+        vi.useFakeTimers();
+        const templates = [makeTemplateHabit({ id: 1 })];
+        const wrapper = mount(TemplateSection, {
+            props: { templates, translations },
+        });
+
+        await wrapper.find('.cursor-pointer').trigger('click');
+        const templateBtn = wrapper.find('.border-t button');
+        await templateBtn.trigger('click');
+
+        expect(wrapper.text()).toContain('Added!');
+
+        vi.advanceTimersByTime(5000);
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.text()).not.toContain('Added!');
+        vi.useRealTimers();
+    });
+
+    it('keeps all added templates highlighted simultaneously', async () => {
+        vi.useFakeTimers();
+        const templates = [
+            makeTemplateHabit({ id: 1, category: 'Health', name: 'Yoga' }),
+            makeTemplateHabit({ id: 2, category: 'Health', name: 'Run' }),
+        ];
+        const wrapper = mount(TemplateSection, {
+            props: { templates, translations },
+        });
+
+        await wrapper.find('.cursor-pointer').trigger('click');
+        const [btn1, btn2] = wrapper.findAll('.border-t button');
+
+        await btn1.trigger('click');
+        await btn2.trigger('click');
+
+        // Both should show 'Added!' simultaneously.
+        expect(wrapper.findAll('.border-t button')[0].text()).toContain(
+            'Added!',
+        );
+        expect(wrapper.findAll('.border-t button')[1].text()).toContain(
+            'Added!',
+        );
+
+        vi.useRealTimers();
+    });
+
+    it('allows re-adding a template after its highlight clears', async () => {
+        vi.useFakeTimers();
+        const templates = [makeTemplateHabit({ id: 1 })];
+        const wrapper = mount(TemplateSection, {
+            props: { templates, translations },
+        });
+
+        await wrapper.find('.cursor-pointer').trigger('click');
+        const templateBtn = wrapper.find('.border-t button');
+
+        // First copy.
+        await templateBtn.trigger('click');
+        expect(wrapper.emitted('copy')).toHaveLength(1);
+
+        // Clicking again before timeout: blocked.
+        await templateBtn.trigger('click');
+        expect(wrapper.emitted('copy')).toHaveLength(1);
+
+        // After 5s the added state clears — can copy again.
+        vi.advanceTimersByTime(5000);
+        await wrapper.vm.$nextTick();
+        await templateBtn.trigger('click');
+        expect(wrapper.emitted('copy')).toHaveLength(2);
+
+        vi.useRealTimers();
     });
 });

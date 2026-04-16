@@ -44,7 +44,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[1];
+        const statusBtn = wrapper.findAll('button')[2];
         await statusBtn.trigger('click');
         expect(wrapper.emitted('toggle-active')?.[0]).toEqual([42]);
     });
@@ -54,7 +54,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const contentBtn = wrapper.findAll('button')[2];
+        const contentBtn = wrapper.findAll('button')[3];
         await contentBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
     });
@@ -64,7 +64,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[1];
+        const statusBtn = wrapper.findAll('button')[2];
         expect(statusBtn.classes()).toContain('bg-green-500');
     });
 
@@ -73,7 +73,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const statusBtn = wrapper.findAll('button')[1];
+        const statusBtn = wrapper.findAll('button')[2];
         expect(statusBtn.classes()).toContain('bg-neutral-300');
     });
 
@@ -82,7 +82,7 @@ describe('EditHabitItem', () => {
         const wrapper = mount(EditHabitItem, {
             props: { habit, translations },
         });
-        const chevronBtn = wrapper.findAll('button')[3];
+        const chevronBtn = wrapper.findAll('button')[4];
         await chevronBtn.trigger('click');
         expect(wrapper.emitted('edit')?.[0]).toEqual([42]);
     });
@@ -145,5 +145,79 @@ describe('EditHabitItem', () => {
         swipeEl.dispatchEvent(new TouchEvent('touchend'));
 
         expect(wrapper.emitted('delete')?.[0]).toEqual([42]);
+    });
+
+    it('renders a drag handle with the sortable class', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        const handle = wrapper.find('[data-testid="habit-drag-handle"]');
+        expect(handle.exists()).toBe(true);
+        expect(handle.classes()).toContain('habit-drag-handle');
+    });
+
+    it('stops click propagation on the drag handle', async () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+        const handle = wrapper.find('[data-testid="habit-drag-handle"]');
+        await handle.trigger('click');
+        // No emits should fire since the click is stopped.
+        expect(wrapper.emitted('edit')).toBeUndefined();
+        expect(wrapper.emitted('toggle-active')).toBeUndefined();
+    });
+
+    it('applies highlight ring when highlighted prop is true', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, highlighted: true },
+        });
+        expect(
+            wrapper.find('[data-testid="edit-habit-item"]').classes(),
+        ).toContain('ring-1');
+    });
+
+    it('does not apply highlight ring when highlighted prop is false', () => {
+        const habit = makeEditHabit();
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations, highlighted: false },
+        });
+        expect(
+            wrapper.find('[data-testid="edit-habit-item"]').classes(),
+        ).not.toContain('ring-1');
+    });
+
+    it('ignores swipe gesture when it starts on the drag handle', () => {
+        const habit = makeEditHabit({ id: 42 });
+        const wrapper = mount(EditHabitItem, {
+            props: { habit, translations },
+        });
+
+        const handleEl = wrapper.find('[data-testid="habit-drag-handle"]')
+            .element as HTMLElement;
+        const swipeEl = wrapper.find('.select-none').element as HTMLElement;
+        Object.defineProperty(swipeEl, 'offsetWidth', { value: 400 });
+        const parent = swipeEl.parentElement;
+        if (parent) {
+            Object.defineProperty(parent, 'offsetWidth', { value: 400 });
+        }
+
+        // touchstart originates from the drag handle.
+        const touchStart = new TouchEvent('touchstart', {
+            bubbles: true,
+            touches: [{ clientX: 400, clientY: 0 } as Touch],
+        });
+        handleEl.dispatchEvent(touchStart);
+        swipeEl.dispatchEvent(
+            new TouchEvent('touchmove', {
+                cancelable: true,
+                touches: [{ clientX: 80, clientY: 0 } as Touch],
+            }),
+        );
+        swipeEl.dispatchEvent(new TouchEvent('touchend'));
+
+        expect(wrapper.emitted('delete')).toBeUndefined();
     });
 });

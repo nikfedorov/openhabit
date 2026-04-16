@@ -12,6 +12,7 @@ const emit = defineEmits<{
     copy: [templateId: number];
 }>();
 
+const HIGHLIGHT_DURATION_MS = 5000;
 const addedIds = ref(new Set<number>());
 
 const groupedTemplates = computed(() => {
@@ -34,6 +35,10 @@ function copyTemplate(template: TemplateHabit) {
 
     addedIds.value.add(template.id);
     emit('copy', template.id);
+
+    window.setTimeout(() => {
+        addedIds.value.delete(template.id);
+    }, HIGHLIGHT_DURATION_MS);
 }
 </script>
 

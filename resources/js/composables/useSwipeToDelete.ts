@@ -32,6 +32,14 @@ export function useSwipeToDelete({
     }
 
     function onTouchStart(e: TouchEvent) {
+        // Ignore touches that originate from the drag handle to avoid
+        // conflicting with drag-and-drop sorting.
+        const target = e.target;
+        if (target instanceof Element && target.closest('.habit-drag-handle')) {
+            swiping = false;
+            return;
+        }
+
         const touch = e.touches[0];
         startX = touch.clientX;
         startY = touch.clientY;

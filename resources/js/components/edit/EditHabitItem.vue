@@ -3,10 +3,14 @@ import { onMounted, ref } from 'vue';
 import { useSwipeToDelete } from '@/composables/useSwipeToDelete';
 import type { EditHabit, EditTranslations } from '@/types/edit';
 
-const props = defineProps<{
-    habit: EditHabit;
-    translations: EditTranslations;
-}>();
+const props = withDefaults(
+    defineProps<{
+        habit: EditHabit;
+        translations: EditTranslations;
+        highlighted?: boolean;
+    }>(),
+    { highlighted: false },
+);
 
 const emit = defineEmits<{
     'toggle-active': [habitId: number];
@@ -34,8 +38,13 @@ onMounted(() => {
 
 <template>
     <div
-        class="relative overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800"
-        :class="{ 'opacity-50': !habit.is_active }"
+        class="relative overflow-hidden rounded-xl bg-neutral-100 transition-[box-shadow,background-color] duration-500 dark:bg-neutral-800"
+        :class="[
+            { 'opacity-50': !habit.is_active },
+            highlighted
+                ? 'bg-green-50 ring-1 ring-green-400 dark:bg-green-900/20 dark:ring-green-500'
+                : '',
+        ]"
         data-testid="edit-habit-item"
     >
         <!-- Delete button behind (revealed on swipe) -->
@@ -66,11 +75,35 @@ onMounted(() => {
             ref="swipeContentEl"
             class="relative flex items-center gap-2 px-4 py-3 select-none"
         >
+            <!-- Drag handle -->
+            <button
+                type="button"
+                class="habit-drag-handle -ml-1 flex h-7 w-5 flex-shrink-0 cursor-grab items-center justify-center text-neutral-300 hover:text-neutral-500 active:cursor-grabbing dark:text-neutral-600 dark:hover:text-neutral-400"
+                tabindex="-1"
+                aria-label="Reorder"
+                data-testid="habit-drag-handle"
+                @click.stop
+            >
+                <svg
+                    class="h-4 w-4"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                >
+                    <circle cx="7" cy="5" r="1.5" />
+                    <circle cx="13" cy="5" r="1.5" />
+                    <circle cx="7" cy="10" r="1.5" />
+                    <circle cx="13" cy="10" r="1.5" />
+                    <circle cx="7" cy="15" r="1.5" />
+                    <circle cx="13" cy="15" r="1.5" />
+                </svg>
+            </button>
+
             <!-- Status Indicator -->
             <div class="flex-shrink-0">
                 <button
                     type="button"
-                    class="h-7 w-7 rounded-md align-middle"
+                    class="h-7 w-7 rounded-md align-middle transition-colors duration-200"
                     :class="
                         habit.is_active
                             ? 'bg-green-500 dark:bg-green-500'

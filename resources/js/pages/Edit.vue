@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { vDraggable } from 'vue-draggable-plus';
 import { useRouter } from 'vue-router';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal.vue';
 import EditHabitItem from '@/components/edit/EditHabitItem.vue';
@@ -31,6 +32,19 @@ const franklinHabits = ref<EditHabit[]>([]);
 const templateHabits = ref<TemplateHabit[]>([]);
 const translations = ref<EditTranslations | null>(null);
 const loading = ref(true);
+
+// ─── Highlight state ─────────────────────────────────────────
+
+const HIGHLIGHT_DURATION_MS = 5000;
+/** Set of habit IDs currently highlighted (supports multiple simultaneous). */
+const highlightedHabitIds = ref<Set<number>>(new Set());
+
+function highlightHabit(habitId: number) {
+    highlightedHabitIds.value.add(habitId);
+    window.setTimeout(() => {
+        highlightedHabitIds.value.delete(habitId);
+    }, HIGHLIGHT_DURATION_MS);
+}
 
 // ─── Delete confirmation ────────────────────────────────────
 
@@ -88,12 +102,28 @@ async function toggleFranklinHabits() {
 }
 
 async function deleteHabit(habitId: number) {
-    habits.value = habits.value.filter((h) => h.id !== habitId);
+    const idx = habits.value.findIndex((h) => h.id === habitId);
+    if (idx !== -1) habits.value.splice(idx, 1);
     await apiFetch(
         `/api/edit/habits/${habitId.toString()}`,
         { method: 'DELETE' },
         { silent: true },
     );
+    // splice mutates the array in-place to keep SortableJS in sync
+}
+
+async function reorderHabits() {
+    await apiFetch(
+        '/api/edit/habits/reorder',
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                ordered_ids: habits.value.map((h) => h.id),
+            }),
+        },
+        { silent: true },
+    );
+    // v-draggable already mutated habits.value in-place — no need to replace
 }
 
 // ─── Delete confirmation flow ───────────────────────────────
@@ -142,12 +172,22 @@ async function copyFromTemplate(templateId: number) {
     const template = templateHabits.value.find((t) => t.id === templateId);
     if (!template) return;
 
+    const existingIds = new Set(habits.value.map((h) => h.id));
+
     const response = await apiFetch<{ data: EditHabit[] }>(
         `/api/edit/templates/${templateId.toString()}/copy`,
         { method: 'POST' },
     );
 
-    updateHabitLists(response.data);
+    // Mutate in-place to keep SortableJS in sync: replace existing items,
+    // then append any newly added ones.
+    const newRegular = response.data.filter((h) => !h.is_franklin_virtue);
+    habits.value.splice(0, habits.value.length, ...newRegular);
+
+    const newHabit = habits.value.find((h) => !existingIds.has(h.id));
+    if (newHabit) {
+        highlightHabit(newHabit.id);
+    }
 }
 
 // ─── Lifecycle ───────────────────────────────────────────────
@@ -155,6 +195,9 @@ async function copyFromTemplate(templateId: number) {
 onMounted(() => {
     loadData();
 });
+
+// Exposed for component tests that simulate drag-end reordering.
+defineExpose({ reorderHabits });
 </script>
 
 <template>
@@ -233,20 +276,36 @@ onMounted(() => {
                 @toggle-all-active="toggleFranklinHabits"
             />
 
-            <!-- Regular Habits -->
-            <div v-if="habits.length > 0" class="space-y-1">
+            <!-- Regular Habits (draggable + animated) -->
+            <TransitionGroup
+                v-draggable="[
+                    habits,
+                    {
+                        animation: 200,
+                        handle: '.habit-drag-handle',
+                        ghostClass: 'habit-ghost',
+                        chosenClass: 'habit-chosen',
+                        dragClass: 'habit-dragging',
+                        onEnd: reorderHabits,
+                    },
+                ]"
+                tag="div"
+                name="habit"
+                class="space-y-1"
+            >
                 <EditHabitItem
                     v-for="habit in habits"
                     :ref="(el: any) => setHabitItemRef(habit.id, el)"
                     :key="habit.id"
                     :habit="habit"
                     :translations="translations"
+                    :highlighted="highlightedHabitIds.has(habit.id)"
                     @toggle-active="toggleHabit"
                     @edit="navigateToEdit"
                     @delete="deleteHabit"
                     @confirm-delete="confirmDelete"
                 />
-            </div>
+            </TransitionGroup>
 
             <!-- Templates Section -->
             <TemplateSection
@@ -269,3 +328,59 @@ onMounted(() => {
         />
     </div>
 </template>
+
+<style scoped>
+/* Enter/leave animations for habit list items. */
+.habit-enter-active {
+    transition:
+        opacity 300ms ease,
+        transform 300ms ease-in-out,
+        max-height 300ms ease-in-out,
+        margin 300ms ease-in-out,
+        padding 300ms ease-in-out;
+    overflow: hidden;
+    max-height: 200px;
+}
+
+.habit-leave-active {
+    transition:
+        opacity 300ms ease-in-out,
+        max-height 300ms ease-in-out,
+        margin 300ms ease-in-out,
+        padding 300ms ease-in-out;
+    overflow: hidden;
+    max-height: 200px;
+}
+
+.habit-enter-from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.habit-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.habit-leave-active {
+    position: relative;
+}
+
+/* SortableJS drag visuals. */
+.habit-ghost {
+    opacity: 0.4;
+}
+
+.habit-chosen {
+    cursor: grabbing;
+}
+
+.habit-dragging {
+    opacity: 0.9;
+}
+</style>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Edit;
 
+use App\Actions\Edit\GetUserHabitsAction;
 use App\Actions\Edit\StoreAction;
 use App\Http\Requests\Edit\StoreHabitRequest;
 use App\Http\Resources\Edit\EditHabitResource;
@@ -11,6 +12,7 @@ use App\Models\Habit;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Container\Attributes\CurrentUser;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Create or update a habit.
@@ -18,17 +20,19 @@ use Illuminate\Container\Attributes\CurrentUser;
 #[Group('Edit', weight: 1)]
 final readonly class StoreController
 {
-    public function __construct(private StoreAction $storeAction) {}
+    public function __construct(
+        private StoreAction $storeAction,
+        private GetUserHabitsAction $getUserHabits,
+    ) {}
 
     /**
      * Create a new habit.
      */
-    public function store(StoreHabitRequest $request, #[CurrentUser] User $user): EditHabitResource
+    public function store(StoreHabitRequest $request, #[CurrentUser] User $user): AnonymousResourceCollection
     {
-        $habit = $this->storeAction->handle($user, $request->habitData());
-        $habit->load('category');
+        $this->storeAction->handle($user, $request->habitData());
 
-        return new EditHabitResource($habit);
+        return EditHabitResource::collection($this->getUserHabits->handle($user));
     }
 
     /**

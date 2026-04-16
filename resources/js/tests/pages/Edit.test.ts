@@ -115,6 +115,19 @@ describe('Edit Page', () => {
         );
     });
 
+    it('still calls delete API when habit id is not found (no-op splice)', async () => {
+        const wrapper = await mountEdit();
+        mockApiFetch.mockResolvedValueOnce(undefined);
+        const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
+        editItem.vm.$emit('delete', 999);
+        await flushPromises();
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/edit/habits/999',
+            { method: 'DELETE' },
+            { silent: true },
+        );
+    });
+
     it('renders franklin section when franklin habits exist', async () => {
         const wrapper = await mountEdit({
             ...defaultApiResponse,
@@ -247,6 +260,24 @@ describe('Edit Page', () => {
         expect(mockApiFetch).toHaveBeenCalledTimes(1);
     });
 
+    it('still calls copy API even when backend returns no new habit', async () => {
+        const templates = [makeTemplateHabit({ id: 10 })];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        // Backend returns the same habits, no newly added item.
+        mockApiFetch.mockResolvedValueOnce({ data: defaultApiResponse.data });
+        wrapper.findComponent({ name: 'TemplateSection' }).vm.$emit('copy', 10);
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/edit/templates/10/copy',
+            { method: 'POST' },
+        );
+    });
+
     it('shows confirm dialog when confirm-delete is emitted', async () => {
         const wrapper = await mountEdit();
         const editItem = wrapper.findComponent({ name: 'EditHabitItem' });
@@ -305,6 +336,122 @@ describe('Edit Page', () => {
         expect(mockApiFetch).toHaveBeenCalledWith(
             '/api/edit/habits/1',
             { method: 'DELETE' },
+            { silent: true },
+        );
+    });
+
+    it('highlights newly added habit after copy', async () => {
+        vi.useFakeTimers();
+        const templates = [makeTemplateHabit({ id: 10, name: 'Exercise' })];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        const newlyAddedHabit = makeEditHabit({ id: 50, name: 'Exercise' });
+        mockApiFetch.mockResolvedValueOnce({
+            data: [...defaultApiResponse.data, newlyAddedHabit],
+        });
+
+        wrapper.findComponent({ name: 'TemplateSection' }).vm.$emit('copy', 10);
+        await flushPromises();
+
+        const items = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        const newItem = items.find((i) => i.props('habit').id === 50);
+        expect(newItem?.props('highlighted')).toBe(true);
+
+        vi.advanceTimersByTime(5000);
+        await flushPromises();
+
+        const itemsAfter = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        const newItemAfter = itemsAfter.find((i) => i.props('habit').id === 50);
+        expect(newItemAfter?.props('highlighted')).toBe(false);
+        vi.useRealTimers();
+    });
+
+    it('keeps all habits highlighted simultaneously when multiple copies happen', async () => {
+        vi.useFakeTimers();
+        const templates = [
+            makeTemplateHabit({ id: 10, name: 'A' }),
+            makeTemplateHabit({ id: 11, name: 'B' }),
+        ];
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            templates,
+        });
+
+        // First copy adds habit 50.
+        mockApiFetch.mockResolvedValueOnce({
+            data: [...defaultApiResponse.data, makeEditHabit({ id: 50 })],
+        });
+        wrapper.findComponent({ name: 'TemplateSection' }).vm.$emit('copy', 10);
+        await flushPromises();
+
+        // Second copy 2s later adds habit 51.
+        vi.advanceTimersByTime(2000);
+        mockApiFetch.mockResolvedValueOnce({
+            data: [
+                ...defaultApiResponse.data,
+                makeEditHabit({ id: 50 }),
+                makeEditHabit({ id: 51 }),
+            ],
+        });
+        wrapper.findComponent({ name: 'TemplateSection' }).vm.$emit('copy', 11);
+        await flushPromises();
+
+        // Both habits must be highlighted at the same time.
+        const allItems = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        expect(
+            allItems
+                .find((i) => i.props('habit').id === 50)
+                ?.props('highlighted'),
+        ).toBe(true);
+        expect(
+            allItems
+                .find((i) => i.props('habit').id === 51)
+                ?.props('highlighted'),
+        ).toBe(true);
+
+        // 3s more → first timer fires (5s total), habit 50 clears; habit 51 still lit.
+        vi.advanceTimersByTime(3000);
+        await flushPromises();
+
+        const items2 = wrapper.findAllComponents({ name: 'EditHabitItem' });
+        expect(
+            items2
+                .find((i) => i.props('habit').id === 50)
+                ?.props('highlighted'),
+        ).toBe(false);
+        expect(
+            items2
+                .find((i) => i.props('habit').id === 51)
+                ?.props('highlighted'),
+        ).toBe(true);
+
+        vi.useRealTimers();
+    });
+
+    it('sends reorder request with current order when drag ends', async () => {
+        const wrapper = await mountEdit({
+            ...defaultApiResponse,
+            data: [
+                makeEditHabit({ id: 1, name: 'A' }),
+                makeEditHabit({ id: 2, name: 'B' }),
+                makeEditHabit({ id: 3, name: 'C' }),
+            ],
+        });
+        mockApiFetch.mockResolvedValueOnce(undefined);
+
+        await (
+            wrapper.vm as unknown as { reorderHabits: () => Promise<void> }
+        ).reorderHabits();
+
+        expect(mockApiFetch).toHaveBeenLastCalledWith(
+            '/api/edit/habits/reorder',
+            {
+                method: 'POST',
+                body: JSON.stringify({ ordered_ids: [1, 2, 3] }),
+            },
             { silent: true },
         );
     });

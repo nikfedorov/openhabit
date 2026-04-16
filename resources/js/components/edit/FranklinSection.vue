@@ -16,13 +16,16 @@ const anyActive = computed(() => props.habits.some((h) => h.is_active));
 </script>
 
 <template>
-    <CollapsibleCard>
+    <CollapsibleCard
+        :class="{ 'opacity-50': !anyActive }"
+        class="transition-opacity duration-200"
+    >
         <template #header>
             <!-- Bulk Toggle Button -->
             <div class="flex-shrink-0">
                 <button
                     type="button"
-                    class="h-7 w-7 rounded-md align-middle transition-colors"
+                    class="h-7 w-7 rounded-md align-middle transition-colors duration-200"
                     :class="
                         anyActive
                             ? 'bg-green-500 dark:bg-green-500'
@@ -55,7 +58,7 @@ const anyActive = computed(() => props.habits.some((h) => h.is_active));
                 <!-- Status Indicator -->
                 <div class="mt-1.5 flex-shrink-0">
                     <div
-                        class="h-7 w-7 rounded-md align-middle transition-colors"
+                        class="h-7 w-7 rounded-md align-middle transition-colors duration-200"
                         :class="
                             habit.is_active
                                 ? 'bg-green-500 dark:bg-green-500'

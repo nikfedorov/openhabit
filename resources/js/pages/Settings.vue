@@ -284,8 +284,8 @@ function closeTimezoneDropdown() {
     display: grid;
     grid-template-rows: 1fr;
     transition:
-        grid-template-rows 0.25s ease,
-        opacity 0.2s ease;
+        grid-template-rows 0.25s ease-in-out,
+        opacity 0.2s ease-in-out;
 }
 
 .expand-enter-from,

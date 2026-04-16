@@ -18,7 +18,9 @@ use Illuminate\Http\Response;
 #[Group('Edit', weight: 1)]
 final readonly class DestroyController
 {
-    public function __construct(private DeleteHabitAction $deleteHabitAction) {}
+    public function __construct(
+        private DeleteHabitAction $deleteHabitAction,
+    ) {}
 
     /**
      * Delete a habit.
