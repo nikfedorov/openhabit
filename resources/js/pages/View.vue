@@ -132,11 +132,12 @@ async function loadYear(params?: { year?: number }) {
     const response = await apiFetch<YearApiResponse>(
         `/api/view/year${queryStr ? `?${queryStr}` : ''}`,
     );
+    const isNewYear = yearData.value?.selected !== response.data.selected;
     yearData.value = response.data;
     yearActivityData.value = response.activityData;
     yearTranslations.value = response.translations;
     tab.value = 'year';
-    yearKey.value++;
+    if (isNewYear) yearKey.value++;
     handleCommonResponse(response);
     router.replace({ query: buildViewQuery() });
     loading.value = false;
@@ -146,11 +147,12 @@ async function loadYear(params?: { year?: number }) {
 async function loadLife() {
     loading.value = true;
     const response = await apiFetch<LifeApiResponse>('/api/view/life');
+    const isFirstLifeLoad = lifeData.value === null;
     lifeData.value = response.data;
     lifeActivityData.value = response.activityData;
     lifeTranslations.value = response.translations;
     tab.value = 'life';
-    lifeKey.value++;
+    if (isFirstLifeLoad) lifeKey.value++;
     handleCommonResponse(response);
     router.replace({ query: buildViewQuery() });
     loading.value = false;
