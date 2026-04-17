@@ -131,15 +131,19 @@ applyTheme(
 
             <main id="main-content" tabindex="-1">
                 <router-view v-slot="{ Component }">
-                    <PageLoader v-if="!pageReady || !Component" />
-                    <component
-                        v-if="Component"
-                        v-show="pageReady"
-                        :is="Component"
-                        @navigation-translations="updateNavTranslations"
-                        @settings="updateSettings"
-                        @ready="pageReady = true"
-                    />
+                    <Transition name="loader-fade">
+                        <PageLoader v-if="!pageReady || !Component" />
+                    </Transition>
+                    <Transition name="page-fade">
+                        <component
+                            v-if="Component"
+                            v-show="pageReady"
+                            :is="Component"
+                            @navigation-translations="updateNavTranslations"
+                            @settings="updateSettings"
+                            @ready="pageReady = true"
+                        />
+                    </Transition>
                 </router-view>
             </main>
         </div>
@@ -158,3 +162,21 @@ applyTheme(
         />
     </div>
 </template>
+
+<style scoped>
+.loader-fade-leave-active {
+    transition: opacity 300ms ease;
+}
+
+.loader-fade-leave-to {
+    opacity: 0;
+}
+
+.page-fade-enter-active {
+    transition: opacity 300ms ease;
+}
+
+.page-fade-enter-from {
+    opacity: 0;
+}
+</style>
