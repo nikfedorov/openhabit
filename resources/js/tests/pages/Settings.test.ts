@@ -412,7 +412,8 @@ describe('Settings - Personal', () => {
     it('shows error state for invalid birthdate format', async () => {
         const wrapper = await mountSettings(mockApiFetch);
         const input = wrapper.find('input[placeholder="DD.MM.YYYY"]');
-        await input.setValue('not-a-date');
+        // With the date mask, only digits are accepted; use a date with invalid month (13)
+        await input.setValue('13.13.2000');
         await input.trigger('blur');
         await flushPromises();
 

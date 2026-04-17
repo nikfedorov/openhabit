@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { vMaska } from 'maska/vue';
 import PageLoader from '@/components/PageLoader.vue';
 import SettingRow from '@/components/settings/SettingRow.vue';
 import ToggleSwitch from '@/components/settings/ToggleSwitch.vue';
@@ -698,6 +699,7 @@ function closeTimezoneDropdown() {
                 >
                     <input
                         v-model="birthdateDisplay"
+                        v-maska="'##.##.####'"
                         type="text"
                         inputmode="numeric"
                         enterkeyhint="done"
