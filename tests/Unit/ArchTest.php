@@ -3,22 +3,19 @@
 declare(strict_types=1);
 
 use App\Models\AiModel;
+use App\Providers\TelescopeServiceProvider;
 
 arch()->preset()->php();
-arch()->preset()->strict()->ignoring([
-    'App\\Http\\Requests',
-    'App\\Models',
-    'App\\Telegram\\Commands',
-]);
+
 arch()->preset()->laravel()->ignoring([
     AiModel::class,
+    TelescopeServiceProvider::class,
 ]);
+
 arch()->preset()->security()->ignoring([
-    'assert',
+    TelescopeServiceProvider::class,
 ]);
 
 arch('controllers')
     ->expect('App\Http\Controllers')
     ->not->toBeUsed();
-
-//
