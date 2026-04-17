@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Telegram\Handlers;
 
 use App\Models\Payment;
-use App\Models\User;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Payment\RefundedPayment;
 
@@ -20,7 +19,7 @@ final class RefundedPaymentHandler
         }
 
         $payment = Payment::query()
-            ->with('user')
+            ->select(['id', 'user_id'])
             ->where('telegram_payment_charge_id', $refundedPayment->telegram_payment_charge_id)
             ->first();
 
@@ -28,17 +27,24 @@ final class RefundedPaymentHandler
             return;
         }
 
-        /** @var User $user */
-        $user = $payment->user;
-
         $payment->update(['refunded_at' => now()]);
 
-        $user->update([
-            'subscription_expires_at' => $user->payments()
-                ->whereNull('refunded_at')
-                ->whereNotNull('subscription_expiration_date')
-                ->latest()
-                ->value('subscription_expiration_date'),
+        $payment->user()->update([
+            'subscription_expires_at' => $this->latestActiveSubscriptionExpiration($payment),
         ]);
+    }
+
+    private function latestActiveSubscriptionExpiration(Payment $payment): mixed
+    {
+        /** @var Payment|null $latestPayment */
+        $latestPayment = Payment::query()
+            ->select(['id', 'subscription_expiration_date'])
+            ->where('user_id', $payment->user_id)
+            ->whereNull('refunded_at')
+            ->whereNotNull('subscription_expiration_date')
+            ->latest('subscription_expiration_date')
+            ->first();
+
+        return $latestPayment?->subscription_expiration_date;
     }
 }

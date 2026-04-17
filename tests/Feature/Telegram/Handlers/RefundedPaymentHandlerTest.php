@@ -7,16 +7,23 @@ use App\Models\User;
 use App\Telegram\Handlers\RefundedPaymentHandler;
 use SergiX44\Nutgram\Nutgram;
 
-it('marks payment as refunded and rolls back subscription', function (): void {
+it('marks payment as refunded and keeps the furthest active subscription expiration', function (): void {
     $user = User::factory()->telegramId()->premium()->create();
 
-    $previousExpiration = now()->addDays(15);
+    $furthestExpiration = now()->addDays(45);
     Payment::factory()->for($user)->create([
-        'subscription_expiration_date' => $previousExpiration,
+        'subscription_expiration_date' => $furthestExpiration,
+        'created_at' => now()->subDay(),
+    ]);
+
+    Payment::factory()->for($user)->create([
+        'subscription_expiration_date' => now()->addDays(15),
+        'created_at' => now(),
     ]);
 
     $payment = Payment::factory()->for($user)->create([
         'subscription_expiration_date' => now()->addDays(30),
+        'created_at' => now()->addDay(),
     ]);
 
     resolve(Nutgram::class)
@@ -31,9 +38,9 @@ it('marks payment as refunded and rolls back subscription', function (): void {
         ])
         ->reply();
 
-    expect($payment->refresh()->is_refunded)->toBeTrue()
+    expect($payment->refresh()->isRefunded)->toBeTrue()
         ->and($user->refresh()->subscription_expires_at->toDateTimeString())
-        ->toBe($previousExpiration->toDateTimeString());
+        ->toBe($furthestExpiration->toDateTimeString());
 });
 
 it('nullifies subscription when refunding the only payment', function (): void {
@@ -52,7 +59,7 @@ it('nullifies subscription when refunding the only payment', function (): void {
         ])
         ->reply();
 
-    expect($payment->refresh()->is_refunded)->toBeTrue()
+    expect($payment->refresh()->isRefunded)->toBeTrue()
         ->and($user->refresh()->subscription_expires_at)->toBeNull();
 });
 
