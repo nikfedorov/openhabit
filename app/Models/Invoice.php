@@ -7,6 +7,7 @@ namespace App\Models;
 use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -32,13 +33,22 @@ final class Invoice extends Model
 
     /**
      * Get the premium invoice link for the current locale.
+     * Cached per locale to avoid repeated DB queries across requests.
+     * Value is wrapped in an array to allow caching null (no invoice found).
      */
     public static function premiumLink(): ?string
     {
-        /** @var Invoice|null $invoice */
-        $invoice = self::query()->where('slug', 'premium')->first();
+        $key = sprintf('invoice:premium:link:%s', app()->getLocale());
 
-        return $invoice?->invoice_link;
+        /** @var array{link: string|null} $cached */
+        $cached = Cache::remember($key, 3600, function (): array {
+            /** @var Invoice|null $invoice */
+            $invoice = self::query()->where('slug', 'premium')->first();
+
+            return ['link' => $invoice?->invoice_link];
+        });
+
+        return $cached['link'];
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Enums\SettingType;
 use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property-read int $id
@@ -20,15 +21,21 @@ final class Setting extends Model
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
 
+    public const string TRIAL_PERIOD_DAYS_CACHE_KEY = 'setting:trial_period_days';
+
     public $timestamps = false;
 
     /**
      * Get trial period in days from settings.
-     * Cached per-request to avoid repeated DB queries from premium state resolution.
+     * Cached across requests to avoid repeated DB queries.
      */
     public static function trialPeriodDays(): int
     {
-        return (int) once(fn (): ?string => self::getValue('trial_period_days', '14'));
+        return (int) Cache::remember(
+            key: self::TRIAL_PERIOD_DAYS_CACHE_KEY,
+            ttl: 3600,
+            callback: fn (): ?string => self::getValue('trial_period_days', '14'),
+        );
     }
 
     /**
@@ -57,6 +64,10 @@ final class Setting extends Model
             ['key' => $key],
             $attributes,
         );
+
+        if ($key === 'trial_period_days') {
+            Cache::forget(self::TRIAL_PERIOD_DAYS_CACHE_KEY);
+        }
     }
 
     /**
