@@ -21,6 +21,20 @@ import type {
     LifeViewData,
 } from './view';
 
+export type TrialData = {
+    shouldShowBanner: boolean;
+    bannerText: string;
+    invoiceLink: string | null;
+    learnMore: string;
+    featuresTitle: string;
+    featuresSubtitle: string;
+    featureNotifications: string;
+    featureAiDigest: string;
+    featureExport: string;
+    upgradeLabel: string;
+    openInTelegramLabel: string;
+};
+
 export type UserSettings = {
     locale: string;
     theme: 'light' | 'dark' | 'system';
@@ -30,6 +44,7 @@ export type UserSettings = {
     birthdate: string | null;
     aiDigestTime: string | null;
     aiToneId: number | null;
+    trial: TrialData;
 };
 
 export type CommonData = {

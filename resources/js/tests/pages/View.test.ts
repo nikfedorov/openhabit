@@ -7,6 +7,7 @@ import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
 import View from '@/pages/View.vue';
+import { defaultTrial } from '@/tests/helpers/settings';
 import {
     defaultLifeStats,
     defaultNavigationTranslations,
@@ -84,7 +85,11 @@ type LifeOverrides = {
 function makeCommonResponse() {
     return {
         navigationTranslations: defaultNavigationTranslations,
-        settings: { locale: 'en', theme: 'system' as const },
+        settings: {
+            locale: 'en',
+            theme: 'system' as const,
+            trial: defaultTrial,
+        },
     };
 }
 

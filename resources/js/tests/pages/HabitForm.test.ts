@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import HabitForm from '@/pages/HabitForm.vue';
 import { makeHabitTranslations } from '@/tests/helpers/edit';
+import { defaultTrial } from '@/tests/helpers/settings';
 
 const { mockApiFetch, mockRouterPush, mockRouteParams, mockIsTelegram } =
     vi.hoisted(() => ({
@@ -29,7 +30,12 @@ vi.mock('@/composables/useTelegramBackButton', () => ({
 const createApiResponse = {
     habitTranslations: makeHabitTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
-    settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
+    settings: {
+        locale: 'en',
+        theme: 'system',
+        moveCompletedToEnd: true,
+        trial: defaultTrial,
+    },
 };
 
 const habitShowResponse = {
@@ -49,7 +55,12 @@ const habitShowResponse = {
     },
     habitTranslations: makeHabitTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
-    settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
+    settings: {
+        locale: 'en',
+        theme: 'system',
+        moveCompletedToEnd: true,
+        trial: defaultTrial,
+    },
 };
 
 async function mountCreateForm() {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AiTone, UserSettings } from '@/types/api';
+import type { AiTone, TrialData, UserSettings } from '@/types/api';
 import type {
     EditHabit,
     HabitFormData,
@@ -65,6 +65,7 @@ const TESTED_SCHEMAS = new Set([
     'LifeActivityResource',
     'LifeViewResource',
     'TrackResource',
+    'TrialResource',
     'UserSettingResource',
     'WeekDayResource',
     'WeekGridHabitResource',
@@ -108,6 +109,7 @@ const KNOWN_PATHS = new Set([
     '/view/year',
     '/view/life',
     '/settings',
+    '/settings/trial-banner/dismiss',
 ]);
 
 // ─── API Contract Tests ─────────────────────────────────────────
@@ -311,6 +313,26 @@ describe('API contract', () => {
             birthdate: true,
             aiDigestTime: true,
             aiToneId: true,
+            trial: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('TrialResource schema matches TrialData type', () => {
+        const schema = schemaKeys('TrialResource');
+        const ts = typeKeys<TrialData>({
+            shouldShowBanner: true,
+            bannerText: true,
+            invoiceLink: true,
+            learnMore: true,
+            featuresTitle: true,
+            featuresSubtitle: true,
+            featureNotifications: true,
+            featureAiDigest: true,
+            featureExport: true,
+            upgradeLabel: true,
+            openInTelegramLabel: true,
         });
 
         expect(schema).toEqual(ts);

@@ -4,8 +4,11 @@ import { useRoute, useRouter } from 'vue-router';
 import RouteLoadingBar from '@/components/navigation/RouteLoadingBar.vue';
 import TabBar from '@/components/navigation/TabBar.vue';
 import PageLoader from '@/components/PageLoader.vue';
-import type { UserSettings } from '@/types/api';
+import PremiumModal from '@/components/PremiumModal.vue';
+import TrialBanner from '@/components/TrialBanner.vue';
+import type { TrialData, UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
+import { apiFetch } from '@/utils/api';
 
 const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
 
@@ -13,6 +16,8 @@ const route = useRoute();
 const router = useRouter();
 const navTranslations = ref<NavigationTranslations | null>(null);
 const pageReady = ref(false);
+const trialData = ref<TrialData | null>(null);
+const showPremiumModal = ref(false);
 
 router.beforeEach((to, from) => {
     if (to.name !== from.name) {
@@ -54,6 +59,16 @@ function applyTheme(theme: 'light' | 'dark' | 'system') {
 function updateSettings(settings: UserSettings) {
     applyLocale(settings.locale);
     applyTheme(settings.theme);
+
+    if (settings.trial) {
+        trialData.value = settings.trial;
+    }
+}
+
+async function dismissTrialBanner() {
+    trialData.value = { ...trialData.value!, shouldShowBanner: false };
+
+    await apiFetch('/api/settings/trial-banner/dismiss', { method: 'POST' });
 }
 
 /* Apply saved theme or fall back to system preference */
@@ -77,6 +92,13 @@ applyTheme(
                 :translations="navTranslations"
             />
 
+            <TrialBanner
+                v-if="trialData"
+                :trial-data="trialData"
+                @dismiss="dismissTrialBanner"
+                @open-premium-modal="showPremiumModal = true"
+            />
+
             <main id="main-content" tabindex="-1">
                 <router-view v-slot="{ Component }">
                     <PageLoader v-if="!pageReady || !Component" />
@@ -91,5 +113,12 @@ applyTheme(
                 </router-view>
             </main>
         </div>
+
+        <PremiumModal
+            v-if="trialData"
+            :show="showPremiumModal"
+            :trial-data="trialData"
+            @close="showPremiumModal = false"
+        />
     </div>
 </template>

@@ -4,6 +4,7 @@ import type {
     AiTone,
     SettingsApiResponse,
     SettingsTranslations,
+    TrialData,
     UserSettings,
 } from '@/types/api';
 
@@ -39,6 +40,20 @@ export const defaultSettingsTranslations: SettingsTranslations = {
     tone_of_the_daily_summary: 'Tone of the daily summary',
 };
 
+export const defaultTrial: TrialData = {
+    shouldShowBanner: false,
+    bannerText: '',
+    invoiceLink: 'https://t.me/test-invoice',
+    learnMore: 'Learn more',
+    featuresTitle: 'Premium Features',
+    featuresSubtitle: 'Upgrade to unlock all features',
+    featureNotifications: 'Multiple reminders per habit',
+    featureAiDigest: 'Daily AI digest of your progress',
+    featureExport: 'Export all your data as CSV',
+    upgradeLabel: 'Upgrade',
+    openInTelegramLabel: 'To upgrade, please open the app in Telegram.',
+};
+
 export const defaultSettings: UserSettings = {
     locale: 'en',
     theme: 'system',
@@ -48,6 +63,7 @@ export const defaultSettings: UserSettings = {
     birthdate: null,
     aiDigestTime: null,
     aiToneId: null,
+    trial: defaultTrial,
 };
 
 export const defaultAiTones: AiTone[] = [

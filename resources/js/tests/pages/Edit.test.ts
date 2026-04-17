@@ -6,6 +6,7 @@ import {
     makeEditTranslations,
     makeTemplateHabit,
 } from '@/tests/helpers/edit';
+import { defaultTrial } from '@/tests/helpers/settings';
 
 const { mockApiFetch, mockRouterPush } = vi.hoisted(() => ({
     mockApiFetch: vi.fn(),
@@ -24,7 +25,12 @@ const defaultApiResponse = {
     data: [makeEditHabit({ id: 1, name: 'Run' })],
     translations: makeEditTranslations(),
     navigationTranslations: { track: 'Track', view: 'View', edit: 'Edit' },
-    settings: { locale: 'en', theme: 'system', moveCompletedToEnd: true },
+    settings: {
+        locale: 'en',
+        theme: 'system',
+        moveCompletedToEnd: true,
+        trial: defaultTrial,
+    },
     templates: [] as ReturnType<typeof makeTemplateHabit>[],
 };
 

@@ -2,7 +2,17 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import App from '@/App.vue';
+import PremiumModal from '@/components/PremiumModal.vue';
 import { routes } from '@/router';
+import { defaultTrial } from '@/tests/helpers/settings';
+
+const { mockApiFetch } = vi.hoisted(() => ({
+    mockApiFetch: vi.fn(),
+}));
+
+vi.mock('@/utils/api', () => ({
+    apiFetch: mockApiFetch,
+}));
 
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -316,5 +326,122 @@ describe('App', () => {
         expect(setBackgroundColor).toHaveBeenCalledWith('#171717');
 
         delete (window as unknown as Record<string, unknown>).Telegram;
+    });
+
+    it('shows trial banner when settings emit shouldShowBanner true', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', {
+            locale: 'en',
+            theme: 'system',
+            trial: {
+                ...defaultTrial,
+                shouldShowBanner: true,
+                bannerText: 'Free trial: 3 days',
+            },
+        });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            true,
+        );
+        expect(wrapper.text()).toContain('Free trial: 3 days');
+    });
+
+    it('does not show trial banner when shouldShowBanner is false', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', {
+            locale: 'en',
+            theme: 'system',
+            trial: { ...defaultTrial, shouldShowBanner: false },
+        });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+    });
+
+    it('does not show trial banner before settings are received', async () => {
+        const { wrapper } = await mountApp();
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+    });
+
+    it('hides trial banner and calls dismiss API when dismissed', async () => {
+        mockApiFetch.mockResolvedValueOnce(undefined);
+
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', {
+            locale: 'en',
+            theme: 'system',
+            trial: { ...defaultTrial, shouldShowBanner: true },
+        });
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            true,
+        );
+
+        await wrapper
+            .find('[data-testid="trial-banner-dismiss"]')
+            .trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings/trial-banner/dismiss',
+            { method: 'POST' },
+        );
+    });
+
+    it('opens premium modal when learn more is clicked on trial banner', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', {
+            locale: 'en',
+            theme: 'system',
+            trial: { ...defaultTrial, shouldShowBanner: true },
+        });
+        await wrapper.vm.$nextTick();
+
+        await wrapper
+            .find('[data-testid="trial-banner-learn-more"]')
+            .trigger('click');
+        await wrapper.vm.$nextTick();
+
+        expect(
+            document.body.querySelector('[data-testid="premium-modal"]'),
+        ).not.toBeNull();
+    });
+
+    it('closes premium modal when close event is emitted', async () => {
+        const { wrapper } = await mountApp();
+        const trackComponent = wrapper.findComponent({ name: 'Track' });
+        trackComponent.vm.$emit('settings', {
+            locale: 'en',
+            theme: 'system',
+            trial: { ...defaultTrial, shouldShowBanner: true },
+        });
+        await wrapper.vm.$nextTick();
+
+        // Open premium modal
+        await wrapper
+            .find('[data-testid="trial-banner-learn-more"]')
+            .trigger('click');
+        await wrapper.vm.$nextTick();
+        expect(
+            document.body.querySelector('[data-testid="premium-modal"]'),
+        ).not.toBeNull();
+
+        // Close via component emit (PremiumModal.close → App sets showPremiumModal = false)
+        const premiumModal = wrapper.findComponent(PremiumModal);
+        expect(premiumModal.props('show')).toBe(true);
+        premiumModal.vm.$emit('close');
+        await wrapper.vm.$nextTick();
+        expect(premiumModal.props('show')).toBe(false);
     });
 });

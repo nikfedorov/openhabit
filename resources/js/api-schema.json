@@ -1016,6 +1016,23 @@
                     }
                 }
             }
+        },
+        "/settings/trial-banner/dismiss": {
+            "post": {
+                "operationId": "settings.trial-banner.dismiss",
+                "summary": "Record that the user has dismissed the trial banner",
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1781,6 +1798,166 @@
                 ],
                 "title": "TrackResource"
             },
+            "TrialResource": {
+                "type": "object",
+                "properties": {
+                    "shouldShowBanner": {
+                        "type": "boolean"
+                    },
+                    "bannerText": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "string",
+                                "enum": [
+                                    ""
+                                ]
+                            }
+                        ]
+                    },
+                    "invoiceLink": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "learnMore": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "featuresTitle": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "featuresSubtitle": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "featureNotifications": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "featureAiDigest": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "featureExport": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "upgradeLabel": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "openInTelegramLabel": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "array",
+                                "items": {}
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "shouldShowBanner",
+                    "bannerText",
+                    "invoiceLink",
+                    "learnMore",
+                    "featuresTitle",
+                    "featuresSubtitle",
+                    "featureNotifications",
+                    "featureAiDigest",
+                    "featureExport",
+                    "upgradeLabel",
+                    "openInTelegramLabel"
+                ],
+                "title": "TrialResource"
+            },
             "UpdateSettingsRequest": {
                 "type": "object",
                 "properties": {
@@ -1923,6 +2100,61 @@
                             "null"
                         ],
                         "description": "ID of the AI tone used for the digest."
+                    },
+                    "trial": {
+                        "type": "object",
+                        "description": "Trial banner and premium modal data.",
+                        "properties": {
+                            "shouldShowBanner": {
+                                "type": "boolean"
+                            },
+                            "bannerText": {
+                                "type": "string"
+                            },
+                            "invoiceLink": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "learnMore": {
+                                "type": "string"
+                            },
+                            "featuresTitle": {
+                                "type": "string"
+                            },
+                            "featuresSubtitle": {
+                                "type": "string"
+                            },
+                            "featureNotifications": {
+                                "type": "string"
+                            },
+                            "featureAiDigest": {
+                                "type": "string"
+                            },
+                            "featureExport": {
+                                "type": "string"
+                            },
+                            "upgradeLabel": {
+                                "type": "string"
+                            },
+                            "openInTelegramLabel": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "shouldShowBanner",
+                            "bannerText",
+                            "invoiceLink",
+                            "learnMore",
+                            "featuresTitle",
+                            "featuresSubtitle",
+                            "featureNotifications",
+                            "featureAiDigest",
+                            "featureExport",
+                            "upgradeLabel",
+                            "openInTelegramLabel"
+                        ]
                     }
                 },
                 "required": [
@@ -1933,7 +2165,8 @@
                     "dayStartsAt",
                     "birthdate",
                     "aiDigestTime",
-                    "aiToneId"
+                    "aiToneId",
+                    "trial"
                 ],
                 "title": "UserSettingResource"
             },

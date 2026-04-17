@@ -28,6 +28,7 @@ final class UserSettingResource extends JsonResource
      *     birthdate: string|null,
      *     aiDigestTime: string|null,
      *     aiToneId: int|null,
+     *     trial: TrialResource,
      * }
      */
     public function toArray(Request $request): array
@@ -102,6 +103,25 @@ final class UserSettingResource extends JsonResource
              * @var int|null
              */
             'aiToneId' => $this->resource->ai_tone_id,
+
+            /**
+             * Trial banner and premium modal data.
+             *
+             * @var array{
+             *     shouldShowBanner: bool,
+             *     bannerText: string,
+             *     invoiceLink: string|null,
+             *     learnMore: string,
+             *     featuresTitle: string,
+             *     featuresSubtitle: string,
+             *     featureNotifications: string,
+             *     featureAiDigest: string,
+             *     featureExport: string,
+             *     upgradeLabel: string,
+             *     openInTelegramLabel: string,
+             * }
+             */
+            'trial' => new TrialResource($this->resource),
         ];
     }
 }

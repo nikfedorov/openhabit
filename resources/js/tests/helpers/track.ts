@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import Track from '@/pages/Track.vue';
 import type { UserSettings } from '@/types/api';
 import type { ActivityDay, Habit, TrackData } from '@/types/track';
+import { defaultTrial } from './settings';
 
 type TrackVm = {
     data: { habits: Habit[]; completedCount: number } | null;
@@ -131,6 +132,7 @@ export function makeTrackResponse(
             locale: 'en',
             theme: 'system' as const,
             moveCompletedToEnd: false,
+            trial: defaultTrial,
             ...settingsOverrides,
         },
     };

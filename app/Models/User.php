@@ -228,7 +228,7 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
             return null;
         }
 
-        return $expires->diffForHumans(['parts' => 2]);
+        return $expires->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2);
     }
 
     /**
