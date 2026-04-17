@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\RefundPaymentAction;
+use App\Actions\Payments\RefundPaymentAction;
 use App\Models\Payment;
 use App\Models\User;
 use Mockery\MockInterface;
@@ -29,7 +29,7 @@ it('skips subscription cancellation for non-recurring payments', function (): vo
     new RefundPaymentAction($bot)->handle($payment);
 });
 
-it('proceeds with refund when subscription is already cancelled (SUBSCRIPTION_NOT_MODIFIED)', function (): void {
+it('proceeds with refund when subscription is already cancelled', function (): void {
     [$payment, $user] = makePaymentForRefundAction();
 
     $bot = Mockery::mock(Nutgram::class);
@@ -41,7 +41,7 @@ it('proceeds with refund when subscription is already cancelled (SUBSCRIPTION_NO
     new RefundPaymentAction($bot)->handle($payment);
 });
 
-it('rethrows TelegramException that is not SUBSCRIPTION_NOT_MODIFIED', function (): void {
+it('rethrows Telegram exception when cancellation fails for another reason', function (): void {
     [$payment] = makePaymentForRefundAction();
 
     $bot = Mockery::mock(Nutgram::class);

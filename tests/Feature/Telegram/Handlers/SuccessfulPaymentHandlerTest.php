@@ -31,7 +31,7 @@ it('exits early when message has no payment', function (): void {
     $bot = Nutgram::fake();
     $bot->hearMessage(['text' => 'hello']);
 
-    (new SuccessfulPaymentHandler)($bot);
+    resolve(SuccessfulPaymentHandler::class)($bot);
 
     expect($user->refresh()->subscription_expires_at)->toBeNull();
     expect(Payment::query()->count())->toBe(0);

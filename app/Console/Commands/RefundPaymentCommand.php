@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Actions\RefundPaymentAction;
+use App\Actions\Payments\RefundPaymentAction;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Console\Command;

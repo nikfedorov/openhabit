@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Payments;
 
 use App\Models\Payment;
 use App\Models\User;

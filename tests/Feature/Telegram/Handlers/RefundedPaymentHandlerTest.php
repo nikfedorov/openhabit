@@ -82,7 +82,7 @@ it('exits early when message has no refunded payment', function (): void {
     $bot = Nutgram::fake();
     $bot->hearMessage(['text' => 'hello']);
 
-    (new RefundedPaymentHandler)($bot);
+    resolve(RefundedPaymentHandler::class)($bot);
 
     expect(Payment::query()->whereNotNull('refunded_at')->count())->toBe(0);
 });
