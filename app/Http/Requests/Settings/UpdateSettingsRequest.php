@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Settings;
 
+use App\Actions\ResolvePremiumStateAction;
+use App\Models\User;
 use App\Services\LocaleService;
 use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Exists;
-use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Validator;
 
 final class UpdateSettingsRequest extends FormRequest
 {
     /**
-     * @return array<string, array<int, ValidationRule|string|In|Exists>>
+     * @return array<string, array<int, object|string>>
      */
     public function rules(): array
     {
@@ -86,7 +85,13 @@ final class UpdateSettingsRequest extends FormRequest
     {
         return [
             function (Validator $validator): void {
-                if ($this->filled('aiDigestTime') && ! $this->user()?->hasPremium()) {
+                $user = $this->user();
+
+                if (! $this->filled('aiDigestTime') || ! $user instanceof User) {
+                    return;
+                }
+
+                if (! resolve(ResolvePremiumStateAction::class)->handle($user)->hasPremium) {
                     $validator->errors()->add('aiDigestTime', __('This feature requires a premium subscription.'));
                 }
             },

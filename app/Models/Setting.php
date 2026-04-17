@@ -24,7 +24,7 @@ final class Setting extends Model
 
     /**
      * Get trial period in days from settings.
-     * Cached per-request to avoid repeated DB queries from User::hasPremium().
+     * Cached per-request to avoid repeated DB queries from premium state resolution.
      */
     public static function trialPeriodDays(): int
     {

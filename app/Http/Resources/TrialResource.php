@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Data\PremiumState;
 use App\Models\Invoice;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Trial banner and premium modal data for a user.
  *
- * @property-read User $resource
+ * @property-read PremiumState $resource
  */
 final class TrialResource extends JsonResource
 {
@@ -33,10 +33,12 @@ final class TrialResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $shouldShowBanner = $this->resource->shouldShowBanner;
+
         return [
-            'shouldShowBanner' => $this->resource->shouldShowTrialBanner(),
-            'bannerText' => $this->resource->shouldShowTrialBanner()
-                ? __('app.trial_remaining', ['remaining' => $this->resource->trialRemaining()])
+            'shouldShowBanner' => $shouldShowBanner,
+            'bannerText' => $shouldShowBanner
+                ? __('app.trial_remaining', ['remaining' => $this->resource->trialRemaining])
                 : '',
             'invoiceLink' => Invoice::premiumLink(),
             'learnMore' => __('app.learn_more'),

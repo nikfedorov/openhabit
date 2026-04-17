@@ -22,7 +22,22 @@ it('sets trial_banner_dismissed_at to now', function (): void {
     ]);
 });
 
-it('is idempotent when banner already dismissed', function (): void {
+it('does not extend the hidden period when banner was dismissed less than a day ago', function (): void {
+    $dismissedAt = now()->subHours(12);
+
+    $user = User::factory()->create(['trial_banner_dismissed_at' => $dismissedAt]);
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/settings/trial-banner/dismiss')
+        ->assertNoContent();
+
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'trial_banner_dismissed_at' => $dismissedAt,
+    ]);
+});
+
+it('allows dismissing the banner again after one day has passed', function (): void {
     $dismissedAt = now()->subDay();
 
     $user = User::factory()->create(['trial_banner_dismissed_at' => $dismissedAt]);

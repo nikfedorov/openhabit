@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\AiTone;
+use App\Models\Setting;
 use App\Models\User;
 
 it('requires authentication', function (): void {
@@ -33,4 +34,19 @@ it('returns all user settings', function (): void {
         ->assertJsonPath('data.birthdate', '1990-05-20')
         ->assertJsonPath('data.aiDigestTime', '08:30')
         ->assertJsonPath('data.aiToneId', $tone->id);
+});
+
+it('returns premium and trial state in the settings payload', function (): void {
+    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
+    $user = User::factory()->create([
+        'subscription_expires_at' => null,
+        'trial_banner_dismissed_at' => null,
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/settings')
+        ->assertOk()
+        ->assertJsonPath('hasPremium', true)
+        ->assertJsonPath('data.trial.shouldShowBanner', true)
+        ->assertJsonPath('data.trial.learnMore', __('app.learn_more'));
 });

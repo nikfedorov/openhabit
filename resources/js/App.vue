@@ -6,9 +6,9 @@ import TabBar from '@/components/navigation/TabBar.vue';
 import PageLoader from '@/components/PageLoader.vue';
 import PremiumModal from '@/components/PremiumModal.vue';
 import TrialBanner from '@/components/TrialBanner.vue';
-import type { TrialData, UserSettings } from '@/types/api';
+import { useTrialUiState } from '@/composables/useTrialUiState';
+import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
-import { apiFetch } from '@/utils/api';
 
 const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
 
@@ -16,8 +16,14 @@ const route = useRoute();
 const router = useRouter();
 const navTranslations = ref<NavigationTranslations | null>(null);
 const pageReady = ref(false);
-const trialData = ref<TrialData | null>(null);
-const showPremiumModal = ref(false);
+const {
+    trialData,
+    showPremiumModal,
+    setTrialData,
+    openPremiumModal,
+    closePremiumModal,
+    dismissTrialBanner,
+} = useTrialUiState();
 
 router.beforeEach((to, from) => {
     if (to.name !== from.name) {
@@ -60,15 +66,15 @@ function updateSettings(settings: UserSettings) {
     applyLocale(settings.locale);
     applyTheme(settings.theme);
 
-    if (settings.trial) {
-        trialData.value = settings.trial;
-    }
+    setTrialData(settings.trial);
 }
 
-async function dismissTrialBanner() {
-    trialData.value = { ...trialData.value!, shouldShowBanner: false };
-
-    await apiFetch('/api/settings/trial-banner/dismiss', { method: 'POST' });
+async function handleTrialBannerDismiss() {
+    try {
+        await dismissTrialBanner();
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 /* Apply saved theme or fall back to system preference */
@@ -95,8 +101,8 @@ applyTheme(
             <TrialBanner
                 v-if="trialData"
                 :trial-data="trialData"
-                @dismiss="dismissTrialBanner"
-                @open-premium-modal="showPremiumModal = true"
+                @dismiss="handleTrialBannerDismiss"
+                @open-premium-modal="openPremiumModal"
             />
 
             <main id="main-content" tabindex="-1">
@@ -118,7 +124,7 @@ applyTheme(
             v-if="trialData"
             :show="showPremiumModal"
             :trial-data="trialData"
-            @close="showPremiumModal = false"
+            @close="closePremiumModal"
         />
     </div>
 </template>

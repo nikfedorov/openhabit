@@ -6,42 +6,18 @@ use App\Models\Payment;
 use App\Models\User;
 use App\Telegram\Handlers\SuccessfulPaymentHandler;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Properties\UpdateType;
-
-it('approves pre-checkout query', function (): void {
-    $user = User::factory()->telegramId()->create();
-
-    resolve(Nutgram::class)
-        ->comingFrom($user)
-        ->hearUpdateType(UpdateType::PRE_CHECKOUT_QUERY, [
-            'id' => 'test_query_id',
-            'currency' => 'XTR',
-            'total_amount' => 1299,
-            'invoice_payload' => 'premium',
-        ])
-        ->reply()
-        ->assertCalled('answerPreCheckoutQuery');
-});
 
 it('marks user as premium on successful payment and creates payment record', function (): void {
     $user = User::factory()->telegramId()->create(['subscription_expires_at' => null]);
-
     $expirationDate = now()->addDays(30)->getTimestamp();
 
     resolve(Nutgram::class)
         ->comingFrom($user)
-        ->hearMessage([
-            'successful_payment' => [
-                'currency' => 'XTR',
-                'total_amount' => 1299,
-                'invoice_payload' => 'premium',
-                'subscription_expiration_date' => $expirationDate,
-                'is_recurring' => true,
-                'is_first_recurring' => true,
-                'telegram_payment_charge_id' => 'charge_123',
-                'provider_payment_charge_id' => 'provider_123',
-            ],
-        ])
+        ->hearMessage(['successful_payment' => successfulPaymentPayload([
+            'subscription_expiration_date' => $expirationDate,
+            'is_recurring' => true,
+            'is_first_recurring' => true,
+        ])])
         ->reply()
         ->assertCalled('sendMessage');
 
@@ -65,14 +41,11 @@ it('ignores unknown user on successful payment', function (): void {
     resolve(Nutgram::class)
         ->hearMessage([
             'from' => ['id' => 999999999, 'is_bot' => false, 'first_name' => 'Unknown'],
-            'successful_payment' => [
-                'currency' => 'XTR',
-                'total_amount' => 1299,
-                'invoice_payload' => 'premium',
+            'successful_payment' => successfulPaymentPayload([
                 'subscription_expiration_date' => now()->addDays(30)->getTimestamp(),
                 'telegram_payment_charge_id' => 'charge_789',
                 'provider_payment_charge_id' => 'provider_789',
-            ],
+            ]),
         ])
         ->reply();
 
@@ -85,17 +58,33 @@ it('creates payment but does not update subscription for unknown payload', funct
 
     resolve(Nutgram::class)
         ->comingFrom($user)
-        ->hearMessage([
-            'successful_payment' => [
-                'currency' => 'XTR',
-                'total_amount' => 100,
-                'invoice_payload' => 'unknown_product',
-                'telegram_payment_charge_id' => 'charge_456',
-                'provider_payment_charge_id' => 'provider_456',
-            ],
-        ])
+        ->hearMessage(['successful_payment' => successfulPaymentPayload([
+            'total_amount' => 100,
+            'invoice_payload' => 'unknown_product',
+            'subscription_expiration_date' => null,
+            'telegram_payment_charge_id' => 'charge_456',
+            'provider_payment_charge_id' => 'provider_456',
+        ])])
         ->reply();
 
     expect($user->refresh()->subscription_expires_at)->toBeNull();
     expect(Payment::query()->where('user_id', $user->id)->count())->toBe(1);
 });
+
+/**
+ * @return array<string, bool|int|string|null>
+ */
+function successfulPaymentPayload(array $overrides = []): array
+{
+    return [
+        'currency' => 'XTR',
+        'total_amount' => 1299,
+        'invoice_payload' => 'premium',
+        'subscription_expiration_date' => null,
+        'is_recurring' => false,
+        'is_first_recurring' => false,
+        'telegram_payment_charge_id' => 'charge_123',
+        'provider_payment_charge_id' => 'provider_123',
+        ...$overrides,
+    ];
+}

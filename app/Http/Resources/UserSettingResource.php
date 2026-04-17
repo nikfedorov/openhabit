@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Actions\ResolvePremiumStateAction;
+use App\Data\PremiumState;
 use App\Enums\Theme;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,6 +20,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class UserSettingResource extends JsonResource
 {
+    public function __construct(mixed $resource, private ?PremiumState $premiumState = null)
+    {
+        parent::__construct($resource);
+    }
+
     /**
      * @return array{
      *     locale: string,
@@ -121,7 +128,12 @@ final class UserSettingResource extends JsonResource
              *     openInTelegramLabel: string,
              * }
              */
-            'trial' => new TrialResource($this->resource),
+            'trial' => new TrialResource($this->premiumState()),
         ];
+    }
+
+    private function premiumState(): PremiumState
+    {
+        return $this->premiumState ??= resolve(ResolvePremiumStateAction::class)->handle($this->resource);
     }
 }

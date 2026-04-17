@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Settings;
 
+use App\Actions\ResolvePremiumStateAction;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\Settings\AiToneResource;
 use App\Http\Resources\UserSettingResource;
@@ -23,9 +24,11 @@ final readonly class IndexController
     /**
      * Show the current user's settings along with available options.
      */
-    public function show(#[CurrentUser] User $user): UserSettingResource
+    public function show(#[CurrentUser] User $user, ResolvePremiumStateAction $resolvePremiumState): UserSettingResource
     {
-        return UserSettingResource::make($user)
+        $premiumState = $resolvePremiumState->handle($user);
+
+        return new UserSettingResource($user, $premiumState)
             ->additional([
                 /**
                  * Tabbar translations.
@@ -47,7 +50,7 @@ final readonly class IndexController
                 /**
                  * Whether the user has access to premium features.
                  */
-                'hasPremium' => $user->hasPremium(),
+                'hasPremium' => $premiumState->hasPremium,
 
                 /**
                  * Translations for the settings view.

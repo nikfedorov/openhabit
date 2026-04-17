@@ -7,7 +7,7 @@ defineProps<{
 
 const emit = defineEmits<{
     dismiss: [];
-    openPremiumModal: [];
+    'open-premium-modal': [];
 }>();
 </script>
 
@@ -40,7 +40,7 @@ const emit = defineEmits<{
                 <button
                     class="font-medium underline transition-colors hover:text-yellow-800 dark:hover:text-yellow-300"
                     data-testid="trial-banner-learn-more"
-                    @click="emit('openPremiumModal')"
+                    @click="emit('open-premium-modal')"
                 >
                     {{ trialData.learnMore }}
                 </button>

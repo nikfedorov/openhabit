@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { TrialData } from '@/types/api';
 
-defineProps<{
+const props = defineProps<{
     show: boolean;
     trialData: TrialData;
 }>();
@@ -14,7 +14,15 @@ const emit = defineEmits<{
 /** Whether the Telegram WebApp context is unavailable for payment. */
 const notInTelegram = ref(false);
 
-function upgrade(invoiceLink: string | null) {
+const premiumFeatures = computed(() => [
+    props.trialData.featureNotifications,
+    props.trialData.featureAiDigest,
+    props.trialData.featureExport,
+]);
+
+function upgrade() {
+    const invoiceLink = props.trialData.invoiceLink;
+
     if (!invoiceLink) {
         notInTelegram.value = true;
         return;
@@ -112,11 +120,7 @@ function upgrade(invoiceLink: string | null) {
                     <!-- Features list -->
                     <ul class="space-y-3" data-testid="premium-features-list">
                         <li
-                            v-for="feature in [
-                                trialData.featureNotifications,
-                                trialData.featureAiDigest,
-                                trialData.featureExport,
-                            ]"
+                            v-for="feature in premiumFeatures"
                             :key="feature"
                             class="flex items-start gap-3"
                         >
@@ -146,7 +150,7 @@ function upgrade(invoiceLink: string | null) {
                     <button
                         class="w-full rounded-xl bg-yellow-500 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-yellow-600"
                         data-testid="premium-modal-upgrade"
-                        @click="upgrade(trialData.invoiceLink)"
+                        @click="upgrade"
                     >
                         {{ trialData.upgradeLabel }}
                     </button>

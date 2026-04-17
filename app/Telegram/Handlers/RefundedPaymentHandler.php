@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Telegram\Handlers;
 
 use App\Models\Payment;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\DB;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Payment\RefundedPayment;
 
@@ -12,34 +14,48 @@ final class RefundedPaymentHandler
 {
     public function __invoke(Nutgram $bot): void
     {
-        $refundedPayment = $bot->message()?->refunded_payment;
+        $refundedPayment = $this->refundedPayment($bot);
 
         if (! $refundedPayment instanceof RefundedPayment) {
             return;
         }
 
-        $payment = Payment::query()
-            ->select(['id', 'user_id'])
-            ->where('telegram_payment_charge_id', $refundedPayment->telegram_payment_charge_id)
-            ->first();
+        $payment = $this->findPaymentByChargeId($refundedPayment->telegram_payment_charge_id);
 
-        if ($payment === null) {
+        if (! $payment instanceof Payment) {
             return;
         }
 
-        $payment->update(['refunded_at' => now()]);
+        DB::transaction(function () use ($payment): void {
+            $payment->update(['refunded_at' => now()]);
 
-        $payment->user()->update([
-            'subscription_expires_at' => $this->latestActiveSubscriptionExpiration($payment),
-        ]);
+            $payment->user()->update([
+                'subscription_expires_at' => $this->latestActiveSubscriptionExpirationForUser($payment->user_id),
+            ]);
+        });
     }
 
-    private function latestActiveSubscriptionExpiration(Payment $payment): mixed
+    private function refundedPayment(Nutgram $bot): ?RefundedPayment
+    {
+        $payment = $bot->message()?->refunded_payment;
+
+        return $payment instanceof RefundedPayment ? $payment : null;
+    }
+
+    private function findPaymentByChargeId(string $chargeId): ?Payment
+    {
+        return Payment::query()
+            ->select(['id', 'user_id'])
+            ->where('telegram_payment_charge_id', $chargeId)
+            ->first();
+    }
+
+    private function latestActiveSubscriptionExpirationForUser(string $userId): ?CarbonInterface
     {
         /** @var Payment|null $latestPayment */
         $latestPayment = Payment::query()
-            ->select(['id', 'subscription_expiration_date'])
-            ->where('user_id', $payment->user_id)
+            ->select(['subscription_expiration_date'])
+            ->where('user_id', $userId)
             ->whereNull('refunded_at')
             ->whereNotNull('subscription_expiration_date')
             ->latest('subscription_expiration_date')

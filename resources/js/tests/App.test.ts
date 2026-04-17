@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import App from '@/App.vue';
 import PremiumModal from '@/components/PremiumModal.vue';
@@ -65,6 +65,50 @@ async function mountApp(initialRoute = '/track') {
     return { wrapper, router };
 }
 
+function trackComponent(
+    wrapper: Awaited<ReturnType<typeof mountApp>>['wrapper'],
+) {
+    return wrapper.findComponent({ name: 'Track' });
+}
+
+async function emitTrackSettings(
+    wrapper: Awaited<ReturnType<typeof mountApp>>['wrapper'],
+    settings: Record<string, unknown>,
+) {
+    trackComponent(wrapper).vm.$emit('settings', settings);
+    await wrapper.vm.$nextTick();
+}
+
+async function showTrialBanner(
+    wrapper: Awaited<ReturnType<typeof mountApp>>['wrapper'],
+    overrides: Record<string, unknown> = {},
+) {
+    await emitTrackSettings(wrapper, {
+        locale: 'en',
+        theme: 'system',
+        trial: {
+            ...defaultTrial,
+            shouldShowBanner: true,
+            ...overrides,
+        },
+    });
+}
+
+beforeEach(() => {
+    mockApiFetch.mockReset();
+    localStorage.clear();
+    document.documentElement.className = '';
+    document.documentElement.dir = 'ltr';
+    document.documentElement.lang = 'en';
+    document.documentElement.style.backgroundColor = '';
+});
+
+afterEach(() => {
+    document.body.innerHTML = '';
+    delete (window as unknown as Record<string, unknown>).Telegram;
+    vi.useRealTimers();
+});
+
 describe('App', () => {
     it('renders Track by default', async () => {
         const { wrapper } = await mountApp();
@@ -91,8 +135,7 @@ describe('App', () => {
 
     it('updates tab bar labels when navigation-translations is emitted', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('navigation-translations', {
+        trackComponent(wrapper).vm.$emit('navigation-translations', {
             track: 'Трекер',
             view: 'Обзор',
         });
@@ -218,9 +261,7 @@ describe('App', () => {
 
     it('sets document dir to rtl when settings emit ar locale', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'ar', theme: 'system' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'ar', theme: 'system' });
         expect(document.documentElement.dir).toBe('rtl');
         expect(document.documentElement.lang).toBe('ar');
     });
@@ -228,9 +269,7 @@ describe('App', () => {
     it('sets document dir to ltr when settings emit en locale', async () => {
         document.documentElement.dir = 'rtl';
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'system' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'en', theme: 'system' });
         expect(document.documentElement.dir).toBe('ltr');
         expect(document.documentElement.lang).toBe('en');
     });
@@ -277,26 +316,20 @@ describe('App', () => {
 
     it('applies dark class when settings emit dark theme', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'dark' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'en', theme: 'dark' });
         expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
 
     it('removes dark class when settings emit light theme', async () => {
         document.documentElement.classList.add('dark');
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'light' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'en', theme: 'light' });
         expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
 
     it('respects system preference when settings emit system theme', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'system' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'en', theme: 'system' });
         // matchMedia mock returns matches: false, so no dark class
         expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
@@ -318,29 +351,15 @@ describe('App', () => {
         });
 
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', { locale: 'en', theme: 'dark' });
-        await wrapper.vm.$nextTick();
+        await emitTrackSettings(wrapper, { locale: 'en', theme: 'dark' });
 
         expect(setHeaderColor).toHaveBeenCalledWith('#171717');
         expect(setBackgroundColor).toHaveBeenCalledWith('#171717');
-
-        delete (window as unknown as Record<string, unknown>).Telegram;
     });
 
     it('shows trial banner when settings emit shouldShowBanner true', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', {
-            locale: 'en',
-            theme: 'system',
-            trial: {
-                ...defaultTrial,
-                shouldShowBanner: true,
-                bannerText: 'Free trial: 3 days',
-            },
-        });
-        await wrapper.vm.$nextTick();
+        await showTrialBanner(wrapper, { bannerText: 'Free trial: 3 days' });
         expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
             true,
         );
@@ -349,13 +368,11 @@ describe('App', () => {
 
     it('does not show trial banner when shouldShowBanner is false', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', {
+        await emitTrackSettings(wrapper, {
             locale: 'en',
             theme: 'system',
             trial: { ...defaultTrial, shouldShowBanner: false },
         });
-        await wrapper.vm.$nextTick();
         expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
             false,
         );
@@ -372,13 +389,7 @@ describe('App', () => {
         mockApiFetch.mockResolvedValueOnce(undefined);
 
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', {
-            locale: 'en',
-            theme: 'system',
-            trial: { ...defaultTrial, shouldShowBanner: true },
-        });
-        await wrapper.vm.$nextTick();
+        await showTrialBanner(wrapper);
 
         expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
             true,
@@ -398,15 +409,40 @@ describe('App', () => {
         );
     });
 
+    it('ignores dismiss clicks when the trial banner is not visible', async () => {
+        const { wrapper } = await mountApp();
+
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+        expect(mockApiFetch).not.toHaveBeenCalled();
+    });
+
+    it('restores the trial banner when dismiss API fails', async () => {
+        const consoleError = vi
+            .spyOn(console, 'error')
+            .mockImplementation(() => undefined);
+
+        mockApiFetch.mockRejectedValueOnce(new Error('network error'));
+
+        const { wrapper } = await mountApp();
+        await showTrialBanner(wrapper, { bannerText: 'Free trial: 3 days' });
+
+        await wrapper
+            .find('[data-testid="trial-banner-dismiss"]')
+            .trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            true,
+        );
+
+        consoleError.mockRestore();
+    });
+
     it('opens premium modal when learn more is clicked on trial banner', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', {
-            locale: 'en',
-            theme: 'system',
-            trial: { ...defaultTrial, shouldShowBanner: true },
-        });
-        await wrapper.vm.$nextTick();
+        await showTrialBanner(wrapper);
 
         await wrapper
             .find('[data-testid="trial-banner-learn-more"]')
@@ -420,13 +456,7 @@ describe('App', () => {
 
     it('closes premium modal when close event is emitted', async () => {
         const { wrapper } = await mountApp();
-        const trackComponent = wrapper.findComponent({ name: 'Track' });
-        trackComponent.vm.$emit('settings', {
-            locale: 'en',
-            theme: 'system',
-            trial: { ...defaultTrial, shouldShowBanner: true },
-        });
-        await wrapper.vm.$nextTick();
+        await showTrialBanner(wrapper);
 
         // Open premium modal
         await wrapper

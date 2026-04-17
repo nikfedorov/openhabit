@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Actions\ResolvePremiumStateAction;
 use App\Jobs\SendAiDigestJob;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -17,9 +18,9 @@ final class SendAiDigestsCommand extends Command
 
     protected $description = 'Generate and send AI daily digests via Telegram';
 
-    public function handle(): int
+    public function handle(ResolvePremiumStateAction $resolvePremiumState): int
     {
-        $users = $this->getEligibleUsers();
+        $users = $this->getEligibleUsers($resolvePremiumState);
 
         foreach ($users as $user) {
             dispatch(new SendAiDigestJob($user->id));
@@ -40,7 +41,7 @@ final class SendAiDigestsCommand extends Command
      *
      * @return Collection<int, User>
      */
-    private function getEligibleUsers(): Collection
+    private function getEligibleUsers(ResolvePremiumStateAction $resolvePremiumState): Collection
     {
         $users = User::query()
             ->select(['id', 'timezone', 'ai_digest_time', 'subscription_expires_at', 'created_at'])
@@ -49,8 +50,8 @@ final class SendAiDigestsCommand extends Command
             ->with('lastDigest:ai_digests.id,ai_digests.user_id,ai_digests.created_at')
             ->get();
 
-        return $users->filter(function (User $user): bool {
-            if (! $user->hasPremium()) {
+        return $users->filter(function (User $user) use ($resolvePremiumState): bool {
+            if (! $resolvePremiumState->handle($user)->hasPremium) {
                 return false;
             }
 

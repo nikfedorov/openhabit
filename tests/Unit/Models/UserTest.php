@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 use App\Models\AiDigest;
 use App\Models\AiLog;
 use App\Models\AiTone;
@@ -10,7 +9,6 @@ use App\Models\DailyNote;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\Payment;
-use App\Models\Setting;
 use App\Models\Stat;
 use App\Models\User;
 use App\Models\UserMemory;
@@ -177,80 +175,6 @@ it('has many payments', function (): void {
 });
 
 // ─── Premium Logic ──────────────────────────────────────────
-
-it('returns true with active subscription for hasPremium', function (): void {
-    $user = User::factory()->premium()->create();
-
-    expect($user->hasPremium())->toBeTrue();
-});
-
-it('returns true during trial period for hasPremium', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->create(['subscription_expires_at' => null]);
-
-    expect($user->hasPremium())->toBeTrue();
-});
-
-it('returns false when trial expired and no subscription for hasPremium', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->trialExpired()->create(['subscription_expires_at' => null]);
-
-    expect($user->hasPremium())->toBeFalse();
-});
-
-it('returns true for isTrialing during trial without subscription', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->create(['subscription_expires_at' => null]);
-
-    expect($user->isTrialing())->toBeTrue();
-});
-
-it('returns false for isTrialing with active subscription', function (): void {
-    $user = User::factory()->premium()->create();
-
-    expect($user->isTrialing())->toBeFalse();
-});
-
-it('returns true for shouldShowTrialBanner during trial without dismissal', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->create([
-        'subscription_expires_at' => null,
-        'trial_banner_dismissed_at' => null,
-    ]);
-
-    expect($user->shouldShowTrialBanner())->toBeTrue();
-});
-
-it('returns false for shouldShowTrialBanner when dismissed', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->create([
-        'subscription_expires_at' => null,
-        'trial_banner_dismissed_at' => now(),
-    ]);
-
-    expect($user->shouldShowTrialBanner())->toBeFalse();
-});
-
-it('returns human readable string for trialRemaining during trial', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->create(['subscription_expires_at' => null]);
-
-    expect($user->trialRemaining())->toBeString()->not->toBeEmpty();
-});
-
-it('returns null for trialRemaining when trial expired', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
-    $user = User::factory()->trialExpired()->create();
-
-    expect($user->trialRemaining())->toBeNull();
-});
-
-it('returns null for trialRemaining when trial days is zero', function (): void {
-    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
-    $user = User::factory()->create();
-
-    expect($user->trialRemaining())->toBeNull();
-});
 
 // ─── Scopes ─────────────────────────────────────────────────
 

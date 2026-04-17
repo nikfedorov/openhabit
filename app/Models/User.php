@@ -187,50 +187,6 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
         return $this->hasMany(Payment::class);
     }
 
-    // ─── Premium Logic ──────────────────────────────────────────
-
-    /**
-     * Whether the user currently has premium access (subscription or trial).
-     */
-    public function hasPremium(): bool
-    {
-        if ($this->hasActiveSubscription()) {
-            return true;
-        }
-
-        return $this->isWithinTrialPeriod();
-    }
-
-    /**
-     * Whether the user is currently on trial (no subscription, within trial window).
-     */
-    public function isTrialing(): bool
-    {
-        return ! $this->hasActiveSubscription() && $this->isWithinTrialPeriod();
-    }
-
-    /**
-     * Whether a trial banner should be shown.
-     */
-    public function shouldShowTrialBanner(): bool
-    {
-        return $this->isTrialing() && $this->trial_banner_dismissed_at === null;
-    }
-
-    /**
-     * Remaining trial time as a human-readable string, or null.
-     */
-    public function trialRemaining(): ?string
-    {
-        $expires = $this->trialExpiresAt();
-
-        if (! $expires instanceof CarbonInterface || $expires->isPast()) {
-            return null;
-        }
-
-        return $expires->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2);
-    }
-
     /**
      * @return array<string, string>
      */
@@ -286,31 +242,5 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
             $q->whereNull('subscription_expires_at')
                 ->orWhere('subscription_expires_at', '<', now());
         });
-    }
-
-    // ─── Private Helpers ────────────────────────────────────────
-
-    private function trialExpiresAt(): ?CarbonInterface
-    {
-        $trialDays = Setting::trialPeriodDays();
-
-        if ($trialDays <= 0) {
-            return null;
-        }
-
-        return $this->created_at->addDays($trialDays);
-    }
-
-    private function hasActiveSubscription(): bool
-    {
-        return $this->subscription_expires_at !== null
-            && $this->subscription_expires_at->isFuture();
-    }
-
-    private function isWithinTrialPeriod(): bool
-    {
-        $expires = $this->trialExpiresAt();
-
-        return $expires instanceof CarbonInterface && $expires->isFuture();
     }
 }

@@ -935,7 +935,7 @@
                                             }
                                         },
                                         "hasPremium": {
-                                            "type": "boolean",
+                                            "type": "string",
                                             "description": "Whether the user has access to premium features."
                                         },
                                         "translations": {
