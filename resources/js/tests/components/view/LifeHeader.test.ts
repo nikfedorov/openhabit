@@ -22,4 +22,15 @@ describe('LifeHeader', () => {
         expect(wrapper.text()).toContain('years left');
         expect(wrapper.text()).toContain('weeks lived');
     });
+
+    it('shows infinity symbol when yearsRemaining is negative', () => {
+        const wrapper = mount(LifeHeader, {
+            props: {
+                lifeStats: { ...defaultLifeStats, yearsRemaining: -5 },
+                translations: defaultLifeTranslations,
+            },
+        });
+        expect(wrapper.text()).toContain('∞');
+        expect(wrapper.text()).not.toContain('-5');
+    });
 });

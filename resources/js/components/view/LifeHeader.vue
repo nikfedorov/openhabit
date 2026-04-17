@@ -28,7 +28,7 @@ defineProps<{
             </span>
             <div class="flex-1 text-center">
                 <div class="text-lg font-bold text-neutral-900 dark:text-white">
-                    {{ lifeStats.yearsRemaining }}
+                    {{ lifeStats.yearsRemaining < 0 ? '∞' : lifeStats.yearsRemaining }}
                 </div>
                 <div class="text-xs text-neutral-500 dark:text-neutral-400">
                     {{ translations.years_left }}
