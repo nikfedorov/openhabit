@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     close: [];
+    'payment-success': [];
 }>();
 
 /** Whether the Telegram WebApp context is unavailable for payment. */
@@ -31,7 +32,11 @@ function upgrade() {
     const tg = window.Telegram?.WebApp;
 
     if (tg) {
-        tg.openInvoice(invoiceLink);
+        tg.openInvoice(invoiceLink, (status: string) => {
+            if (status === 'paid') {
+                emit('payment-success');
+            }
+        });
     } else {
         window.open(invoiceLink, '_blank');
     }

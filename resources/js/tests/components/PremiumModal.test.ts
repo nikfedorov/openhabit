@@ -104,12 +104,69 @@ describe('PremiumModal', () => {
         upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await nextTick();
 
-        expect(openInvoice).toHaveBeenCalledWith('https://t.me/invoice');
+        expect(openInvoice).toHaveBeenCalledWith(
+            'https://t.me/invoice',
+            expect.any(Function),
+        );
         expect(
             document.body.querySelector(
                 '[data-testid="premium-modal-not-in-telegram"]',
             ),
         ).toBeNull();
+    });
+
+    it('emits payment-success when Telegram reports a paid invoice', async () => {
+        const openInvoice = vi.fn();
+
+        Object.defineProperty(window, 'Telegram', {
+            writable: true,
+            configurable: true,
+            value: { WebApp: { openInvoice } },
+        });
+
+        const wrapper = mountPremiumModal();
+
+        const upgradeBtn = document.body.querySelector(
+            '[data-testid="premium-modal-upgrade"]',
+        ) as HTMLElement;
+        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        const callback = openInvoice.mock.calls[0]?.[1] as
+            | ((status: string) => void)
+            | undefined;
+
+        expect(callback).toBeTypeOf('function');
+
+        callback?.('paid');
+        await nextTick();
+
+        expect(wrapper.emitted('payment-success')).toHaveLength(1);
+    });
+
+    it('does not emit payment-success when Telegram reports a non-paid status', async () => {
+        const openInvoice = vi.fn();
+
+        Object.defineProperty(window, 'Telegram', {
+            writable: true,
+            configurable: true,
+            value: { WebApp: { openInvoice } },
+        });
+
+        const wrapper = mountPremiumModal();
+
+        const upgradeBtn = document.body.querySelector(
+            '[data-testid="premium-modal-upgrade"]',
+        ) as HTMLElement;
+        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        const callback = openInvoice.mock.calls[0]?.[1] as
+            | ((status: string) => void)
+            | undefined;
+
+        callback?.('cancelled');
+        await nextTick();
+
+        expect(wrapper.emitted('payment-success')).toBeUndefined();
     });
 
     it('opens the invoice in a new tab when Telegram WebApp is unavailable', async () => {

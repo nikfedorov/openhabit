@@ -10,6 +10,7 @@
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.2.2",
+        "@types/canvas-confetti": "^1.9.0",
         "@types/node": "^25.6.0",
         "@vitejs/plugin-vue": "^6.0.5",
         "@vitest/coverage-v8": "^4.1.4",
@@ -32,6 +33,7 @@
     },
     "dependencies": {
         "@vueuse/core": "^14.2.1",
+        "canvas-confetti": "^1.9.4",
         "vue": "^3.5.32",
         "vue-draggable-plus": "^0.6.1",
         "vue-router": "^5.0.4"

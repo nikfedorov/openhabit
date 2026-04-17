@@ -14,6 +14,10 @@ vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
 }));
 
+vi.mock('canvas-confetti', () => ({
+    default: vi.fn(),
+}));
+
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
@@ -473,5 +477,95 @@ describe('App', () => {
         premiumModal.vm.$emit('close');
         await wrapper.vm.$nextTick();
         expect(premiumModal.props('show')).toBe(false);
+    });
+
+    it('shows confetti and hides the trial banner after successful payment', async () => {
+        const { wrapper } = await mountApp();
+        await showTrialBanner(wrapper);
+
+        await wrapper
+            .find('[data-testid="trial-banner-learn-more"]')
+            .trigger('click');
+        await wrapper.vm.$nextTick();
+
+        vi.useFakeTimers();
+
+        const premiumModal = wrapper.findComponent(PremiumModal);
+        premiumModal.vm.$emit('payment-success');
+        await wrapper.vm.$nextTick();
+
+        expect(premiumModal.props('show')).toBe(false);
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+        expect(wrapper.find('[data-testid="payment-confetti"]').exists()).toBe(
+            true,
+        );
+
+        // confetti still visible just before the auto-dismiss timeout
+        vi.advanceTimersByTime(2999);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.find('[data-testid="payment-confetti"]').exists()).toBe(
+            true,
+        );
+
+        // confetti dismissed once the 3 s timeout fires
+        vi.advanceTimersByTime(1);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.find('[data-testid="payment-confetti"]').exists()).toBe(
+            false,
+        );
+    });
+
+    it('shows confetti after payment even when banner is already hidden', async () => {
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            trial: { ...defaultTrial, shouldShowBanner: false },
+        });
+
+        // Open premium modal programmatically via the composable
+        // PremiumModal is rendered (trialData is set) but banner is hidden
+        const premiumModal = wrapper.findComponent(PremiumModal);
+        premiumModal.vm.$emit('payment-success');
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.find('[data-testid="payment-confetti"]').exists()).toBe(
+            true,
+        );
+    });
+
+    it('skips confetti when reduced motion is enabled after successful payment', async () => {
+        vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
+            matches: query === '(prefers-reduced-motion: reduce)',
+            media: query,
+            onchange: null,
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            dispatchEvent: vi.fn(),
+        }));
+
+        const { wrapper } = await mountApp();
+        await showTrialBanner(wrapper);
+
+        await wrapper
+            .find('[data-testid="trial-banner-learn-more"]')
+            .trigger('click');
+        await wrapper.vm.$nextTick();
+
+        const premiumModal = wrapper.findComponent(PremiumModal);
+        premiumModal.vm.$emit('payment-success');
+        await wrapper.vm.$nextTick();
+
+        expect(premiumModal.props('show')).toBe(false);
+        expect(wrapper.find('[data-testid="trial-banner"]').exists()).toBe(
+            false,
+        );
+        expect(wrapper.find('[data-testid="payment-confetti"]').exists()).toBe(
+            false,
+        );
     });
 });

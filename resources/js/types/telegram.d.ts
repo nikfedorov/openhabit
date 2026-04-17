@@ -14,6 +14,9 @@ interface TelegramWebApp {
     /** Non-empty when opened inside Telegram. */
     initData: string;
     isVersionAtLeast(version: string): boolean;
+    openInvoice(url: string, callback?: (status: string) => void): void;
+    setHeaderColor?(color: string): void;
+    setBackgroundColor?(color: string): void;
     BackButton: TelegramBackButton;
 }
 

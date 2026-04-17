@@ -4,11 +4,13 @@ import { useRoute, useRouter } from 'vue-router';
 import RouteLoadingBar from '@/components/navigation/RouteLoadingBar.vue';
 import TabBar from '@/components/navigation/TabBar.vue';
 import PageLoader from '@/components/PageLoader.vue';
+import PaymentSuccessConfetti from '@/components/PaymentSuccessConfetti.vue';
 import PremiumModal from '@/components/PremiumModal.vue';
 import TrialBanner from '@/components/TrialBanner.vue';
 import { useTrialUiState } from '@/composables/useTrialUiState';
 import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
+import { prefersReducedMotion } from '@/utils/accessibility';
 
 const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
 
@@ -16,6 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const navTranslations = ref<NavigationTranslations | null>(null);
 const pageReady = ref(false);
+const showPaymentConfetti = ref(false);
 const {
     trialData,
     showPremiumModal,
@@ -77,6 +80,27 @@ async function handleTrialBannerDismiss() {
     }
 }
 
+function handlePaymentSuccess() {
+    closePremiumModal();
+
+    if (trialData.value && trialData.value.shouldShowBanner) {
+        setTrialData({
+            ...trialData.value,
+            shouldShowBanner: false,
+        });
+    }
+
+    if (prefersReducedMotion()) {
+        return;
+    }
+
+    showPaymentConfetti.value = true;
+}
+
+function handlePaymentConfettiComplete() {
+    showPaymentConfetti.value = false;
+}
+
 /* Apply saved theme or fall back to system preference */
 applyTheme(
     (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system',
@@ -120,11 +144,17 @@ applyTheme(
             </main>
         </div>
 
+        <PaymentSuccessConfetti
+            :show="showPaymentConfetti"
+            @complete="handlePaymentConfettiComplete"
+        />
+
         <PremiumModal
             v-if="trialData"
             :show="showPremiumModal"
             :trial-data="trialData"
             @close="closePremiumModal"
+            @payment-success="handlePaymentSuccess"
         />
     </div>
 </template>

@@ -174,6 +174,35 @@
 }
 
 /*
+ * Trial banner — collapse/expand matching the collapse-btn pattern.
+ *
+ * Uses max-height + overflow:hidden for reliable smooth animation
+ * across all WebView engines.
+ */
+.trial-banner-enter-active,
+.trial-banner-leave-active {
+    overflow: hidden;
+    transition:
+        max-height 0.25s ease-in-out,
+        margin-bottom 0.25s ease-in-out,
+        opacity 0.25s ease-in-out;
+}
+
+.trial-banner-enter-from,
+.trial-banner-leave-to {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.trial-banner-enter-to,
+.trial-banner-leave-from {
+    max-height: 5rem;
+    opacity: 1;
+    margin-bottom: 1rem;
+}
+
+/*
  * Life grid cell entrance animation.
  * Each cell fades in and scales up from a smaller size.
  * Apply with `animation-delay` inline style for stagger effect.
