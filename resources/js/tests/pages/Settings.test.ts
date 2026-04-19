@@ -1,7 +1,8 @@
 import { flushPromises } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     defaultAiTones,
+    defaultSettingsTranslations,
     makeSettingsResponse,
     mountSettings,
 } from '@/tests/helpers/settings';
@@ -15,6 +16,7 @@ vi.mock('@/utils/api', () => ({
 }));
 
 const mockReload = vi.fn();
+const mockWindowOpen = vi.fn();
 
 Object.defineProperty(window, 'location', {
     value: { reload: mockReload },
@@ -24,6 +26,12 @@ Object.defineProperty(window, 'location', {
 beforeEach(() => {
     mockApiFetch.mockReset();
     mockReload.mockReset();
+    mockWindowOpen.mockReset();
+    vi.stubGlobal('open', mockWindowOpen);
+});
+
+afterEach(() => {
+    vi.unstubAllGlobals();
 });
 
 // ─── Loading ─────────────────────────────────────────────────
@@ -831,5 +839,84 @@ describe('Settings - AI Digest', () => {
             { aiTones: [] },
         );
         expect(wrapper.text()).not.toContain('AI tone');
+    });
+});
+
+// ─── Data Export ─────────────────────────────────────────────
+
+describe('Data Export', () => {
+    it('renders export section with correct text', async () => {
+        const wrapper = await mountSettings(mockApiFetch);
+
+        expect(wrapper.text()).toContain(defaultSettingsTranslations.data);
+        expect(wrapper.text()).toContain(
+            defaultSettingsTranslations.export_data,
+        );
+        expect(wrapper.text()).toContain(defaultSettingsTranslations.export);
+    });
+
+    it('opens premium modal when non-premium user clicks export', async () => {
+        const wrapper = await mountSettings(mockApiFetch);
+
+        const exportBtn = wrapper
+            .findAll('button')
+            .find((b) =>
+                b.text().includes(defaultSettingsTranslations.export),
+            )!;
+        await exportBtn.trigger('click');
+        await flushPromises();
+
+        expect(wrapper.emitted('open-premium-modal')).toHaveLength(1);
+        expect(mockApiFetch).toHaveBeenCalledTimes(1); // only initial load
+    });
+
+    it('calls export API and opens download URL for premium user', async () => {
+        const downloadUrl = 'https://example.com/export/test.zip';
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {},
+            { hasPremium: true },
+        );
+
+        mockApiFetch.mockResolvedValueOnce({ url: downloadUrl });
+
+        const exportBtn = wrapper
+            .findAll('button')
+            .find((b) =>
+                b.text().includes(defaultSettingsTranslations.export),
+            )!;
+        await exportBtn.trigger('click');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings/export',
+            expect.objectContaining({ method: 'POST' }),
+        );
+        expect(mockWindowOpen).toHaveBeenCalledWith(downloadUrl, '_blank');
+    });
+
+    it('uses Telegram openLink when available', async () => {
+        const mockOpenLink = vi.fn();
+        vi.stubGlobal('Telegram', { WebApp: { openLink: mockOpenLink } });
+
+        const downloadUrl = 'https://example.com/export/tg.zip';
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {},
+            { hasPremium: true },
+        );
+
+        mockApiFetch.mockResolvedValueOnce({ url: downloadUrl });
+
+        const exportBtn = wrapper
+            .findAll('button')
+            .find((b) =>
+                b.text().includes(defaultSettingsTranslations.export),
+            )!;
+        await exportBtn.trigger('click');
+        await flushPromises();
+
+        expect(mockOpenLink).toHaveBeenCalledWith(downloadUrl);
+        expect(mockWindowOpen).not.toHaveBeenCalled();
     });
 });

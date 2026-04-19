@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'When to send the digest',
     'ai_tone' => 'AI tone',
     'tone_of_the_daily_summary' => 'Tone of the daily summary',
+    'data' => 'Data',
+    'export_data' => 'Export data',
+    'export_data_desc' => 'Download all your data as CSV files',
+    'export' => 'Export',
+    'exporting' => 'Exporting...',
 ];

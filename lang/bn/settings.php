@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'ডাইজেস্ট পাঠানোর সময়',
     'ai_tone' => 'এআই টোন',
     'tone_of_the_daily_summary' => 'দৈনিক সারাংশের টোন',
+    'data' => 'ডেটা',
+    'export_data' => 'ডেটা রপ্তানি করুন',
+    'export_data_desc' => 'CSV ফাইল হিসাবে সব ডেটা ডাউনলোড করুন',
+    'export' => 'রপ্তানি',
+    'exporting' => 'রপ্তানি হচ্ছে...',
 ];

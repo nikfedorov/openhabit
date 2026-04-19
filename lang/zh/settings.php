@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => '何时发送摘要',
     'ai_tone' => 'AI 语气',
     'tone_of_the_daily_summary' => '每日总结的语气',
+    'data' => '数据',
+    'export_data' => '导出数据',
+    'export_data_desc' => '将所有数据下载为CSV文件',
+    'export' => '导出',
+    'exporting' => '导出中...',
 ];

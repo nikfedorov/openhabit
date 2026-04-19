@@ -110,6 +110,7 @@ const KNOWN_PATHS = new Set([
     '/view/life',
     '/settings',
     '/settings/trial-banner/dismiss',
+    '/settings/export',
 ]);
 
 // ─── API Contract Tests ─────────────────────────────────────────

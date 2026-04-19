@@ -15,3 +15,6 @@ Schedule::command('app:clean-story-images')->hourly();
 
 // Check for expired trials and subscriptions every hour
 Schedule::command('app:check-premium-expirations')->hourly();
+
+// Clean up old export files daily
+Schedule::command('app:clean-export-files')->daily();

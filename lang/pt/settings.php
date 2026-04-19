@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'Quando enviar o resumo',
     'ai_tone' => 'Tom IA',
     'tone_of_the_daily_summary' => 'Tom do resumo diário',
+    'data' => 'Dados',
+    'export_data' => 'Exportar dados',
+    'export_data_desc' => 'Baixar todos os dados como arquivos CSV',
+    'export' => 'Exportar',
+    'exporting' => 'Exportando...',
 ];

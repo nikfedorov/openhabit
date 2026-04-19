@@ -28,4 +28,9 @@ export type SettingsTranslations = {
     when_to_send_the_digest: string;
     ai_tone: string;
     tone_of_the_daily_summary: string;
+    data: string;
+    export_data: string;
+    export_data_desc: string;
+    export: string;
+    exporting: string;
 };

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Settings;
 
-use App\Actions\ResolvePremiumStateAction;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -19,11 +18,9 @@ final readonly class DismissTrialBannerController
     /**
      * Record that the user has dismissed the trial banner.
      */
-    public function store(#[CurrentUser] User $user, ResolvePremiumStateAction $resolvePremiumState): Response
+    public function store(#[CurrentUser] User $user): Response
     {
-        if ($resolvePremiumState->handle($user)->shouldShowBanner) {
-            $user->update(['trial_banner_dismissed_at' => now()]);
-        }
+        $user->update(['trial_banner_dismissed_at' => now()]);
 
         return response()->noContent();
     }

@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'डाइजेस्ट कब भेजें',
     'ai_tone' => 'AI टोन',
     'tone_of_the_daily_summary' => 'दैनिक सारांश का टोन',
+    'data' => 'डेटा',
+    'export_data' => 'डेटा निर्यात करें',
+    'export_data_desc' => 'सभी डेटा CSV फ़ाइलों के रूप में डाउनलोड करें',
+    'export' => 'निर्यात',
+    'exporting' => 'निर्यात हो रहा है...',
 ];

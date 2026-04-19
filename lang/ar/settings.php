@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'وقت إرسال الملخص',
     'ai_tone' => 'نبرة الذكاء الاصطناعي',
     'tone_of_the_daily_summary' => 'نبرة الملخص اليومي',
+    'data' => 'البيانات',
+    'export_data' => 'تصدير البيانات',
+    'export_data_desc' => 'تحميل جميع البيانات كملفات CSV',
+    'export' => 'تصدير',
+    'exporting' => 'جارٍ التصدير...',
 ];

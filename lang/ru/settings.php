@@ -32,4 +32,9 @@ return [
     'when_to_send_the_digest' => 'Когда отправлять дайджест',
     'ai_tone' => 'Тон ИИ',
     'tone_of_the_daily_summary' => 'Тон ежедневной сводки',
+    'data' => 'Данные',
+    'export_data' => 'Экспорт данных',
+    'export_data_desc' => 'Скачать все данные в формате CSV',
+    'export' => 'Экспорт',
+    'exporting' => 'Экспорт...',
 ];

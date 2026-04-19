@@ -12,6 +12,7 @@ use App\Http\Controllers\Edit\TemplateController;
 use App\Http\Controllers\Edit\ToggleController as EditToggleController;
 use App\Http\Controllers\Edit\ToggleFranklinController;
 use App\Http\Controllers\Settings\DismissTrialBannerController;
+use App\Http\Controllers\Settings\ExportController;
 use App\Http\Controllers\Settings\IndexController as SettingsIndexController;
 use App\Http\Controllers\Settings\UpdateController as SettingsUpdateController;
 use App\Http\Controllers\Track\IndexController;
@@ -46,4 +47,5 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/settings', [SettingsIndexController::class, 'show'])->name('api.settings');
     Route::patch('/settings', [SettingsUpdateController::class, 'update'])->name('api.settings.update');
     Route::post('/settings/trial-banner/dismiss', [DismissTrialBannerController::class, 'store'])->name('api.settings.trial-banner.dismiss');
+    Route::post('/settings/export', [ExportController::class, 'store'])->name('api.settings.export');
 });
