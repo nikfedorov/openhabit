@@ -77,6 +77,37 @@ test('parseResponse extracts digest and categorized memory updates from JSON', f
     ]);
 });
 
+test('parseResponse handles array-of-objects memory_updates format', function (): void {
+    $service = new AiPromptService();
+
+    // Array-of-objects format from AI
+    $json = json_encode([
+        'digest' => 'Good day!',
+        'memory_updates' => [
+            ['category' => 'successes', 'content' => 'Completed all habits.'],
+            ['category' => 'challenges', 'content' => 'Struggled with early wake-up.'],
+        ],
+    ], JSON_THROW_ON_ERROR);
+    $parsed = $service->parseResponse($json);
+    expect($parsed['digest'])->toBe('Good day!')
+        ->and($parsed['memory_updates'])->toBe([
+            'successes' => 'Completed all habits.',
+            'challenges' => 'Struggled with early wake-up.',
+        ]);
+
+    // Invalid categories in array-of-objects are filtered
+    $json = json_encode([
+        'digest' => 'Test.',
+        'memory_updates' => [
+            ['category' => 'goals', 'content' => 'Valid.'],
+            ['category' => 'invalid', 'content' => 'Filtered.'],
+        ],
+    ], JSON_THROW_ON_ERROR);
+    expect($service->parseResponse($json)['memory_updates'])->toBe([
+        'goals' => 'Valid.',
+    ]);
+});
+
 test('buildSystemPrompt replaces placeholders and includes categorized memories', function (): void {
     $service = new AiPromptService();
 

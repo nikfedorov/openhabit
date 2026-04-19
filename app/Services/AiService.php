@@ -110,10 +110,8 @@ final class AiService
     ): null {
         if ($response->status() === 429) {
             $aiModel->disableFor(self::RATE_LIMIT_DISABLE_HOURS);
-            Log::info('AI model rate-limited, disabled for 24h', ['model' => $aiModel->slug]);
         } elseif ($response->serverError()) {
             $aiModel->disableFor(self::SERVER_ERROR_DISABLE_HOURS);
-            Log::info('AI model returned server error, disabled for 1h', ['model' => $aiModel->slug]);
         }
 
         $this->logCall($userId, $aiModel, $systemPrompt, $userPrompt, $durationMs,

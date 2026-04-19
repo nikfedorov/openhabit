@@ -165,7 +165,14 @@ final class AiPromptService
                 /** @var mixed $value */
                 foreach ($data['memory_updates'] as $key => $value) {
                     if (is_string($key) && is_string($value) && MemoryCategory::tryFrom($key) !== null) {
+                        // Flat map format: {"long_term": "content"}
                         $memoryUpdates[$key] = $value;
+                    } elseif (is_array($value) && isset($value['category'], $value['content'])
+                        && is_string($value['category']) && is_string($value['content'])
+                        && MemoryCategory::tryFrom($value['category']) !== null
+                    ) {
+                        // Array-of-objects format: [{"category": "long_term", "content": "..."}]
+                        $memoryUpdates[$value['category']] = $value['content'];
                     }
                 }
             }
