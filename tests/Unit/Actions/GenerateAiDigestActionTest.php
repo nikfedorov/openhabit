@@ -51,7 +51,7 @@ it('creates digest with memory updates from habits data', function (): void {
     ]);
     $user = makeUserWithCompletionYesterday();
 
-    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
+    $digest = resolve(GenerateAiDigestAction::class)->handle($user);
 
     expect($digest)->not->toBeNull()
         ->and($digest->content)->toBe('You did great!')
@@ -68,7 +68,7 @@ it('returns null when API fails and does not create a digest', function (): void
     Http::fake(['https://openrouter.ai/*' => Http::response(['error' => 'server error'], 500)]);
     $user = makeUserWithCompletionYesterday();
 
-    expect(resolve(GenerateAiDigestAction::class)->execute($user))->toBeNull()
+    expect(resolve(GenerateAiDigestAction::class)->handle($user))->toBeNull()
         ->and(AiDigest::query()->where('user_id', $user->id)->count())->toBe(0);
 });
 
@@ -79,7 +79,7 @@ it('generates digest when only daily note is present', function (): void {
         'content' => 'Felt tired today but stayed focused.',
     ]);
 
-    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
+    $digest = resolve(GenerateAiDigestAction::class)->handle($user);
 
     expect($digest?->content)->toBe('Note-based digest.');
 });
@@ -93,7 +93,7 @@ it('treats non-JSON response as plain-text digest with no memory updates', funct
     ]);
     $user = makeUserWithCompletionYesterday();
 
-    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
+    $digest = resolve(GenerateAiDigestAction::class)->handle($user);
 
     expect($digest?->content)->toBe('Plain text response without JSON.')
         ->and($user->memories()->count())->toBe(0);
@@ -108,8 +108,8 @@ it('updates existing digest on re-run for same date', function (): void {
     $user = makeUserWithCompletionYesterday();
     $action = resolve(GenerateAiDigestAction::class);
 
-    $action->execute($user);
-    $action->execute($user);
+    $action->handle($user);
+    $action->handle($user);
 
     expect(AiDigest::query()->where('user_id', $user->id)->count())->toBe(1)
         ->and(AiDigest::query()->where('user_id', $user->id)->value('content'))->toBe('Updated digest.');

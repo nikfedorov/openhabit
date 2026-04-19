@@ -57,7 +57,7 @@ final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $digest = $generateAiDigest->execute($user);
+        $digest = $generateAiDigest->handle($user);
 
         if ($digest instanceof AiDigest) {
             /** @var Carbon $date */

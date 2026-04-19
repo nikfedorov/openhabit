@@ -28,7 +28,7 @@ final class RefundPaymentCommand extends Command
      */
     private array $searchResultsByChargeId = [];
 
-    public function handle(RefundPaymentAction $refund): int
+    public function handle(RefundPaymentAction $refundPayment): int
     {
         $this->searchResultsByChargeId = [];
 
@@ -54,7 +54,7 @@ final class RefundPaymentCommand extends Command
         }
 
         try {
-            $refund->handle($payment, $cancelSubscription, $issueRefund);
+            $refundPayment->handle($payment, $cancelSubscription, $issueRefund);
         } catch (TelegramException $telegramException) {
             error('Telegram API error: '.$telegramException->getMessage());
 

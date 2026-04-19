@@ -30,7 +30,7 @@ final readonly class GenerateAiDigestAction
     /**
      * Generate and store a digest for the given user.
      */
-    public function execute(User $user): ?AiDigest
+    public function handle(User $user): ?AiDigest
     {
         $yesterday = CarbonImmutable::now($user->timezone)->subDay()->startOfDay();
 
