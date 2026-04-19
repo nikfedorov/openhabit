@@ -14,19 +14,12 @@ final readonly class RefundedPaymentHandler
 
     public function __invoke(Nutgram $bot): void
     {
-        $refundedPayment = $this->refundedPayment($bot);
+        $refundedPayment = $bot->message()?->refunded_payment;
 
         if (! $refundedPayment instanceof RefundedPayment) {
             return;
         }
 
         $this->handleRefundedPayment->handle($refundedPayment->telegram_payment_charge_id);
-    }
-
-    private function refundedPayment(Nutgram $bot): ?RefundedPayment
-    {
-        $payment = $bot->message()?->refunded_payment;
-
-        return $payment instanceof RefundedPayment ? $payment : null;
     }
 }
