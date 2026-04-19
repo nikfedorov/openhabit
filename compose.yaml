@@ -64,6 +64,16 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    redis-insight:
+        image: redis/redisinsight:latest
+        restart: always
+        ports:
+            - "${FORWARD_REDIS_INSIGHT_PORT:-5540}:5540"
+        volumes:
+            - sail-redis-insight:/data
+        networks:
+            - sail
+
 networks:
     sail:
         driver: bridge
@@ -71,4 +81,6 @@ volumes:
     sail-pgsql:
         driver: local
     sail-valkey:
+        driver: local
+    sail-redis-insight:
         driver: local

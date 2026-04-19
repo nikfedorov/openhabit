@@ -64,9 +64,13 @@
             "bun install",
             "bun run build"
         ],
+        "dev-full": [
+            "Composer\\Config::disableProcessTimeout",
+            "bunx concurrently -c \"#e26638,#fb7185,#fdba74,#3866e2\" \"php artisan horizon:listen --poll\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan schedule:work\" --names=horizon,logs,vite,schedule --kill-others"
+        ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "bunx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"bun run dev\" --names=server,queue,logs,vite --kill-others"
+            "bunx concurrently -c \"#e26638,#fb7185,#3866e2\" \"php artisan horizon:listen --poll\" \"php artisan pail --timeout=0\" \"php artisan schedule:work\" --names=horizon,logs,schedule --kill-others"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
