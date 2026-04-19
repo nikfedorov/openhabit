@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function (): void {
-    config()->set('services.openrouter.api_key', 'test-key');
-    config()->set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
     AiModel::factory()->create(['slug' => 'test-model', 'priority' => 1]);
 });
 
@@ -45,6 +43,7 @@ it('sends notification when digest is generated', function (): void {
 });
 
 it('does not send notification when no digest generated', function (): void {
+    Log::spy();
     Notification::fake();
 
     Http::fake([

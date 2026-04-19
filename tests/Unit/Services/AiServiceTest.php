@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\AiLog;
 use App\Models\AiModel;
 use App\Models\User;
-use App\Services\OpenRouterService;
+use App\Services\AiService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
  */
 function generate(?string $userId = null): ?string
 {
-    return new OpenRouterService()->generate('system', 'user', $userId);
+    return new AiService()->generate('system', 'user', $userId);
 }
 
 /**
@@ -34,16 +34,8 @@ function fakeAiSuccess(string $content = 'OK', array $extra = []): void
 }
 
 beforeEach(function (): void {
-    config()->set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
-    config()->set('services.openrouter.api_key', 'test-key');
+    Log::spy();
     AiModel::factory()->create(['slug' => 'test-model', 'priority' => 1]);
-});
-
-test('returns null and warns when API key is missing', function (): void {
-    config()->set('services.openrouter.api_key');
-    Log::shouldReceive('warning')->once()->with('OpenRouter API key is not configured');
-
-    expect(generate())->toBeNull();
 });
 
 test('returns null and warns when no active models configured', function (): void {
@@ -67,7 +59,7 @@ test('returns content and logs success on 200 with usage', function (): void {
         ->and($log->output_tokens)->toBe(50);
 });
 
-test('returns null and logs HTTP error', function (): void {
+test('returns null and logs HTTP error and disables model on 429', function (): void {
     $user = User::factory()->create();
     Http::fake(['https://openrouter.ai/*' => Http::response(['error' => 'Too many requests'], 429)]);
 
@@ -76,6 +68,10 @@ test('returns null and logs HTTP error', function (): void {
     $log = AiLog::query()->where('user_id', $user->id)->sole();
     expect($log->is_successful)->toBeFalse()
         ->and($log->error)->toContain('HTTP 429');
+
+    $model = AiModel::query()->first();
+    expect($model->disabled_until)->not->toBeNull()
+        ->and($model->disabled_until->isFuture())->toBeTrue();
 });
 
 test('returns null and logs error on empty content', function (): void {
@@ -110,7 +106,7 @@ test('returns null when all models fail', function (): void {
     expect(generate())->toBeNull();
 });
 
-test('logs connection exception', function (): void {
+test('logs connection exception and disables model', function (): void {
     $user = User::factory()->create();
     Http::fake(['https://openrouter.ai/*' => fn () => throw new ConnectionException('Connection timed out')]);
 
@@ -119,6 +115,21 @@ test('logs connection exception', function (): void {
     $log = AiLog::query()->where('user_id', $user->id)->sole();
     expect($log->is_successful)->toBeFalse()
         ->and($log->error)->toBe('Connection timed out');
+
+    $model = AiModel::query()->first();
+    expect($model->disabled_until)->not->toBeNull()
+        ->and($model->disabled_until->isFuture())->toBeTrue();
+});
+
+test('disables model on 5xx server error', function (): void {
+    $user = User::factory()->create();
+    Http::fake(['https://openrouter.ai/*' => Http::response(['error' => 'Internal Server Error'], 500)]);
+
+    expect(generate($user->id))->toBeNull();
+
+    $model = AiModel::query()->first();
+    expect($model->disabled_until)->not->toBeNull()
+        ->and($model->disabled_until->isFuture())->toBeTrue();
 });
 
 test('does not log when userId is null', function (): void {

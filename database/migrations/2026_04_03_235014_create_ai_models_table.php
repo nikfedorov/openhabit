@@ -14,6 +14,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('base_url');
+            $table->text('api_key')->nullable();
             $table->unsignedInteger('priority')->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_free')->default(false);

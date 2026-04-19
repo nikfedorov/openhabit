@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\UserMemory;
 use App\Services\RRuleService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Fake an OpenRouter JSON response containing the given digest + memory updates.
@@ -40,8 +41,6 @@ function makeUserWithCompletionYesterday(): User
 }
 
 beforeEach(function (): void {
-    config()->set('services.openrouter.api_key', 'test-key');
-    config()->set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
     AiModel::factory()->create(['slug' => 'test-model', 'priority' => 1]);
 });
 
@@ -65,6 +64,7 @@ it('creates digest with memory updates from habits data', function (): void {
 });
 
 it('returns null when API fails and does not create a digest', function (): void {
+    Log::spy();
     Http::fake(['https://openrouter.ai/*' => Http::response(['error' => 'server error'], 500)]);
     $user = makeUserWithCompletionYesterday();
 
@@ -85,6 +85,7 @@ it('generates digest when only daily note is present', function (): void {
 });
 
 it('treats non-JSON response as plain-text digest with no memory updates', function (): void {
+    Log::spy();
     Http::fake([
         'https://openrouter.ai/*' => Http::response([
             'choices' => [['message' => ['content' => 'Plain text response without JSON.']]],

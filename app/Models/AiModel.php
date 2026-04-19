@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int $id
  * @property-read string $slug
  * @property-read string $name
+ * @property-read string $base_url
+ * @property-read string|null $api_key
  * @property-read int $priority
  * @property-read bool $is_active
  * @property-read bool $is_free
@@ -66,6 +68,7 @@ final class AiModel extends Model
             'priority' => 'integer',
             'is_active' => 'boolean',
             'is_free' => 'boolean',
+            'api_key' => 'encrypted',
             'disabled_until' => 'datetime',
         ];
     }

@@ -20,6 +20,8 @@ final class AiModelFactory extends Factory
         return [
             'name' => fake()->unique()->words(3, true),
             'slug' => fake()->unique()->slug(3),
+            'base_url' => 'https://openrouter.ai/api/v1',
+            'api_key' => 'test-key',
             'priority' => fake()->numberBetween(0, 100),
             'is_active' => true,
             'is_free' => false,

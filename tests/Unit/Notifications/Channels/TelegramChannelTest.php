@@ -7,6 +7,7 @@ use App\Notifications\Channels\TelegramChannel;
 use App\Notifications\Contracts\SendsTelegramNotification;
 use App\Notifications\Messages\TelegramMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
@@ -57,6 +58,7 @@ test('send skips when preconditions are not met', function (object $notifiable, 
 ]);
 
 test('send flags user on known telegram errors', function (string $errorMessage, int $code, string $flaggedField): void {
+    Log::spy();
     $user = User::factory()->telegramId()->create();
 
     $notification = Mockery::mock(Notification::class, SendsTelegramNotification::class);

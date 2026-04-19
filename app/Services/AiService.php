@@ -12,35 +12,31 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Client for OpenRouter's OpenAI-compatible chat completions API.
+ * Client for OpenAI-compatible chat completions APIs.
+ *
+ * Each AiModel stores its own base_url and api_key, so any
+ * provider with an OpenAI-compatible endpoint can be used.
  *
  * Supports model rotation: tries active models in priority order,
  * falling back to the next model on failure (429, 5xx, connection errors).
  */
-final class OpenRouterService
+final class AiService
 {
-    private const int TIMEOUT_SECONDS = 30;
+    private const int TIMEOUT_SECONDS = 10;
 
     private const float TEMPERATURE = 0.7;
 
     private const int RATE_LIMIT_DISABLE_HOURS = 24;
 
+    private const int SERVER_ERROR_DISABLE_HOURS = 1;
+
     /**
-     * Generate a chat completion via OpenRouter with automatic model rotation.
+     * Generate a chat completion with automatic model rotation.
      *
      * @return string|null The generated text, or null if all models fail.
      */
     public function generate(string $systemPrompt, string $userPrompt, ?string $userId = null): ?string
     {
-        /** @var string|null $apiKey */
-        $apiKey = config('services.openrouter.api_key');
-
-        if ($apiKey === null || $apiKey === '') {
-            Log::warning('OpenRouter API key is not configured');
-
-            return null;
-        }
-
         $models = AiModel::getOrdered();
 
         if ($models->isEmpty()) {
@@ -49,11 +45,8 @@ final class OpenRouterService
             return null;
         }
 
-        /** @var string $baseUrl */
-        $baseUrl = config('services.openrouter.base_url');
-
         foreach ($models as $aiModel) {
-            $content = $this->tryModel($baseUrl, $apiKey, $aiModel, $systemPrompt, $userPrompt, $userId);
+            $content = $this->tryModel($aiModel, $systemPrompt, $userPrompt, $userId);
 
             if ($content !== null) {
                 return $content;
@@ -69,8 +62,6 @@ final class OpenRouterService
      * @return string|null Content on success, null on failure (try next model).
      */
     private function tryModel(
-        string $baseUrl,
-        string $apiKey,
         AiModel $aiModel,
         string $systemPrompt,
         string $userPrompt,
@@ -79,17 +70,22 @@ final class OpenRouterService
         $startTime = hrtime(true);
 
         try {
-            $response = Http::withToken($apiKey)
-                ->timeout(self::TIMEOUT_SECONDS)
-                ->post($baseUrl.'/chat/completions', [
-                    'model' => $aiModel->slug,
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => $userPrompt],
-                    ],
-                    'temperature' => self::TEMPERATURE,
-                ]);
+            $request = Http::timeout(self::TIMEOUT_SECONDS);
+
+            if ($aiModel->api_key !== null && $aiModel->api_key !== '') {
+                $request = $request->withToken($aiModel->api_key);
+            }
+
+            $response = $request->post($aiModel->base_url.'/chat/completions', [
+                'model' => $aiModel->slug,
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userPrompt],
+                ],
+                'temperature' => self::TEMPERATURE,
+            ]);
         } catch (ConnectionException $connectionException) {
+            $aiModel->disableFor(self::SERVER_ERROR_DISABLE_HOURS);
             $this->logCall($userId, $aiModel, $systemPrompt, $userPrompt, $this->elapsedMs($startTime), error: $connectionException->getMessage());
 
             return null;
@@ -115,6 +111,9 @@ final class OpenRouterService
         if ($response->status() === 429) {
             $aiModel->disableFor(self::RATE_LIMIT_DISABLE_HOURS);
             Log::info('AI model rate-limited, disabled for 24h', ['model' => $aiModel->slug]);
+        } elseif ($response->serverError()) {
+            $aiModel->disableFor(self::SERVER_ERROR_DISABLE_HOURS);
+            Log::info('AI model returned server error, disabled for 1h', ['model' => $aiModel->slug]);
         }
 
         $this->logCall($userId, $aiModel, $systemPrompt, $userPrompt, $durationMs,

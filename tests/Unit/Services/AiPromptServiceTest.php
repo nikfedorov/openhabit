@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\UserMemory;
 use App\Services\AiPromptService;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 
 test('sanitize strips HTML, truncates, and passes clean content through', function (): void {
     expect(AiPromptService::sanitizeUserContent('<script>alert("xss")</script>Hello', 1000))
@@ -56,6 +57,7 @@ test('parseResponse extracts digest and categorized memory updates from JSON', f
         ->and($parsed['memory_updates'])->toBe(['goals' => 'Wants to run a marathon.']);
 
     // Non-JSON fallback
+    Log::spy();
     $parsed = $service->parseResponse('Just a plain text response.');
     expect($parsed['digest'])->toBe('Just a plain text response.')
         ->and($parsed['memory_updates'])->toBe([]);

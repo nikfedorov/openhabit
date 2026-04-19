@@ -6,16 +6,19 @@ namespace Database\Seeders;
 
 use App\Models\AiModel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Config;
 
 final class AiModelSeeder extends Seeder
 {
     public function run(): void
     {
+        $openRouterBaseUrl = Config::string('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+        $openRouterApiKey = Config::string('services.openrouter.api_key');
+
         $models = [
             ['slug' => 'nousresearch/hermes-3-llama-3.1-405b:free', 'name' => 'Hermes 3 405B', 'is_free' => true],
             ['slug' => 'z-ai/glm-4.5-air:free', 'name' => 'GLM 4.5 Air', 'is_free' => true],
             ['slug' => 'minimax/minimax-m2.5:free', 'name' => 'Minimax M2.5', 'is_free' => true],
-            ['slug' => 'openrouter/elephant-alpha', 'name' => 'Openrouter Elephant Alpha', 'is_free' => true],
 
             ['slug' => 'sourceful/riverflow-v2-fast-preview', 'name' => 'Riverflow V2 Fast Preview', 'is_free' => true],
             ['slug' => 'sourceful/riverflow-v2-fast', 'name' => 'Riverflow V2 Fast', 'is_free' => true],
@@ -51,9 +54,11 @@ final class AiModelSeeder extends Seeder
             AiModel::query()->updateOrCreate(
                 ['slug' => $model['slug']],
                 [
-                    ...$model,
+                    'base_url' => $openRouterBaseUrl,
+                    'api_key' => $openRouterApiKey,
                     'is_active' => true,
                     'priority' => $i + 1,
+                    ...$model,
                 ],
             );
         }

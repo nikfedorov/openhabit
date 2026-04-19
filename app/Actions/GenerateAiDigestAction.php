@@ -10,7 +10,7 @@ use App\Models\HabitCompletion;
 use App\Models\User;
 use App\Models\UserMemory;
 use App\Services\AiPromptService;
-use App\Services\OpenRouterService;
+use App\Services\AiService;
 use App\Services\RRuleService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
@@ -23,7 +23,7 @@ final readonly class GenerateAiDigestAction
 {
     public function __construct(
         private AiPromptService $promptService,
-        private OpenRouterService $openRouterService,
+        private AiService $aiService,
         private RRuleService $rruleService,
     ) {}
 
@@ -48,7 +48,7 @@ final readonly class GenerateAiDigestAction
             $yesterday,
         );
 
-        $response = $this->openRouterService->generate($systemPrompt, $userPrompt, $user->id);
+        $response = $this->aiService->generate($systemPrompt, $userPrompt, $user->id);
 
         if ($response === null) {
             Log::warning('AI digest generation failed for user', ['user_id' => $user->id]);

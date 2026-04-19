@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Config;
+
 /**
  * Shared locale utilities for supported languages.
  */
@@ -47,11 +49,8 @@ final class LocaleService
      */
     public static function all(): array
     {
-        /** @var array<string> $configLocales */
-        $configLocales = config('translatable.locales', []);
-
         $result = [];
-        foreach ($configLocales as $locale) {
+        foreach (self::codes() as $locale) {
             $result[$locale] = self::label($locale);
         }
 
@@ -66,6 +65,6 @@ final class LocaleService
     public static function codes(): array
     {
         /** @var list<string> */
-        return config('translatable.locales', []);
+        return Config::array('translatable.locales', []);
     }
 }
