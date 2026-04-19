@@ -20,9 +20,6 @@ final class AiModelSeeder extends Seeder
             ['slug' => 'z-ai/glm-4.5-air:free', 'name' => 'GLM 4.5 Air', 'is_free' => true],
             ['slug' => 'minimax/minimax-m2.5:free', 'name' => 'Minimax M2.5', 'is_free' => true],
 
-            ['slug' => 'sourceful/riverflow-v2-fast-preview', 'name' => 'Riverflow V2 Fast Preview', 'is_free' => true],
-            ['slug' => 'sourceful/riverflow-v2-fast', 'name' => 'Riverflow V2 Fast', 'is_free' => true],
-
             ['slug' => 'openai/gpt-oss-120b:free', 'name' => 'GPT OSS 120B', 'is_free' => true],
             ['slug' => 'openai/gpt-oss-20b:free', 'name' => 'GPT OSS 20B', 'is_free' => true],
 
@@ -35,8 +32,6 @@ final class AiModelSeeder extends Seeder
             ['slug' => 'google/gemma-3-27b-it:free', 'name' => 'Gemma 3 27B', 'is_free' => true],
             ['slug' => 'google/gemma-3-12b-it:free', 'name' => 'Gemma 3 12B', 'is_free' => true],
             ['slug' => 'google/gemma-3-4b-it:free', 'name' => 'Gemma 3 4B', 'is_free' => true],
-            ['slug' => 'google/lyria-3-pro-preview', 'name' => 'Lyria 3 Pro', 'is_free' => true],
-            ['slug' => 'google/lyria-3-clip-preview', 'name' => 'Lyria 3 Clip', 'is_free' => true],
 
             ['slug' => 'meta-llama/llama-3.3-70b-instruct:free', 'name' => 'Llama 3.3 70B', 'is_free' => true],
             ['slug' => 'meta-llama/llama-3.2-3b-instruct:free', 'name' => 'Llama 3.2 3B', 'is_free' => true],

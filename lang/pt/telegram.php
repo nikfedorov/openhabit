@@ -8,11 +8,12 @@ return [
     'welcome_back' => '👋 Bem-vindo de volta, :name!',
     'open_app' => '🚀 Abrir',
     'reminder' => '🔔 Lembrete: :name',
+    'reminder_header' => 'Lembrete',
     'mark_as_done' => '✅ Feito',
     'done' => '✅ Feito!',
     'marked_as_done' => '✅ :name concluído!',
     'already_completed' => '✅ Já completado hoje!',
     'habit_not_found' => '❌ Hábito não encontrado.',
     'open_app_plain' => 'Abrir',
-    'description' => '📝 :text',
+    'description' => ':text',
 ];

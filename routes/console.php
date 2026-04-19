@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schedule;
 
-// Send habit reminder notifications every 15 minutes
-Schedule::command('app:send-notifications')->everyFifteenMinutes();
+// Send habit reminder notifications every 5 minutes
+Schedule::command('app:send-notifications')->everyFiveMinutes();
 
 // Generate and send AI daily digests every 15 minutes
 Schedule::command('app:send-ai-digests')->everyFifteenMinutes();

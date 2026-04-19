@@ -11,6 +11,8 @@ use App\Notifications\Messages\TelegramMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
+use SergiX44\Nutgram\Telegram\Types\WebApp\WebAppInfo;
 
 /**
  * Queued notification that reminds a user about a habit via Telegram.
@@ -41,13 +43,19 @@ final class HabitReminderNotification extends Notification implements SendsTeleg
     public function toTelegram(object $notifiable): TelegramMessage
     {
         $message = TelegramMessage::create()
-            ->line(__('telegram.reminder', ['name' => $this->habit->name]));
+            ->parseMode('HTML')
+            ->line('<b>'.__('telegram.reminder_header').'</b>')
+            ->line($this->habit->name);
 
         if ($this->habit->description !== null && $this->habit->description !== '') {
-            $message->line(__('telegram.description', ['text' => $this->habit->description]));
+            $message
+                ->line('')
+                ->line(__('telegram.description', ['text' => $this->habit->description]));
         }
 
-        return $message
-            ->webAppButton(__('telegram.open_app'), url('/telegram-miniapp'));
+        return $message->inlineRow(
+            InlineKeyboardButton::make(text: __('telegram.mark_as_done'), callback_data: 'complete_habit:'.$this->habit->id),
+            InlineKeyboardButton::make(text: __('telegram.open_app'), web_app: WebAppInfo::make(url('/telegram-miniapp'))),
+        );
     }
 }

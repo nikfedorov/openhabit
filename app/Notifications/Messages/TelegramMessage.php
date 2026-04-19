@@ -92,6 +92,16 @@ final class TelegramMessage
     }
 
     /**
+     * Add multiple buttons as a single inline row.
+     */
+    public function inlineRow(InlineKeyboardButton ...$buttons): self
+    {
+        $this->buttonRows[] = array_values($buttons);
+
+        return $this;
+    }
+
+    /**
      * Get the message text.
      */
     public function getText(): string

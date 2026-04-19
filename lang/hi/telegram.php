@@ -8,11 +8,12 @@ return [
     'welcome_back' => '👋 वापसी पर स्वागत है, :name!',
     'open_app' => '🚀 खोलें',
     'reminder' => '🔔 अनुस्मारक: :name',
+    'reminder_header' => 'अनुस्मारक',
     'mark_as_done' => '✅ पूर्ण',
     'done' => '✅ हो गया!',
     'marked_as_done' => '✅ :name पूर्ण!',
     'already_completed' => '✅ आज पहले ही पूरा हो चुका!',
     'habit_not_found' => '❌ आदत नहीं मिली।',
     'open_app_plain' => 'खोलें',
-    'description' => '📝 :text',
+    'description' => ':text',
 ];

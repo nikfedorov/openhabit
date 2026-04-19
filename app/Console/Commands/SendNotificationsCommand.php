@@ -19,7 +19,7 @@ final class SendNotificationsCommand extends Command
     /**
      * Notifications are eligible within this window (in minutes) after the scheduled time.
      */
-    private const int TIME_WINDOW_MINUTES = 15;
+    private const int TIME_WINDOW_MINUTES = 5;
 
     protected $signature = 'app:send-notifications';
 
