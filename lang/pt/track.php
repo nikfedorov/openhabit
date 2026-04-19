@@ -17,4 +17,5 @@ return [
     'previous_day' => 'Dia anterior',
     'next_day' => 'Próximo dia',
     'today' => 'Hoje',
+    'ai_digest' => 'Resumo de IA',
 ];

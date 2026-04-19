@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\AiDigest;
 use App\Models\DailyNote;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
@@ -54,6 +55,7 @@ it('loads habits with completion state and filters inactive ones', function (): 
                 ->has('dayName')
                 ->has('dateFormatted')
                 ->has('dailyNoteContent')
+                ->has('aiDigest')
                 ->has('translations')
             )
         );
@@ -174,6 +176,47 @@ it('uses user locale for translations', function (): void {
                     ->where('today', 'Сегодня')
                     ->etc()
                 )
+                ->etc()
+            )
+            ->etc()
+        );
+});
+
+it('includes ai digest when one exists for the requested date', function (): void {
+    $user = User::factory()->create();
+    $date = now()->toDateString();
+
+    AiDigest::factory()->create([
+        'user_id' => $user->id,
+        'date' => $date,
+        'content' => 'Test digest content',
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/track?date='.$date)
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->has('aiDigest', fn (AssertableJson $json): AssertableJson => $json
+                    ->where('date', $date)
+                    ->where('content', 'Test digest content')
+                    ->has('dateLabel')
+                )
+                ->etc()
+            )
+            ->etc()
+        );
+});
+
+it('returns null ai digest when none exists for the requested date', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/track')
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->where('aiDigest', null)
                 ->etc()
             )
             ->etc()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Track;
 
 use App\Data\Track\TrackData;
+use App\Http\Resources\AiDigestResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class TrackResource extends JsonResource
 {
     /**
-     * @return array{date: string, dayName: string, dateFormatted: string, isToday: bool, totalHabits: int, completedCount: int, dailyNoteContent: string, translations: array<string, string>}
+     * @return array{date: string, dayName: string, dateFormatted: string, isToday: bool, totalHabits: int, completedCount: int, dailyNoteContent: string, translations: array<string, string>, aiDigest: AiDigestResource|null}
      */
     public function toArray(Request $request): array
     {
@@ -88,6 +89,13 @@ final class TrackResource extends JsonResource
              * @var array<string, string>
              */
             'translations' => $this->resource->translations,
+
+            /**
+             * AI-generated digest for this day, or null if not available.
+             */
+            'aiDigest' => $this->resource->aiDigest !== null
+                ? AiDigestResource::make($this->resource->aiDigest)
+                : null,
         ];
     }
 }

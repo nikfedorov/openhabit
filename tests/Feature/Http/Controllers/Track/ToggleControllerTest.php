@@ -42,6 +42,7 @@ it('creates, increments, and deletes completion through full cycle', function ()
                 ->has('dayName')
                 ->has('dateFormatted')
                 ->has('dailyNoteContent')
+                ->has('aiDigest')
                 ->has('translations')
             )
         );

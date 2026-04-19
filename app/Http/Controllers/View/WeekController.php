@@ -6,6 +6,7 @@ namespace App\Http\Controllers\View;
 
 use App\Actions\View\GetWeekViewAction;
 use App\Http\Requests\View\WeekRequest;
+use App\Http\Resources\AiDigestResource;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\UserSettingResource;
 use App\Http\Resources\View\WeekDayResource;
@@ -57,6 +58,11 @@ final readonly class WeekController
                  * Habit rows with daily completion statuses.
                  */
                 'habits' => WeekGridHabitResource::collection($data->habits),
+
+                /**
+                 * AI digests for the current week.
+                 */
+                'aiDigests' => AiDigestResource::collection($data->aiDigests),
             ]);
     }
 
@@ -75,6 +81,7 @@ final readonly class WeekController
             'week', 'year', 'life',
             'previous_week', 'next_week', 'this_week', 'current_week',
             'habits', 'franklins_virtues', 'done', 'partial', 'missed', 'future',
+            'insights',
         ]);
 
         return $translations;

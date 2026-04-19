@@ -8,6 +8,7 @@ import type {
 } from '@/types/edit';
 import type { ActivityDay, Habit, TrackData } from '@/types/track';
 import type {
+    AiDigestItem,
     GridHabit,
     LifeViewData,
     WeekActivityData,
@@ -55,6 +56,7 @@ function typeKeys<T>(obj: { [K in keyof Required<T>]: true }): string[] {
  * Every entry here must have an `it('XResource schema matches ...')` below.
  */
 const TESTED_SCHEMAS = new Set([
+    'AiDigestResource',
     'AiToneResource',
     'EditHabitResource',
     'HabitActivityDataResource',
@@ -126,6 +128,17 @@ const KNOWN_PATHS = new Set([
 // change).
 
 describe('API contract', () => {
+    it('AiDigestResource schema matches AiDigestItem type', () => {
+        const schema = schemaKeys('AiDigestResource');
+        const ts = typeKeys<AiDigestItem>({
+            date: true,
+            dateLabel: true,
+            content: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
     it('TrackResource schema matches TrackData type', () => {
         const schema = schemaKeys('TrackResource');
         const ts = typeKeys<Omit<TrackData, 'habits' | 'activityData'>>({
@@ -136,6 +149,7 @@ describe('API contract', () => {
             totalHabits: true,
             completedCount: true,
             dailyNoteContent: true,
+            aiDigest: true,
             translations: true,
         });
 

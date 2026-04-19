@@ -16,6 +16,12 @@ export type ActivityDay = {
     intensity: number;
 };
 
+export type AiDigestItem = {
+    date: string;
+    dateLabel: string;
+    content: string | null;
+};
+
 export type TrackTranslations = {
     progress: string;
     all_done: string;
@@ -31,6 +37,7 @@ export type TrackTranslations = {
     more: string;
     previous_day: string;
     next_day: string;
+    ai_digest: string;
 };
 
 export type TrackData = {
@@ -44,4 +51,5 @@ export type TrackData = {
     dailyNoteContent: string;
     activityData: ActivityDay[];
     translations: TrackTranslations;
+    aiDigest: AiDigestItem | null;
 };

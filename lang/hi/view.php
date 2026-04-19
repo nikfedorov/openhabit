@@ -34,4 +34,5 @@ return [
     'set_birthdate' => 'सेटिंग्स में जन्मतिथि भरें',
     'to_see_year_visualization' => 'वर्ष विज़ुअलाइज़ेशन देखने के लिए',
     'to_see_life_visualization' => 'जीवन विज़ुअलाइज़ेशन देखने के लिए',
+    'insights' => 'एआई विश्लेषण',
 ];

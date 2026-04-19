@@ -34,4 +34,5 @@ return [
     'set_birthdate' => 'Set your birthdate in settings',
     'to_see_year_visualization' => 'to see your year visualization',
     'to_see_life_visualization' => 'to see your life visualization',
+    'insights' => 'Insights',
 ];

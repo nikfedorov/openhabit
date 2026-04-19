@@ -6,6 +6,7 @@ namespace App\Actions\Track;
 
 use App\Data\Track\DailyActivity;
 use App\Data\Track\TrackData;
+use App\Models\AiDigest;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\Stat;
@@ -55,6 +56,7 @@ final readonly class GetTrackDataAction
             dailyNoteContent: $dailyNoteContent ?? '',
             activityData: $this->activityData($user),
             translations: $this->translations(),
+            aiDigest: $this->getAiDigest($user, $date),
         );
     }
 
@@ -122,6 +124,17 @@ final readonly class GetTrackDataAction
         );
 
         return array_map(DailyActivity::fromArray(...), $cached);
+    }
+
+    /**
+     * Get the AI digest for the given date.
+     */
+    private function getAiDigest(User $user, CarbonImmutable $date): ?AiDigest
+    {
+        return $user->aiDigests()
+            ->select(['id', 'user_id', 'date', 'content'])
+            ->where('date', $date->toDateString())
+            ->first();
     }
 
     /**

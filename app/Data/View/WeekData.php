@@ -6,6 +6,8 @@ namespace App\Data\View;
 
 use App\Data\HabitActivity\WeekDay;
 use App\Data\HabitActivity\WeekGridHabit;
+use App\Models\AiDigest;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * Data returned by GetWeekViewAction.
@@ -15,6 +17,7 @@ final readonly class WeekData
     /**
      * @param  array<int, WeekDay>  $days
      * @param  array<int, WeekGridHabit>  $habits
+     * @param  EloquentCollection<int, AiDigest>  $aiDigests
      */
     public function __construct(
         public string $start,
@@ -26,5 +29,6 @@ final readonly class WeekData
         public bool $isCurrent,
         public array $days,
         public array $habits,
+        public EloquentCollection $aiDigests,
     ) {}
 }

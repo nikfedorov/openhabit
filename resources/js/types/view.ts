@@ -21,6 +21,12 @@ export type GridHabit = {
     days: Record<string, HabitDayStatus>;
 };
 
+export type AiDigestItem = {
+    date: string;
+    dateLabel: string;
+    content: string | null;
+};
+
 export type WeekActivityData = {
     weekNum: number;
     intensity: number;
@@ -55,6 +61,7 @@ export type WeekTranslations = {
     partial: string;
     missed: string;
     future: string;
+    insights: string;
 };
 
 export type YearTranslations = {

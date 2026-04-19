@@ -35,4 +35,5 @@ return [
     'set_birthdate' => 'সেটিংসে আপনার জন্ম তারিখ সেট করুন',
     'to_see_year_visualization' => 'বছরের ভিজুয়ালাইজেশন দেখতে',
     'to_see_life_visualization' => 'জীবনের ভিজুয়ালাইজেশন দেখতে',
+    'insights' => 'এআই বিশ্লেষণ',
 ];

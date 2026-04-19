@@ -17,4 +17,5 @@ return [
     'previous_day' => 'আগের দিন',
     'next_day' => 'পরের দিন',
     'today' => 'আজ',
+    'ai_digest' => 'এআই ডাইজেস্ট',
 ];

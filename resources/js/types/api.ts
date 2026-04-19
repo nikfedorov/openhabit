@@ -10,6 +10,7 @@ import type { SettingsTranslations } from './settings';
 import type { ActivityDay, Habit, TrackData } from './track';
 import type {
     GridHabit,
+    AiDigestItem,
     LifeTranslations,
     WeekActivityData,
     WeekDay,
@@ -68,6 +69,7 @@ export type WeekApiResponse = CommonData & {
     days: WeekDay[];
     habits: GridHabit[];
     translations: WeekTranslations;
+    aiDigests: AiDigestItem[];
 };
 
 export type YearApiResponse = CommonData & {

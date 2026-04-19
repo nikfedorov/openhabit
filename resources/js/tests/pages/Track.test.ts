@@ -633,3 +633,25 @@ describe('Track - URL Sync', () => {
         expect(mockReplace).toHaveBeenCalledWith({ query: {} });
     });
 });
+
+// ─── AI Digest ──────────────────────────────────────────────────
+
+describe('Track - AI Digest', () => {
+    it('shows ai digest when content is present', async () => {
+        const wrapper = await mountTrack(mockApiFetch, {
+            aiDigest: {
+                date: '2026-04-06',
+                dateLabel: 'April 6, 2026, Monday',
+                content: 'Great week for habits.',
+            },
+        });
+
+        expect(wrapper.text()).toContain('Great week for habits.');
+    });
+
+    it('does not render ai digest when aiDigest is null', async () => {
+        const wrapper = await mountTrack(mockApiFetch, { aiDigest: null });
+
+        expect(wrapper.text()).not.toContain('AI Digest');
+    });
+});

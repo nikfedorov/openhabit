@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import LifeGrid from '@/components/view/LifeGrid.vue';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import WeekGrid from '@/components/view/WeekGrid.vue';
+import WeekInsights from '@/components/view/WeekInsights.vue';
 import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
@@ -18,6 +19,7 @@ import {
     makeGridHabit,
 } from '@/tests/helpers/view';
 import type {
+    AiDigestItem,
     LifeStats,
     LifeTranslations,
     LifeViewData,
@@ -62,6 +64,7 @@ type WeekOverrides = {
     weekYear?: string;
     isCurrentWeek?: boolean;
     translations?: WeekTranslations;
+    aiDigests?: AiDigestItem[];
 };
 
 type YearOverrides = {
@@ -142,6 +145,7 @@ function makeWeekResponse(overrides: WeekOverrides = {}) {
         data: makeWeekData(overrides),
         days: makeDays(),
         habits: [makeGridHabit()],
+        aiDigests: overrides.aiDigests ?? [],
         translations: overrides.translations ?? defaultWeekTranslations,
         ...makeCommonResponse(),
     };
@@ -200,6 +204,27 @@ describe('View - Tab Navigation', () => {
         expect(wrapper.findComponent(WeekGrid).exists()).toBe(true);
         expect(wrapper.findComponent(YearNavigator).exists()).toBe(false);
         expect(wrapper.findComponent(LifeHeader).exists()).toBe(false);
+    });
+
+    it('shows WeekInsights when ai digests are present', async () => {
+        const wrapper = await mountView({
+            aiDigests: [
+                {
+                    date: '2024-01-08',
+                    dateLabel: 'January 8, 2024, Monday',
+                    content: 'Great week!',
+                },
+            ],
+        });
+
+        expect(wrapper.findComponent(WeekInsights).exists()).toBe(true);
+        expect(wrapper.text()).toContain('Great week!');
+    });
+
+    it('does not show WeekInsights when ai digests are empty', async () => {
+        const wrapper = await mountView({ aiDigests: [] });
+
+        expect(wrapper.findComponent(WeekInsights).exists()).toBe(false);
     });
 
     it('switches to year tab on click', async () => {

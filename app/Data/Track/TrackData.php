@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Data\Track;
 
+use App\Models\AiDigest;
 use App\Models\Habit;
 use Illuminate\Support\Collection;
 
@@ -28,5 +29,6 @@ final readonly class TrackData
         public string $dailyNoteContent,
         public array $activityData,
         public array $translations,
+        public ?AiDigest $aiDigest = null,
     ) {}
 }

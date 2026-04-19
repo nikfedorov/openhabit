@@ -38,9 +38,7 @@
             "post": {
                 "operationId": "auth.telegram",
                 "summary": "Login via Telegram initData",
-                "tags": [
-                    "Auth"
-                ],
+                "tags": ["Auth"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -62,9 +60,7 @@
                                         "success": {
                                             "type": "boolean",
                                             "description": "Indicate successful authentication.",
-                                            "examples": [
-                                                true
-                                            ]
+                                            "examples": [true]
                                         },
                                         "token": {
                                             "type": "string",
@@ -74,10 +70,7 @@
                                             ]
                                         }
                                     },
-                                    "required": [
-                                        "success",
-                                        "token"
-                                    ]
+                                    "required": ["success", "token"]
                                 }
                             }
                         }
@@ -93,19 +86,14 @@
                 "operationId": "track",
                 "description": "Returns habits, completion progress, daily note, and activity heatmap data\nfor a specific date. Defaults to today when no date is provided.",
                 "summary": "Get daily tracking data",
-                "tags": [
-                    "Track"
-                ],
+                "tags": ["Track"],
                 "parameters": [
                     {
                         "name": "date",
                         "in": "query",
                         "description": "Date to retrieve tracking data for. Defaults to today.",
                         "schema": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
+                            "type": ["string", "null"],
                             "format": "date-time"
                         },
                         "example": "2026-04-06"
@@ -166,9 +154,7 @@
                 "operationId": "track.toggle",
                 "description": "Marks a habit as completed (or uncompleted) for a given date.\nReturns the refreshed daily tracking data.",
                 "summary": "Toggle habit completion",
-                "tags": [
-                    "Track"
-                ],
+                "tags": ["Track"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -234,9 +220,7 @@
                 "operationId": "track.daily-note",
                 "description": "Creates or updates the user's journal note for a specific date.\nSend null content to clear the note.",
                 "summary": "Save daily note",
-                "tags": [
-                    "Track"
-                ],
+                "tags": ["Track"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -265,9 +249,7 @@
                 "operationId": "edit",
                 "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
                 "summary": "Get all habits for editing",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "responses": {
                     "200": {
                         "description": "Array of `EditHabitResource`",
@@ -333,9 +315,7 @@
                 "operationId": "edit.create",
                 "description": "Returns translations and settings needed by the habit form\nwhen creating a new habit.",
                 "summary": "Get habit creation form data",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "responses": {
                     "200": {
                         "description": "",
@@ -380,9 +360,7 @@
                 "operationId": "edit.show",
                 "description": "Returns the habit with parsed RRule data for the edit form,\nalong with translations and settings needed by the habit form.",
                 "summary": "Get habit form data",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "parameters": [
                     {
                         "name": "habit",
@@ -448,9 +426,7 @@
             "put": {
                 "operationId": "edit.update",
                 "summary": "Update an existing habit",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "parameters": [
                     {
                         "name": "habit",
@@ -484,9 +460,7 @@
                                             "$ref": "#/components/schemas/EditHabitResource"
                                         }
                                     },
-                                    "required": [
-                                        "data"
-                                    ]
+                                    "required": ["data"]
                                 }
                             }
                         }
@@ -509,9 +483,7 @@
                 "operationId": "edit.destroy",
                 "description": "Soft-deletes the habit, or force-deletes if no completions exist.\nReorders remaining habits to close the sort_order gap.",
                 "summary": "Delete a habit",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "parameters": [
                     {
                         "name": "habit",
@@ -546,9 +518,7 @@
             "post": {
                 "operationId": "edit.store",
                 "summary": "Create a new habit",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -574,9 +544,7 @@
                                             }
                                         }
                                     },
-                                    "required": [
-                                        "data"
-                                    ]
+                                    "required": ["data"]
                                 }
                             }
                         }
@@ -597,9 +565,7 @@
             "post": {
                 "operationId": "edit.toggle",
                 "summary": "Toggle habit active/inactive",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "parameters": [
                     {
                         "name": "habit",
@@ -634,9 +600,7 @@
             "post": {
                 "operationId": "edit.toggle-franklin",
                 "summary": "Toggle all Franklin virtue habits active/inactive for the authenticated user",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "responses": {
                     "204": {
                         "description": "No content"
@@ -651,9 +615,7 @@
             "post": {
                 "operationId": "edit.reorder",
                 "summary": "Reorder habits by providing habit IDs in desired order",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -682,9 +644,7 @@
                 "operationId": "edit.templates.copy",
                 "description": "Creates a new habit from the given template and returns\nthe updated habit list in edit format.",
                 "summary": "Copy a template to the current user",
-                "tags": [
-                    "Edit"
-                ],
+                "tags": ["Edit"],
                 "parameters": [
                     {
                         "name": "habitTemplate",
@@ -711,9 +671,7 @@
                                             }
                                         }
                                     },
-                                    "required": [
-                                        "data"
-                                    ]
+                                    "required": ["data"]
                                 }
                             }
                         }
@@ -732,19 +690,14 @@
                 "operationId": "view.week",
                 "description": "Returns the Franklin virtue grid for the requested week.",
                 "summary": "Get week grid data",
-                "tags": [
-                    "View"
-                ],
+                "tags": ["View"],
                 "parameters": [
                     {
                         "name": "week",
                         "in": "query",
                         "description": "Start date of the week to display.",
                         "schema": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
+                            "type": ["string", "null"],
                             "format": "date-time"
                         },
                         "example": "2026-04-06"
@@ -825,19 +778,14 @@
                 "operationId": "view.year",
                 "description": "Returns weekly activity data for the selected life year (age).",
                 "summary": "Get year heatmap data",
-                "tags": [
-                    "View"
-                ],
+                "tags": ["View"],
                 "parameters": [
                     {
                         "name": "year",
                         "in": "query",
-                        "description": "Year index (age) for the year grid (0–79).",
+                        "description": "Year index (age) for the year grid (0\u201379).",
                         "schema": {
-                            "type": [
-                                "integer",
-                                "null"
-                            ],
+                            "type": ["integer", "null"],
                             "minimum": 0,
                             "maximum": 79
                         },
@@ -871,10 +819,7 @@
                                             }
                                         },
                                         "activityData": {
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ],
+                                            "type": ["array", "null"],
                                             "description": "Weekly activity data for the selected life year.",
                                             "items": {
                                                 "$ref": "#/components/schemas/YearActivityResource"
@@ -906,9 +851,7 @@
                 "operationId": "view.life",
                 "description": "Returns yearly activity data and life statistics for the memento mori visualization.",
                 "summary": "Get life (memento mori) grid data",
-                "tags": [
-                    "View"
-                ],
+                "tags": ["View"],
                 "responses": {
                     "200": {
                         "description": "`LifeViewResource`",
@@ -936,10 +879,7 @@
                                             }
                                         },
                                         "activityData": {
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ],
+                                            "type": ["array", "null"],
                                             "description": "Yearly activity data for the life heatmap.",
                                             "items": {
                                                 "$ref": "#/components/schemas/LifeActivityResource"
@@ -967,9 +907,7 @@
             "get": {
                 "operationId": "settings",
                 "summary": "Show the current user's settings along with available options",
-                "tags": [
-                    "Settings"
-                ],
+                "tags": ["Settings"],
                 "responses": {
                     "200": {
                         "description": "`UserSettingResource`",
@@ -1042,9 +980,7 @@
             "patch": {
                 "operationId": "settings.update",
                 "summary": "Update one or more user settings",
-                "tags": [
-                    "Settings"
-                ],
+                "tags": ["Settings"],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1066,9 +1002,7 @@
                                             "$ref": "#/components/schemas/UserSettingResource"
                                         }
                                     },
-                                    "required": [
-                                        "data"
-                                    ]
+                                    "required": ["data"]
                                 }
                             }
                         }
@@ -1086,9 +1020,7 @@
             "post": {
                 "operationId": "settings.trial-banner.dismiss",
                 "summary": "Record that the user has dismissed the trial banner",
-                "tags": [
-                    "Settings"
-                ],
+                "tags": ["Settings"],
                 "responses": {
                     "204": {
                         "description": "No content"
@@ -1103,9 +1035,7 @@
             "post": {
                 "operationId": "settings.export",
                 "summary": "Export user data and return a signed URL for download",
-                "tags": [
-                    "Settings"
-                ],
+                "tags": ["Settings"],
                 "responses": {
                     "200": {
                         "description": "",
@@ -1119,9 +1049,7 @@
                                             "description": "The signed URL pointing to the file download route."
                                         }
                                     },
-                                    "required": [
-                                        "url"
-                                    ]
+                                    "required": ["url"]
                                 }
                             }
                         }
@@ -1153,30 +1081,19 @@
                     "date": {
                         "type": "string",
                         "description": "ISO 8601 date string (YYYY-MM-DD).",
-                        "examples": [
-                            "2026-04-06"
-                        ]
+                        "examples": ["2026-04-06"]
                     },
                     "dateLabel": {
                         "type": "string",
                         "description": "Localized full date with day name.",
-                        "examples": [
-                            "April 6, 2026, Sunday"
-                        ]
+                        "examples": ["April 6, 2026, Sunday"]
                     },
                     "content": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "AI-generated digest content."
                     }
                 },
-                "required": [
-                    "date",
-                    "dateLabel",
-                    "content"
-                ],
+                "required": ["date", "dateLabel", "content"],
                 "title": "AiDigestResource"
             },
             "AiToneResource": {
@@ -1185,22 +1102,15 @@
                     "id": {
                         "type": "integer",
                         "description": "The AI tone's unique identifier, used for saving the user's selection.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "name": {
                         "type": "string",
                         "description": "The display name of the AI tone.",
-                        "examples": [
-                            "Friendly"
-                        ]
+                        "examples": ["Friendly"]
                     },
                     "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "A description of the AI tone's style or personality.",
                         "examples": [
                             "Provides responses in a warm and approachable manner."
@@ -1209,17 +1119,10 @@
                     "icon": {
                         "type": "string",
                         "description": "The name of the icon associated with this AI tone, used for display in the UI.",
-                        "examples": [
-                            "sun"
-                        ]
+                        "examples": ["sun"]
                     }
                 },
-                "required": [
-                    "id",
-                    "name",
-                    "description",
-                    "icon"
-                ],
+                "required": ["id", "name", "description", "icon"],
                 "title": "AiToneResource"
             },
             "EditHabitResource": {
@@ -1228,26 +1131,17 @@
                     "id": {
                         "type": "integer",
                         "description": "Unique habit identifier.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "name": {
                         "type": "string",
                         "description": "Display name of the habit.",
-                        "examples": [
-                            "Morning meditation"
-                        ]
+                        "examples": ["Morning meditation"]
                     },
                     "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Optional longer description.",
-                        "examples": [
-                            "10 minutes before breakfast"
-                        ]
+                        "examples": ["10 minutes before breakfast"]
                     },
                     "is_active": {
                         "type": "boolean",
@@ -1256,23 +1150,17 @@
                     "sort_order": {
                         "type": "integer",
                         "description": "Position in the sorted habit list.",
-                        "examples": [
-                            3
-                        ]
+                        "examples": [3]
                     },
                     "iterations_required": {
                         "type": "integer",
                         "description": "How many completions are required per day.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "human_readable": {
                         "type": "string",
                         "description": "Human-readable schedule description derived from the RRule.",
-                        "examples": [
-                            "Monday, Wednesday, Friday"
-                        ]
+                        "examples": ["Monday, Wednesday, Friday"]
                     },
                     "is_franklin_virtue": {
                         "type": "boolean",
@@ -1297,37 +1185,27 @@
                     "date": {
                         "type": "string",
                         "description": "Date of the activity entry (YYYY-MM-DD).",
-                        "examples": [
-                            "2026-04-06"
-                        ]
+                        "examples": ["2026-04-06"]
                     },
                     "percentage": {
                         "type": "number",
-                        "description": "Completion percentage for the day (0.0–100.0).",
-                        "examples": [
-                            66.7
-                        ]
+                        "description": "Completion percentage for the day (0.0\u2013100.0).",
+                        "examples": [66.7]
                     },
                     "completed": {
                         "type": "integer",
                         "description": "Number of habits completed on this day.",
-                        "examples": [
-                            4
-                        ]
+                        "examples": [4]
                     },
                     "total": {
                         "type": "integer",
                         "description": "Total number of habits planned for this day.",
-                        "examples": [
-                            6
-                        ]
+                        "examples": [6]
                     },
                     "intensity": {
                         "type": "integer",
-                        "description": "Heatmap intensity level (0–4).",
-                        "examples": [
-                            3
-                        ]
+                        "description": "Heatmap intensity level (0\u20134).",
+                        "examples": [3]
                     }
                 },
                 "required": [
@@ -1345,33 +1223,22 @@
                     "id": {
                         "type": "integer",
                         "description": "Unique habit identifier.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "name": {
                         "type": "string",
                         "description": "Display name of the habit.",
-                        "examples": [
-                            "Morning meditation"
-                        ]
+                        "examples": ["Morning meditation"]
                     },
                     "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Optional longer description.",
-                        "examples": [
-                            "10 minutes before breakfast"
-                        ]
+                        "examples": ["10 minutes before breakfast"]
                     },
                     "iterations_required": {
                         "type": "integer",
                         "description": "How many completions are required per day.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "is_active": {
                         "type": "boolean",
@@ -1380,33 +1247,20 @@
                     "frequency": {
                         "type": "string",
                         "description": "RRule frequency: DAILY, WEEKLY, or MONTHLY.",
-                        "examples": [
-                            "WEEKLY"
-                        ]
+                        "examples": ["WEEKLY"]
                     },
                     "weekly_days": {
                         "type": "array",
-                        "description": "Days of the week the habit repeats (0 = Monday … 6 = Sunday). For WEEKLY habits.",
-                        "examples": [
-                            [
-                                0,
-                                2,
-                                4
-                            ]
-                        ],
+                        "description": "Days of the week the habit repeats (0 = Monday \u2026 6 = Sunday). For WEEKLY habits.",
+                        "examples": [[0, 2, 4]],
                         "items": {
                             "type": "integer"
                         }
                     },
                     "monthly_days": {
                         "type": "array",
-                        "description": "Specific calendar days of the month (1–31). For MONTHLY \"day\" mode.",
-                        "examples": [
-                            [
-                                1,
-                                15
-                            ]
-                        ],
+                        "description": "Specific calendar days of the month (1\u201331). For MONTHLY \"day\" mode.",
+                        "examples": [[1, 15]],
                         "items": {
                             "type": "integer"
                         }
@@ -1414,23 +1268,17 @@
                     "monthly_mode": {
                         "type": "string",
                         "description": "Monthly recurrence mode: \"day\" for specific dates, \"position\" for ordinal weekday.",
-                        "examples": [
-                            "position"
-                        ]
+                        "examples": ["position"]
                     },
                     "monthly_position": {
                         "type": "integer",
                         "description": "Ordinal position within the month (1, 2, 3, 4, or -1 for last). Used when monthly_mode is \"position\".",
-                        "examples": [
-                            2
-                        ]
+                        "examples": [2]
                     },
                     "monthly_weekday": {
                         "type": "integer",
-                        "description": "Day of the week for ordinal recurrence (0 = Monday … 6 = Sunday). Used when monthly_mode is \"position\".",
-                        "examples": [
-                            1
-                        ]
+                        "description": "Day of the week for ordinal recurrence (0 = Monday \u2026 6 = Sunday). Used when monthly_mode is \"position\".",
+                        "examples": [1]
                     },
                     "notifications": {
                         "type": "array",
@@ -1462,19 +1310,14 @@
                     "time": {
                         "type": "string",
                         "description": "Time of day for the notification in HH:MM format.",
-                        "examples": [
-                            "08:00"
-                        ]
+                        "examples": ["08:00"]
                     },
                     "is_active": {
                         "type": "boolean",
                         "description": "Whether this notification is currently enabled."
                     }
                 },
-                "required": [
-                    "time",
-                    "is_active"
-                ],
+                "required": ["time", "is_active"],
                 "title": "HabitNotificationResource"
             },
             "HabitResource": {
@@ -1487,28 +1330,19 @@
                     "name": {
                         "type": "array",
                         "description": "Display name of the habit.",
-                        "examples": [
-                            "Morning exercise"
-                        ],
+                        "examples": ["Morning exercise"],
                         "items": {}
                     },
                     "description": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
+                        "type": ["array", "null"],
                         "description": "Optional longer description.",
-                        "examples": [
-                            "Do 30 pushups"
-                        ],
+                        "examples": ["Do 30 pushups"],
                         "items": {}
                     },
                     "iterations_required": {
                         "type": "integer",
                         "description": "How many iterations are needed to complete.",
-                        "examples": [
-                            3
-                        ]
+                        "examples": [3]
                     },
                     "is_completed": {
                         "type": "boolean",
@@ -1516,25 +1350,19 @@
                     },
                     "current_iteration": {
                         "description": "Number of iterations completed so far today.",
-                        "examples": [
-                            1
-                        ],
+                        "examples": [1],
                         "anyOf": [
                             {},
                             {
                                 "type": "integer",
-                                "enum": [
-                                    0
-                                ]
+                                "enum": [0]
                             }
                         ]
                     },
                     "sort_order": {
                         "type": "integer",
                         "description": "Position in the habit list.",
-                        "examples": [
-                            2
-                        ]
+                        "examples": [2]
                     }
                 },
                 "required": [
@@ -1554,44 +1382,32 @@
                     "id": {
                         "type": "integer",
                         "description": "Habit template identifier.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "name": {
                         "type": "string",
                         "description": "Localized habit name.",
-                        "examples": [
-                            "Morning Meditation"
-                        ]
+                        "examples": ["Morning Meditation"]
                     },
                     "human_readable": {
                         "type": "string",
                         "description": "Human-readable recurrence rule.",
-                        "examples": [
-                            "Every day"
-                        ]
+                        "examples": ["Every day"]
                     },
                     "iterations_required": {
                         "type": "integer",
                         "description": "Number of iterations required per occurrence.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "category": {
                         "type": "string",
                         "description": "Localized category name.",
-                        "examples": [
-                            "Health & Fitness"
-                        ]
+                        "examples": ["Health & Fitness"]
                     },
                     "sort_order": {
                         "type": "integer",
                         "description": "Sort order within the category.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     }
                 },
                 "required": [
@@ -1610,82 +1426,49 @@
                     "year": {
                         "type": "integer",
                         "description": "Life year index (age, 0-based).",
-                        "examples": [
-                            24
-                        ]
+                        "examples": [24]
                     },
                     "intensity": {
                         "type": "integer",
-                        "description": "Heatmap intensity level (0–4).",
-                        "examples": [
-                            3
-                        ]
+                        "description": "Heatmap intensity level (0\u20134).",
+                        "examples": [3]
                     },
                     "completed": {
                         "type": "integer",
                         "description": "Number of habits completed that year.",
-                        "examples": [
-                            120
-                        ]
+                        "examples": [120]
                     },
                     "total": {
                         "type": "integer",
                         "description": "Total habit occurrences scheduled that year.",
-                        "examples": [
-                            200
-                        ]
+                        "examples": [200]
                     }
                 },
-                "required": [
-                    "year",
-                    "intensity",
-                    "completed",
-                    "total"
-                ],
+                "required": ["year", "intensity", "completed", "total"],
                 "title": "LifeActivityResource"
             },
             "LifeViewResource": {
                 "type": "object",
                 "properties": {
                     "birthdate": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "User's birthdate (YYYY-MM-DD).",
-                        "examples": [
-                            "2001-03-15"
-                        ]
+                        "examples": ["2001-03-15"]
                     },
                     "currentAge": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "User's current age in years.",
-                        "examples": [
-                            25
-                        ]
+                        "examples": [25]
                     },
                     "weeksLived": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "Total weeks lived since birth.",
-                        "examples": [
-                            1300
-                        ]
+                        "examples": [1300]
                     },
                     "yearsRemaining": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "Estimated years remaining (based on 80-year lifespan).",
-                        "examples": [
-                            55
-                        ]
+                        "examples": [55]
                     }
                 },
                 "required": [
@@ -1713,18 +1496,13 @@
                         "example": "2026-04-06"
                     },
                     "content": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Note text content. Send null to clear.",
                         "example": "Great day!",
                         "maxLength": 5000
                     }
                 },
-                "required": [
-                    "date"
-                ],
+                "required": ["date"],
                 "title": "NoteRequest"
             },
             "ReorderHabitsRequest": {
@@ -1738,9 +1516,7 @@
                         "minItems": 1
                     }
                 },
-                "required": [
-                    "ordered_ids"
-                ],
+                "required": ["ordered_ids"],
                 "title": "ReorderHabitsRequest"
             },
             "StoreHabitRequest": {
@@ -1752,19 +1528,12 @@
                         "maxLength": 255
                     },
                     "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "maxLength": 1000
                     },
                     "frequency": {
                         "type": "string",
-                        "enum": [
-                            "DAILY",
-                            "WEEKLY",
-                            "MONTHLY"
-                        ]
+                        "enum": ["DAILY", "WEEKLY", "MONTHLY"]
                     },
                     "iterations_required": {
                         "type": "integer",
@@ -1776,20 +1545,11 @@
                     },
                     "monthly_mode": {
                         "type": "string",
-                        "enum": [
-                            "day",
-                            "position"
-                        ]
+                        "enum": ["day", "position"]
                     },
                     "monthly_position": {
                         "type": "integer",
-                        "enum": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "-1"
-                        ]
+                        "enum": ["1", "2", "3", "4", "-1"]
                     },
                     "monthly_weekday": {
                         "type": "integer",
@@ -1825,10 +1585,7 @@
                                     "type": "boolean"
                                 }
                             },
-                            "required": [
-                                "time",
-                                "is_active"
-                            ]
+                            "required": ["time", "is_active"]
                         },
                         "maxItems": 10
                     }
@@ -1853,9 +1610,7 @@
                         "example": "user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
                     }
                 },
-                "required": [
-                    "init_data"
-                ],
+                "required": ["init_data"],
                 "title": "TelegramMiniAppRequest"
             },
             "ToggleRequest": {
@@ -1873,10 +1628,7 @@
                         "example": "2026-04-06"
                     }
                 },
-                "required": [
-                    "habit_id",
-                    "date"
-                ],
+                "required": ["habit_id", "date"],
                 "title": "ToggleRequest"
             },
             "TrackResource": {
@@ -1885,23 +1637,17 @@
                     "date": {
                         "type": "string",
                         "description": "ISO 8601 date string (YYYY-MM-DD).",
-                        "examples": [
-                            "2026-04-06"
-                        ]
+                        "examples": ["2026-04-06"]
                     },
                     "dayName": {
                         "type": "string",
                         "description": "Localized day of week name.",
-                        "examples": [
-                            "Monday"
-                        ]
+                        "examples": ["Monday"]
                     },
                     "dateFormatted": {
                         "type": "string",
                         "description": "Localized full date.",
-                        "examples": [
-                            "April 6, 2026"
-                        ]
+                        "examples": ["April 6, 2026"]
                     },
                     "isToday": {
                         "type": "boolean",
@@ -1910,23 +1656,17 @@
                     "totalHabits": {
                         "type": "integer",
                         "description": "Total number of habits scheduled for this day.",
-                        "examples": [
-                            5
-                        ]
+                        "examples": [5]
                     },
                     "completedCount": {
                         "type": "integer",
                         "description": "Number of fully completed habits.",
-                        "examples": [
-                            3
-                        ]
+                        "examples": [3]
                     },
                     "dailyNoteContent": {
                         "type": "string",
                         "description": "User's daily note text.",
-                        "examples": [
-                            "Great day!"
-                        ]
+                        "examples": ["Great day!"]
                     },
                     "translations": {
                         "type": "object",
@@ -1936,10 +1676,7 @@
                         }
                     },
                     "aiDigest": {
-                        "type": [
-                            "object",
-                            "null"
-                        ],
+                        "type": ["object", "null"],
                         "description": "AI-generated digest for this day, or null if not available.",
                         "properties": {
                             "date": {
@@ -1949,17 +1686,10 @@
                                 "type": "string"
                             },
                             "content": {
-                                "type": [
-                                    "string",
-                                    "null"
-                                ]
+                                "type": ["string", "null"]
                             }
                         },
-                        "required": [
-                            "date",
-                            "dateLabel",
-                            "content"
-                        ]
+                        "required": ["date", "dateLabel", "content"]
                     }
                 },
                 "required": [
@@ -1989,15 +1719,10 @@
                     "bannerText": {
                         "type": "string",
                         "description": "Text to show in the trial banner, e.g. \"Your trial expires in 3 days\".",
-                        "examples": [
-                            "Your trial expires in 3 days"
-                        ]
+                        "examples": ["Your trial expires in 3 days"]
                     },
                     "invoiceLink": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Premium invoice link for the current locale, if available.\nUsed in the trial banner and premium modal."
                     },
                     "learnMore": {
@@ -2055,11 +1780,7 @@
                     "theme": {
                         "type": "string",
                         "description": "UI theme preference.",
-                        "enum": [
-                            "light",
-                            "dark",
-                            "system"
-                        ],
+                        "enum": ["light", "dark", "system"],
                         "example": "dark"
                     },
                     "locale": {
@@ -2083,19 +1804,13 @@
                         "example": "Europe/London"
                     },
                     "birthdate": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "format": "date-time",
                         "description": "User's date of birth.",
                         "example": "1990-01-15"
                     },
                     "dayStartsAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
                         "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
                         "example": "03:00"
@@ -2105,19 +1820,13 @@
                         "description": "Whether completed habits are moved to the bottom of the list."
                     },
                     "aiDigestTime": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Scheduled time for the daily AI digest (HH:MM). Null disables it.",
                         "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
                         "example": "09:00"
                     },
                     "aiToneId": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "AI tone to use for the digest.",
                         "example": 1
                     }
@@ -2130,66 +1839,39 @@
                     "locale": {
                         "type": "string",
                         "description": "Current locale code.",
-                        "examples": [
-                            "en"
-                        ]
+                        "examples": ["en"]
                     },
                     "theme": {
                         "type": "string",
                         "description": "UI theme preference.",
-                        "examples": [
-                            "system"
-                        ]
+                        "examples": ["system"]
                     },
                     "moveCompletedToEnd": {
                         "type": "boolean",
                         "description": "Whether completed habits are moved to bottom."
                     },
                     "timezone": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "IANA timezone identifier.",
-                        "examples": [
-                            "Europe/London"
-                        ]
+                        "examples": ["Europe/London"]
                     },
                     "dayStartsAt": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
-                        "examples": [
-                            "03:00"
-                        ]
+                        "examples": ["03:00"]
                     },
                     "birthdate": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "User's date of birth.",
-                        "examples": [
-                            "1990-01-15"
-                        ]
+                        "examples": ["1990-01-15"]
                     },
                     "aiDigestTime": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Scheduled time for the daily AI digest (HH:MM). Null means disabled.",
-                        "examples": [
-                            "09:00"
-                        ]
+                        "examples": ["09:00"]
                     },
                     "aiToneId": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "ID of the AI tone used for the digest."
                     },
                     "trial": {
@@ -2216,23 +1898,17 @@
                     "date": {
                         "type": "string",
                         "description": "Date in YYYY-MM-DD format.",
-                        "examples": [
-                            "2026-04-06"
-                        ]
+                        "examples": ["2026-04-06"]
                     },
                     "day_name": {
                         "type": "string",
                         "description": "Short localized day name.",
-                        "examples": [
-                            "Mon"
-                        ]
+                        "examples": ["Mon"]
                     },
                     "day_number": {
                         "type": "integer",
                         "description": "Day of month number.",
-                        "examples": [
-                            6
-                        ]
+                        "examples": [6]
                     },
                     "is_today": {
                         "type": "boolean",
@@ -2258,26 +1934,17 @@
                     "id": {
                         "type": "integer",
                         "description": "Habit ID.",
-                        "examples": [
-                            1
-                        ]
+                        "examples": [1]
                     },
                     "name": {
                         "type": "string",
                         "description": "Habit name.",
-                        "examples": [
-                            "Exercise"
-                        ]
+                        "examples": ["Exercise"]
                     },
                     "category": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "Category name, if any.",
-                        "examples": [
-                            "Health"
-                        ]
+                        "examples": ["Health"]
                     },
                     "is_weekly_focus": {
                         "type": "boolean",
@@ -2303,11 +1970,7 @@
                                     "type": "boolean"
                                 }
                             },
-                            "required": [
-                                "completed",
-                                "partial",
-                                "scheduled"
-                            ]
+                            "required": ["completed", "partial", "scheduled"]
                         }
                     }
                 },
@@ -2327,44 +1990,32 @@
                     "start": {
                         "type": "string",
                         "description": "Week start date (YYYY-MM-DD).",
-                        "examples": [
-                            "2026-04-06"
-                        ]
+                        "examples": ["2026-04-06"]
                     },
                     "end": {
                         "type": "string",
                         "description": "Week end date (YYYY-MM-DD).",
-                        "examples": [
-                            "2026-04-12"
-                        ]
+                        "examples": ["2026-04-12"]
                     },
                     "startFormatted": {
                         "type": "string",
                         "description": "Localized short start date.",
-                        "examples": [
-                            "Apr 6"
-                        ]
+                        "examples": ["Apr 6"]
                     },
                     "endFormatted": {
                         "type": "string",
                         "description": "Localized short end date.",
-                        "examples": [
-                            "Apr 12"
-                        ]
+                        "examples": ["Apr 12"]
                     },
                     "endFormattedFull": {
                         "type": "string",
                         "description": "Localized full end date with year.",
-                        "examples": [
-                            "Apr 12, 2026"
-                        ]
+                        "examples": ["Apr 12, 2026"]
                     },
                     "year": {
                         "type": "string",
                         "description": "Year of the displayed week.",
-                        "examples": [
-                            "2026"
-                        ]
+                        "examples": ["2026"]
                     },
                     "isCurrent": {
                         "type": "boolean",
@@ -2388,79 +2039,47 @@
                     "weekNum": {
                         "type": "integer",
                         "description": "Week number within the life year (1-based).",
-                        "examples": [
-                            12
-                        ]
+                        "examples": [12]
                     },
                     "intensity": {
                         "type": "integer",
-                        "description": "Heatmap intensity level (0–4).",
-                        "examples": [
-                            3
-                        ]
+                        "description": "Heatmap intensity level (0\u20134).",
+                        "examples": [3]
                     },
                     "completed": {
                         "type": "integer",
                         "description": "Number of habits completed that week.",
-                        "examples": [
-                            5
-                        ]
+                        "examples": [5]
                     },
                     "total": {
                         "type": "integer",
                         "description": "Total habit occurrences scheduled that week.",
-                        "examples": [
-                            7
-                        ]
+                        "examples": [7]
                     }
                 },
-                "required": [
-                    "weekNum",
-                    "intensity",
-                    "completed",
-                    "total"
-                ],
+                "required": ["weekNum", "intensity", "completed", "total"],
                 "title": "YearActivityResource"
             },
             "YearViewResource": {
                 "type": "object",
                 "properties": {
                     "selected": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "Selected year index (age) for the year grid.",
-                        "examples": [
-                            25
-                        ]
+                        "examples": [25]
                     },
                     "birthdate": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
+                        "type": ["string", "null"],
                         "description": "User's birthdate (YYYY-MM-DD).",
-                        "examples": [
-                            "2001-03-15"
-                        ]
+                        "examples": ["2001-03-15"]
                     },
                     "currentAge": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ],
+                        "type": ["integer", "null"],
                         "description": "User's current age in years.",
-                        "examples": [
-                            25
-                        ]
+                        "examples": [25]
                     }
                 },
-                "required": [
-                    "selected",
-                    "birthdate",
-                    "currentAge"
-                ],
+                "required": ["selected", "birthdate", "currentAge"],
                 "title": "YearViewResource"
             }
         },
@@ -2487,10 +2106,7 @@
                                     }
                                 }
                             },
-                            "required": [
-                                "message",
-                                "errors"
-                            ]
+                            "required": ["message", "errors"]
                         }
                     }
                 }
@@ -2507,9 +2123,7 @@
                                     "description": "Error overview."
                                 }
                             },
-                            "required": [
-                                "message"
-                            ]
+                            "required": ["message"]
                         }
                     }
                 }
@@ -2526,9 +2140,7 @@
                                     "description": "Error overview."
                                 }
                             },
-                            "required": [
-                                "message"
-                            ]
+                            "required": ["message"]
                         }
                     }
                 }
@@ -2545,9 +2157,7 @@
                                     "description": "Error overview."
                                 }
                             },
-                            "required": [
-                                "message"
-                            ]
+                            "required": ["message"]
                         }
                     }
                 }

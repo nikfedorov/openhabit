@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\AiDigest;
 use App\Models\Habit;
 use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -23,6 +24,7 @@ it('returns week data with correct structure and defaults to current week', func
             ->has('translations')
             ->has('days')
             ->has('habits')
+            ->has('aiDigests')
             ->has('data', fn (AssertableJson $json): AssertableJson => $json
                 ->where('isCurrent', true)
                 ->has('start')
@@ -54,4 +56,27 @@ it('accepts week parameter and validates it', function (): void {
         ->getJson('/api/view/week?week=not-a-date')
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['week']);
+});
+
+it('includes ai digests for the requested week', function (): void {
+    $user = User::factory()->create();
+    $weekStart = now()->startOfWeek()->toDateString();
+
+    AiDigest::factory()->create([
+        'user_id' => $user->id,
+        'date' => $weekStart,
+        'content' => 'Weekly digest content',
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+        ->getJson('/api/view/week?week='.$weekStart)
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('aiDigests', 1, fn (AssertableJson $json): AssertableJson => $json
+                ->where('date', $weekStart)
+                ->where('content', 'Weekly digest content')
+                ->has('dateLabel')
+            )
+            ->etc()
+        );
 });

@@ -34,4 +34,5 @@ return [
     'set_birthdate' => '请在设置中填写出生日期',
     'to_see_year_visualization' => '以查看年度可视化',
     'to_see_life_visualization' => '以查看生命可视化',
+    'insights' => 'AI 洞察',
 ];

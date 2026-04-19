@@ -34,4 +34,5 @@ return [
     'set_birthdate' => 'Укажите дату рождения в настройках',
     'to_see_year_visualization' => 'чтобы увидеть визуализацию года',
     'to_see_life_visualization' => 'чтобы увидеть визуализацию жизни',
+    'insights' => 'ИИ-дайджесты',
 ];

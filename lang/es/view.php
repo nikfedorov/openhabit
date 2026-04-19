@@ -34,4 +34,5 @@ return [
     'set_birthdate' => 'Configura tu fecha de nacimiento en ajustes',
     'to_see_year_visualization' => 'para ver tu visualización anual',
     'to_see_life_visualization' => 'para ver tu visualización de vida',
+    'insights' => 'Insights',
 ];

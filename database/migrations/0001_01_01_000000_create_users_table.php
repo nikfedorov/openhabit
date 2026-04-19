@@ -28,12 +28,12 @@ return new class extends Migration
             $table->string('timezone')->default('UTC');
             $table->string('locale', 10)->nullable();
 
-            $table->time('day_starts_at')->default('03:00:00');
+            $table->time('day_starts_at')->default('03:00');
             $table->boolean('move_completed_to_end')->default(true);
             $table->date('birthdate')->nullable();
 
-            $table->string('ai_digest_time', 5)->nullable();
-            $table->foreignId('ai_tone_id')->nullable();
+            $table->string('ai_digest_time', 5)->nullable()->default('08:00');
+            $table->foreignId('ai_tone_id')->nullable()->default(1);
 
             $table->timestamp('last_active_at')->nullable();
             $table->timestamp('trial_banner_dismissed_at')->nullable();

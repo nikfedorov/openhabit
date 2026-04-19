@@ -21,6 +21,7 @@ export const defaultWeekTranslations: WeekTranslations = {
     partial: 'Partial',
     missed: 'Missed',
     future: 'Future',
+    insights: 'Insights',
 };
 
 export const defaultYearTranslations: YearTranslations = {

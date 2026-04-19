@@ -5,6 +5,7 @@ import BirthdateNotice from '@/components/view/BirthdateNotice.vue';
 import LifeGrid from '@/components/view/LifeGrid.vue';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import WeekGrid from '@/components/view/WeekGrid.vue';
+import WeekInsights from '@/components/view/WeekInsights.vue';
 import WeekNavigator from '@/components/view/WeekNavigator.vue';
 import YearGrid from '@/components/view/YearGrid.vue';
 import YearNavigator from '@/components/view/YearNavigator.vue';
@@ -17,6 +18,7 @@ import type {
 import type { NavigationTranslations } from '@/types/navigation';
 import type {
     GridHabit,
+    AiDigestItem,
     LifeStats,
     LifeTranslations,
     WeekActivityData,
@@ -46,6 +48,7 @@ const lifeKey = ref(0);
 const weekData = ref<WeekViewData | null>(null);
 const weekDays = ref<WeekDay[] | null>(null);
 const weekHabits = ref<GridHabit[] | null>(null);
+const weekDigests = ref<AiDigestItem[]>([]);
 const yearData = ref<YearViewData | null>(null);
 const yearActivityData = ref<WeekActivityData[] | null>(null);
 const lifeData = ref<LifeViewData | null>(null);
@@ -116,6 +119,7 @@ async function loadWeek(params?: { week?: string }) {
     weekData.value = response.data;
     weekDays.value = response.days;
     weekHabits.value = response.habits;
+    weekDigests.value = response.aiDigests;
     weekTranslations.value = response.translations;
     tab.value = 'week';
     handleCommonResponse(response);
@@ -302,6 +306,14 @@ onMounted(() => {
                     :days="weekDays"
                     :habits="weekHabits"
                     :translations="weekTranslations!"
+                />
+
+                <!-- Weekly AI Insights -->
+                <WeekInsights
+                    v-if="weekDigests.length > 0"
+                    class="mt-4"
+                    :digests="weekDigests"
+                    :label="weekTranslations!.insights"
                 />
             </div>
 

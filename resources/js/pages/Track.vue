@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PageLoader from '@/components/PageLoader.vue';
 import ActivityGraph from '@/components/track/ActivityGraph.vue';
+import AiDigest from '@/components/track/AiDigest.vue';
 import DailyNote from '@/components/track/DailyNote.vue';
 import DateNavigator from '@/components/track/DateNavigator.vue';
 import EmptyState from '@/components/track/EmptyState.vue';
@@ -109,6 +110,12 @@ onMounted(() => {
                 :note-label="data.translations.daily_note"
                 :saving-label="data.translations.saving"
                 :placeholder="data.translations.how_was_your_day"
+            />
+            <AiDigest
+                v-if="data.aiDigest?.content"
+                key="ai-digest"
+                :content="data.aiDigest.content"
+                :label="data.translations.ai_digest"
             />
 
             <ActivityGraph

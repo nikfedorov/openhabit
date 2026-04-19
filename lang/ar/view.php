@@ -34,4 +34,5 @@ return [
     'set_birthdate' => 'حدد تاريخ ميلادك في الإعدادات',
     'to_see_year_visualization' => 'لمشاهدة عرض السنة الخاص بك',
     'to_see_life_visualization' => 'لمشاهدة عرض الحياة الخاص بك',
+    'insights' => 'تحليلات',
 ];

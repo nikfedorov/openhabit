@@ -62,6 +62,7 @@ export const defaultTrackTranslations = {
     more: 'More',
     previous_day: 'Previous day',
     next_day: 'Next day',
+    ai_digest: 'AI Digest',
 };
 
 export function makeHabit(overrides: Partial<Habit> = {}): Habit {
@@ -107,6 +108,7 @@ export const defaultTrackData: TrackData = {
     totalHabits: 2,
     completedCount: 0,
     dailyNoteContent: '',
+    aiDigest: null,
     activityData: [] as ActivityDay[],
     translations: defaultTrackTranslations,
 };
