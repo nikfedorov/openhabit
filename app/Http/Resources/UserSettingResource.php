@@ -7,6 +7,7 @@ namespace App\Http\Resources;
 use App\Actions\ResolvePremiumStateAction;
 use App\Data\PremiumState;
 use App\Enums\Theme;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,6 +37,7 @@ final class UserSettingResource extends JsonResource
      *     aiDigestTime: string|null,
      *     aiToneId: int|null,
      *     trial: TrialResource,
+     *     telegramBotUsername: string|null,
      * }
      */
     public function toArray(Request $request): array
@@ -115,6 +117,13 @@ final class UserSettingResource extends JsonResource
              * Trial banner and premium modal data.
              */
             'trial' => new TrialResource($this->premiumState()),
+
+            /**
+             * Telegram bot username for story sharing widget link.
+             *
+             * @var string|null
+             */
+            'telegramBotUsername' => Setting::getValue('telegram_bot_username'),
         ];
     }
 

@@ -89,6 +89,7 @@ const EXCLUDED_SCHEMAS = new Set([
     'TelegramMiniAppRequest', // request body
     'ToggleRequest', // request body
     'UpdateSettingsRequest', // request body
+    'StoryUploadRequest', // request body
 ]);
 
 /**
@@ -115,6 +116,7 @@ const KNOWN_PATHS = new Set([
     '/settings',
     '/settings/trial-banner/dismiss',
     '/settings/export',
+    '/story/upload',
 ]);
 
 // ─── API Contract Tests ─────────────────────────────────────────
@@ -331,6 +333,7 @@ describe('API contract', () => {
             aiDigestTime: true,
             aiToneId: true,
             trial: true,
+            telegramBotUsername: true,
         });
 
         expect(schema).toEqual(ts);

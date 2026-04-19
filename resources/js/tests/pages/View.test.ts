@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import LifeGrid from '@/components/view/LifeGrid.vue';
 import LifeHeader from '@/components/view/LifeHeader.vue';
 import WeekGrid from '@/components/view/WeekGrid.vue';
@@ -31,14 +31,27 @@ import type {
     YearViewData,
 } from '@/types/view';
 
-const { mockApiFetch, mockRouteQuery, mockReplace } = vi.hoisted(() => ({
+const {
+    mockApiFetch,
+    mockRouteQuery,
+    mockReplace,
+    mockHtml2canvas,
+    mockGetToken,
+} = vi.hoisted(() => ({
     mockApiFetch: vi.fn(),
     mockRouteQuery: { value: {} as Record<string, string> },
     mockReplace: vi.fn(),
+    mockHtml2canvas: vi.fn(),
+    mockGetToken: vi.fn(() => null as string | null),
 }));
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
+    getToken: mockGetToken,
+}));
+
+vi.mock('html2canvas-pro', () => ({
+    default: mockHtml2canvas,
 }));
 
 vi.mock('vue-router', () => ({
@@ -716,5 +729,444 @@ describe('View - URL Sync', () => {
         expect(mockReplace).toHaveBeenCalledWith({
             query: { tab: 'week' },
         });
+    });
+});
+
+// ─── Share Story Button ─────────────────────────────────────────
+
+describe('View - Share Story Button', () => {
+    const mockShareToStory = vi.fn();
+
+    function setupTelegram() {
+        Object.assign(window, {
+            Telegram: {
+                WebApp: {
+                    initData: 'test-init-data',
+                    shareToStory: mockShareToStory,
+                },
+            },
+        });
+    }
+
+    function teardownTelegram() {
+        delete (window as unknown as Record<string, unknown>).Telegram;
+    }
+
+    beforeEach(() => {
+        mockShareToStory.mockReset();
+        mockHtml2canvas.mockReset();
+        teardownTelegram();
+    });
+
+    afterEach(() => {
+        teardownTelegram();
+        vi.unstubAllGlobals();
+        vi.restoreAllMocks();
+    });
+
+    it('does not render share button when Telegram WebApp is not available', async () => {
+        const wrapper = await mountView();
+        expect(wrapper.find('[data-testid="share-story-btn"]').exists()).toBe(
+            false,
+        );
+    });
+
+    it('renders share button when Telegram WebApp with shareToStory is available', async () => {
+        setupTelegram();
+        const wrapper = await mountView();
+        expect(wrapper.find('[data-testid="share-story-btn"]').exists()).toBe(
+            true,
+        );
+    });
+
+    it('does nothing when no panel element is found', async () => {
+        setupTelegram();
+        const wrapper = await mountView();
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockShareToStory).not.toHaveBeenCalled();
+    });
+
+    it('does not re-enter while already sharing', async () => {
+        setupTelegram();
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        fakeStoryCanvas.getContext = () =>
+            ({
+                fillStyle: '',
+                fillRect: vi.fn(),
+                drawImage: vi.fn(),
+            }) as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+
+        let resolveHtml2canvas!: (v: HTMLCanvasElement) => void;
+        mockHtml2canvas.mockReturnValueOnce(
+            new Promise<HTMLCanvasElement>((res) => {
+                resolveHtml2canvas = res;
+            }),
+        );
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: () =>
+                    Promise.resolve({ url: 'https://example.com/story.png' }),
+            }),
+        );
+
+        const wrapper = await mountView();
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        const btn = wrapper.find('[data-testid="share-story-btn"]');
+
+        // Start first share (still in-progress)
+        btn.trigger('click');
+
+        // Click again while sharing — should be ignored
+        await btn.trigger('click');
+        await flushPromises();
+
+        resolveHtml2canvas(fakeSourceCanvas);
+        await flushPromises();
+
+        // shareToStory called exactly once
+        expect(mockShareToStory).toHaveBeenCalledTimes(1);
+
+        document.body.removeChild(panel);
+    });
+
+    it('calls shareToStory with url when share button is clicked', async () => {
+        setupTelegram();
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        fakeStoryCanvas.getContext = () =>
+            ({
+                fillStyle: '',
+                fillRect: vi.fn(),
+                drawImage: vi.fn(),
+            }) as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+        mockHtml2canvas.mockResolvedValue(fakeSourceCanvas);
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: () =>
+                    Promise.resolve({ url: 'https://example.com/story.png' }),
+            }),
+        );
+
+        const wrapper = await mountView();
+
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockShareToStory).toHaveBeenCalledWith(
+            'https://example.com/story.png',
+            expect.any(Object),
+        );
+
+        document.body.removeChild(panel);
+    });
+
+    it('does nothing when fetch response is not ok', async () => {
+        setupTelegram();
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        fakeStoryCanvas.getContext = () =>
+            ({
+                fillStyle: '',
+                fillRect: vi.fn(),
+                drawImage: vi.fn(),
+            }) as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+        mockHtml2canvas.mockResolvedValue(fakeSourceCanvas);
+
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
+
+        const wrapper = await mountView();
+
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockShareToStory).not.toHaveBeenCalled();
+
+        document.body.removeChild(panel);
+    });
+
+    it('includes widget_link when telegramBotUsername is set', async () => {
+        setupTelegram();
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        fakeStoryCanvas.getContext = () =>
+            ({
+                fillStyle: '',
+                fillRect: vi.fn(),
+                drawImage: vi.fn(),
+            }) as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+        mockHtml2canvas.mockResolvedValue(fakeSourceCanvas);
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: () =>
+                    Promise.resolve({ url: 'https://example.com/story.png' }),
+            }),
+        );
+
+        mockApiFetch.mockResolvedValueOnce({
+            ...makeWeekResponse(),
+            settings: {
+                locale: 'en',
+                theme: 'system' as const,
+                trial: defaultTrial,
+                telegramBotUsername: 'my_bot',
+            },
+        });
+        const wrapper = mount(View);
+        await flushPromises();
+
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockShareToStory).toHaveBeenCalledWith(
+            'https://example.com/story.png',
+            expect.objectContaining({
+                widget_link: expect.objectContaining({
+                    url: 'https://t.me/my_bot',
+                }),
+            }),
+        );
+
+        document.body.removeChild(panel);
+    });
+
+    it('sends Authorization header when token is available', async () => {
+        setupTelegram();
+        mockGetToken.mockReturnValue('my-auth-token');
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        fakeStoryCanvas.getContext = () =>
+            ({
+                fillStyle: '',
+                fillRect: vi.fn(),
+                drawImage: vi.fn(),
+            }) as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+        mockHtml2canvas.mockResolvedValue(fakeSourceCanvas);
+
+        const mockFetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () =>
+                Promise.resolve({ url: 'https://example.com/story.png' }),
+        });
+        vi.stubGlobal('fetch', mockFetch);
+
+        mockApiFetch.mockResolvedValueOnce({
+            ...makeWeekResponse(),
+            settings: {
+                locale: 'en',
+                theme: 'system' as const,
+                trial: defaultTrial,
+                telegramBotUsername: null,
+            },
+        });
+        const wrapper = mount(View);
+        await flushPromises();
+
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockFetch).toHaveBeenCalledWith(
+            '/api/story/upload',
+            expect.objectContaining({
+                headers: expect.objectContaining({
+                    Authorization: 'Bearer my-auth-token',
+                }),
+            }),
+        );
+
+        document.body.removeChild(panel);
+        mockGetToken.mockReturnValue(null);
+    });
+
+    it('uses dark background when dark mode is active', async () => {
+        setupTelegram();
+        document.documentElement.classList.add('dark');
+
+        const origCreate = document.createElement.bind(document);
+        const fakeStoryCanvas = origCreate('canvas');
+        const fakeCtx = {
+            fillStyle: '',
+            fillRect: vi.fn(),
+            drawImage: vi.fn(),
+        } as unknown as CanvasRenderingContext2D;
+        fakeStoryCanvas.getContext = () => fakeCtx;
+        fakeStoryCanvas.toDataURL = () => 'data:image/png;base64,story';
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (tag, ...args) => {
+                if (tag === 'canvas') return fakeStoryCanvas;
+                return origCreate(tag, ...args);
+            },
+        );
+
+        const fakeSourceCanvas = origCreate('canvas');
+        Object.defineProperty(fakeSourceCanvas, 'width', {
+            value: 100,
+            writable: true,
+        });
+        Object.defineProperty(fakeSourceCanvas, 'height', {
+            value: 100,
+            writable: true,
+        });
+        mockHtml2canvas.mockResolvedValue(fakeSourceCanvas);
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: () =>
+                    Promise.resolve({ url: 'https://example.com/story.png' }),
+            }),
+        );
+
+        mockApiFetch.mockResolvedValueOnce({
+            ...makeWeekResponse(),
+            settings: {
+                locale: 'en',
+                theme: 'system' as const,
+                trial: defaultTrial,
+                telegramBotUsername: null,
+            },
+        });
+        const wrapper = mount(View);
+        await flushPromises();
+
+        const panel = origCreate('div');
+        panel.id = 'view-panel-week';
+        document.body.appendChild(panel);
+
+        await wrapper.find('[data-testid="share-story-btn"]').trigger('click');
+        await flushPromises();
+
+        expect(mockHtml2canvas).toHaveBeenCalledWith(
+            panel,
+            expect.objectContaining({ backgroundColor: '#171717' }),
+        );
+
+        document.body.removeChild(panel);
+        document.documentElement.classList.remove('dark');
     });
 });

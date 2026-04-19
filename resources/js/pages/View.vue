@@ -30,8 +30,19 @@ import type {
     YearViewData,
     LifeViewData,
 } from '@/types/view';
-import { apiFetch } from '@/utils/api';
+import { apiFetch, getToken } from '@/utils/api';
 import { findMondayOnOrAfter, formatDate } from '@/utils/date';
+
+declare global {
+    interface Window {
+        Telegram?: {
+            WebApp?: {
+                initData?: string;
+                shareToStory?: (url: string, params?: object) => void;
+            };
+        };
+    }
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -80,6 +91,86 @@ const lifeStats = computed<LifeStats | null>(() => {
 });
 const loading = ref(false);
 const navDirection = ref<'nav-forward' | 'nav-backward' | null>(null);
+const telegramBotUsername = ref<string | null>(null);
+const isSharing = ref(false);
+const isTelegramStoryAvailable = computed(
+    () =>
+        !!window.Telegram?.WebApp?.initData &&
+        typeof window.Telegram?.WebApp?.shareToStory === 'function',
+);
+
+async function shareToStory() {
+    if (isSharing.value || !isTelegramStoryAvailable.value) return;
+    isSharing.value = true;
+    try {
+        const target =
+            document.getElementById('view-panel-week') ??
+            document.getElementById('view-panel-year') ??
+            document.getElementById('view-panel-life');
+        if (!target) return;
+
+        const { default: html2canvas } = await import('html2canvas-pro');
+        const isDark = document.documentElement.classList.contains('dark');
+        const bg = isDark ? '#171717' : '#ffffff';
+
+        const canvas = await html2canvas(target, {
+            backgroundColor: bg,
+            scale: 2,
+            useCORS: true,
+        });
+
+        const storyCanvas = document.createElement('canvas');
+        storyCanvas.width = 1080;
+        storyCanvas.height = 1920;
+        const ctx = storyCanvas.getContext('2d')!;
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, 1080, 1920);
+
+        const padding = 40;
+        const ratio = Math.min(
+            (1080 - padding * 2) / canvas.width,
+            (1920 - padding * 2) / canvas.height,
+            1,
+        );
+        const drawW = Math.round(canvas.width * ratio);
+        const drawH = Math.round(canvas.height * ratio);
+
+        ctx.drawImage(
+            canvas,
+            Math.round((1080 - drawW) / 2),
+            Math.round((1920 - drawH) / 2),
+            drawW,
+            drawH,
+        );
+
+        const token = getToken();
+        const response = await fetch('/api/story/upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({ image: storyCanvas.toDataURL('image/png') }),
+        });
+
+        if (!response.ok) return;
+
+        const data = (await response.json()) as { url: string };
+        const params: Record<string, unknown> = {};
+        if (telegramBotUsername.value) {
+            params.widget_link = {
+                url: `https://t.me/${telegramBotUsername.value}`,
+                name: document.title,
+            };
+        }
+
+        window.Telegram!.WebApp!.shareToStory!(data.url, params);
+    } finally {
+        isSharing.value = false;
+    }
+}
 
 function queryParam(key: string): string | undefined {
     const v = route.query[key];
@@ -106,6 +197,7 @@ function handleCommonResponse(
 ) {
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
+    telegramBotUsername.value = response.settings.telegramBotUsername;
 }
 
 async function loadWeek(params?: { week?: string }) {
@@ -271,6 +363,32 @@ onMounted(() => {
                     @click="setTab(tabName)"
                 >
                     {{ tabTranslations?.[tabName] }}
+                </button>
+            </div>
+
+            <!-- Share Story Button -->
+            <div
+                v-if="isTelegramStoryAvailable"
+                class="flex-shrink-0 self-stretch rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+            >
+                <button
+                    type="button"
+                    :disabled="isSharing"
+                    data-testid="share-story-btn"
+                    class="flex h-full w-10 items-center justify-center rounded-md text-neutral-500 transition-all duration-150 hover:bg-white hover:text-neutral-700 hover:shadow-sm dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+                    :class="{ 'pointer-events-none opacity-50': isSharing }"
+                    @click="shareToStory"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 rtl:-scale-x-100"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            d="M13 14h-2a8.999 8.999 0 0 0-7.968 4.81A10.136 10.136 0 0 1 3 18C3 12.477 7.477 8 13 8V3l10 8-10 8v-5z"
+                        />
+                    </svg>
                 </button>
             </div>
         </div>

@@ -47,6 +47,7 @@ export type UserSettings = {
     aiDigestTime: string | null;
     aiToneId: number | null;
     trial: TrialData;
+    telegramBotUsername: string | null;
 };
 
 export type CommonData = {
