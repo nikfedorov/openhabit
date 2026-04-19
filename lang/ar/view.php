@@ -22,8 +22,6 @@ return [
     'done' => 'مكتمل',
     'partial' => 'جزئي',
     'missed' => 'فائت',
-    'no_habits_yet' => 'لا توجد عادات بعد',
-    'create_habits_to_track' => 'أنشئ بعض العادات لتتبع تقدمك',
     'memento_mori' => 'تذكّر الموت',
     'years_old' => 'سنة',
     'years_left' => 'سنة متبقية',

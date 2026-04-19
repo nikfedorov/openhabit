@@ -22,8 +22,6 @@ return [
     'done' => 'Feito',
     'partial' => 'Parcial',
     'missed' => 'Perdido',
-    'no_habits_yet' => 'Nenhum hábito ainda',
-    'create_habits_to_track' => 'Crie alguns hábitos para acompanhar seu progresso',
     'memento_mori' => 'Memento Mori',
     'years_old' => 'anos',
     'years_left' => 'anos restantes',

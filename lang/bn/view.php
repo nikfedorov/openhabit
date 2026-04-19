@@ -22,8 +22,7 @@ return [
     'done' => 'সম্পন্ন',
     'partial' => 'আংশিক',
     'missed' => 'বাদ পড়েছে',
-    'no_habits_yet' => 'এখনো কোনো অভ্যাস নেই',
-    'create_habits_to_track' => 'আপনার অগ্রগতি ট্র্যাক করতে কিছু অভ্যাস তৈরি করুন',
+
     'memento_mori' => 'মেমেন্টো মরি',
     'years_old' => 'বছর বয়স',
     'years_left' => 'বছর বাকি',

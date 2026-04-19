@@ -22,8 +22,6 @@ return [
     'done' => 'Выполнено',
     'partial' => 'Частично',
     'missed' => 'Пропущено',
-    'no_habits_yet' => 'Пока нет привычек',
-    'create_habits_to_track' => 'Создайте привычки, чтобы отслеживать прогресс',
     'memento_mori' => 'Memento Mori',
     'years_old' => 'лет',
     'years_left' => 'лет осталось',

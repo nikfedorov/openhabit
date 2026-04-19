@@ -22,8 +22,6 @@ return [
     'done' => '完成',
     'partial' => '部分',
     'missed' => '错过',
-    'no_habits_yet' => '还没有习惯',
-    'create_habits_to_track' => '创建习惯来追踪你的进度',
     'memento_mori' => 'Memento Mori',
     'years_old' => '岁',
     'years_left' => '年剩余',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Telegram\Commands;
 
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Handlers\Type\Command;
@@ -24,6 +25,7 @@ final class StartCommand extends Command
     {
         $telegramId = (string) $bot->userId();
         $telegramUser = $bot->user();
+        App::setLocale($telegramUser->language_code ?? Config::string('app.locale'));
 
         if (! $telegramUser instanceof TelegramUser) {
             return; // @codeCoverageIgnore
@@ -45,15 +47,15 @@ final class StartCommand extends Command
 
         if ($user->wasRecentlyCreated) {
             $bot->sendMessage(
-                text: '👋 Welcome to '.Config::string('app.name').", {$user->name}!\n\n"
-                    .'Your account has been created automatically.',
+                text: __('telegram.welcome', ['app' => Config::string('app.name'), 'name' => $user->name])
+                    ."\n\n"
+                    .__('telegram.account_created'),
                 reply_markup: $this->buildWebAppKeyboard(),
             );
 
             return;
         }
 
-        $user->last_active_at = now();
         if (blank($user->name)) {
             $user->name = $name;
         }
@@ -62,10 +64,11 @@ final class StartCommand extends Command
             $user->locale = $telegramUser->language_code;
         }
 
+        $user->last_active_at = now();
         $user->save();
 
         $bot->sendMessage(
-            text: sprintf('👋 Welcome back, %s!', $user->name),
+            text: __('telegram.welcome_back', ['name' => $user->name]),
             reply_markup: $this->buildWebAppKeyboard(),
         );
     }
@@ -77,7 +80,7 @@ final class StartCommand extends Command
         return InlineKeyboardMarkup::make()
             ->addRow(
                 InlineKeyboardButton::make(
-                    text: '🚀 Open App',
+                    text: __('telegram.open_app'),
                     web_app: WebAppInfo::make($webAppUrl),
                 ),
             );

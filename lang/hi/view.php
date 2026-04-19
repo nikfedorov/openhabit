@@ -22,8 +22,6 @@ return [
     'done' => 'पूरा',
     'partial' => 'आंशिक',
     'missed' => 'छूट गया',
-    'no_habits_yet' => 'अभी कोई आदत नहीं है',
-    'create_habits_to_track' => 'प्रगति ट्रैक करने के लिए आदतें बनाएं',
     'memento_mori' => 'Memento Mori',
     'years_old' => 'वर्ष',
     'years_left' => 'वर्ष शेष',
