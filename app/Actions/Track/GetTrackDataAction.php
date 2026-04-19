@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
-final readonly class IndexAction
+final readonly class GetTrackDataAction
 {
     public const int ACTIVITY_DAYS = 140;
 

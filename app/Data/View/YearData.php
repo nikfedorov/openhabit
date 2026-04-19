@@ -7,7 +7,7 @@ namespace App\Data\View;
 use App\Data\LifeGrid\WeeklyActivity;
 
 /**
- * Data returned by YearAction.
+ * Data returned by GetYearViewAction.
  */
 final readonly class YearData
 {

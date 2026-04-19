@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Track;
 
-use App\Actions\Track\NoteAction;
+use App\Actions\Track\SaveNoteAction;
 use App\Http\Requests\Track\NoteRequest;
 use App\Models\User;
 use Dedoc\Scramble\Attributes\Group;
@@ -17,7 +17,7 @@ use Illuminate\Http\Response;
 #[Group('Track', weight: 0)]
 final readonly class NoteController
 {
-    public function __construct(private NoteAction $saveNote) {}
+    public function __construct(private SaveNoteAction $saveNote) {}
 
     /**
      * Save daily note.

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Create or update a habit from form data.
  */
-final readonly class StoreAction
+final readonly class SaveHabitAction
 {
     public function __construct(private RRuleService $rruleService) {}
 

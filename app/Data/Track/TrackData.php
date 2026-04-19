@@ -8,7 +8,7 @@ use App\Models\Habit;
 use Illuminate\Support\Collection;
 
 /**
- * Data returned by Track IndexAction.
+ * Data returned by Track GetTrackDataAction.
  */
 final readonly class TrackData
 {

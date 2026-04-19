@@ -19,14 +19,14 @@ use Illuminate\Http\Response;
 #[Group('Edit', weight: 1)]
 final readonly class ToggleFranklinController
 {
-    public function __construct(private ToggleFranklinHabitsAction $toggleFranklinHabitsAction) {}
+    public function __construct(private ToggleFranklinHabitsAction $toggleFranklinHabits) {}
 
     /**
      * Toggle all Franklin virtue habits active/inactive for the authenticated user.
      */
     public function store(#[CurrentUser] User $user): Response
     {
-        $this->toggleFranklinHabitsAction->handle($user);
+        $this->toggleFranklinHabits->handle($user);
 
         return response()->noContent();
     }

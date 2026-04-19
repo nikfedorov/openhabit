@@ -24,10 +24,10 @@ final readonly class ExportController
     public function store(
         ExportRequest $request,
         #[CurrentUser] User $user,
-        ExportUserDataAction $exportAction,
+        ExportUserDataAction $exportUserData,
     ): JsonResponse {
 
-        $path = $exportAction->handle($user);
+        $path = $exportUserData->handle($user);
 
         return response()->json([
             /**

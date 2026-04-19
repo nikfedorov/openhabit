@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Track;
 
-use App\Actions\Track\IndexAction;
-use App\Actions\Track\ToggleAction;
+use App\Actions\Track\GetTrackDataAction;
+use App\Actions\Track\ToggleHabitCompletionAction;
 use App\Http\Requests\Track\ToggleRequest;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\Track\HabitActivityDataResource;
@@ -23,8 +23,8 @@ use Illuminate\Container\Attributes\CurrentUser;
 final readonly class ToggleController
 {
     public function __construct(
-        private ToggleAction $toggleHabitCompletion,
-        private IndexAction $indexTrack,
+        private ToggleHabitCompletionAction $toggleHabitCompletion,
+        private GetTrackDataAction $getTrackData,
     ) {}
 
     /**
@@ -37,7 +37,7 @@ final readonly class ToggleController
     {
         $this->toggleHabitCompletion->handle($user, $request->habitId(), $request->completionDate());
 
-        $data = $this->indexTrack->handle($user, $request->completionDate());
+        $data = $this->getTrackData->handle($user, $request->completionDate());
 
         return new TrackResource($data)
             ->additional([

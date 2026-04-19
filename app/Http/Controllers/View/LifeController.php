@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\View;
 
-use App\Actions\View\LifeAction;
+use App\Actions\View\GetLifeViewAction;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\UserSettingResource;
 use App\Http\Resources\View\LifeActivityResource;
@@ -21,7 +21,7 @@ use Illuminate\Support\Arr;
 #[Group('View', weight: 1)]
 final readonly class LifeController
 {
-    public function __construct(private LifeAction $lifeAction) {}
+    public function __construct(private GetLifeViewAction $getLifeView) {}
 
     /**
      * Get life (memento mori) grid data.
@@ -30,7 +30,7 @@ final readonly class LifeController
      */
     public function show(Request $request, #[CurrentUser] User $user): LifeViewResource
     {
-        $data = $this->lifeAction->handle($user);
+        $data = $this->getLifeView->handle($user);
 
         return new LifeViewResource($data)
             ->additional([

@@ -13,7 +13,7 @@ use Carbon\CarbonInterface;
 /**
  * Load year heatmap data for the View page.
  */
-final readonly class YearAction
+final readonly class GetYearViewAction
 {
     public function __construct(
         private LifeGridService $lifeGridService,

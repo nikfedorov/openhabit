@@ -8,7 +8,7 @@ use App\Data\HabitActivity\WeekDay;
 use App\Data\HabitActivity\WeekGridHabit;
 
 /**
- * Data returned by WeekAction.
+ * Data returned by GetWeekViewAction.
  */
 final readonly class WeekData
 {

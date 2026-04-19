@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Edit;
 
 use App\Actions\Edit\GetUserHabitsAction;
-use App\Actions\Edit\StoreAction;
+use App\Actions\Edit\SaveHabitAction;
 use App\Http\Requests\Edit\StoreHabitRequest;
 use App\Http\Resources\Edit\EditHabitResource;
 use App\Models\Habit;
@@ -21,7 +21,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 final readonly class StoreController
 {
     public function __construct(
-        private StoreAction $storeAction,
+        private SaveHabitAction $saveHabit,
         private GetUserHabitsAction $getUserHabits,
     ) {}
 
@@ -30,7 +30,7 @@ final readonly class StoreController
      */
     public function store(StoreHabitRequest $request, #[CurrentUser] User $user): AnonymousResourceCollection
     {
-        $this->storeAction->handle($user, $request->habitData());
+        $this->saveHabit->handle($user, $request->habitData());
 
         return EditHabitResource::collection($this->getUserHabits->handle($user));
     }
@@ -40,7 +40,7 @@ final readonly class StoreController
      */
     public function update(StoreHabitRequest $request, Habit $habit, #[CurrentUser] User $user): EditHabitResource
     {
-        $habit = $this->storeAction->handle($user, $request->habitData(), $habit);
+        $habit = $this->saveHabit->handle($user, $request->habitData(), $habit);
         $habit->load('category');
 
         return new EditHabitResource($habit);

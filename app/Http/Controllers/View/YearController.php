@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\View;
 
-use App\Actions\View\YearAction;
+use App\Actions\View\GetYearViewAction;
 use App\Http\Requests\View\YearRequest;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\UserSettingResource;
@@ -21,7 +21,7 @@ use Illuminate\Support\Arr;
 #[Group('View', weight: 1)]
 final readonly class YearController
 {
-    public function __construct(private YearAction $yearAction) {}
+    public function __construct(private GetYearViewAction $getYearView) {}
 
     /**
      * Get year heatmap data.
@@ -30,7 +30,7 @@ final readonly class YearController
      */
     public function show(YearRequest $request, #[CurrentUser] User $user): YearViewResource
     {
-        $data = $this->yearAction->handle($user, $request->selectedYear());
+        $data = $this->getYearView->handle($user, $request->selectedYear());
 
         return new YearViewResource($data)
             ->additional([

@@ -12,7 +12,7 @@ use App\Models\User;
  */
 final readonly class DeleteHabitAction
 {
-    public function __construct(private ReorderAction $reorderAction) {}
+    public function __construct(private ReorderHabitsAction $reorderHabits) {}
 
     /**
      * Delete the habit (soft or force) and reorder remaining habits.
@@ -28,6 +28,6 @@ final readonly class DeleteHabitAction
             ->map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0)
             ->all();
 
-        $this->reorderAction->handle($user, $remainingIds);
+        $this->reorderHabits->handle($user, $remainingIds);
     }
 }

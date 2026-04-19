@@ -17,14 +17,14 @@ use Illuminate\Container\Attributes\CurrentUser;
 #[Group('Settings', weight: 2)]
 final readonly class UpdateController
 {
-    public function __construct(private UpdateUserSettingsAction $updateSettings) {}
+    public function __construct(private UpdateUserSettingsAction $updateUserSettings) {}
 
     /**
      * Update one or more user settings.
      */
     public function update(UpdateSettingsRequest $request, #[CurrentUser] User $user): UserSettingResource
     {
-        $this->updateSettings->handle($user, $request->settingsData());
+        $this->updateUserSettings->handle($user, $request->settingsData());
 
         return UserSettingResource::make($user->fresh());
     }

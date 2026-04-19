@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\View;
 
-use App\Actions\View\WeekAction;
+use App\Actions\View\GetWeekViewAction;
 use App\Http\Requests\View\WeekRequest;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\UserSettingResource;
@@ -22,7 +22,7 @@ use Illuminate\Support\Arr;
 #[Group('View', weight: 1)]
 final readonly class WeekController
 {
-    public function __construct(private WeekAction $weekAction) {}
+    public function __construct(private GetWeekViewAction $getWeekView) {}
 
     /**
      * Get week grid data.
@@ -31,7 +31,7 @@ final readonly class WeekController
      */
     public function show(WeekRequest $request, #[CurrentUser] User $user): WeekViewResource
     {
-        $data = $this->weekAction->handle($user, $request->selectedWeek());
+        $data = $this->getWeekView->handle($user, $request->selectedWeek());
 
         return new WeekViewResource($data)
             ->additional([

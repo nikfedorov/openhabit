@@ -12,7 +12,7 @@ use Carbon\CarbonInterface;
 /**
  * Load memento mori life grid data for the View page.
  */
-final readonly class LifeAction
+final readonly class GetLifeViewAction
 {
     public function __construct(
         private LifeGridService $lifeGridService,

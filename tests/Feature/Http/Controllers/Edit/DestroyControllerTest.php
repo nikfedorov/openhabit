@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\Edit\ReorderAction;
+use App\Actions\Edit\ReorderHabitsAction;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\User;
@@ -41,17 +41,17 @@ it('force deletes a habit without completions and soft deletes one with completi
 it('reorders remaining habits after deletion', function (): void {
     $user = User::factory()->create();
 
-    $habit1 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER]);
-    $habit2 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 1]);
-    $habit3 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 2]);
+    $habit1 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER]);
+    $habit2 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 1]);
+    $habit3 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 2]);
 
     $this->actingAs($user, 'sanctum')
         ->deleteJson('/api/edit/habits/'.$habit2->id)
         ->assertNoContent();
 
     // The remaining habits should be renumbered to remove the gap
-    $this->assertDatabaseHas('habits', ['id' => $habit1->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER]);
-    $this->assertDatabaseHas('habits', ['id' => $habit3->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 1]);
+    $this->assertDatabaseHas('habits', ['id' => $habit1->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER]);
+    $this->assertDatabaseHas('habits', ['id' => $habit3->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 1]);
 });
 
 it('prevents unauthorized deletion', function (): void {

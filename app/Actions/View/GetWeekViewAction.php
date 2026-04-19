@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Date;
 /**
  * Load week grid data for the View page.
  */
-final readonly class WeekAction
+final readonly class GetWeekViewAction
 {
     public function __construct(
         private HabitActivityService $habitActivityService,

@@ -19,7 +19,7 @@ use Illuminate\Http\Response;
 final readonly class DestroyController
 {
     public function __construct(
-        private DeleteHabitAction $deleteHabitAction,
+        private DeleteHabitAction $deleteHabit,
     ) {}
 
     /**
@@ -30,7 +30,7 @@ final readonly class DestroyController
      */
     public function destroy(DestroyHabitRequest $request, Habit $habit, #[CurrentUser] User $user): Response
     {
-        $this->deleteHabitAction->handle($user, $habit);
+        $this->deleteHabit->handle($user, $habit);
 
         return response()->noContent();
     }

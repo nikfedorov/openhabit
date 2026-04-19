@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\Edit\ReorderAction;
+use App\Actions\Edit\ReorderHabitsAction;
 use App\Models\Habit;
 use App\Models\User;
 
@@ -23,9 +23,9 @@ it('reorders habits by updating sort_order', function (): void {
         ])
         ->assertNoContent();
 
-    $this->assertDatabaseHas('habits', ['id' => $habit3->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER]);
-    $this->assertDatabaseHas('habits', ['id' => $habit1->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 1]);
-    $this->assertDatabaseHas('habits', ['id' => $habit2->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 2]);
+    $this->assertDatabaseHas('habits', ['id' => $habit3->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER]);
+    $this->assertDatabaseHas('habits', ['id' => $habit1->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 1]);
+    $this->assertDatabaseHas('habits', ['id' => $habit2->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 2]);
 });
 
 it('ignores habit ids not belonging to user', function (): void {
@@ -40,7 +40,7 @@ it('ignores habit ids not belonging to user', function (): void {
         ])
         ->assertNoContent();
 
-    $this->assertDatabaseHas('habits', ['id' => $habit->id, 'sort_order' => ReorderAction::MIN_SORT_ORDER + 1]);
+    $this->assertDatabaseHas('habits', ['id' => $habit->id, 'sort_order' => ReorderHabitsAction::MIN_SORT_ORDER + 1]);
     $this->assertDatabaseHas('habits', ['id' => $otherHabit->id, 'sort_order' => 5]);
 
     $this->actingAs($user, 'sanctum')

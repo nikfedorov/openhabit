@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\Edit\ReorderAction;
+use App\Actions\Edit\ReorderHabitsAction;
 use App\Models\CategoryTemplate;
 use App\Models\Habit;
 use App\Models\HabitTemplate;
@@ -25,7 +25,7 @@ it('returns habits and translations', function (): void {
             ->has('settings')
             ->has('translations')
             ->has('templates')
-            ->where('minSortOrder', ReorderAction::MIN_SORT_ORDER)
+            ->where('minSortOrder', ReorderHabitsAction::MIN_SORT_ORDER)
             ->has('data', 1, fn (AssertableJson $json): AssertableJson => $json
                 ->where('id', $habit->id)
                 ->has('name')

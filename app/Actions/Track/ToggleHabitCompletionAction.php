@@ -7,7 +7,7 @@ namespace App\Actions\Track;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
-final readonly class ToggleAction
+final readonly class ToggleHabitCompletionAction
 {
     public function handle(User $user, int $habitId, string $date): void
     {
@@ -38,6 +38,6 @@ final readonly class ToggleAction
             ]);
         }
 
-        Cache::forget(IndexAction::activityCacheKey($user));
+        Cache::forget(GetTrackDataAction::activityCacheKey($user));
     }
 }

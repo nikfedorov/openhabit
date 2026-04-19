@@ -6,7 +6,7 @@ namespace App\Actions\Track;
 
 use App\Models\User;
 
-final readonly class NoteAction
+final readonly class SaveNoteAction
 {
     public function handle(User $user, string $date, ?string $content): void
     {

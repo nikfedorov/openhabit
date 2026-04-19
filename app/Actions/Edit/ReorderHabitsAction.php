@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Reorder user's regular habits by updating sort_order.
  */
-final readonly class ReorderAction
+final readonly class ReorderHabitsAction
 {
     public const int MIN_SORT_ORDER = 101;
 

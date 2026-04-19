@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Track;
 
-use App\Actions\Track\IndexAction;
+use App\Actions\Track\GetTrackDataAction;
 use App\Http\Requests\Track\IndexRequest;
 use App\Http\Resources\NavigationTranslationResource;
 use App\Http\Resources\Track\HabitActivityDataResource;
@@ -21,7 +21,7 @@ use Illuminate\Container\Attributes\CurrentUser;
 #[Group('Track', weight: 0)]
 final readonly class IndexController
 {
-    public function __construct(private IndexAction $indexTrack) {}
+    public function __construct(private GetTrackDataAction $getTrackData) {}
 
     /**
      * Get daily tracking data.
@@ -31,7 +31,7 @@ final readonly class IndexController
      */
     public function show(IndexRequest $request, #[CurrentUser] User $user): TrackResource
     {
-        $data = $this->indexTrack->handle($user, $request->selectedDate());
+        $data = $this->getTrackData->handle($user, $request->selectedDate());
 
         return new TrackResource($data)
             ->additional([
