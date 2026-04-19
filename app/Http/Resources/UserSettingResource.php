@@ -113,20 +113,6 @@ final class UserSettingResource extends JsonResource
 
             /**
              * Trial banner and premium modal data.
-             *
-             * @var array{
-             *     shouldShowBanner: bool,
-             *     bannerText: string,
-             *     invoiceLink: string|null,
-             *     learnMore: string,
-             *     featuresTitle: string,
-             *     featuresSubtitle: string,
-             *     featureNotifications: string,
-             *     featureAiDigest: string,
-             *     featureExport: string,
-             *     upgradeLabel: string,
-             *     openInTelegramLabel: string,
-             * }
              */
             'trial' => new TrialResource($this->premiumState()),
         ];

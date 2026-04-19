@@ -1802,145 +1802,54 @@
                 "type": "object",
                 "properties": {
                     "shouldShowBanner": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Whether to show the trial banner in the UI."
                     },
                     "bannerText": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "string",
-                                "enum": [
-                                    ""
-                                ]
-                            }
+                        "type": "string",
+                        "description": "Text to show in the trial banner, e.g. \"Your trial expires in 3 days\".",
+                        "examples": [
+                            "Your trial expires in 3 days"
                         ]
                     },
                     "invoiceLink": {
                         "type": [
                             "string",
                             "null"
-                        ]
+                        ],
+                        "description": "Premium invoice link for the current locale, if available.\nUsed in the trial banner and premium modal."
                     },
                     "learnMore": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal."
                     },
                     "featuresTitle": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
                     },
                     "featuresSubtitle": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
                     },
                     "featureNotifications": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
                     },
                     "featureAiDigest": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
                     },
                     "featureExport": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
                     },
                     "upgradeLabel": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal upgrade button."
                     },
                     "openInTelegramLabel": {
-                        "anyOf": [
-                            {
-                                "type": "null"
-                            },
-                            {
-                                "type": "array",
-                                "items": {}
-                            },
-                            {
-                                "type": "string"
-                            }
-                        ]
+                        "type": "string",
+                        "description": "Localization strings for the premium modal button to open the Telegram channel."
                     }
                 },
                 "required": [
@@ -2102,59 +2011,8 @@
                         "description": "ID of the AI tone used for the digest."
                     },
                     "trial": {
-                        "type": "object",
                         "description": "Trial banner and premium modal data.",
-                        "properties": {
-                            "shouldShowBanner": {
-                                "type": "boolean"
-                            },
-                            "bannerText": {
-                                "type": "string"
-                            },
-                            "invoiceLink": {
-                                "type": [
-                                    "string",
-                                    "null"
-                                ]
-                            },
-                            "learnMore": {
-                                "type": "string"
-                            },
-                            "featuresTitle": {
-                                "type": "string"
-                            },
-                            "featuresSubtitle": {
-                                "type": "string"
-                            },
-                            "featureNotifications": {
-                                "type": "string"
-                            },
-                            "featureAiDigest": {
-                                "type": "string"
-                            },
-                            "featureExport": {
-                                "type": "string"
-                            },
-                            "upgradeLabel": {
-                                "type": "string"
-                            },
-                            "openInTelegramLabel": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "shouldShowBanner",
-                            "bannerText",
-                            "invoiceLink",
-                            "learnMore",
-                            "featuresTitle",
-                            "featuresSubtitle",
-                            "featureNotifications",
-                            "featureAiDigest",
-                            "featureExport",
-                            "upgradeLabel",
-                            "openInTelegramLabel"
-                        ]
+                        "$ref": "#/components/schemas/TrialResource"
                     }
                 },
                 "required": [

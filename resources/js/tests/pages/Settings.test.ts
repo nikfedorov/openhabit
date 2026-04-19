@@ -443,6 +443,18 @@ describe('Settings - Personal', () => {
         expect(input.classes()).toContain('text-red-500');
     });
 
+    it('shows error state when birthdate format does not match DD.MM.YYYY', async () => {
+        const wrapper = await mountSettings(mockApiFetch);
+        const input = wrapper.find('input[placeholder="DD.MM.YYYY"]');
+        // Single-digit day/month does not match the ^(\d{2})\.(\d{2})\.(\d{4})$ regex
+        await input.setValue('1.1.2020');
+        await input.trigger('blur');
+        await flushPromises();
+
+        expect(input.classes()).toContain('text-red-500');
+        expect(mockApiFetch).toHaveBeenCalledTimes(1); // only initial GET
+    });
+
     it('triggers blur on birthdate input when Enter is pressed', async () => {
         const wrapper = await mountSettings(mockApiFetch, {
             birthdate: '1990-05-20',

@@ -25,6 +25,7 @@ export default defineConfig({
                 'resources/js/routes/**',
                 'resources/js/wayfinder/**',
                 'resources/js/types/**',
+                'resources/js/utils/accessibility.ts',
             ],
             thresholds: {
                 lines: 100,

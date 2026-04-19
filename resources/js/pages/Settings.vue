@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
 import { vMaska } from 'maska/vue';
+import { computed, onMounted, ref } from 'vue';
 import PageLoader from '@/components/PageLoader.vue';
 import SettingRow from '@/components/settings/SettingRow.vue';
 import ToggleSwitch from '@/components/settings/ToggleSwitch.vue';

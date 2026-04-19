@@ -382,6 +382,25 @@ describe('View - Year Navigation', () => {
         );
     });
 
+    it('does not increment yearKey when same year is reloaded', async () => {
+        mockRouteQuery.value = { tab: 'year' };
+        mockApiFetch.mockResolvedValueOnce(
+            makeYearResponse({ selectedYear: 25 }),
+        );
+        const wrapper = mount(View);
+        await flushPromises();
+
+        // Reload the same year → isNewYear is false, yearKey should not increment
+        mockApiFetch.mockResolvedValueOnce(
+            makeYearResponse({ selectedYear: 25 }),
+        );
+        wrapper.findComponent(YearNavigator).vm.$emit('selectYear', 25);
+        await flushPromises();
+        expect(mockApiFetch).toHaveBeenLastCalledWith(
+            expect.stringContaining('year=25'),
+        );
+    });
+
     it('selects a week from year grid', async () => {
         mockRouteQuery.value = { tab: 'year' };
         mockApiFetch.mockResolvedValueOnce(
@@ -487,6 +506,33 @@ describe('View - Life Tab', () => {
         await flushPromises();
         expect(wrapper.text()).toContain('Set your birthdate in settings');
         expect(wrapper.text()).toContain('to see your life visualization');
+    });
+
+    it('does not increment lifeKey on subsequent life loads', async () => {
+        // First visit to life tab
+        mockRouteQuery.value = { tab: 'life' };
+        mockApiFetch.mockResolvedValueOnce(makeLifeResponse());
+        const wrapper = mount(View);
+        await flushPromises();
+
+        // Navigate away to week tab
+        mockApiFetch.mockResolvedValueOnce(makeWeekResponse());
+        const weekBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Week')!;
+        await weekBtn.trigger('click');
+        await flushPromises();
+
+        // Navigate back to life tab → isFirstLifeLoad is false (lifeData is already set)
+        mockApiFetch.mockResolvedValueOnce(makeLifeResponse());
+        const lifeBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Life')!;
+        await lifeBtn.trigger('click');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledTimes(3);
+        expect(wrapper.findComponent(LifeHeader).exists()).toBe(true);
     });
 });
 
