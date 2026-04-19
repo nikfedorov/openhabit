@@ -257,6 +257,7 @@ async function updateDayStartsAt(time?: string) {
 async function toggleAiDigest() {
     if (aiDigestEnabled.value && !hasPremium.value) {
         aiDigestEnabled.value = false;
+        emit('open-premium-modal');
         return;
     }
     if (aiDigestEnabled.value) {

@@ -46,6 +46,7 @@ export const defaultSettingsTranslations: SettingsTranslations = {
 };
 
 export const defaultTrial: TrialData = {
+    hasPremium: false,
     shouldShowBanner: false,
     bannerText: '',
     invoiceLink: 'https://t.me/test-invoice',

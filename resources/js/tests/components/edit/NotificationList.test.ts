@@ -8,14 +8,14 @@ const translations = makeHabitTranslations();
 describe('NotificationList', () => {
     it('shows empty state when no notifications', () => {
         const wrapper = mount(NotificationList, {
-            props: { modelValue: [], translations },
+            props: { modelValue: [], translations, hasPremium: true },
         });
         expect(wrapper.text()).toContain('No reminders set');
     });
 
     it('shows add button when under 10 notifications', () => {
         const wrapper = mount(NotificationList, {
-            props: { modelValue: [], translations },
+            props: { modelValue: [], translations, hasPremium: true },
         });
         expect(wrapper.text()).toContain('Add');
     });
@@ -26,7 +26,7 @@ describe('NotificationList', () => {
             is_active: true,
         }));
         const wrapper = mount(NotificationList, {
-            props: { modelValue: items, translations },
+            props: { modelValue: items, translations, hasPremium: true },
         });
         const addBtn = wrapper
             .findAll('button')
@@ -36,7 +36,7 @@ describe('NotificationList', () => {
 
     it('emits new notification on add click', async () => {
         const wrapper = mount(NotificationList, {
-            props: { modelValue: [], translations },
+            props: { modelValue: [], translations, hasPremium: true },
         });
         const addBtn = wrapper
             .findAll('button')
@@ -56,6 +56,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:30', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         expect(wrapper.text()).toContain('08');
@@ -67,6 +68,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:00', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -87,6 +89,7 @@ describe('NotificationList', () => {
                     { time: '14:00', is_active: true },
                 ],
                 translations,
+                hasPremium: true,
             },
         });
         // Buttons in row: toggle, time pill, remove
@@ -106,6 +109,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:00', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         // Click the time pill (second button in the row — first is toggle)
@@ -143,6 +147,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:00', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         // Open dropdown
@@ -172,6 +177,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:00', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -188,6 +194,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:00', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -205,6 +212,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '08:07', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -229,6 +237,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -253,6 +262,7 @@ describe('NotificationList', () => {
             props: {
                 modelValue: [{ time: '', is_active: true }],
                 translations,
+                hasPremium: true,
             },
         });
         const rows = wrapper.findAll('.flex.items-center.gap-2');
@@ -270,5 +280,64 @@ describe('NotificationList', () => {
             is_active: boolean;
         }[];
         expect(emitted[0].time).toBe('09:10');
+    });
+
+    it('emits open-premium-modal when non-premium user tries to add a second notification', async () => {
+        const wrapper = mount(NotificationList, {
+            props: {
+                modelValue: [{ time: '09:00', is_active: true }],
+                translations,
+                hasPremium: false,
+            },
+        });
+        const addBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Add')!;
+        await addBtn.trigger('click');
+
+        expect(wrapper.emitted('open-premium-modal')).toHaveLength(1);
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('allows premium user to add a second notification', async () => {
+        const wrapper = mount(NotificationList, {
+            props: {
+                modelValue: [{ time: '09:00', is_active: true }],
+                translations,
+                hasPremium: true,
+            },
+        });
+        const addBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Add')!;
+        await addBtn.trigger('click');
+
+        expect(wrapper.emitted('open-premium-modal')).toBeUndefined();
+        const emitted = wrapper.emitted('update:modelValue')?.[0]?.[0] as {
+            time: string;
+            is_active: boolean;
+        }[];
+        expect(emitted).toHaveLength(2);
+    });
+
+    it('allows non-premium user to add the first notification', async () => {
+        const wrapper = mount(NotificationList, {
+            props: {
+                modelValue: [],
+                translations,
+                hasPremium: false,
+            },
+        });
+        const addBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === 'Add')!;
+        await addBtn.trigger('click');
+
+        expect(wrapper.emitted('open-premium-modal')).toBeUndefined();
+        const emitted = wrapper.emitted('update:modelValue')?.[0]?.[0] as {
+            time: string;
+            is_active: boolean;
+        }[];
+        expect(emitted).toHaveLength(1);
     });
 });

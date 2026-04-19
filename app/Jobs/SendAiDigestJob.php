@@ -46,7 +46,7 @@ final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue
         return $this->userId;
     }
 
-    public function handle(GenerateAiDigestAction $action): void
+    public function handle(GenerateAiDigestAction $generateAiDigest): void
     {
         $user = User::query()
             ->find($this->userId);
@@ -57,7 +57,7 @@ final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $digest = $action->execute($user);
+        $digest = $generateAiDigest->execute($user);
 
         if ($digest instanceof AiDigest) {
             /** @var Carbon $date */

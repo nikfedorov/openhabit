@@ -3,11 +3,20 @@ import TimePickerInput from '@/components/TimePickerInput.vue';
 import type { HabitTranslations, NotificationTime } from '@/types/edit';
 const model = defineModel<NotificationTime[]>({ required: true });
 
-defineProps<{
+const props = defineProps<{
     translations: HabitTranslations;
+    hasPremium: boolean;
+}>();
+
+const emit = defineEmits<{
+    'open-premium-modal': [];
 }>();
 
 function addNotification() {
+    if (model.value.length >= 1 && !props.hasPremium) {
+        emit('open-premium-modal');
+        return;
+    }
     model.value = [...model.value, { time: '09:00', is_active: true }];
 }
 

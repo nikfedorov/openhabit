@@ -29,6 +29,7 @@ const inTelegram = isTelegram();
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
     settings: [settings: UserSettings];
+    'open-premium-modal': [];
     ready: [];
 }>();
 
@@ -55,6 +56,7 @@ const translations = ref<HabitTranslations | null>(null);
 const saving = ref(false);
 const loading = ref(true);
 const showDeleteConfirm = ref(false);
+const hasPremium = ref(false);
 
 const descriptionEl = ref<HTMLTextAreaElement>();
 useTextareaAutosize({
@@ -68,6 +70,7 @@ function applyCommonData(response: {
     settings: UserSettings;
 }) {
     translations.value = response.habitTranslations;
+    hasPremium.value = response.settings.trial.hasPremium;
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', response.settings);
 }
@@ -248,6 +251,8 @@ onMounted(async () => {
                 <NotificationList
                     v-model="form.notifications"
                     :translations="translations"
+                    :has-premium="hasPremium"
+                    @open-premium-modal="emit('open-premium-modal')"
                 />
 
                 <!-- Active Toggle -->

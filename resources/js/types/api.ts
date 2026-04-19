@@ -22,6 +22,7 @@ import type {
 } from './view';
 
 export type TrialData = {
+    hasPremium: boolean;
     shouldShowBanner: boolean;
     bannerText: string;
     invoiceLink: string | null;

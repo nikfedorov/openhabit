@@ -192,3 +192,57 @@ it('validates request data', function (): void {
         ]))
         ->assertJsonValidationErrors(['frequency', 'notifications.0.time']);
 });
+
+it('rejects more than one notification for non-premium user on create', function (): void {
+    $user = User::factory()->trialExpired()->create();
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/edit/habits', habitPayload([
+            'notifications' => [
+                ['time' => '08:00', 'is_active' => true],
+                ['time' => '20:00', 'is_active' => true],
+            ],
+        ]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['notifications']);
+});
+
+it('rejects more than one notification for non-premium user on update', function (): void {
+    $user = User::factory()->trialExpired()->create();
+    $habit = Habit::factory()->daily()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user, 'sanctum')
+        ->putJson('/api/edit/habits/'.$habit->id, habitPayload([
+            'notifications' => [
+                ['time' => '08:00', 'is_active' => true],
+                ['time' => '20:00', 'is_active' => true],
+            ],
+        ]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['notifications']);
+});
+
+it('allows one notification for non-premium user', function (): void {
+    $user = User::factory()->trialExpired()->create();
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/edit/habits', habitPayload([
+            'notifications' => [
+                ['time' => '08:00', 'is_active' => true],
+            ],
+        ]))
+        ->assertOk();
+});
+
+it('allows multiple notifications for premium user', function (): void {
+    $user = User::factory()->premium()->create();
+
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/edit/habits', habitPayload([
+            'notifications' => [
+                ['time' => '08:00', 'is_active' => true],
+                ['time' => '20:00', 'is_active' => true],
+            ],
+        ]))
+        ->assertOk();
+});

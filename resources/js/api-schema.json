@@ -1840,6 +1840,10 @@
             "TrialResource": {
                 "type": "object",
                 "properties": {
+                    "hasPremium": {
+                        "type": "boolean",
+                        "description": "Whether the user has an active premium subscription or is within the trial period."
+                    },
                     "shouldShowBanner": {
                         "type": "boolean",
                         "description": "Whether to show the trial banner in the UI."
@@ -1892,6 +1896,7 @@
                     }
                 },
                 "required": [
+                    "hasPremium",
                     "shouldShowBanner",
                     "bannerText",
                     "invoiceLink",

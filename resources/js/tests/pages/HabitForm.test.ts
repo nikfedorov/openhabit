@@ -370,6 +370,16 @@ describe('HabitForm - Edit Mode', () => {
         expect(notificationComponent.exists()).toBe(true);
     });
 
+    it('forwards open-premium-modal from NotificationList', async () => {
+        const wrapper = await mountCreateForm();
+        const notificationComponent = wrapper.findComponent({
+            name: 'NotificationList',
+        });
+        notificationComponent.vm.$emit('open-premium-modal');
+        await flushPromises();
+        expect(wrapper.emitted('open-premium-modal')).toHaveLength(1);
+    });
+
     it('interacts with monthly options in form', async () => {
         const wrapper = await mountCreateForm();
         // Switch to Monthly

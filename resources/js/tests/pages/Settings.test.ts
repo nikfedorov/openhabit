@@ -666,7 +666,7 @@ describe('Settings - AI Digest', () => {
         );
     });
 
-    it('disables AI digest immediately for non-premium user', async () => {
+    it('disables AI digest immediately for non-premium user and opens premium modal', async () => {
         const wrapper = await mountSettings(
             mockApiFetch,
             { aiDigestTime: null },
@@ -679,6 +679,7 @@ describe('Settings - AI Digest', () => {
         // Should not call PATCH, premium guard reverts toggle
         expect(mockApiFetch).toHaveBeenCalledTimes(1); // only GET
         expect(wrapper.text()).not.toContain('Digest time');
+        expect(wrapper.emitted('open-premium-modal')).toHaveLength(1);
     });
 
     it('disables AI digest and saves null when toggled off', async () => {

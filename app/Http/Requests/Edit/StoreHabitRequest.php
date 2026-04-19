@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Edit;
 
+use App\Actions\ResolvePremiumStateAction;
 use App\Http\Concerns\AuthorizesHabitAccess;
 use App\Models\Habit;
+use App\Models\User;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 final class StoreHabitRequest extends FormRequest
 {
@@ -47,6 +51,31 @@ final class StoreHabitRequest extends FormRequest
             'notifications' => ['array', 'max:10'],
             'notifications.*.time' => ['required', 'string', 'regex:/^\d{2}:(00|05|10|15|20|25|30|35|40|45|50|55)$/'],
             'notifications.*.is_active' => ['required', 'boolean'],
+        ];
+    }
+
+    /**
+     * Validate that adding more than one notification requires a premium subscription.
+     *
+     * @return array<int, Closure>
+     */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator): void {
+                $user = $this->user();
+
+                /** @var array<int, mixed> $notifications */
+                $notifications = $this->input('notifications', []);
+
+                if (! $user instanceof User || count($notifications) <= 1) {
+                    return;
+                }
+
+                if (! resolve(ResolvePremiumStateAction::class)->handle($user)->hasPremium) {
+                    $validator->errors()->add('notifications', __('This feature requires a premium subscription.'));
+                }
+            },
         ];
     }
 
