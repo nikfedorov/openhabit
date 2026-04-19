@@ -31,7 +31,7 @@ function upgrade() {
 
     const tg = window.Telegram?.WebApp;
 
-    if (tg) {
+    if (tg?.isVersionAtLeast?.('6.1')) {
         tg.openInvoice(invoiceLink, (status: string) => {
             if (status === 'paid') {
                 emit('payment-success');

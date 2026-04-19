@@ -63,6 +63,50 @@ describe('Settings - Loading', () => {
     });
 });
 
+// ─── Premium Upsell Banner ────────────────────────────────────
+
+describe('Settings - Premium Upsell Banner', () => {
+    it('shows the upsell banner when user has no premium', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {},
+            { hasPremium: false },
+        );
+
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(true);
+        expect(wrapper.text()).toContain('Upgrade');
+        expect(wrapper.text()).toContain('Upgrade to unlock all features');
+    });
+
+    it('hides the upsell banner when user has premium', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {},
+            { hasPremium: true },
+        );
+
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(false);
+    });
+
+    it('emits open-premium-modal when upsell banner is clicked', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {},
+            { hasPremium: false },
+        );
+
+        await wrapper
+            .find('[data-testid="premium-upsell-banner"]')
+            .trigger('click');
+
+        expect(wrapper.emitted('open-premium-modal')).toBeTruthy();
+    });
+});
+
 // ─── Appearance ───────────────────────────────────────────────
 
 describe('Settings - Appearance', () => {

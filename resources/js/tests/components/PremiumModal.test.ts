@@ -93,7 +93,7 @@ describe('PremiumModal', () => {
         Object.defineProperty(window, 'Telegram', {
             writable: true,
             configurable: true,
-            value: { WebApp: { openInvoice } },
+            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
         });
 
         mountPremiumModal();
@@ -121,7 +121,7 @@ describe('PremiumModal', () => {
         Object.defineProperty(window, 'Telegram', {
             writable: true,
             configurable: true,
-            value: { WebApp: { openInvoice } },
+            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
         });
 
         const wrapper = mountPremiumModal();
@@ -149,7 +149,7 @@ describe('PremiumModal', () => {
         Object.defineProperty(window, 'Telegram', {
             writable: true,
             configurable: true,
-            value: { WebApp: { openInvoice } },
+            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
         });
 
         const wrapper = mountPremiumModal();
@@ -167,6 +167,30 @@ describe('PremiumModal', () => {
         await nextTick();
 
         expect(wrapper.emitted('payment-success')).toBeUndefined();
+    });
+
+    it('opens the invoice in a new tab when Telegram version is too old', async () => {
+        const openInvoice = vi.fn();
+        const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+        Object.defineProperty(window, 'Telegram', {
+            writable: true,
+            configurable: true,
+            value: { WebApp: { openInvoice, isVersionAtLeast: () => false } },
+        });
+
+        mountPremiumModal();
+
+        const upgradeBtn = document.body.querySelector(
+            '[data-testid="premium-modal-upgrade"]',
+        ) as HTMLElement;
+        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await nextTick();
+
+        expect(openSpy).toHaveBeenCalledWith('https://t.me/invoice', '_blank');
+        expect(openInvoice).not.toHaveBeenCalled();
+
+        openSpy.mockRestore();
     });
 
     it('opens the invoice in a new tab when Telegram WebApp is unavailable', async () => {

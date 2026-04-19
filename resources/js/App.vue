@@ -142,6 +142,7 @@ applyTheme(
                             @navigation-translations="updateNavTranslations"
                             @settings="updateSettings"
                             @ready="pageReady = true"
+                            @open-premium-modal="openPremiumModal"
                         />
                     </Transition>
                 </router-view>

@@ -2,6 +2,7 @@
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import PageLoader from '@/components/PageLoader.vue';
+import PremiumUpsellBanner from '@/components/PremiumUpsellBanner.vue';
 import SettingRow from '@/components/settings/SettingRow.vue';
 import ToggleSwitch from '@/components/settings/ToggleSwitch.vue';
 import TimePickerInput from '@/components/TimePickerInput.vue';
@@ -9,6 +10,7 @@ import type {
     AiTone,
     SettingsApiResponse,
     SettingsTranslations,
+    TrialData,
     UserSettings,
 } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
@@ -17,6 +19,7 @@ import { apiFetch } from '@/utils/api';
 const emit = defineEmits<{
     'navigation-translations': [translations: NavigationTranslations];
     settings: [settings: UserSettings];
+    'open-premium-modal': [];
     ready: [];
 }>();
 
@@ -27,6 +30,7 @@ const locales = ref<Record<string, string>>({});
 const timezones = ref<Record<string, Record<string, string>>>({});
 const aiTones = ref<AiTone[]>([]);
 const hasPremium = ref(false);
+const trialData = ref<TrialData | null>(null);
 const translations = ref<SettingsTranslations>({} as SettingsTranslations);
 
 // ─── Current settings state ──────────────────────────────────
@@ -137,6 +141,7 @@ async function loadData() {
     timezones.value = response.timezones;
     aiTones.value = response.aiTones;
     hasPremium.value = response.hasPremium;
+    trialData.value = response.data.trial;
     translations.value = response.translations;
 
     const s = response.data;
@@ -328,6 +333,13 @@ function closeTimezoneDropdown() {
                 {{ translations.subtitle }}
             </p>
         </div>
+
+        <!-- ═══ Premium Upsell ═══ -->
+        <PremiumUpsellBanner
+            v-if="!hasPremium && trialData"
+            :trial-data="trialData"
+            @open-premium-modal="emit('open-premium-modal')"
+        />
 
         <!-- ═══ Appearance ═══ -->
         <section
