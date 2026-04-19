@@ -24,6 +24,13 @@ final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue
     public int $tries = 1;
 
     /**
+     * Abort the job after 90 seconds.
+     * Must stay below the supervisor timeout (120 s) which itself must stay
+     * below retry_after (180 s) in config/queue.php.
+     */
+    public int $timeout = 90;
+
+    /**
      * Release the unique lock after 30 minutes (safety net).
      */
     public int $uniqueFor = 1800;

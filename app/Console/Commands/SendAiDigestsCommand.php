@@ -10,7 +10,6 @@ use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 
 final class SendAiDigestsCommand extends Command
 {
@@ -34,51 +33,58 @@ final class SendAiDigestsCommand extends Command
     /**
      * Get users eligible for AI digest right now.
      *
-     * Filters:
-     * 1. DB: ai_digest_time is set and telegram_id exists
-     * 2. PHP: current time in user's timezone is at or past the scheduled digest time
-     * 3. PHP: not already digested today in user's timezone
-     *
      * @return Collection<int, User>
      */
     private function getEligibleUsers(ResolvePremiumStateAction $resolvePremiumState): Collection
     {
-        $users = User::query()
-            ->select(['id', 'timezone', 'ai_digest_time', 'subscription_expires_at', 'created_at'])
+        return User::query()
+            ->select(['id', 'timezone', 'ai_digest_time', 'subscription_expires_at', 'created_at', 'trial_banner_dismissed_at'])
             ->whereNotNull('ai_digest_time')
             ->canReceiveTelegram()
             ->with('lastDigest:ai_digests.id,ai_digests.user_id,ai_digests.created_at')
-            ->get();
-
-        return $users->filter(function (User $user) use ($resolvePremiumState): bool {
-            if (! $resolvePremiumState->handle($user)->hasPremium) {
-                return false;
-            }
-
-            $timezone = $user->timezone ?? 'UTC';
-            $userNow = CarbonImmutable::now($timezone);
-
-            // Check if digest time has passed today
-            if ($user->ai_digest_time === null || ! $this->isAfterDigestTime($userNow->format('H:i'), $user->ai_digest_time)) {
-                return false;
-            }
-
-            // Check if already digested today (user's timezone)
-            $lastDigest = $user->lastDigest;
-            if ($lastDigest?->created_at !== null
-                && $lastDigest->created_at->timezone($timezone)->isSameDay($userNow)) {
-                return false;
-            }
-
-            return true;
-        });
+            ->get()
+            ->filter(fn (User $user): bool => $this->isEligible($user, $resolvePremiumState));
     }
 
     /**
-     * Check if current time is at or past the scheduled digest time.
+     * A user is eligible when, in their timezone, all hold:
+     *  - Has an active premium/trial.
+     *  - Current time is at or past their configured digest time.
+     *  - They have not already been digested today.
+     *  - They had trackable activity yesterday (completion or daily note).
      */
-    private function isAfterDigestTime(string $currentTime, string $digestTime): bool
+    private function isEligible(User $user, ResolvePremiumStateAction $resolvePremiumState): bool
     {
-        return Date::createFromFormat('H:i', $currentTime) >= Date::createFromFormat('H:i', $digestTime);
+        if (! $resolvePremiumState->handle($user)->hasPremium) {
+            return false;
+        }
+
+        $userNow = CarbonImmutable::now($user->timezone ?? 'UTC');
+
+        if ($userNow->format('H:i') < (string) $user->ai_digest_time) {
+            return false;
+        }
+
+        if ($user->lastDigest?->created_at?->timezone($userNow->timezone)->isSameDay($userNow) === true) {
+            return false;
+        }
+
+        return $this->hadActivityYesterday($user, $userNow->subDay()->toDateString());
+    }
+
+    /**
+     * At least one habit completion or a non-empty daily note on the given date.
+     */
+    private function hadActivityYesterday(User $user, string $yesterday): bool
+    {
+        if ($user->habitCompletions()->whereDate('completed_at', $yesterday)->exists()) {
+            return true;
+        }
+
+        return $user->dailyNotes()
+            ->where('date', $yesterday)
+            ->whereNotNull('content')
+            ->where('content', '!=', '')
+            ->exists();
     }
 }

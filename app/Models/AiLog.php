@@ -14,12 +14,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read int $id
  * @property-read string $user_id
  * @property-read string $model
- * @property-read string|null $action
+ * @property-read string $system_prompt
+ * @property-read string $user_prompt
+ * @property-read string|null $response
  * @property-read int|null $input_tokens
  * @property-read int|null $output_tokens
  * @property-read int|null $duration_ms
  * @property-read bool $is_successful
- * @property-read string|null $error_message
+ * @property-read string|null $error
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at
  */

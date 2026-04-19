@@ -15,6 +15,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read string $slug
  * @property-read string $name
  * @property-read string|null $description
+ * @property-read string $system_instruction
  * @property-read int $sort_order
  * @property-read bool $is_active
  */

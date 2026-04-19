@@ -21,7 +21,8 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider
         parent::boot();
 
         // Allow Horizon dashboard access in local environment regardless of IP/proxy settings.
-        Sentinel::extend('horizon', fn () => new class(fn () => app()) extends Driver {
+        Sentinel::extend('horizon', fn (): Driver => new class(fn () => app()) extends Driver
+        {
             public function authorize(Request $request): bool
             {
                 return app()->environment('local');
@@ -40,6 +41,6 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewHorizon', fn (?User $user): bool => app()->environment('local'));
+        Gate::define('viewHorizon', fn (?User $user): bool => $user instanceof User);
     }
 }

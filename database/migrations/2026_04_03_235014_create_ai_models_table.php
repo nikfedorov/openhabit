@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('priority')->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_free')->default(false);
+            $table->timestamp('disabled_until')->nullable();
             $table->timestamps();
         });
     }

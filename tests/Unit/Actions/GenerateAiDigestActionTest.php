@@ -4,26 +4,112 @@ declare(strict_types=1);
 
 use App\Actions\GenerateAiDigestAction;
 use App\Models\AiDigest;
+use App\Models\AiModel;
+use App\Models\DailyNote;
+use App\Models\Habit;
+use App\Models\HabitCompletion;
 use App\Models\User;
+use App\Models\UserMemory;
+use App\Services\RRuleService;
+use Illuminate\Support\Facades\Http;
 
-it('returns existing digest for today', function (): void {
-    $user = User::factory()->create();
-    $digest = AiDigest::factory()->for($user)->create([
-        'date' => now()->toDateString(),
+/**
+ * Fake an OpenRouter JSON response containing the given digest + memory updates.
+ *
+ * @param  array<string, string>  $memoryUpdates
+ */
+function fakeAiJson(string $digest, array $memoryUpdates = []): void
+{
+    $content = json_encode(['digest' => $digest, 'memory_updates' => $memoryUpdates], JSON_THROW_ON_ERROR);
+
+    Http::fake([
+        'https://openrouter.ai/*' => Http::response([
+            'choices' => [['message' => ['content' => $content]]],
+        ]),
     ]);
+}
 
-    $action = new GenerateAiDigestAction;
-    $result = $action->execute($user);
+function makeUserWithCompletionYesterday(): User
+{
+    $user = User::factory()->create(['timezone' => 'UTC']);
+    $rule = resolve(RRuleService::class)->buildDaily();
+    $habit = Habit::factory()->for($user)->create(['rrule' => $rule, 'is_active' => true]);
+    HabitCompletion::factory()->for($habit)->for($user)->create(['completed_at' => now()->subDay()]);
 
-    expect($result)->toBeInstanceOf(AiDigest::class)
-        ->and($result->id)->toBe($digest->id);
+    return $user;
+}
+
+beforeEach(function (): void {
+    config()->set('services.openrouter.api_key', 'test-key');
+    config()->set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+    AiModel::factory()->create(['slug' => 'test-model', 'priority' => 1]);
 });
 
-it('returns null when no digest exists', function (): void {
-    $user = User::factory()->create();
+it('creates digest with memory updates from habits data', function (): void {
+    fakeAiJson('You did great!', [
+        'long_term' => 'User has been consistent.',
+        'successes' => 'Completed all habits today.',
+    ]);
+    $user = makeUserWithCompletionYesterday();
 
-    $action = new GenerateAiDigestAction;
-    $result = $action->execute($user);
+    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
 
-    expect($result)->toBeNull();
+    expect($digest)->not->toBeNull()
+        ->and($digest->content)->toBe('You did great!')
+        ->and($digest->date->toDateString())->toBe(now()->subDay()->toDateString());
+
+    $memories = $user->memories()->get()->keyBy(fn (UserMemory $m): string => $m->category->value);
+    expect($memories)->toHaveCount(2)
+        ->and($memories['long_term']->content)->toBe('User has been consistent.')
+        ->and($memories['successes']->content)->toBe('Completed all habits today.');
+});
+
+it('returns null when API fails and does not create a digest', function (): void {
+    Http::fake(['https://openrouter.ai/*' => Http::response(['error' => 'server error'], 500)]);
+    $user = makeUserWithCompletionYesterday();
+
+    expect(resolve(GenerateAiDigestAction::class)->execute($user))->toBeNull()
+        ->and(AiDigest::query()->where('user_id', $user->id)->count())->toBe(0);
+});
+
+it('generates digest when only daily note is present', function (): void {
+    fakeAiJson('Note-based digest.');
+    $user = User::factory()->create(['timezone' => 'UTC']);
+    DailyNote::factory()->for($user)->forDate(now()->subDay()->toDateString())->create([
+        'content' => 'Felt tired today but stayed focused.',
+    ]);
+
+    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
+
+    expect($digest?->content)->toBe('Note-based digest.');
+});
+
+it('treats non-JSON response as plain-text digest with no memory updates', function (): void {
+    Http::fake([
+        'https://openrouter.ai/*' => Http::response([
+            'choices' => [['message' => ['content' => 'Plain text response without JSON.']]],
+        ]),
+    ]);
+    $user = makeUserWithCompletionYesterday();
+
+    $digest = resolve(GenerateAiDigestAction::class)->execute($user);
+
+    expect($digest?->content)->toBe('Plain text response without JSON.')
+        ->and($user->memories()->count())->toBe(0);
+});
+
+it('updates existing digest on re-run for same date', function (): void {
+    Http::fake([
+        'https://openrouter.ai/*' => Http::sequence()
+            ->push(['choices' => [['message' => ['content' => json_encode(['digest' => 'First digest.', 'memory_updates' => []], JSON_THROW_ON_ERROR)]]]])
+            ->push(['choices' => [['message' => ['content' => json_encode(['digest' => 'Updated digest.', 'memory_updates' => []], JSON_THROW_ON_ERROR)]]]]),
+    ]);
+    $user = makeUserWithCompletionYesterday();
+    $action = resolve(GenerateAiDigestAction::class);
+
+    $action->execute($user);
+    $action->execute($user);
+
+    expect(AiDigest::query()->where('user_id', $user->id)->count())->toBe(1)
+        ->and(AiDigest::query()->where('user_id', $user->id)->value('content'))->toBe('Updated digest.');
 });

@@ -99,6 +99,8 @@ return [
     */
 
     'waits' => [
+        'redis:ai-digests' => 120,
+        'redis:notifications' => 30,
         'redis:default' => 60,
     ],
 
