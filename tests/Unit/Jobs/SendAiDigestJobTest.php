@@ -60,19 +60,19 @@ it('does not send notification when no digest generated', function (): void {
 it('logs warning when user not found', function (): void {
     Http::fake();
 
-    $job = new SendAiDigestJob('00000000-0000-0000-0000-000000000000');
+    $job = new SendAiDigestJob(99999999);
 
     Log::shouldReceive('warning')
         ->once()
-        ->with('SendAiDigestJob: user not found', ['user_id' => '00000000-0000-0000-0000-000000000000']);
+        ->with('SendAiDigestJob: user not found', ['user_id' => 99999999]);
 
     $job->handle(resolve(GenerateAiDigestAction::class));
 });
 
 it('exposes unique id, tags, and queue', function (): void {
-    $job = new SendAiDigestJob('test-user-id');
+    $job = new SendAiDigestJob(42);
 
-    expect($job->uniqueId())->toBe('test-user-id')
-        ->and($job->tags())->toBe(['ai-digest', 'user:test-user-id'])
+    expect($job->uniqueId())->toBe('42')
+        ->and($job->tags())->toBe(['ai-digest', 'user:42'])
         ->and($job->queue)->toBe('ai-digests');
 });

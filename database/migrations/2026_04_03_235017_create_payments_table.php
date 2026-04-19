@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('currency');
             $table->unsignedInteger('total_amount');
             $table->string('invoice_payload');

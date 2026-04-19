@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read CarbonInterface $date
  * @property-read string|null $content
  * @property-read array<string, mixed>|null $habits_data
@@ -39,7 +39,7 @@ final class AiDigest extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'date' => 'date',
             'habits_data' => 'array',
             'created_at' => 'datetime',

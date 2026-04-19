@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read CarbonInterface $date
  * @property-read string|null $content
  * @property-read CarbonInterface $created_at
@@ -38,7 +38,7 @@ final class DailyNote extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'date' => 'date',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',

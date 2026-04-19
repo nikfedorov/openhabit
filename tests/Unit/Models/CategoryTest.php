@@ -49,7 +49,7 @@ it('has correct casts', function (): void {
     $category = Category::factory()->create();
 
     expect($category->id)->toBeInt()
-        ->and($category->user_id)->toBeString()
+        ->and($category->user_id)->toBeInt()
         ->and($category->is_active)->toBeBool()
         ->and($category->sort_order)->toBeInt();
 });

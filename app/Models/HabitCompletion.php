@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property-read int $id
  * @property-read int $habit_id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read CarbonInterface $completed_at
  * @property-read int $current_iteration
  * @property-read CarbonInterface $created_at
@@ -51,7 +51,7 @@ final class HabitCompletion extends Model
         return [
             'id' => 'integer',
             'habit_id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'completed_at' => 'date',
             'current_iteration' => 'integer',
             'created_at' => 'datetime',

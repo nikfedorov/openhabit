@@ -23,6 +23,6 @@ it('has correct casts', function (): void {
 
     expect($completion->id)->toBeInt()
         ->and($completion->habit_id)->toBeInt()
-        ->and($completion->user_id)->toBeString()
+        ->and($completion->user_id)->toBeInt()
         ->and($completion->current_iteration)->toBeInt();
 });

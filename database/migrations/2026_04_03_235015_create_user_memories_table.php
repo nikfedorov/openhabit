@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('user_memories', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('category');
             $table->text('content');
             $table->timestamps();

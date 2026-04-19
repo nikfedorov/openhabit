@@ -107,7 +107,7 @@ it('has correct casts', function (): void {
     $habit = Habit::factory()->create();
 
     expect($habit->id)->toBeInt()
-        ->and($habit->user_id)->toBeString()
+        ->and($habit->user_id)->toBeInt()
         ->and($habit->is_active)->toBeBool()
         ->and($habit->sort_order)->toBeInt()
         ->and($habit->iterations_required)->toBeInt();

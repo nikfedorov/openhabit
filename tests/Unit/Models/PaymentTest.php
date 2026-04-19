@@ -33,7 +33,7 @@ it('has correct casts', function (): void {
     $payment = Payment::factory()->create();
 
     expect($payment->id)->toBeInt()
-        ->and($payment->user_id)->toBeString()
+        ->and($payment->user_id)->toBeInt()
         ->and($payment->total_amount)->toBeInt()
         ->and($payment->is_recurring)->toBeBool()
         ->and($payment->is_first_recurring)->toBeBool();

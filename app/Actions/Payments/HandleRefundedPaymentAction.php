@@ -43,7 +43,7 @@ final readonly class HandleRefundedPaymentAction
         return $payment;
     }
 
-    private function latestActiveSubscriptionExpirationForUser(string $userId): ?CarbonInterface
+    private function latestActiveSubscriptionExpirationForUser(int $userId): ?CarbonInterface
     {
         /** @var Payment|null $latestPayment */
         $latestPayment = Payment::query()

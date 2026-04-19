@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('ai_digests', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->text('content');
             $table->json('habits_data')->nullable();

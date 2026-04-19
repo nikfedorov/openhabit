@@ -19,7 +19,7 @@ use Spatie\Translatable\HasTranslations;
  * User's category instance created from a template or manually.
  *
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read string $name
  * @property-read string|null $description
  * @property-read string|null $slug
@@ -111,7 +111,7 @@ final class Category extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'slug' => 'string',
             'is_active' => 'boolean',
             'sort_order' => 'integer',

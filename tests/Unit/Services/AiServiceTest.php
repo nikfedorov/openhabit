@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 /**
  * Helper: call the service under test.
  */
-function generate(?string $userId = null): ?string
+function generate(?int $userId = null): ?string
 {
     return new AiService()->generate('system', 'user', $userId);
 }

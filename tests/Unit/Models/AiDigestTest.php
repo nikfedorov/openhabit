@@ -15,5 +15,5 @@ it('has correct casts', function (): void {
     $digest = AiDigest::factory()->create();
 
     expect($digest->id)->toBeInt()
-        ->and($digest->user_id)->toBeString();
+        ->and($digest->user_id)->toBeInt();
 });

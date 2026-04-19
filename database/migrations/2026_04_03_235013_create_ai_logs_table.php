@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('ai_logs', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('model');
             $table->text('system_prompt');
             $table->text('user_prompt');

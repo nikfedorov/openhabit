@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read string $model
  * @property-read string $system_prompt
  * @property-read string $user_prompt
@@ -45,7 +45,7 @@ final class AiLog extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'input_tokens' => 'integer',
             'output_tokens' => 'integer',
             'duration_ms' => 'integer',

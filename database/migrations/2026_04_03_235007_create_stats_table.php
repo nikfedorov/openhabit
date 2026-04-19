@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('stats', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('user_id')
+            $table->foreignId('user_id')
                 ->constrained()->cascadeOnDelete();
 
             $table->string('period');

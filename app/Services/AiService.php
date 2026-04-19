@@ -35,7 +35,7 @@ final class AiService
      *
      * @return string|null The generated text, or null if all models fail.
      */
-    public function generate(string $systemPrompt, string $userPrompt, ?string $userId = null): ?string
+    public function generate(string $systemPrompt, string $userPrompt, ?int $userId = null): ?string
     {
         $models = AiModel::getOrdered();
 
@@ -65,7 +65,7 @@ final class AiService
         AiModel $aiModel,
         string $systemPrompt,
         string $userPrompt,
-        ?string $userId,
+        ?int $userId,
     ): ?string {
         $startTime = hrtime(true);
 
@@ -105,7 +105,7 @@ final class AiService
         Response $response,
         string $systemPrompt,
         string $userPrompt,
-        ?string $userId,
+        ?int $userId,
         int $durationMs,
     ): null {
         if ($response->status() === 429) {
@@ -126,7 +126,7 @@ final class AiService
         Response $response,
         string $systemPrompt,
         string $userPrompt,
-        ?string $userId,
+        ?int $userId,
         int $durationMs,
     ): ?string {
         /** @var string|null $content */
@@ -162,7 +162,7 @@ final class AiService
     }
 
     private function logCall(
-        ?string $userId,
+        ?int $userId,
         AiModel $aiModel,
         string $systemPrompt,
         string $userPrompt,

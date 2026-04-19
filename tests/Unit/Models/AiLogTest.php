@@ -15,6 +15,6 @@ it('has correct casts', function (): void {
     $log = AiLog::factory()->create();
 
     expect($log->id)->toBeInt()
-        ->and($log->user_id)->toBeString()
+        ->and($log->user_id)->toBeInt()
         ->and($log->is_successful)->toBeBool();
 });

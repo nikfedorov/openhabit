@@ -15,5 +15,5 @@ it('has correct casts', function (): void {
     $note = DailyNote::factory()->create();
 
     expect($note->id)->toBeInt()
-        ->and($note->user_id)->toBeString();
+        ->and($note->user_id)->toBeInt();
 });

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read MemoryCategory $category
  * @property-read string $content
  * @property-read CarbonInterface $created_at
@@ -39,7 +39,7 @@ final class UserMemory extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'category' => MemoryCategory::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',

@@ -36,14 +36,14 @@ final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue
     public int $uniqueFor = 1800;
 
     public function __construct(
-        public readonly string $userId,
+        public readonly int $userId,
     ) {
         $this->onQueue('ai-digests');
     }
 
     public function uniqueId(): string
     {
-        return $this->userId;
+        return (string) $this->userId;
     }
 
     public function handle(GenerateAiDigestAction $generateAiDigest): void

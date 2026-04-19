@@ -67,6 +67,6 @@ it('has correct casts', function (): void {
     $stat = Stat::factory()->create();
 
     expect($stat->id)->toBeInt()
-        ->and($stat->user_id)->toBeString()
+        ->and($stat->user_id)->toBeInt()
         ->and($stat->period)->toBeInstanceOf(StatPeriod::class);
 });

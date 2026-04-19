@@ -22,7 +22,7 @@ use Spatie\Translatable\HasTranslations;
  * User's habit instance created from a template or manually.
  *
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read int|null $category_id
  * @property-read string $name
  * @property-read string|null $description
@@ -196,7 +196,7 @@ final class Habit extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'category_id' => 'integer',
             'is_active' => 'boolean',
             'sort_order' => 'integer',

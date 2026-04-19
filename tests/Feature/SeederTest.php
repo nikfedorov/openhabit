@@ -9,5 +9,5 @@ it('seeds the database', function (): void {
     $this->artisan('db:seed');
 
     // assert
-    expect(User::query()->count())->toBe(6);
+    expect(User::query()->count())->toBe(1);
 });

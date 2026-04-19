@@ -13,7 +13,6 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +23,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * @property-read string $id
+ * @property-read int $id
  * @property-read string|null $telegram_id
  * @property string|null $name
  * @property-read string|null $email
@@ -57,7 +56,6 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
-    use HasUuids;
     use Notifiable;
     use SoftDeletes;
 
@@ -193,7 +191,7 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
     public function casts(): array
     {
         return [
-            'id' => 'string',
+            'id' => 'integer',
             'telegram_id' => 'string',
             'name' => 'string',
             'email' => 'string',

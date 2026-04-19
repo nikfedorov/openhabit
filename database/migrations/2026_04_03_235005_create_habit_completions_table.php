@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('habit_id')
                 ->constrained()->cascadeOnDelete();
-            $table->foreignUuid('user_id')
+            $table->foreignId('user_id')
                 ->constrained()->cascadeOnDelete();
 
             $table->date('completed_at');

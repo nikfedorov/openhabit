@@ -16,6 +16,6 @@ it('has correct casts', function (): void {
     $memory = UserMemory::factory()->create();
 
     expect($memory->id)->toBeInt()
-        ->and($memory->user_id)->toBeString()
+        ->and($memory->user_id)->toBeInt()
         ->and($memory->category)->toBeInstanceOf(MemoryCategory::class);
 });

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property-read string $user_id
+ * @property-read int $user_id
  * @property-read string $telegram_payment_charge_id
  * @property-read string $provider_payment_charge_id
  * @property-read int $total_amount
@@ -68,7 +68,7 @@ final class Payment extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'total_amount' => 'integer',
             'subscription_expiration_date' => 'datetime',
             'is_recurring' => 'boolean',

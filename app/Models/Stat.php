@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property-read int $id
- * @property string $user_id
+ * @property int $user_id
  * @property StatPeriod $period
  * @property CarbonInterface|string $period_start
  * @property int $planned_count
@@ -122,7 +122,7 @@ final class Stat extends Model
     {
         return [
             'id' => 'integer',
-            'user_id' => 'string',
+            'user_id' => 'integer',
             'period' => StatPeriod::class,
             'period_start' => 'date',
             'completed_count' => 'integer',
