@@ -90,13 +90,13 @@
         }
 
         if (initData) {
-            fetch("{{ route('telegram-miniapp.auth') }}", {
+            fetch("{{ route('api.auth.telegram') }}", {
                 method: "POST",
                 headers: {
-                    "X-Telegram-Init-Data": initData,
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ init_data: initData }),
                 credentials: "include",
             })
                 .then((response) =>

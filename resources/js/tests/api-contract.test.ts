@@ -84,6 +84,7 @@ const EXCLUDED_SCHEMAS = new Set([
     'NoteRequest', // request body
     'ReorderHabitsRequest', // request body
     'StoreHabitRequest', // request body
+    'TelegramMiniAppRequest', // request body
     'ToggleRequest', // request body
     'UpdateSettingsRequest', // request body
 ]);
@@ -94,6 +95,7 @@ const EXCLUDED_SCHEMAS = new Set([
  * path and the coverage test below will fail until it is listed here.
  */
 const KNOWN_PATHS = new Set([
+    '/auth/telegram',
     '/track',
     '/track/toggle',
     '/track/daily-note',

@@ -20,21 +20,16 @@ final class TelegramMiniAppRequest extends FormRequest
     private ?WebAppData $webAppData = null;
 
     /**
-     * @return array<string, string|null>
-     */
-    public function validationData(): array
-    {
-        return [
-            'init_data' => $this->header('X-Telegram-Init-Data'),
-        ];
-    }
-
-    /**
      * @return array<string, array<int, ValidationRule|string>>
      */
     public function rules(): array
     {
         return [
+            /**
+             * The init data from Telegram Web App.
+             *
+             * @example user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+             */
             'init_data' => ['required', 'string'],
         ];
     }
@@ -62,7 +57,7 @@ final class TelegramMiniAppRequest extends FormRequest
                 }
 
                 /** @var string $initData */
-                $initData = $this->header('X-Telegram-Init-Data');
+                $initData = $this->input('init_data');
 
                 try {
                     $this->webAppData = resolve(Nutgram::class)->validateWebAppData($initData);

@@ -13,6 +13,9 @@
     ],
     "tags": [
         {
+            "name": "Auth"
+        },
+        {
             "name": "Track"
         },
         {
@@ -31,6 +34,60 @@
         }
     ],
     "paths": {
+        "/auth/telegram": {
+            "post": {
+                "operationId": "auth.telegram",
+                "summary": "Login via Telegram initData",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TelegramMiniAppRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "description": "Indicate successful authentication.",
+                                            "examples": [
+                                                true
+                                            ]
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "The API token for the authenticated user, to be used in subsequent requests.",
+                                            "examples": [
+                                                "1|AbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefg"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "token"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/track": {
             "get": {
                 "operationId": "track",
@@ -1747,6 +1804,20 @@
                 ],
                 "title": "StoreHabitRequest"
             },
+            "TelegramMiniAppRequest": {
+                "type": "object",
+                "properties": {
+                    "init_data": {
+                        "type": "string",
+                        "description": "The init data from Telegram Web App.",
+                        "example": "user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+                    }
+                },
+                "required": [
+                    "init_data"
+                ],
+                "title": "TelegramMiniAppRequest"
+            },
             "ToggleRequest": {
                 "type": "object",
                 "properties": {
@@ -2327,25 +2398,6 @@
             }
         },
         "responses": {
-            "AuthenticationException": {
-                "description": "Unauthenticated",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "description": "Error overview."
-                                }
-                            },
-                            "required": [
-                                "message"
-                            ]
-                        }
-                    }
-                }
-            },
             "ValidationException": {
                 "description": "Validation error",
                 "content": {
@@ -2371,6 +2423,25 @@
                             "required": [
                                 "message",
                                 "errors"
+                            ]
+                        }
+                    }
+                }
+            },
+            "AuthenticationException": {
+                "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
                             ]
                         }
                     }

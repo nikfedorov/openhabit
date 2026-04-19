@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Auth\TelegramMiniAppController;
 use App\Http\Controllers\Edit\CreateController;
 use App\Http\Controllers\Edit\DestroyController;
 use App\Http\Controllers\Edit\IndexController as EditIndexController;
@@ -23,29 +24,45 @@ use App\Http\Controllers\View\WeekController;
 use App\Http\Controllers\View\YearController;
 use Illuminate\Support\Facades\Route;
 
+// Auth (unauthenticated)
+Route::prefix('auth')->name('api.auth.')->group(function (): void {
+    Route::post('/telegram', TelegramMiniAppController::class)->name('telegram');
+});
+
 Route::middleware('auth:sanctum')->group(function (): void {
-    Route::get('/track', [IndexController::class, 'show'])->name('api.track');
-    Route::post('/track/toggle', [ToggleController::class, 'store'])->name('api.track.toggle');
-    Route::post('/track/daily-note', [NoteController::class, 'store'])->name('api.track.daily-note');
+    // Track
+    Route::prefix('track')->name('api.track')->group(function (): void {
+        Route::get('/', [IndexController::class, 'show'])->name('');
+        Route::post('/toggle', [ToggleController::class, 'store'])->name('.toggle');
+        Route::post('/daily-note', [NoteController::class, 'store'])->name('.daily-note');
+    });
 
-    Route::get('/view/week', [WeekController::class, 'show'])->name('api.view.week');
-    Route::get('/view/year', [YearController::class, 'show'])->name('api.view.year');
-    Route::get('/view/life', [LifeController::class, 'show'])->name('api.view.life');
+    // View
+    Route::prefix('view')->name('api.view.')->group(function (): void {
+        Route::get('/week', [WeekController::class, 'show'])->name('week');
+        Route::get('/year', [YearController::class, 'show'])->name('year');
+        Route::get('/life', [LifeController::class, 'show'])->name('life');
+    });
 
-    Route::get('/edit', [EditIndexController::class, 'show'])->name('api.edit');
-    Route::get('/edit/habits/create', [CreateController::class, 'show'])->name('api.edit.create');
-    Route::get('/edit/habits/{habit}', [ShowController::class, 'show'])->name('api.edit.show');
-    Route::post('/edit/habits', [StoreController::class, 'store'])->name('api.edit.store');
-    Route::put('/edit/habits/{habit}', [StoreController::class, 'update'])->name('api.edit.update');
-    Route::delete('/edit/habits/{habit}', [DestroyController::class, 'destroy'])->name('api.edit.destroy');
-    Route::post('/edit/habits/{habit}/toggle', [EditToggleController::class, 'store'])->name('api.edit.toggle');
-    Route::post('/edit/toggle-franklin', [ToggleFranklinController::class, 'store'])->name('api.edit.toggle-franklin');
-    Route::post('/edit/habits/reorder', [ReorderController::class, 'store'])->name('api.edit.reorder');
+    // Edit
+    Route::prefix('edit')->name('api.edit')->group(function (): void {
+        Route::get('/', [EditIndexController::class, 'show'])->name('');
+        Route::get('/habits/create', [CreateController::class, 'show'])->name('.create');
+        Route::get('/habits/{habit}', [ShowController::class, 'show'])->name('.show');
+        Route::post('/habits', [StoreController::class, 'store'])->name('.store');
+        Route::put('/habits/{habit}', [StoreController::class, 'update'])->name('.update');
+        Route::delete('/habits/{habit}', [DestroyController::class, 'destroy'])->name('.destroy');
+        Route::post('/habits/{habit}/toggle', [EditToggleController::class, 'store'])->name('.toggle');
+        Route::post('/toggle-franklin', [ToggleFranklinController::class, 'store'])->name('.toggle-franklin');
+        Route::post('/habits/reorder', [ReorderController::class, 'store'])->name('.reorder');
+        Route::post('/templates/{habitTemplate}/copy', [TemplateController::class, 'store'])->name('.templates.copy');
+    });
 
-    Route::post('/edit/templates/{habitTemplate}/copy', [TemplateController::class, 'store'])->name('api.edit.templates.copy');
-
-    Route::get('/settings', [SettingsIndexController::class, 'show'])->name('api.settings');
-    Route::patch('/settings', [SettingsUpdateController::class, 'update'])->name('api.settings.update');
-    Route::post('/settings/trial-banner/dismiss', [DismissTrialBannerController::class, 'store'])->name('api.settings.trial-banner.dismiss');
-    Route::post('/settings/export', [ExportController::class, 'store'])->name('api.settings.export');
+    // Settings
+    Route::prefix('settings')->name('api.settings')->group(function (): void {
+        Route::get('/', [SettingsIndexController::class, 'show'])->name('');
+        Route::patch('/', [SettingsUpdateController::class, 'update'])->name('.update');
+        Route::post('/trial-banner/dismiss', [DismissTrialBannerController::class, 'store'])->name('.trial-banner.dismiss');
+        Route::post('/export', [ExportController::class, 'store'])->name('.export');
+    });
 });

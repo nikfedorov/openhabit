@@ -37,7 +37,7 @@ it('loads telegram miniapp page', function (): void {
 });
 
 it('rejects missing init data', function (): void {
-    $this->postJson('/telegram-miniapp/auth')
+    $this->postJson('/api/auth/telegram')
         ->assertUnauthorized()
         ->assertJson(['error' => 'Missing init data']);
 });
@@ -50,9 +50,7 @@ it('rejects invalid init data', function (): void {
 
     $this->app->instance(Nutgram::class, $nutgram);
 
-    $this->postJson('/telegram-miniapp/auth', [], [
-        'X-Telegram-Init-Data' => 'bad_data',
-    ])
+    $this->postJson('/api/auth/telegram', ['init_data' => 'bad_data'])
         ->assertUnauthorized()
         ->assertJson(['error' => 'Invalid init data']);
 });
@@ -70,9 +68,7 @@ it('rejects data without user', function (): void {
 
     $this->app->instance(Nutgram::class, $nutgram);
 
-    $this->postJson('/telegram-miniapp/auth', [], [
-        'X-Telegram-Init-Data' => 'valid_but_no_user',
-    ])
+    $this->postJson('/api/auth/telegram', ['init_data' => 'valid_but_no_user'])
         ->assertUnauthorized()
         ->assertJson(['error' => 'User data not found']);
 });
@@ -88,9 +84,7 @@ it('creates user and logs in', function (): void {
 
     $this->app->instance(Nutgram::class, $nutgram);
 
-    $this->postJson('/telegram-miniapp/auth', [], [
-        'X-Telegram-Init-Data' => 'fake_init_data',
-    ])
+    $this->postJson('/api/auth/telegram', ['init_data' => 'fake_init_data'])
         ->assertOk()
         ->assertJsonStructure([
             'success',
@@ -104,6 +98,23 @@ it('creates user and logs in', function (): void {
     expect($user)->not->toBeNull()
         ->and($user->name)->toBe('John Doe')
         ->and($user->tokens()->count())->toBe(1);
+});
+
+it('sets telegram_authenticated session flag when session is available', function (): void {
+    $webAppUser = makeWebAppUser(111111111, 'Session', 'User');
+    $webAppData = makeWebAppData($webAppUser);
+
+    $nutgram = Mockery::mock(Nutgram::class);
+    $nutgram->shouldReceive('validateWebAppData')
+        ->once()
+        ->andReturn($webAppData);
+
+    $this->app->instance(Nutgram::class, $nutgram);
+
+    $this->withHeader('Origin', 'http://localhost')
+        ->postJson('/api/auth/telegram', ['init_data' => 'fake_init_data'])
+        ->assertOk()
+        ->assertJson(['success' => true]);
 });
 
 it('logs in existing user', function (): void {
@@ -122,9 +133,7 @@ it('logs in existing user', function (): void {
 
     $this->app->instance(Nutgram::class, $nutgram);
 
-    $this->postJson('/telegram-miniapp/auth', [], [
-        'X-Telegram-Init-Data' => 'fake_init_data',
-    ])
+    $this->postJson('/api/auth/telegram', ['init_data' => 'fake_init_data'])
         ->assertOk()
         ->assertJson(['success' => true])
         ->assertJsonStructure(['token']);

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Auth\TelegramMiniAppController;
 use App\Http\Controllers\Settings\ExportDownloadController;
 use App\Http\Controllers\Telegram\WebhookController;
 use App\Http\Middleware\InjectDevToken;
@@ -26,9 +25,6 @@ Route::middleware(InjectDevToken::class)->group(function (): void {
 
 // Telegram Mini App auth
 Route::get('/telegram-miniapp', fn (): View => view('telegram-miniapp'))->name('telegram-miniapp');
-Route::post('/telegram-miniapp/auth', TelegramMiniAppController::class)
-    ->name('telegram-miniapp.auth')
-    ->withoutMiddleware(PreventRequestForgery::class);
 
 // Telegram webhook
 Route::post('/telegram/webhook', WebhookController::class)
