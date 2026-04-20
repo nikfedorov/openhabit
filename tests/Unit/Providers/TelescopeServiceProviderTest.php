@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\Providers\TelescopeServiceProvider;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Sentinel\Sentinel;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 
@@ -125,5 +127,14 @@ describe('TelescopeServiceProvider', function (): void {
                 ->toContain('x-csrf-token')
                 ->toContain('x-xsrf-token');
         });
+    });
+
+    test('telescope sentinel driver is registered and reflects current environment', function (): void {
+        $provider = new TelescopeServiceProvider($this->app);
+        $provider->boot();
+
+        $request = Request::create('/telescope');
+
+        expect(Sentinel::driver('telescope')->authorize($request))->toBe(app()->environment('local'));
     });
 });
