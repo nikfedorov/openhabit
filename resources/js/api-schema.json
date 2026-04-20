@@ -26,6 +26,9 @@
         },
         {
             "name": "Settings"
+        },
+        {
+            "name": "Story"
         }
     ],
     "security": [
@@ -1141,8 +1144,9 @@
         "/story/upload": {
             "post": {
                 "operationId": "story.upload",
+                "summary": "Upload story image",
                 "tags": [
-                    "StoryShare"
+                    "Story"
                 ],
                 "requestBody": {
                     "required": true,
@@ -1164,7 +1168,7 @@
                                     "properties": {
                                         "url": {
                                             "type": "string",
-                                            "description": "URL of the uploaded story image, which can be shared to Telegram.",
+                                            "description": "URL of the uploaded story image to be shared to Telegram.",
                                             "examples": [
                                                 "https://localhost/storage/stories/123.png"
                                             ]
@@ -1896,7 +1900,9 @@
                 "type": "object",
                 "properties": {
                     "image": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Base64-encoded PNG image data URL.",
+                        "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
                     }
                 },
                 "required": [

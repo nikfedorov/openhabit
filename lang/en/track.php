@@ -18,4 +18,6 @@ return [
     'next_day' => 'Next day',
     'today' => 'Today',
     'ai_digest' => 'AI Digest',
+    'save_note' => 'Save',
+    'add_habit' => '+ Add',
 ];

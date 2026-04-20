@@ -63,6 +63,8 @@ export const defaultTrackTranslations = {
     previous_day: 'Previous day',
     next_day: 'Next day',
     ai_digest: 'AI Digest',
+    save_note: 'Save',
+    add_habit: '+ Add',
 };
 
 export function makeHabit(overrides: Partial<Habit> = {}): Habit {

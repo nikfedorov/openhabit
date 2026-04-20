@@ -13,11 +13,14 @@ import {
 } from '@/tests/helpers/track';
 import { addDays, todayStr } from '@/utils/date';
 
-const { mockApiFetch, mockRouteQuery, mockReplace } = vi.hoisted(() => ({
-    mockApiFetch: vi.fn(),
-    mockRouteQuery: { value: {} as Record<string, string> },
-    mockReplace: vi.fn(),
-}));
+const { mockApiFetch, mockRouteQuery, mockReplace, mockPush } = vi.hoisted(
+    () => ({
+        mockApiFetch: vi.fn(),
+        mockRouteQuery: { value: {} as Record<string, string> },
+        mockReplace: vi.fn(),
+        mockPush: vi.fn(),
+    }),
+);
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,
@@ -25,7 +28,7 @@ vi.mock('@/utils/api', () => ({
 
 vi.mock('vue-router', () => ({
     useRoute: () => ({ query: mockRouteQuery.value }),
-    useRouter: () => ({ replace: mockReplace }),
+    useRouter: () => ({ replace: mockReplace, push: mockPush }),
 }));
 
 beforeEach(() => {
@@ -293,6 +296,16 @@ describe('Track - Habits List', () => {
             defaultTrackTranslations.no_habits_scheduled,
         );
         expect(wrapper.text()).toContain(defaultTrackTranslations.for_this_day);
+    });
+
+    it('navigates to create habit page when add button is clicked', async () => {
+        const wrapper = await mountTrack(mockApiFetch);
+        const addBtn = wrapper
+            .findAll('button')
+            .find((b) => b.text() === defaultTrackTranslations.add_habit);
+        expect(addBtn).toBeDefined();
+        await addBtn!.trigger('click');
+        expect(mockPush).toHaveBeenCalledWith({ name: 'edit.create' });
     });
 
     it('shows completed style and toggles on click', async () => {

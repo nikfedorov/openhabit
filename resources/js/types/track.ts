@@ -38,6 +38,8 @@ export type TrackTranslations = {
     previous_day: string;
     next_day: string;
     ai_digest: string;
+    save_note: string;
+    add_habit: string;
 };
 
 export type TrackData = {

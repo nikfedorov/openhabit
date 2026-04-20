@@ -18,4 +18,6 @@ return [
     'next_day' => '后一天',
     'today' => '今天',
     'ai_digest' => 'AI 摘要',
+    'save_note' => '保存',
+    'add_habit' => '+ 添加',
 ];

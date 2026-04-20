@@ -21,6 +21,11 @@ final class StoryUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * Base64-encoded PNG image data URL.
+             *
+             * @example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+             */
             'image' => ['required', 'string', 'starts_with:'.self::DATA_URL_PREFIX],
         ];
     }

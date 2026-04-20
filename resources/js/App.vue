@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import RouteLoadingBar from '@/components/navigation/RouteLoadingBar.vue';
 import TabBar from '@/components/navigation/TabBar.vue';
@@ -105,6 +105,40 @@ function handlePaymentConfettiComplete() {
 applyTheme(
     (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system',
 );
+
+// ─── Input focus tracking (hide tabbar on mobile keyboard) ───────
+
+const isTextInputFocused = ref(false);
+
+function onFocusIn(e: FocusEvent) {
+    const target = e.target;
+    if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement
+    ) {
+        isTextInputFocused.value = true;
+    }
+}
+
+function onFocusOut(e: FocusEvent) {
+    const target = e.target;
+    if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement
+    ) {
+        isTextInputFocused.value = false;
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('focusout', onFocusOut);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('focusin', onFocusIn);
+    document.removeEventListener('focusout', onFocusOut);
+});
 </script>
 
 <template>
@@ -120,6 +154,7 @@ applyTheme(
             <TabBar
                 :active-tab="String(route.name)"
                 :translations="navTranslations"
+                :hidden-on-mobile="isTextInputFocused"
             />
 
             <TrialBanner

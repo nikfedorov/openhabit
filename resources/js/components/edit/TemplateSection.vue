@@ -58,7 +58,7 @@ function copyTemplate(template: TemplateHabit) {
             </div>
         </template>
 
-        <div class="space-y-4 p-3">
+        <div class="space-y-4 p-3 pb-6">
             <div v-for="group in groupedTemplates" :key="group.category">
                 <!-- Category Name -->
                 <div class="mb-2 px-1">

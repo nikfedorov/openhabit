@@ -18,4 +18,6 @@ return [
     'next_day' => 'अगला दिन',
     'today' => 'आज',
     'ai_digest' => 'एआई डाइजेस्ट',
+    'save_note' => 'सहेजें',
+    'add_habit' => '+ जोड़ें',
 ];

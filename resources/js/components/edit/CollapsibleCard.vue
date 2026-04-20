@@ -2,14 +2,32 @@
 import { ref } from 'vue';
 
 const collapsed = ref(true);
+const cardEl = ref<HTMLElement | null>(null);
+
+function toggle() {
+    collapsed.value = !collapsed.value;
+
+    if (!collapsed.value) {
+        // After the grid-row expansion starts, smoothly scroll the card header to the top.
+        window.setTimeout(() => {
+            cardEl.value?.scrollIntoView?.({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }, 50);
+    }
+}
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800">
+    <div
+        ref="cardEl"
+        class="overflow-hidden rounded-xl bg-neutral-100 dark:bg-neutral-800"
+    >
         <!-- Clickable header that toggles the collapsible content -->
         <div
             class="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-700"
-            @click="collapsed = !collapsed"
+            @click="toggle"
         >
             <slot name="header" />
 

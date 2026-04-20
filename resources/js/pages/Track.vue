@@ -103,12 +103,24 @@ onMounted(() => {
                 :subtitle="data.translations.for_this_day"
             />
 
+            <div key="add-habit-btn" class="flex gap-3 px-4 py-1">
+                <div class="flex h-5 w-[18px] flex-shrink-0 items-center"></div>
+                <button
+                    type="button"
+                    class="text-sm text-neutral-400 transition-colors hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+                    @click="router.push({ name: 'edit.create' })"
+                >
+                    {{ data.translations.add_habit }}
+                </button>
+            </div>
+
             <DailyNote
                 key="daily-note"
                 :date="data.date"
                 :content="data.dailyNoteContent"
                 :note-label="data.translations.daily_note"
                 :saving-label="data.translations.saving"
+                :save-label="data.translations.save_note"
                 :placeholder="data.translations.how_was_your_day"
             />
             <AiDigest

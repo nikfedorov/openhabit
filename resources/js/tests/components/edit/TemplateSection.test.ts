@@ -226,4 +226,22 @@ describe('TemplateSection', () => {
 
         vi.useRealTimers();
     });
+
+    it('collapses back on second click', async () => {
+        const templates = [makeTemplateHabit()];
+        const wrapper = mount(TemplateSection, {
+            props: { templates, translations },
+        });
+
+        const header = wrapper.find('.cursor-pointer');
+        const grid = wrapper.find('.grid');
+
+        // Expand.
+        await header.trigger('click');
+        expect(grid.classes()).toContain('grid-rows-[1fr]');
+
+        // Collapse again — hits the `if (!collapsed.value)` false-branch.
+        await header.trigger('click');
+        expect(grid.classes()).toContain('grid-rows-[0fr]');
+    });
 });

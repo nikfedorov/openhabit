@@ -568,4 +568,78 @@ describe('App', () => {
             false,
         );
     });
+
+    it('hides mobile tabbar when a text input gains focus', async () => {
+        const { wrapper } = await mountApp();
+        const tabBar = wrapper.findComponent({ name: 'TabBar' });
+
+        expect(tabBar.props('hiddenOnMobile')).toBe(false);
+
+        // Attach an input to the document so that native dispatch sets target correctly.
+        const input = document.createElement('input');
+        document.body.appendChild(input);
+        input.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+
+        expect(tabBar.props('hiddenOnMobile')).toBe(true);
+
+        input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+
+        expect(tabBar.props('hiddenOnMobile')).toBe(false);
+
+        document.body.removeChild(input);
+    });
+
+    it('does not hide tabbar when a non-input element gains or loses focus', async () => {
+        const { wrapper } = await mountApp();
+        const tabBar = wrapper.findComponent({ name: 'TabBar' });
+
+        const div = document.createElement('div');
+        document.body.appendChild(div);
+
+        div.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+        expect(tabBar.props('hiddenOnMobile')).toBe(false);
+
+        div.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+        expect(tabBar.props('hiddenOnMobile')).toBe(false);
+
+        document.body.removeChild(div);
+    });
+
+    it('hides mobile tabbar when a textarea gains focus', async () => {
+        const { wrapper } = await mountApp();
+        const tabBar = wrapper.findComponent({ name: 'TabBar' });
+
+        const textarea = document.createElement('textarea');
+        document.body.appendChild(textarea);
+        textarea.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+
+        expect(tabBar.props('hiddenOnMobile')).toBe(true);
+
+        textarea.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        await wrapper.vm.$nextTick();
+
+        expect(tabBar.props('hiddenOnMobile')).toBe(false);
+
+        document.body.removeChild(textarea);
+    });
+
+    it('removes focus listeners on unmount', async () => {
+        const { wrapper } = await mountApp();
+        const removeSpy = vi.spyOn(document, 'removeEventListener');
+
+        wrapper.unmount();
+
+        expect(removeSpy).toHaveBeenCalledWith('focusin', expect.any(Function));
+        expect(removeSpy).toHaveBeenCalledWith(
+            'focusout',
+            expect.any(Function),
+        );
+
+        removeSpy.mockRestore();
+    });
 });

@@ -7,6 +7,7 @@ const props = defineProps<{
     content: string;
     noteLabel: string;
     savingLabel: string;
+    saveLabel: string;
     placeholder: string;
 }>();
 
@@ -74,6 +75,16 @@ async function save() {
                 class="w-full resize-none overflow-hidden rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
                 @blur="save"
             />
+            <div class="mt-2 flex justify-end">
+                <button
+                    type="button"
+                    :disabled="processing"
+                    class="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50 dark:bg-green-500 dark:hover:bg-green-600"
+                    @click="save"
+                >
+                    {{ processing ? savingLabel : saveLabel }}
+                </button>
+            </div>
         </div>
     </div>
 </template>
