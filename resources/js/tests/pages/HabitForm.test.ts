@@ -5,10 +5,11 @@ import HabitForm from '@/pages/HabitForm.vue';
 import { makeHabitTranslations } from '@/tests/helpers/edit';
 import { defaultTrial } from '@/tests/helpers/settings';
 
-const { mockApiFetch, mockRouterPush, mockRouteParams, mockIsTelegram } =
+const { mockApiFetch, mockRouterPush, mockRouterBack, mockRouteParams, mockIsTelegram } =
     vi.hoisted(() => ({
         mockApiFetch: vi.fn(),
         mockRouterPush: vi.fn(),
+        mockRouterBack: vi.fn(),
         mockRouteParams: { value: {} as Record<string, string> },
         mockIsTelegram: vi.fn(() => false),
     }));
@@ -19,7 +20,7 @@ vi.mock('@/utils/api', () => ({
 
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: mockRouteParams.value }),
-    useRouter: () => ({ push: mockRouterPush }),
+    useRouter: () => ({ push: mockRouterPush, back: mockRouterBack }),
 }));
 
 vi.mock('@/composables/useTelegramBackButton', () => ({
@@ -140,7 +141,7 @@ describe('HabitForm - Create Mode', () => {
             .findAll('button')
             .find((b) => b.text() === 'Cancel')!;
         await cancelBtn.trigger('click');
-        expect(mockRouterPush).toHaveBeenCalledWith({ name: 'edit' });
+        expect(mockRouterBack).toHaveBeenCalled();
     });
 
     it('navigates back on back button click', async () => {
@@ -148,7 +149,7 @@ describe('HabitForm - Create Mode', () => {
         // Back button is the first button in the header
         const backBtn = wrapper.findAll('button')[0];
         await backBtn.trigger('click');
-        expect(mockRouterPush).toHaveBeenCalledWith({ name: 'edit' });
+        expect(mockRouterBack).toHaveBeenCalled();
     });
 
     it('hides back button when in Telegram', async () => {

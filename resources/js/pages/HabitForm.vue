@@ -117,7 +117,7 @@ async function deleteHabit() {
 }
 
 function goBack() {
-    router.push({ name: 'edit' });
+    router.back();
 }
 
 // Register the native Telegram back button.
