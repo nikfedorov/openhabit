@@ -12,8 +12,17 @@
     <script>
         (function() {
             var theme = localStorage.getItem('theme');
-            var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            var isDark = theme === 'dark' || (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (isDark) document.documentElement.classList.add('dark');
+
+            var bgColor = isDark ? '#171717' : '#ffffff';
+            document.documentElement.style.backgroundColor = bgColor;
+
+            var tg = window.Telegram && window.Telegram.WebApp;
+            if (tg && tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
+                tg.setHeaderColor && tg.setHeaderColor(bgColor);
+                tg.setBackgroundColor && tg.setBackgroundColor(bgColor);
+            }
         })();
     </script>
     <style>
