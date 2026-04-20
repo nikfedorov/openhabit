@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
+
+beforeEach(function (): void {
+    Queue::fake();
+});
 
 it('refunds a recurring payment by charge_id argument', function (): void {
     $bot = mockRefundBot();

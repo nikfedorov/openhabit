@@ -8,8 +8,13 @@ use App\Notifications\Contracts\SendsTelegramNotification;
 use App\Notifications\Messages\TelegramMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
+
+beforeEach(function (): void {
+    Queue::fake();
+});
 
 test('send delivers message via nutgram bot', function (): void {
     $user = User::factory()->telegramId()->create();

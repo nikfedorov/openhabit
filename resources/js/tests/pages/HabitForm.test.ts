@@ -5,14 +5,19 @@ import HabitForm from '@/pages/HabitForm.vue';
 import { makeHabitTranslations } from '@/tests/helpers/edit';
 import { defaultTrial } from '@/tests/helpers/settings';
 
-const { mockApiFetch, mockRouterPush, mockRouterBack, mockRouteParams, mockIsTelegram } =
-    vi.hoisted(() => ({
-        mockApiFetch: vi.fn(),
-        mockRouterPush: vi.fn(),
-        mockRouterBack: vi.fn(),
-        mockRouteParams: { value: {} as Record<string, string> },
-        mockIsTelegram: vi.fn(() => false),
-    }));
+const {
+    mockApiFetch,
+    mockRouterPush,
+    mockRouterBack,
+    mockRouteParams,
+    mockIsTelegram,
+} = vi.hoisted(() => ({
+    mockApiFetch: vi.fn(),
+    mockRouterPush: vi.fn(),
+    mockRouterBack: vi.fn(),
+    mockRouteParams: { value: {} as Record<string, string> },
+    mockIsTelegram: vi.fn(() => false),
+}));
 
 vi.mock('@/utils/api', () => ({
     apiFetch: mockApiFetch,

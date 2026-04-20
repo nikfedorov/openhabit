@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Jobs\SetTelegramMenuButtonJob;
 use App\Models\AiTone;
 use App\Models\User;
 use App\Services\HabitTemplateService;
@@ -22,5 +23,9 @@ final readonly class UserObserver
     public function created(User $user): void
     {
         $this->templateService->applyTemplatesToUser($user);
+
+        if ($user->telegram_id !== null) {
+            dispatch(new SetTelegramMenuButtonJob($user->id));
+        }
     }
 }

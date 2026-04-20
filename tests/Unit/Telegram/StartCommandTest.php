@@ -2,10 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Jobs\SetTelegramMenuButtonJob;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\User\User as TelegramUser;
 use SergiX44\Nutgram\Testing\FakeNutgram;
+
+beforeEach(function (): void {
+    Queue::fake();
+});
 
 it('creates new user and sends welcome', function (): void {
     /** @var FakeNutgram $bot */
@@ -15,7 +21,8 @@ it('creates new user and sends welcome', function (): void {
         ->reply()
         ->assertReply('sendMessage');
 
-    expect(User::query()->count())->toBe(1);
+    $user = User::query()->sole();
+    Queue::assertPushed(SetTelegramMenuButtonJob::class, fn (SetTelegramMenuButtonJob $job): bool => $job->userId === $user->id);
 });
 
 it('welcomes back existing user', function (): void {

@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Queue;
 use SergiX44\Nutgram\Exception\InvalidDataException;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Web\WebAppData;
 use SergiX44\Nutgram\Telegram\Web\WebAppUser;
+
+beforeEach(function (): void {
+    Queue::fake();
+});
 
 function makeWebAppUser(int $id, string $firstName, ?string $lastName = null): WebAppUser
 {

@@ -101,6 +101,7 @@ return [
     'waits' => [
         'redis:ai-digests' => 120,
         'redis:notifications' => 30,
+        'redis:telegram' => 30,
         'redis:default' => 60,
     ],
 
@@ -240,6 +241,19 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+        'supervisor-telegram' => [
+            'connection' => 'redis',
+            'queue' => ['telegram'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 64,
+            'tries' => 3,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
@@ -259,6 +273,11 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-telegram' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
         ],
 
         'local' => [
@@ -269,6 +288,9 @@ return [
                 'maxProcesses' => 1,
             ],
             'supervisor-default' => [
+                'maxProcesses' => 1,
+            ],
+            'supervisor-telegram' => [
                 'maxProcesses' => 1,
             ],
         ],

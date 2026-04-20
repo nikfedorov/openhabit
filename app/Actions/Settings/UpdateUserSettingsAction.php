@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Settings;
 
+use App\Jobs\SetTelegramMenuButtonJob;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -42,6 +43,12 @@ final readonly class UpdateUserSettingsAction
             $updates['day_starts_at'] .= ':00';
         }
 
+        $localeChanged = isset($updates['locale']) && $updates['locale'] !== $user->locale;
+
         $user->update($updates);
+
+        if ($localeChanged && isset($user->telegram_id)) {
+            dispatch(new SetTelegramMenuButtonJob($user->id));
+        }
     }
 }

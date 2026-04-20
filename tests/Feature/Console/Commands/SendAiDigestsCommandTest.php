@@ -93,7 +93,7 @@ it('skips ineligible users', function (callable $setup): void {
         ->expectsOutputToContain('AI digest jobs dispatched: 0')
         ->assertExitCode(0);
 
-    Queue::assertNothingPushed();
+    Queue::assertNotPushed(SendAiDigestJob::class);
 })->with([
     'no premium' => fn () => User::factory()->telegram()->create([
         'subscription_expires_at' => now()->subDay(),

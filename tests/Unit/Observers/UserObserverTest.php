@@ -2,10 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Jobs\SetTelegramMenuButtonJob;
 use App\Models\AiTone;
 use App\Models\CategoryTemplate;
 use App\Models\HabitTemplate;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
+
+beforeEach(function (): void {
+    Queue::fake();
+});
 
 it('sets ai_tone_id when null', function (): void {
     $tone = AiTone::factory()->create();
@@ -36,4 +42,12 @@ it('applies templates to user when created', function (): void {
 
     expect($user->categories)->toHaveCount(1)
         ->and($user->habits)->toHaveCount(1);
+});
+
+it('dispatches SetTelegramMenuButtonJob only for users with telegram_id', function (): void {
+    $telegramUser = User::factory()->create(['telegram_id' => '12345']);
+    User::factory()->create(['telegram_id' => null]);
+
+    Queue::assertPushed(SetTelegramMenuButtonJob::class, 1);
+    Queue::assertPushed(SetTelegramMenuButtonJob::class, fn (SetTelegramMenuButtonJob $job): bool => $job->userId === $telegramUser->id);
 });
