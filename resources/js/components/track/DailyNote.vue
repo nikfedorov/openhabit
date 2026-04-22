@@ -38,7 +38,7 @@ async function save() {
 </script>
 
 <template>
-    <div class="mt-8">
+    <div class="mt-6">
         <div class="rounded-xl bg-neutral-100 px-4 py-4 dark:bg-neutral-800">
             <div class="mb-3 flex items-center gap-2">
                 <svg

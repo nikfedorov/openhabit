@@ -103,7 +103,7 @@ onMounted(() => {
                 :subtitle="data.translations.for_this_day"
             />
 
-            <div key="add-habit-btn" class="flex gap-3 px-4 py-1">
+            <div key="add-habit-btn" class="flex gap-3 px-4 py-2">
                 <div class="flex h-5 w-[18px] flex-shrink-0 items-center"></div>
                 <button
                     type="button"
