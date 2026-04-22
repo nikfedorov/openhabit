@@ -23,6 +23,9 @@ docker run --rm \
 echo -e "\n${bold}> sail build${normal}"
 vendor/bin/sail build
 
+echo -e "\n${bold}> sail artisan octane:install --server=frankenphp${normal}"
+vendor/bin/sail artisan octane:install --server=frankenphp
+
 echo -e "\n${bold}> sail up -d${normal}"
 vendor/bin/sail up -d
 

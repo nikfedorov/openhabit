@@ -25,3 +25,7 @@ Homestead.yaml
 /.zed
 /tmp
 /coverage
+**/caddy
+**/composer
+frankenphp
+frankenphp-worker.php
