@@ -1,6 +1,7 @@
-import { flushPromises } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ActivityGraph from '@/components/track/ActivityGraph.vue';
+import DailyNote from '@/components/track/DailyNote.vue';
 import {
     defaultTrackTranslations,
     deferredPromise,
@@ -510,6 +511,34 @@ describe('Track - Daily Note', () => {
     it('hides saving indicator when not processing', async () => {
         const wrapper = await mountTrack(mockApiFetch);
         expect(wrapper.text()).not.toContain(defaultTrackTranslations.saving);
+    });
+
+    it('shows save button on textarea focus and hides it on blur after save', async () => {
+        mockApiFetch.mockResolvedValueOnce(undefined);
+        const wrapper = mount(DailyNote, {
+            props: {
+                date: '2026-04-06',
+                content: '',
+                noteLabel: defaultTrackTranslations.daily_note,
+                savingLabel: defaultTrackTranslations.saving,
+                saveLabel: defaultTrackTranslations.save_note,
+                placeholder: defaultTrackTranslations.how_was_your_day,
+            },
+            attachTo: document.body,
+        });
+        const textarea = wrapper.find('textarea');
+        const saveBtn = wrapper.find('.save-btn');
+
+        expect(saveBtn.isVisible()).toBe(false);
+
+        await textarea.trigger('focus');
+        expect(saveBtn.isVisible()).toBe(true);
+
+        await textarea.trigger('blur');
+        await flushPromises();
+        expect(saveBtn.isVisible()).toBe(false);
+
+        wrapper.unmount();
     });
 
     it('syncs daily note content when navigating to a new day', async () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { apiFetch } from '@/utils/api';
 
 const props = defineProps<{
@@ -13,6 +13,9 @@ const props = defineProps<{
 
 const dailyNote = ref(props.content);
 const processing = ref(false);
+const focused = ref(false);
+
+const showButton = computed(() => focused.value || processing.value);
 
 watch(
     () => props.content,
@@ -20,6 +23,15 @@ watch(
         dailyNote.value = val;
     },
 );
+
+function onFocus() {
+    focused.value = true;
+}
+
+function onBlur() {
+    focused.value = false;
+    save();
+}
 
 async function save() {
     processing.value = true;
@@ -73,18 +85,40 @@ async function save() {
                 rows="3"
                 maxlength="5000"
                 class="w-full resize-none overflow-hidden rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
-                @blur="save"
+                @focus="onFocus"
+                @blur="onBlur"
             />
-            <div class="mt-2 flex justify-end">
-                <button
-                    type="button"
-                    :disabled="processing"
-                    class="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50 dark:bg-green-500 dark:hover:bg-green-600"
-                    @click="save"
-                >
-                    {{ processing ? savingLabel : saveLabel }}
-                </button>
-            </div>
+            <Transition name="save">
+                <div v-show="showButton" class="save-btn mt-2 flex justify-end">
+                    <button
+                        type="button"
+                        :disabled="processing"
+                        class="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50 dark:bg-green-500 dark:hover:bg-green-600"
+                        @click="save"
+                    >
+                        {{ processing ? savingLabel : saveLabel }}
+                    </button>
+                </div>
+            </Transition>
         </div>
     </div>
 </template>
+
+<style scoped>
+.save-enter-active,
+.save-leave-active {
+    transition:
+        opacity 200ms ease,
+        max-height 200ms ease,
+        margin-top 200ms ease;
+    overflow: hidden;
+    max-height: 40px;
+}
+
+.save-enter-from,
+.save-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+}
+</style>
