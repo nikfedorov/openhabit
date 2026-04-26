@@ -35,7 +35,7 @@ final class InvoiceSeeder extends Seeder
                     'pt' => 'Recursos premium por 30 dias: resumos diários com IA, análises avançadas e mais.',
                     'ar' => 'ميزات مميزة لمدة 30 يومًا: ملخصات يومية بالذكاء الاصطناعي، تحليلات متقدمة، والمزيد.',
                 ],
-                'stars' => app()->isLocal() ? 1 : 1299,
+                'stars' => app()->isLocal() ? 1 : 499,
                 'subscription_period' => User::PREMIUM_PERIOD_SECONDS,
             ],
         );
