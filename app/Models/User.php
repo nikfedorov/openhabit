@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Theme;
-use App\Models\Setting;
 use App\Observers\UserObserver;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
