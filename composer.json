@@ -105,7 +105,19 @@
             "rector --output-format=json",
             "bun run test:lint"
         ],
-        "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
+        "test:app": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
+        "test:commands": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Commands --coverage --coverage-filter=app/Console/Commands --exactly=100.0",
+        "test:actions": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Actions --coverage --coverage-filter=app/Actions --exactly=100.0",
+        "test:jobs": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Jobs --coverage --coverage-filter=app/Jobs --exactly=100.0",
+        "test:notifications": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Notifications --coverage --coverage-filter=app/Notifications --exactly=100.0",
+        "test:services": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Services --coverage --coverage-filter=app/Services --exactly=100.0",
+        "test:suites": [
+            "@test:commands",
+            "@test:actions",
+            "@test:jobs",
+            "@test:notifications",
+            "@test:services"
+        ],
         "test:types": "phpstan",
         "test:api-schema": [
             "php artisan scramble:export --no-interaction",
@@ -115,7 +127,7 @@
         "test": [
             "@test:type-coverage",
             "@test:lint",
-            "@test:unit",
+            "@test:app",
             "@test:types",
             "@test:api-schema",
             "@test:vue"
