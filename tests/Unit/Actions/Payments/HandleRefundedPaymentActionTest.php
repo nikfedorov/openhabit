@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Actions\Payments\HandleRefundedPaymentAction;
 use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 
 it('marks a payment as refunded and keeps the furthest active subscription expiration', function (): void {
     $user = User::factory()->premium()->create();

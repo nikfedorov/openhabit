@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Actions\Payments\HandleSuccessfulPaymentAction;
 use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Telegram\Types\Payment\SuccessfulPayment;
 
 it('stores a premium payment and activates the subscription', function (): void {

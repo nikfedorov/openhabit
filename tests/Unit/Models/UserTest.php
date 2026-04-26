@@ -9,6 +9,7 @@ use App\Models\DailyNote;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
 use App\Models\Payment;
+use App\Models\Setting;
 use App\Models\Stat;
 use App\Models\User;
 use App\Models\UserMemory;
@@ -187,6 +188,8 @@ it('filters correctly for canReceiveTelegram scope', function (): void {
 });
 
 it('filters correctly for withoutPremium scope', function (): void {
+    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '0']);
+
     User::factory()->premium()->create();
     User::factory()->create(['subscription_expires_at' => null]);
     User::factory()->create(['subscription_expires_at' => now()->subDay()]);

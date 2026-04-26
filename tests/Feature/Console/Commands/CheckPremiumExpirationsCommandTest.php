@@ -60,3 +60,19 @@ it('ignores users with active premium', function (): void {
 
     expect($user->refresh()->ai_digest_time)->toBe('09:00');
 });
+
+it('ignores users on active trial', function (): void {
+    Setting::factory()->create(['key' => 'trial_period_days', 'value' => '14']);
+
+    $user = User::factory()->create([
+        'created_at' => now()->subDays(5),
+        'subscription_expires_at' => null,
+        'ai_digest_time' => '09:00',
+    ]);
+
+    $this->artisan('app:check-premium-expirations')
+        ->expectsOutputToContain('Users downgraded: 0')
+        ->assertExitCode(0);
+
+    expect($user->refresh()->ai_digest_time)->toBe('09:00');
+});

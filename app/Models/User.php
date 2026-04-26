@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Theme;
+use App\Models\Setting;
 use App\Observers\UserObserver;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
@@ -236,9 +237,17 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
     #[Scope]
     protected function withoutPremium(Builder $query): Builder
     {
-        return $query->where(function (Builder $q): void {
+        $trialDays = Setting::trialPeriodDays();
+
+        $query->where(function (Builder $q): void {
             $q->whereNull('subscription_expires_at')
                 ->orWhere('subscription_expires_at', '<', now());
         });
+
+        if ($trialDays > 0) {
+            $query->where('created_at', '<=', now()->subDays($trialDays));
+        }
+
+        return $query;
     }
 }
