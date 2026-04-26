@@ -7,6 +7,8 @@ namespace App\Jobs;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -18,18 +20,11 @@ use SergiX44\Nutgram\Telegram\Types\WebApp\WebAppInfo;
  * Sets the Telegram chat menu button for a user to a WebApp button
  * with text translated to the user's locale.
  */
+#[Timeout(30)]
+#[Tries(3)]
 final class SetTelegramMenuButtonJob implements ShouldQueue
 {
     use Queueable;
-
-    /** @var int Maximum attempts before giving up. */
-    public int $tries = 3;
-
-    /**
-     * Abort the job after 30 seconds.
-     * Must stay below the supervisor timeout (60 s).
-     */
-    public int $timeout = 30;
 
     public function __construct(
         public readonly int $userId,

@@ -6,6 +6,8 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -16,20 +18,11 @@ use SergiX44\Nutgram\Telegram\Properties\ParseMode;
  * Dispatched asynchronously by TelegramMonologHandler so error reporting
  * never blocks the request or exception handler.
  */
+#[Timeout(15)]
+#[Tries(2)]
 final class SendTelegramErrorAlertJob implements ShouldQueue
 {
     use Queueable;
-
-    /**
-     * Maximum delivery attempts before the job is considered failed.
-     * Errors that prevent delivery should not retry indefinitely.
-     */
-    public int $tries = 2;
-
-    /**
-     * Abort if the job takes longer than this many seconds.
-     */
-    public int $timeout = 15;
 
     /**
      * @param  string  $chatId  Telegram chat / channel ID to send to.

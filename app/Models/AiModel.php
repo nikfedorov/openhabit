@@ -7,6 +7,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Database\Factories\AiModelFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,12 +26,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  */
+#[Table(name: 'ai_models')]
 final class AiModel extends Model
 {
     /** @use HasFactory<AiModelFactory> */
     use HasFactory;
-
-    protected $table = 'ai_models';
 
     /**
      * Get all active models ordered by priority.

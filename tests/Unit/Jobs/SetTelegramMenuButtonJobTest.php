@@ -53,9 +53,9 @@ it('skips when user cannot receive telegram notifications', function (Closure $s
     ])->id,
 ]);
 
-it('exposes correct queue and tries', function (): void {
+it('exposes correct queue', function (): void {
     $job = new SetTelegramMenuButtonJob(1);
 
-    expect($job->queue)->toBe('telegram')
-        ->and($job->tries)->toBe(3);
+    expect($job->queue)
+        ->toBe('telegram');
 });

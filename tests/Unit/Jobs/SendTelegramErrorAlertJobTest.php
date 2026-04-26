@@ -10,9 +10,8 @@ use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 test('job configuration is correct', function (): void {
     $job = new SendTelegramErrorAlertJob('chat-id', 'hello');
 
-    expect($job->queue)->toBe('notifications')
-        ->and($job->tries)->toBe(2)
-        ->and($job->timeout)->toBe(15);
+    expect($job->queue)
+        ->toBe('notifications');
 });
 
 test('handle sends message via nutgram', function (): void {

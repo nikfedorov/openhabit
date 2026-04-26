@@ -27,5 +27,6 @@ Homestead.yaml
 /coverage
 **/caddy
 **/composer
+/config/configstore/
 frankenphp
 frankenphp-worker.php

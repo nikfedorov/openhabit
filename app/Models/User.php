@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,6 +50,10 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read CarbonInterface|null $deleted_at
  */
 #[ObservedBy(UserObserver::class)]
+#[Hidden([
+    'password',
+    'remember_token',
+])]
 final class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     use HasApiTokens;
@@ -63,14 +68,6 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
      * 30 days in seconds (for premium subscription period).
      */
     public const int PREMIUM_PERIOD_SECONDS = 2_592_000;
-
-    /**
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     /**
      * Route notifications for the Telegram channel.
