@@ -135,6 +135,15 @@ return [
             ],
         ],
 
+        'telegram-payments' => [
+            'driver' => 'monolog',
+            'handler' => TelegramMonologHandler::class,
+            'level' => 'info',
+            'handler_with' => [
+                'chatId' => env('TELEGRAM_PAYMENTS_CHAT_ID', ''),
+            ],
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

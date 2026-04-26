@@ -7,6 +7,7 @@ namespace App\Actions\Payments;
 use App\Models\Payment;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 final readonly class HandleRefundedPaymentAction
 {
@@ -28,6 +29,11 @@ final readonly class HandleRefundedPaymentAction
                 'subscription_expires_at' => $this->latestActiveSubscriptionExpirationForUser($payment->user_id),
             ]);
         });
+
+        Log::channel('telegram-payments')->info(
+            sprintf('Payment refunded: %s', $telegramPaymentChargeId),
+            ['user_id' => $payment->user_id],
+        );
 
         return true;
     }

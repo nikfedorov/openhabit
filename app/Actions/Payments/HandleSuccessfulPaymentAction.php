@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Telegram\Types\Payment\SuccessfulPayment;
 
 final readonly class HandleSuccessfulPaymentAction
@@ -19,7 +20,7 @@ final readonly class HandleSuccessfulPaymentAction
     {
         $subscriptionExpiresAt = $this->subscriptionExpiresAt($payment);
 
-        return DB::transaction(function () use ($payment, $subscriptionExpiresAt, $user): bool {
+        $activated = DB::transaction(function () use ($payment, $subscriptionExpiresAt, $user): bool {
             Payment::query()->create($this->paymentAttributes($payment, $subscriptionExpiresAt, $user));
 
             if (! $this->shouldActivatePremium($payment, $subscriptionExpiresAt)) {
@@ -30,6 +31,13 @@ final readonly class HandleSuccessfulPaymentAction
 
             return true;
         });
+
+        Log::channel('telegram-payments')->info(
+            sprintf('Payment received: %d %s from user %d', $payment->total_amount, $payment->currency, $user->id),
+            ['premium_until' => $subscriptionExpiresAt?->toIso8601String(), 'charge_id' => $payment->telegram_payment_charge_id],
+        );
+
+        return $activated;
     }
 
     private function subscriptionExpiresAt(SuccessfulPayment $payment): ?CarbonImmutable

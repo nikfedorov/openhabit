@@ -49,3 +49,17 @@ it('nullifies the subscription when refunding the only active payment', function
 it('returns false for an unknown charge id', function (): void {
     expect(resolve(HandleRefundedPaymentAction::class)->handle('unknown_charge_id'))->toBeFalse();
 });
+
+it('logs refund to the telegram-payments channel', function (): void {
+    $channelSpy = Mockery::spy(LoggerInterface::class);
+    Log::shouldReceive('channel')->with('telegram-payments')->once()->andReturn($channelSpy);
+
+    $user = User::factory()->premium()->create();
+    $payment = Payment::factory()->for($user)->create();
+
+    resolve(HandleRefundedPaymentAction::class)->handle($payment->telegram_payment_charge_id);
+
+    $channelSpy->shouldHaveReceived('info')
+        ->once()
+        ->withArgs(fn (string $message): bool => str_contains($message, $payment->telegram_payment_charge_id));
+});

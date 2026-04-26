@@ -35,17 +35,23 @@ test('respects configured log level', function (Level $level, bool $handlesError
     'critical' => [Level::Critical, false, false],
 ]);
 
-test('dispatches job with formatted text when chatId is set', function (): void {
-    $handler = new TelegramMonologHandler(Level::Error, 'my-channel-id');
+test('dispatches job with formatted text when chatId is set', function (Level $level, string $expectedEmoji): void {
+    $handler = new TelegramMonologHandler(Level::Debug, 'my-channel-id');
 
-    $handler->handle(makeTelegramRecord('Something went wrong', Level::Error, ['key' => 'value']));
+    $handler->handle(makeTelegramRecord('Something went wrong', $level, ['key' => 'value']));
 
     Queue::assertPushed(SendTelegramErrorAlertJob::class, fn (SendTelegramErrorAlertJob $job): bool => $job->chatId === 'my-channel-id'
         && str_contains($job->text, 'Something went wrong')
-        && str_contains($job->text, 'Error')
+        && str_contains($job->text, $level->name)
+        && str_contains($job->text, $expectedEmoji)
         && str_contains($job->text, 'key')
         && str_contains($job->text, 'value'));
-});
+})->with([
+    'error' => [Level::Error, '❌'],
+    'critical' => [Level::Critical, '🔴'],
+    'warning' => [Level::Warning, '⚠️'],
+    'info' => [Level::Info, 'ℹ️'],
+]);
 
 test('does not dispatch a job when chatId is empty', function (): void {
     $handler = new TelegramMonologHandler(Level::Error, '');

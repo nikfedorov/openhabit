@@ -43,6 +43,22 @@ it('stores a payment without activating premium for non-premium payloads', funct
         ->and(Payment::query()->where('user_id', $user->id)->count())->toBe(1);
 });
 
+it('logs payment to the telegram-payments channel', function (): void {
+    $channelSpy = Mockery::spy(LoggerInterface::class);
+    Log::shouldReceive('channel')->with('telegram-payments')->once()->andReturn($channelSpy);
+
+    $user = User::factory()->create();
+
+    resolve(HandleSuccessfulPaymentAction::class)->handle(
+        SuccessfulPayment::fromArray(successfulPaymentAttributes(['total_amount' => 500, 'currency' => 'XTR'])),
+        $user,
+    );
+
+    $channelSpy->shouldHaveReceived('info')
+        ->once()
+        ->withArgs(fn (string $message): bool => str_contains($message, '500') && str_contains($message, 'XTR'));
+});
+
 /**
  * @return array<string, bool|int|string|null>
  */
