@@ -26,6 +26,9 @@
         },
         {
             "name": "Settings"
+        },
+        {
+            "name": "Story"
         }
     ],
     "security": [
@@ -83,7 +86,7 @@
         },
         "/track": {
             "get": {
-                "operationId": "track",
+                "operationId": "track.",
                 "description": "Returns habits, completion progress, daily note, and activity heatmap data\nfor a specific date. Defaults to today when no date is provided.",
                 "summary": "Get daily tracking data",
                 "tags": ["Track"],
@@ -246,7 +249,7 @@
         },
         "/edit": {
             "get": {
-                "operationId": "edit",
+                "operationId": "edit.",
                 "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
                 "summary": "Get all habits for editing",
                 "tags": ["Edit"],
@@ -905,7 +908,7 @@
         },
         "/settings": {
             "get": {
-                "operationId": "settings",
+                "operationId": "settings.",
                 "summary": "Show the current user's settings along with available options",
                 "tags": ["Settings"],
                 "responses": {
@@ -1062,6 +1065,51 @@
                     },
                     "403": {
                         "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/story/upload": {
+            "post": {
+                "operationId": "story.upload",
+                "summary": "Upload story image",
+                "tags": ["Story"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoryUploadRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "description": "URL of the uploaded story image to be shared to Telegram.",
+                                            "examples": [
+                                                "https://localhost/storage/stories/123.png"
+                                            ]
+                                        }
+                                    },
+                                    "required": ["url"]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }
@@ -1601,6 +1649,18 @@
                 ],
                 "title": "StoreHabitRequest"
             },
+            "StoryUploadRequest": {
+                "type": "object",
+                "properties": {
+                    "image": {
+                        "type": "string",
+                        "description": "Base64-encoded PNG image data URL.",
+                        "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+                    }
+                },
+                "required": ["image"],
+                "title": "StoryUploadRequest"
+            },
             "TelegramMiniAppRequest": {
                 "type": "object",
                 "properties": {
@@ -1676,20 +1736,15 @@
                         }
                     },
                     "aiDigest": {
-                        "type": ["object", "null"],
-                        "description": "AI-generated digest for this day, or null if not available.",
-                        "properties": {
-                            "date": {
-                                "type": "string"
+                        "anyOf": [
+                            {
+                                "description": "AI-generated digest for this day, or null if not available.",
+                                "$ref": "#/components/schemas/AiDigestResource"
                             },
-                            "dateLabel": {
-                                "type": "string"
-                            },
-                            "content": {
-                                "type": ["string", "null"]
+                            {
+                                "type": "null"
                             }
-                        },
-                        "required": ["date", "dateLabel", "content"]
+                        ]
                     }
                 },
                 "required": [
@@ -1711,6 +1766,10 @@
                     "hasPremium": {
                         "type": "boolean",
                         "description": "Whether the user has an active premium subscription or is within the trial period."
+                    },
+                    "isTrialing": {
+                        "type": "boolean",
+                        "description": "Whether the user is currently in the free trial (not a paying subscriber).\nUsed to decide when to show the premium upsell."
                     },
                     "shouldShowBanner": {
                         "type": "boolean",
@@ -1760,6 +1819,7 @@
                 },
                 "required": [
                     "hasPremium",
+                    "isTrialing",
                     "shouldShowBanner",
                     "bannerText",
                     "invoiceLink",
@@ -1877,6 +1937,10 @@
                     "trial": {
                         "description": "Trial banner and premium modal data.",
                         "$ref": "#/components/schemas/TrialResource"
+                    },
+                    "telegramBotUsername": {
+                        "type": ["string", "null"],
+                        "description": "Telegram bot username for story sharing widget link."
                     }
                 },
                 "required": [
@@ -1888,7 +1952,8 @@
                     "birthdate",
                     "aiDigestTime",
                     "aiToneId",
-                    "trial"
+                    "trial",
+                    "telegramBotUsername"
                 ],
                 "title": "UserSettingResource"
             },

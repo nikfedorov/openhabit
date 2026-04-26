@@ -38,5 +38,8 @@
         </div>
         <style>.dark #splash{background:#171717!important}.dark #splash-bg{fill:#171717}</style>
     </div>
+    @if($trackingScripts = \App\Models\Setting::trackingScripts())
+        {!! $trackingScripts !!}
+    @endif
 </body>
 </html>

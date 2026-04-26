@@ -24,6 +24,7 @@ import type {
 
 export type TrialData = {
     hasPremium: boolean;
+    isTrialing: boolean;
     shouldShowBanner: boolean;
     bannerText: string;
     invoiceLink: string | null;

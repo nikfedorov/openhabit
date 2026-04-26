@@ -2033,6 +2033,10 @@
                         "type": "boolean",
                         "description": "Whether the user has an active premium subscription or is within the trial period."
                     },
+                    "isTrialing": {
+                        "type": "boolean",
+                        "description": "Whether the user is currently in the free trial (not a paying subscriber).\nUsed to decide when to show the premium upsell."
+                    },
                     "shouldShowBanner": {
                         "type": "boolean",
                         "description": "Whether to show the trial banner in the UI."
@@ -2086,6 +2090,7 @@
                 },
                 "required": [
                     "hasPremium",
+                    "isTrialing",
                     "shouldShowBanner",
                     "bannerText",
                     "invoiceLink",

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import App from '@/App.vue';
 import PremiumModal from '@/components/PremiumModal.vue';
+import { useTrialUiState } from '@/composables/useTrialUiState';
 import { routes } from '@/router';
 import { defaultTrial } from '@/tests/helpers/settings';
 
@@ -105,6 +106,10 @@ beforeEach(() => {
     document.documentElement.dir = 'ltr';
     document.documentElement.lang = 'en';
     document.documentElement.style.backgroundColor = '';
+    // Reset singleton state so each test starts with a clean slate.
+    const { setTrialData, closePremiumModal } = useTrialUiState();
+    setTrialData(null);
+    closePremiumModal();
 });
 
 afterEach(() => {

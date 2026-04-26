@@ -2,10 +2,13 @@ import { ref } from 'vue';
 import type { TrialData } from '@/types/api';
 import { apiFetch } from '@/utils/api';
 
-export function useTrialUiState() {
-    const trialData = ref<TrialData | null>(null);
-    const showPremiumModal = ref(false);
+// Module-level refs — shared across all callers so that dismissing the trial
+// banner in App.vue is immediately reflected in Settings.vue (and any other
+// component that reads trialData from this composable).
+const trialData = ref<TrialData | null>(null);
+const showPremiumModal = ref(false);
 
+export function useTrialUiState() {
     function setTrialData(nextTrialData?: TrialData | null) {
         if (nextTrialData === undefined) {
             return;

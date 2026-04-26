@@ -12,6 +12,10 @@ vi.mock('@/utils/api', () => ({
 
 beforeEach(() => {
     mockApiFetch.mockReset();
+    // Reset shared singleton state between tests.
+    const { setTrialData, closePremiumModal } = useTrialUiState();
+    setTrialData(null);
+    closePremiumModal();
 });
 
 describe('useTrialUiState', () => {

@@ -6,6 +6,7 @@ import PremiumUpsellBanner from '@/components/PremiumUpsellBanner.vue';
 import SettingRow from '@/components/settings/SettingRow.vue';
 import ToggleSwitch from '@/components/settings/ToggleSwitch.vue';
 import TimePickerInput from '@/components/TimePickerInput.vue';
+import { useTrialUiState } from '@/composables/useTrialUiState';
 import type {
     AiTone,
     SettingsApiResponse,
@@ -30,8 +31,11 @@ const locales = ref<Record<string, string>>({});
 const timezones = ref<Record<string, Record<string, string>>>({});
 const aiTones = ref<AiTone[]>([]);
 const hasPremium = ref(false);
-const trialData = ref<TrialData | null>(null);
 const translations = ref<SettingsTranslations>({} as SettingsTranslations);
+
+// Shared state — dismissing the trial banner in App.vue is immediately
+// reflected here because both use the same module-level ref.
+const { trialData, setTrialData } = useTrialUiState();
 
 // ─── Current settings state ──────────────────────────────────
 
@@ -141,7 +145,7 @@ async function loadData() {
     timezones.value = response.timezones;
     aiTones.value = response.aiTones;
     hasPremium.value = response.hasPremium;
-    trialData.value = response.data.trial;
+    setTrialData(response.data.trial);
     translations.value = response.translations;
 
     const s = response.data;
@@ -290,6 +294,25 @@ function closeTimezoneDropdown() {
 
 const exporting = ref(false);
 
+/**
+ * Non-null while the premium upsell banner should be visible:
+ * user is trialing (or trial expired without a paid subscription),
+ * data is loaded, and the trial banner is not already showing.
+ */
+const premiumUpsellData = computed((): TrialData | null => {
+    const data = trialData.value;
+    if (!data || data.shouldShowBanner) {
+        return null;
+    }
+    // hasPremium is true for both paid subscribers AND trialing users.
+    // Show the upsell for trialing users (dismissed banner) and for
+    // fully expired trial users, but not for paid subscribers.
+    if (hasPremium.value && !data.isTrialing) {
+        return null;
+    }
+    return data;
+});
+
 async function exportData() {
     if (!hasPremium.value) {
         emit('open-premium-modal');
@@ -365,8 +388,8 @@ async function exportData() {
 
         <!-- ═══ Premium Upsell ═══ -->
         <PremiumUpsellBanner
-            v-if="!hasPremium && trialData"
-            :trial-data="trialData"
+            v-if="premiumUpsellData"
+            :trial-data="premiumUpsellData"
             @open-premium-modal="emit('open-premium-modal')"
         />
 

@@ -343,6 +343,7 @@ describe('API contract', () => {
         const schema = schemaKeys('TrialResource');
         const ts = typeKeys<TrialData>({
             hasPremium: true,
+            isTrialing: true,
             shouldShowBanner: true,
             bannerText: true,
             invoiceLink: true,

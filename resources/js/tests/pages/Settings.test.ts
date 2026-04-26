@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     defaultAiTones,
     defaultSettingsTranslations,
+    defaultTrial,
     makeSettingsResponse,
     mountSettings,
 } from '@/tests/helpers/settings';
@@ -88,11 +89,44 @@ describe('Settings - Premium Upsell Banner', () => {
         expect(wrapper.text()).toContain('Upgrade to unlock all features');
     });
 
+    it('shows the upsell banner when user is trialing and dismissed the trial banner', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {
+                trial: {
+                    ...defaultTrial,
+                    hasPremium: true,
+                    isTrialing: true,
+                    shouldShowBanner: false,
+                },
+            },
+            { hasPremium: true },
+        );
+
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(true);
+    });
+
     it('hides the upsell banner when user has premium', async () => {
         const wrapper = await mountSettings(
             mockApiFetch,
             {},
             { hasPremium: true },
+        );
+
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(false);
+    });
+
+    it('hides the upsell banner while the trial banner is still showing', async () => {
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {
+                trial: { ...defaultTrial, shouldShowBanner: true },
+            },
+            { hasPremium: false },
         );
 
         expect(
@@ -125,71 +159,41 @@ describe('Settings - Appearance', () => {
         expect(wrapper.find('[title="System"]').exists()).toBe(true);
     });
 
-    it('applies active class to the dark theme button', async () => {
-        const wrapper = await mountSettings(mockApiFetch, { theme: 'dark' });
-        const darkBtn = wrapper.find('[title="Dark"]');
-        expect(darkBtn.classes()).toContain('bg-green-100');
-    });
+    it.each([
+        ['light', 'Light'],
+        ['dark', 'Dark'],
+        ['system', 'System'],
+    ] as const)(
+        'applies active class to the %s theme button',
+        async (theme, title) => {
+            const wrapper = await mountSettings(mockApiFetch, { theme });
+            expect(wrapper.find(`[title="${title}"]`).classes()).toContain(
+                'bg-green-100',
+            );
+        },
+    );
 
-    it('applies active class to the system theme button', async () => {
+    it('calls PATCH with the selected theme value', async () => {
         const wrapper = await mountSettings(mockApiFetch, { theme: 'system' });
-        const systemBtn = wrapper.find('[title="System"]');
-        expect(systemBtn.classes()).toContain('bg-green-100');
-    });
 
-    it('applies active class to the light theme button', async () => {
-        const wrapper = await mountSettings(mockApiFetch, { theme: 'light' });
-        const lightBtn = wrapper.find('[title="Light"]');
-        expect(lightBtn.classes()).toContain('bg-green-100');
-    });
+        for (const [title, themeValue] of [
+            ['Light', 'light'],
+            ['Dark', 'dark'],
+            ['System', 'system'],
+        ] as const) {
+            mockApiFetch.mockResolvedValueOnce({ data: { theme: themeValue } });
+            await wrapper.find(`[title="${title}"]`).trigger('click');
+            await flushPromises();
 
-    it('calls PATCH when theme is changed', async () => {
-        const wrapper = await mountSettings(mockApiFetch, { theme: 'system' });
-        mockApiFetch.mockResolvedValueOnce({ data: { theme: 'light' } });
-
-        await wrapper.find('[title="Light"]').trigger('click');
-        await flushPromises();
-
-        expect(mockApiFetch).toHaveBeenCalledWith(
-            '/api/settings',
-            expect.objectContaining({
-                method: 'PATCH',
-                body: expect.stringContaining('"theme":"light"'),
-            }),
-            expect.anything(),
-        );
-    });
-
-    it('calls PATCH when dark theme is selected', async () => {
-        const wrapper = await mountSettings(mockApiFetch, { theme: 'system' });
-        mockApiFetch.mockResolvedValueOnce({ data: { theme: 'dark' } });
-
-        await wrapper.find('[title="Dark"]').trigger('click');
-        await flushPromises();
-
-        expect(mockApiFetch).toHaveBeenCalledWith(
-            '/api/settings',
-            expect.objectContaining({
-                body: expect.stringContaining('"theme":"dark"'),
-            }),
-            expect.anything(),
-        );
-    });
-
-    it('calls PATCH when system theme is selected', async () => {
-        const wrapper = await mountSettings(mockApiFetch, { theme: 'light' });
-        mockApiFetch.mockResolvedValueOnce({ data: { theme: 'system' } });
-
-        await wrapper.find('[title="System"]').trigger('click');
-        await flushPromises();
-
-        expect(mockApiFetch).toHaveBeenCalledWith(
-            '/api/settings',
-            expect.objectContaining({
-                body: expect.stringContaining('"theme":"system"'),
-            }),
-            expect.anything(),
-        );
+            expect(mockApiFetch).toHaveBeenCalledWith(
+                '/api/settings',
+                expect.objectContaining({
+                    method: 'PATCH',
+                    body: expect.stringContaining(`"theme":"${themeValue}"`),
+                }),
+                expect.anything(),
+            );
+        }
     });
 });
 

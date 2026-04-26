@@ -19,6 +19,7 @@ final class TrialResource extends JsonResource
     /**
      * @return array{
      *     hasPremium: bool,
+     *     isTrialing: bool,
      *     shouldShowBanner: bool,
      *     bannerText: string,
      *     invoiceLink: string|null,
@@ -41,6 +42,12 @@ final class TrialResource extends JsonResource
              * Whether the user has an active premium subscription or is within the trial period.
              */
             'hasPremium' => $this->resource->hasPremium,
+
+            /**
+             * Whether the user is currently in the free trial (not a paying subscriber).
+             * Used to decide when to show the premium upsell.
+             */
+            'isTrialing' => $this->resource->isTrialing,
 
             /**
              * Whether to show the trial banner in the UI.

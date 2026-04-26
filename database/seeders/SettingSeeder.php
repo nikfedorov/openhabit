@@ -14,6 +14,8 @@ final class SettingSeeder extends Seeder
     {
         Setting::setValue('trial_period_days', '14', SettingType::Number);
 
+        Setting::setValue('tracking_scripts', null, SettingType::Text);
+
         Setting::setValue('ai_system_prompt', <<<'PROMPT'
 You are a personal habit tracking assistant. Your role is to provide a daily digest summarizing the user's habit performance.
 

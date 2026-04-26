@@ -23,7 +23,22 @@ final class Setting extends Model
 
     public const string TRIAL_PERIOD_DAYS_CACHE_KEY = 'setting:trial_period_days';
 
+    public const string TRACKING_SCRIPTS_CACHE_KEY = 'setting:tracking_scripts';
+
     public $timestamps = false;
+
+    /**
+     * Get tracking/analytics scripts HTML from settings.
+     * Cached when non-null to avoid a DB hit on every page render.
+     */
+    public static function trackingScripts(): ?string
+    {
+        return Cache::remember(
+            key: self::TRACKING_SCRIPTS_CACHE_KEY,
+            ttl: 3600,
+            callback: fn (): ?string => self::getValue('tracking_scripts'),
+        );
+    }
 
     /**
      * Get trial period in days from settings.
@@ -65,9 +80,11 @@ final class Setting extends Model
             $attributes,
         );
 
-        if ($key === 'trial_period_days') {
-            Cache::forget(self::TRIAL_PERIOD_DAYS_CACHE_KEY);
-        }
+        match ($key) {
+            'trial_period_days' => Cache::forget(self::TRIAL_PERIOD_DAYS_CACHE_KEY),
+            'tracking_scripts' => Cache::forget(self::TRACKING_SCRIPTS_CACHE_KEY),
+            default => null,
+        };
     }
 
     /**

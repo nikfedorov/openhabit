@@ -221,5 +221,8 @@
 @if (Route::has('login'))
     <div class="h-14.5 hidden lg:block"></div>
 @endif
+@if($trackingScripts = \App\Models\Setting::trackingScripts())
+    {!! $trackingScripts !!}
+@endif
 </body>
 </html>

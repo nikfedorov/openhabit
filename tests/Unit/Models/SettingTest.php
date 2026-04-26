@@ -89,3 +89,32 @@ it('has correct casts', function (): void {
     expect($setting->id)->toBeInt()
         ->and($setting->type)->toBe(SettingType::String);
 });
+
+it('returns null from trackingScripts when not set', function (): void {
+    expect(Setting::trackingScripts())->toBeNull();
+});
+
+it('returns tracking scripts value when set', function (): void {
+    Setting::factory()->create(['key' => 'tracking_scripts', 'value' => '<script>console.log("test")</script>']);
+
+    expect(Setting::trackingScripts())->toBe('<script>console.log("test")</script>');
+});
+
+it('caches tracking scripts result', function (): void {
+    Setting::factory()->create(['key' => 'tracking_scripts', 'value' => '<script>ga()</script>']);
+
+    Setting::trackingScripts();
+
+    expect(Cache::has(Setting::TRACKING_SCRIPTS_CACHE_KEY))->toBeTrue()
+        ->and(Cache::get(Setting::TRACKING_SCRIPTS_CACHE_KEY))->toBe('<script>ga()</script>');
+});
+
+it('flushes tracking scripts cache when setValue is called', function (): void {
+    Setting::factory()->create(['key' => 'tracking_scripts', 'value' => '<script>ga()</script>']);
+    Setting::trackingScripts(); // populate cache
+
+    Setting::setValue('tracking_scripts', '<script>gtag()</script>');
+
+    expect(Cache::has(Setting::TRACKING_SCRIPTS_CACHE_KEY))->toBeFalse()
+        ->and(Setting::trackingScripts())->toBe('<script>gtag()</script>');
+});
