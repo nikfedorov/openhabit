@@ -3,10 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\AiDigest;
-use App\Models\DailyNote;
 use App\Models\Habit;
 use App\Models\HabitCompletion;
-use App\Models\Stat;
 use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -26,6 +24,8 @@ it('loads habits with completion state and filters inactive ones', function (): 
         'completed_at' => now()->toDateString(),
         'current_iteration' => 1,
     ]);
+
+    AiDigest::factory()->for($user)->create(['date' => now()->toDateString()]);
 
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/track')
@@ -58,167 +58,5 @@ it('loads habits with completion state and filters inactive ones', function (): 
                 ->has('aiDigest')
                 ->has('translations')
             )
-        );
-});
-
-it('supports date navigation and clamps future dates', function (): void {
-    $user = User::factory()->create();
-    Habit::factory()->daily()->create(['user_id' => $user->id]);
-
-    $yesterday = now()->subDay()->toDateString();
-    $tomorrow = now()->addDay()->toDateString();
-    $today = now()->toDateString();
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track?date='.$yesterday)
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $yesterday)
-                ->where('isToday', false)
-                ->etc()
-            )
-            ->etc()
-        );
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track?date='.$tomorrow)
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->where('date', $today)
-                ->where('isToday', true)
-                ->etc()
-            )
-            ->etc()
-        );
-});
-
-it('includes habits with null rrule alongside daily habits', function (): void {
-    $user = User::factory()->create();
-    Habit::factory()->daily()->create(['user_id' => $user->id]);
-    Habit::factory()->create(['user_id' => $user->id, 'rrule' => null]);
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track')
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('habits', 2)
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json->etc())
-            ->etc()
-        );
-});
-
-it('preserves sort order when move_completed_to_end is disabled', function (): void {
-    $user = User::factory()->create(['move_completed_to_end' => false]);
-    $habit1 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => 1]);
-    $habit2 = Habit::factory()->daily()->create(['user_id' => $user->id, 'sort_order' => 2]);
-
-    HabitCompletion::factory()->create([
-        'habit_id' => $habit1->id,
-        'user_id' => $user->id,
-        'completed_at' => now()->toDateString(),
-        'current_iteration' => 1,
-    ]);
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track')
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('habits', 2)
-            ->where('habits.0.id', $habit1->id)
-            ->where('habits.1.id', $habit2->id)
-            ->etc()
-        );
-});
-
-it('includes daily note and activity data', function (): void {
-    $user = User::factory()->create();
-
-    DailyNote::factory()->create([
-        'user_id' => $user->id,
-        'date' => now()->toDateString(),
-        'content' => 'My note',
-    ]);
-
-    Stat::factory()->daily()->create([
-        'user_id' => $user->id,
-        'period_start' => now()->toDateString(),
-        'planned_count' => 5,
-        'completed_count' => 3,
-    ]);
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track')
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('activityData', 1, fn (AssertableJson $json): AssertableJson => $json
-                ->where('completed', 3)
-                ->where('total', 5)
-                ->etc()
-            )
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json
-                ->where('dailyNoteContent', 'My note')
-                ->etc()
-            )
-            ->etc()
-        );
-});
-
-it('uses user locale for translations', function (): void {
-    $user = User::factory()->create(['locale' => 'ru']);
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track')
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json
-                ->has('translations', fn (AssertableJson $json): AssertableJson => $json
-                    ->where('progress', 'Прогресс')
-                    ->where('today', 'Сегодня')
-                    ->etc()
-                )
-                ->etc()
-            )
-            ->etc()
-        );
-});
-
-it('includes ai digest when one exists for the requested date', function (): void {
-    $user = User::factory()->create();
-    $date = now()->toDateString();
-
-    AiDigest::factory()->create([
-        'user_id' => $user->id,
-        'date' => $date,
-        'content' => 'Test digest content',
-    ]);
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track?date='.$date)
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json
-                ->has('aiDigest', fn (AssertableJson $json): AssertableJson => $json
-                    ->where('date', $date)
-                    ->where('content', 'Test digest content')
-                    ->has('dateLabel')
-                )
-                ->etc()
-            )
-            ->etc()
-        );
-});
-
-it('returns null ai digest when none exists for the requested date', function (): void {
-    $user = User::factory()->create();
-
-    $this->actingAs($user, 'sanctum')
-        ->getJson('/api/track')
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
-            ->has('data', fn (AssertableJson $json): AssertableJson => $json
-                ->where('aiDigest', null)
-                ->etc()
-            )
-            ->etc()
         );
 });

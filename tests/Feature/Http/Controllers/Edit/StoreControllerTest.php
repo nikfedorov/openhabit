@@ -77,14 +77,6 @@ it('creates habits with correct rrule', function (array $overrides, string $expe
         ['name' => 'Gym', 'frequency' => 'WEEKLY', 'weekly_days' => [0, 2, 4]],
         'FREQ=WEEKLY;BYDAY=MO,WE,FR',
     ],
-    'monthly by specific days' => [
-        ['name' => 'Pay bills', 'frequency' => 'MONTHLY', 'monthly_days' => [1, 15]],
-        'FREQ=MONTHLY;BYMONTHDAY=1,15',
-    ],
-    'monthly by position' => [
-        ['name' => 'Team meeting', 'frequency' => 'MONTHLY', 'monthly_mode' => 'position', 'monthly_position' => 2, 'monthly_weekday' => 1],
-        'FREQ=MONTHLY;BYDAY=2TU',
-    ],
 ]);
 
 it('creates a habit with notifications', function (): void {

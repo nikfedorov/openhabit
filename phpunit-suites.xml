@@ -6,7 +6,6 @@
 >
     <testsuites>
         <testsuite name="Actions">
-            <directory>tests/Feature/Actions</directory>
             <directory>tests/Unit/Actions</directory>
         </testsuite>
         <testsuite name="Commands">

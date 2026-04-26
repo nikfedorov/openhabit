@@ -30,3 +30,17 @@ it('does not dispatch SetTelegramMenuButtonJob when conditions are not met', fun
     'locale not in update' => [['telegram_id' => '42', 'locale' => 'en'], ['theme' => 'dark']],
     'locale unchanged' => [['telegram_id' => '42', 'locale' => 'en'], ['locale' => 'en']],
 ]);
+
+it('maps camelCase keys to snake_case columns and pads dayStartsAt with seconds', function (): void {
+    $user = User::factory()->create(['day_starts_at' => '00:00:00', 'move_completed_to_end' => false]);
+
+    (new UpdateUserSettingsAction)->handle($user, [
+        'dayStartsAt' => '04:30',
+        'moveCompletedToEnd' => true,
+    ]);
+
+    $user->refresh();
+
+    expect((string) $user->day_starts_at)->toContain('04:30:00')
+        ->and($user->move_completed_to_end)->toBeTrue();
+});
