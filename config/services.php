@@ -42,4 +42,9 @@ return [
         'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
     ],
 
+    'horizon' => [
+        'username' => env('HORIZON_USERNAME'),
+        'password' => env('HORIZON_PASSWORD'),
+    ],
+
 ];

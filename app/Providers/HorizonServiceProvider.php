@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
 use Laravel\Sentinel\Drivers\Driver;
@@ -20,12 +21,26 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         parent::boot();
 
-        // Allow Horizon dashboard access in local environment regardless of IP/proxy settings.
+        // Allow Horizon dashboard access in local environment, or via HTTP Basic Auth in production.
         Sentinel::extend('horizon', fn (): Driver => new class(fn () => app()) extends Driver
         {
             public function authorize(Request $request): bool
             {
-                return app()->environment('local');
+                if (app()->environment('local')) {
+                    return true;
+                }
+
+                $username = Config::string('services.horizon.username');
+                $password = Config::string('services.horizon.password');
+
+                if (
+                    $request->getUser() === $username
+                    && hash_equals($password, $request->getPassword() ?? '')
+                ) {
+                    return true;
+                }
+
+                abort(401, 'Unauthorized.', ['WWW-Authenticate' => 'Basic realm="Horizon"']);
             }
         });
 
