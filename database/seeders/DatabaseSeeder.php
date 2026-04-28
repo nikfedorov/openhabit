@@ -16,7 +16,6 @@ final class DatabaseSeeder extends Seeder
             AiModelSeeder::class,
             HabitTemplateSeeder::class,
             InvoiceSeeder::class,
-            UserSeeder::class,
         ]);
     }
 }

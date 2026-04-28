@@ -28,25 +28,23 @@ final class InjectDevToken
     public function handle(Request $request, Closure $next): Response
     {
         if (app()->isLocal() && ! $request->session()->get('telegram_authenticated', false)) {
-            $user = User::query()->oldest()->first();
+            $user = User::query()->oldest()->first() ?? User::factory()->create();
 
-            if ($user !== null) {
-                /** @var non-falsy-string $tokenName */
-                $tokenName = 'dev_'.$request->session()->getId();
+            /** @var non-falsy-string $tokenName */
+            $tokenName = 'dev_'.$request->session()->getId();
 
-                /** @var string|null $plaintext */
-                $plaintext = $request->session()->get('dev_token');
+            /** @var string|null $plaintext */
+            $plaintext = $request->session()->get('dev_token');
 
-                // Create a new token only if this session doesn't have one yet,
-                // or if the token was pruned from the database.
-                if ($plaintext === null || ! $user->tokens()->where('name', $tokenName)->exists()) {
-                    $user->tokens()->where('name', $tokenName)->delete();
-                    $plaintext = $user->createToken($tokenName)->plainTextToken;
-                    $request->session()->put('dev_token', $plaintext);
-                }
-
-                View::share('devToken', $plaintext);
+            // Create a new token only if this session doesn't have one yet,
+            // or if the token was pruned from the database.
+            if ($plaintext === null || ! $user->tokens()->where('name', $tokenName)->exists()) {
+                $user->tokens()->where('name', $tokenName)->delete();
+                $plaintext = $user->createToken($tokenName)->plainTextToken;
+                $request->session()->put('dev_token', $plaintext);
             }
+
+            View::share('devToken', $plaintext);
         }
 
         return $next($request);

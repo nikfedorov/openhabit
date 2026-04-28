@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Models\User;
+use App\Models\Setting;
 
 it('seeds the database', function (): void {
     // act
     $this->artisan('db:seed');
 
     // assert
-    expect(User::query()->count())->toBe(1);
+    expect(Setting::query()->count())->toBeGreaterThan(1);
 });
