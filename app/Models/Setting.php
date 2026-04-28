@@ -21,11 +21,26 @@ final class Setting extends Model
     /** @use HasFactory<SettingFactory> */
     use HasFactory;
 
+    public const string BOT_USERNAME_CACHE_KEY = 'setting:telegram_bot_username';
+
     public const string TRIAL_PERIOD_DAYS_CACHE_KEY = 'setting:trial_period_days';
 
     public const string TRACKING_SCRIPTS_CACHE_KEY = 'setting:tracking_scripts';
 
     public $timestamps = false;
+
+    /**
+     * Get the Telegram bot username from settings.
+     * Cached to avoid a DB hit on every page render.
+     */
+    public static function botUsername(): ?string
+    {
+        return Cache::remember(
+            key: self::BOT_USERNAME_CACHE_KEY,
+            ttl: 3600,
+            callback: fn (): ?string => self::getValue('telegram_bot_username'),
+        );
+    }
 
     /**
      * Get tracking/analytics scripts HTML from settings.
@@ -81,6 +96,7 @@ final class Setting extends Model
         );
 
         match ($key) {
+            'telegram_bot_username' => Cache::forget(self::BOT_USERNAME_CACHE_KEY),
             'trial_period_days' => Cache::forget(self::TRIAL_PERIOD_DAYS_CACHE_KEY),
             'tracking_scripts' => Cache::forget(self::TRACKING_SCRIPTS_CACHE_KEY),
             default => null,

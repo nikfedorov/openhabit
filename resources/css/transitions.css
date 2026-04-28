@@ -21,6 +21,18 @@
 }
 
 /*
+ * Smooth anchor scrolling for the landing page nav links.
+ * Scoped to the html element so it only applies to full-page navigation,
+ * not programmatic scrollEl.scrollTop changes inside the app.
+ * The prefers-reduced-motion block above overrides this for users who opt out.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/*
  * Shared directional slide transitions (RTL-aware).
  *
  * Usage: wrap the transitioning element in a parent with `.nav-forward`
@@ -259,4 +271,30 @@
     .animate-fade-in-up {
         animation: fade-in-up 0.25s ease forwards;
     }
+}
+
+/*
+ * Scroll-reveal pattern for landing page sections.
+ *
+ * Elements start hidden (opacity + translate). IntersectionObserver adds
+ * .revealed — the transition runs, then JS removes the transitionDelay so
+ * subsequent hover effects are instant.
+ *
+ * Users who prefer reduced motion: the @media guard means .reveal adds no
+ * opacity/transform change, so content is always visible. The JS still adds
+ * .revealed (harmless) without any delay.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+            opacity 0.35s ease,
+            transform 0.35s ease;
+    }
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
 }

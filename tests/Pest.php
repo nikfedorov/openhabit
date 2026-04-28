@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Sleep;
@@ -49,6 +50,30 @@ Nutgram::macro('comingFrom', function (User $user, array $extra = []) {
 });
 
 expect()->extend('toBeOne', fn () => $this->toBe(1));
+
+/**
+ * Build a Telegram Login Widget payload signed with the configured bot token.
+ *
+ * Mirrors the HMAC-SHA256 verification logic in AuthenticateTelegramWidgetAction
+ * so tests can produce valid payloads without duplicating the implementation.
+ *
+ * @param  array<string, scalar>  $fields  Payload fields excluding `hash`.
+ * @return array<string, scalar|string>
+ */
+function signedTelegramWidgetPayload(array $fields): array
+{
+    $pairs = [];
+    foreach ($fields as $key => $value) {
+        $pairs[] = $key.'='.$value;
+    }
+
+    sort($pairs);
+    $checkString = implode("\n", $pairs);
+    $secret = hash('sha256', (string) Config::get('nutgram.token'), true);
+    $hash = hash_hmac('sha256', $checkString, $secret);
+
+    return $fields + ['hash' => $hash];
+}
 
 function something(): void
 {
