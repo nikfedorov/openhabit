@@ -7,6 +7,7 @@ namespace App\Telegram\Handlers;
 use App\Actions\Payments\HandleSuccessfulPaymentAction;
 use App\Models\User;
 use SergiX44\Nutgram\Nutgram;
+use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Payment\SuccessfulPayment;
 
 final readonly class SuccessfulPaymentHandler
@@ -35,6 +36,7 @@ final readonly class SuccessfulPaymentHandler
 
         $bot->sendMessage(
             text: __('app.premium_activated', locale: $user->preferredLocale()),
+            parse_mode: ParseMode::HTML,
         );
     }
 

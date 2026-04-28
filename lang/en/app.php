@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'premium_activated' => '🎉 Premium activated! You now have access to AI Digest and multiple reminders per habit.',
+    'premium_activated' => "🎉 <b>Premium activated!</b>\n\nYou now have access to:\n• 🤖 AI Digest — smart analysis of your progress\n• 🔔 Multiple reminders per habit\n• 📤 Export all your data as CSV",
     'upgrade' => 'Upgrade',
     'upgrade_open_telegram' => 'To upgrade, please open the app in Telegram.',
     'learn_more' => 'Learn more',

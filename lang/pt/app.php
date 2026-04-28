@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'premium_activated' => '🎉 Premium ativado! Agora você tem acesso ao resumo por IA e múltiplos lembretes por hábito.',
+    'premium_activated' => "🎉 <b>Premium ativado!</b>\n\nAgora você tem acesso a:\n• 🤖 Resumo por IA — análise inteligente do seu progresso\n• 🔔 Vários lembretes por hábito\n• 📤 Exporte todos os seus dados como CSV",
     'upgrade' => 'Atualizar',
     'upgrade_open_telegram' => 'Para atualizar, abra o app no Telegram.',
     'learn_more' => 'Saiba mais',
