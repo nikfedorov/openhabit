@@ -307,7 +307,7 @@ const premiumUpsellData = computed((): TrialData | null => {
     // hasPremium is true for both paid subscribers AND trialing users.
     // Show the upsell for trialing users (dismissed banner) and for
     // fully expired trial users, but not for paid subscribers.
-    if (hasPremium.value && !data.isTrialing) {
+    if (data.hasPremium && !data.isTrialing) {
         return null;
     }
     return data;

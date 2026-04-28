@@ -1,5 +1,6 @@
 import { flushPromises } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useTrialUiState } from '@/composables/useTrialUiState';
 import {
     defaultAiTones,
     defaultSettingsTranslations,
@@ -29,6 +30,10 @@ beforeEach(() => {
     mockReload.mockReset();
     mockWindowOpen.mockReset();
     vi.stubGlobal('open', mockWindowOpen);
+    // Reset shared singleton state between tests.
+    const { setTrialData, closePremiumModal } = useTrialUiState();
+    setTrialData(null);
+    closePremiumModal();
 });
 
 afterEach(() => {
@@ -111,9 +116,46 @@ describe('Settings - Premium Upsell Banner', () => {
     it('hides the upsell banner when user has premium', async () => {
         const wrapper = await mountSettings(
             mockApiFetch,
-            {},
+            {
+                trial: { ...defaultTrial, hasPremium: true },
+            },
             { hasPremium: true },
         );
+
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(false);
+    });
+
+    it('hides the upsell banner immediately after payment success', async () => {
+        const { setTrialData } = useTrialUiState();
+
+        const wrapper = await mountSettings(
+            mockApiFetch,
+            {
+                trial: {
+                    ...defaultTrial,
+                    hasPremium: true,
+                    isTrialing: true,
+                    shouldShowBanner: false,
+                },
+            },
+            { hasPremium: true },
+        );
+
+        // Banner is visible while user is trialing.
+        expect(
+            wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
+        ).toBe(true);
+
+        // Simulate what handlePaymentSuccess does in App.vue.
+        setTrialData({
+            ...defaultTrial,
+            hasPremium: true,
+            isTrialing: false,
+            shouldShowBanner: false,
+        });
+        await wrapper.vm.$nextTick();
 
         expect(
             wrapper.find('[data-testid="premium-upsell-banner"]').exists(),

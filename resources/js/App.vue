@@ -83,12 +83,12 @@ async function handleTrialBannerDismiss() {
 function handlePaymentSuccess() {
     closePremiumModal();
 
-    if (trialData.value && trialData.value.shouldShowBanner) {
-        setTrialData({
-            ...trialData.value,
-            shouldShowBanner: false,
-        });
-    }
+    setTrialData({
+        ...trialData.value!,
+        shouldShowBanner: false,
+        isTrialing: false,
+        hasPremium: true,
+    });
 
     if (prefersReducedMotion()) {
         return;

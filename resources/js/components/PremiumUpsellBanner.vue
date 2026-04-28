@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 <template>
     <section
-        class="flex cursor-pointer items-center gap-3 rounded-xl bg-yellow-50 px-4 py-4 transition-colors hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/30"
+        class="animate-fade-in-up flex cursor-pointer items-center gap-3 rounded-xl bg-yellow-50 px-4 py-4 transition-colors hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/30"
         data-testid="premium-upsell-banner"
         @click="emit('open-premium-modal')"
     >
