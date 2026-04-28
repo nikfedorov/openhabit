@@ -47,4 +47,9 @@ return [
         'password' => env('HORIZON_PASSWORD'),
     ],
 
+    'pulse' => [
+        'username' => env('PULSE_USERNAME'),
+        'password' => env('PULSE_PASSWORD'),
+    ],
+
 ];
