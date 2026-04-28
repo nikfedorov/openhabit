@@ -449,7 +449,6 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildDaily(),
             sortOrder: $sortOrder++,
-            copyByDefault: true,
         );
         $this->createHabit(
             category: $categories['mindfulness'],
@@ -470,7 +469,6 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildDaily(),
             sortOrder: $sortOrder++,
-            copyByDefault: true,
         );
 
         $this->createHabit(
@@ -492,6 +490,7 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildDaily(),
             sortOrder: $sortOrder++,
+            copyByDefault: true,
             iterationsRequired: 8,
         );
 
@@ -514,7 +513,6 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildWeekly([0, 1, 2, 3, 4]),
             sortOrder: $sortOrder++,
-            copyByDefault: true,
         );
         $this->createHabit(
             category: $categories['productivity'],
@@ -535,7 +533,6 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildWeekly([0, 1, 2, 3, 4]),
             sortOrder: $sortOrder++,
-            copyByDefault: true,
         );
 
         $this->createHabit(
