@@ -19,6 +19,7 @@ final readonly class AuthenticateMiniAppUserAction
             ['name' => mb_trim(($webAppUser->first_name ?? '').' '.($webAppUser->last_name ?? '')) ?: null],
         );
 
+        $user->telegram_username = $webAppUser->username;
         $user->last_active_at = now();
         $user->save();
 

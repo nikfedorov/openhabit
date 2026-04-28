@@ -22,6 +22,7 @@ it('has expected keys in toArray', function (): void {
             'id',
             'name',
             'telegram_id',
+            'telegram_username',
             'telegram_bot_blocked_at',
             'telegram_user_deleted_at',
             'email',

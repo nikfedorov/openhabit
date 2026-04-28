@@ -41,6 +41,7 @@ final class StartCommand extends Command
             [
                 'name' => $name,
                 'locale' => $telegramUser->language_code,
+                'telegram_username' => $telegramUser->username,
                 'last_active_at' => now(),
             ],
         );
@@ -64,6 +65,7 @@ final class StartCommand extends Command
             $user->locale = $telegramUser->language_code;
         }
 
+        $user->telegram_username = $telegramUser->username;
         $user->last_active_at = now();
         $user->save();
 

@@ -67,6 +67,7 @@ final class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'telegram_id' => (string) fake()->unique()->randomNumber(9),
+            'telegram_username' => fake()->userName(),
             'locale' => fake()->randomElement(['en', 'ru', 'uk']),
             'email' => null,
             'email_verified_at' => null,

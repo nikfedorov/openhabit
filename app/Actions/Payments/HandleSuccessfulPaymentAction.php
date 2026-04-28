@@ -33,7 +33,7 @@ final readonly class HandleSuccessfulPaymentAction
         });
 
         Log::channel('telegram-payments')->info(
-            sprintf('Payment received: %d %s from user %d', $payment->total_amount, $payment->currency, $user->id),
+            sprintf('Payment received: %d %s from user %d (@%s)', $payment->total_amount, $payment->currency, $user->id, $user->telegram_username ?? 'unknown'),
             ['premium_until' => $subscriptionExpiresAt?->toIso8601String(), 'charge_id' => $payment->telegram_payment_charge_id],
         );
 

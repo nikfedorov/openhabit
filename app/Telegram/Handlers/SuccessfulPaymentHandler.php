@@ -51,7 +51,7 @@ final readonly class SuccessfulPaymentHandler
     {
         /** @var User|null $user */
         $user = User::query()
-            ->select(['id', 'locale'])
+            ->select(['id', 'locale', 'telegram_username'])
             ->where('telegram_id', $telegramId)
             ->first();
 

@@ -26,6 +26,7 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * @property-read int $id
  * @property-read string|null $telegram_id
+ * @property string|null $telegram_username
  * @property string|null $name
  * @property-read string|null $email
  * @property-read CarbonInterface|null $email_verified_at
@@ -190,6 +191,7 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
         return [
             'id' => 'integer',
             'telegram_id' => 'string',
+            'telegram_username' => 'string',
             'name' => 'string',
             'email' => 'string',
             'email_verified_at' => 'datetime',
