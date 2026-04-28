@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn (): View => view('welcome', [
     'botUsername' => Setting::botUsername(),
     'trackingScripts' => Setting::trackingScripts(),
+    'isLoggedIn' => auth()->check(),
 ]))->name('welcome');
 
 // Telegram Login Widget callback (browser redirect with auth params).

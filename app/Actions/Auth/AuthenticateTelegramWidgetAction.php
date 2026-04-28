@@ -17,7 +17,7 @@ final readonly class AuthenticateTelegramWidgetAction
 
     /**
      * Validate a Telegram Login Widget payload, find or create the user,
-     * and return a fresh API token.
+     * and return the authenticated User model.
      *
      * @param  array<string, mixed>  $payload  Raw query parameters from the
      *                                         widget redirect (id, first_name,
@@ -27,7 +27,7 @@ final readonly class AuthenticateTelegramWidgetAction
      * @throws InvalidArgumentException When the payload signature or freshness
      *                                  cannot be validated.
      */
-    public function handle(array $payload): string
+    public function handle(array $payload): User
     {
         $token = Config::string('nutgram.token', '');
         throw_if($token === '', InvalidArgumentException::class, 'Telegram bot token is not configured');
@@ -55,10 +55,7 @@ final readonly class AuthenticateTelegramWidgetAction
             $user->save();
         }
 
-        /** @var string $plainText */
-        $plainText = $user->createToken('telegram-widget')->plainTextToken;
-
-        return $plainText;
+        return $user;
     }
 
     /**

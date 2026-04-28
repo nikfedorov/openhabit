@@ -10,7 +10,7 @@ beforeEach(function (): void {
     Config::set('nutgram.token', 'test-bot-token');
 });
 
-it('creates a new user from a valid payload and returns a token', function (): void {
+it('creates a new user from a valid payload and returns the user', function (): void {
     $payload = signedTelegramWidgetPayload([
         'id' => 555_000_001,
         'first_name' => 'Ada',
@@ -19,12 +19,10 @@ it('creates a new user from a valid payload and returns a token', function (): v
         'auth_date' => time(),
     ]);
 
-    $token = resolve(AuthenticateTelegramWidgetAction::class)->handle($payload);
+    $user = resolve(AuthenticateTelegramWidgetAction::class)->handle($payload);
 
-    expect($token)->toBeString()->not->toBeEmpty();
-
-    $user = User::query()->where('telegram_id', '555000001')->firstOrFail();
-    expect($user->name)->toBe('Ada Lovelace')
+    expect($user)->toBeInstanceOf(User::class)
+        ->and($user->name)->toBe('Ada Lovelace')
         ->and($user->telegram_username)->toBe('adalovelace')
         ->and($user->last_active_at)->not->toBeNull();
 });
@@ -58,9 +56,9 @@ it('ignores non-scalar fields when computing the signature', function (): void {
     /** @var array<string, mixed> $payload */
     $payload = $signed + ['extra' => ['nested' => 'array']];
 
-    $token = resolve(AuthenticateTelegramWidgetAction::class)->handle($payload);
+    $user = resolve(AuthenticateTelegramWidgetAction::class)->handle($payload);
 
-    expect($token)->toBeString()->not->toBeEmpty();
+    expect($user)->toBeInstanceOf(User::class);
 });
 
 it('rejects an unconfigured bot token', function (): void {

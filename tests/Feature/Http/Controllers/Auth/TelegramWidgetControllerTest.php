@@ -22,6 +22,7 @@ it('renders the token bridge page for a valid Telegram callback', function (): v
         ->assertSee('app\/track', false);
 
     expect(User::query()->where('telegram_id', '777000001')->exists())->toBeTrue();
+    expect(auth()->check())->toBeTrue();
 });
 
 it('returns 403 for an invalid Telegram callback', function (): void {

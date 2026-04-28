@@ -5,8 +5,8 @@
     $isRtl = LocaleService::isRtl($currentLocale);
     $appUrl = url('/app/track');
     $telegramUrl = $botUsername ? 'https://t.me/' . $botUsername : null;
-    $primaryUrl = $telegramUrl ?? $appUrl;
-    $primaryLabel = $telegramUrl ? __('welcome.nav.cta_telegram') : __('welcome.nav.cta_app');
+    $primaryUrl = ($isLoggedIn || !$telegramUrl) ? $appUrl : $telegramUrl;
+    $primaryLabel = ($isLoggedIn || !$telegramUrl) ? __('welcome.nav.cta_app') : __('welcome.nav.cta_telegram');
     $callbackUrl = url('/auth/telegram/callback');
 @endphp
 <html lang="{{ str_replace('_', '-', $currentLocale) }}" @if ($isRtl) dir="rtl" @endif>
@@ -137,7 +137,7 @@
                 </svg>
             </a>
 
-            @if ($botUsername)
+            @if ($botUsername && !$isLoggedIn)
                 {{-- Telegram Login Widget. Renders an iframe button that redirects --}}
                 {{-- the browser to the auth callback after the user confirms.    --}}
                 <div class="inline-flex items-center" aria-label="{{ __('welcome.hero.login_telegram') }}">
