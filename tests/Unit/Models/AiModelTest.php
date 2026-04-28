@@ -20,6 +20,5 @@ it('has correct casts', function (): void {
 
     expect($model->id)->toBeInt()
         ->and($model->priority)->toBeInt()
-        ->and($model->is_active)->toBeBool()
-        ->and($model->is_free)->toBeBool();
+        ->and($model->is_active)->toBeBool();
 });

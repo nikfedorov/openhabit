@@ -24,17 +24,11 @@ final class AiModelFactory extends Factory
             'api_key' => 'test-key',
             'priority' => fake()->numberBetween(0, 100),
             'is_active' => true,
-            'is_free' => false,
         ];
     }
 
     public function inactive(): self
     {
         return $this->state(['is_active' => false]);
-    }
-
-    public function free(): self
-    {
-        return $this->state(['is_free' => true]);
     }
 }

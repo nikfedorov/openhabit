@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read string|null $api_key
  * @property-read int $priority
  * @property-read bool $is_active
- * @property-read bool $is_free
  * @property CarbonInterface|null $disabled_until
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
@@ -67,7 +66,6 @@ final class AiModel extends Model
             'id' => 'integer',
             'priority' => 'integer',
             'is_active' => 'boolean',
-            'is_free' => 'boolean',
             'api_key' => 'encrypted',
             'disabled_until' => 'datetime',
         ];
