@@ -490,8 +490,8 @@ final class HabitTemplateSeeder extends Seeder
             ],
             rrule: $this->rruleService->buildDaily(),
             sortOrder: $sortOrder++,
-            copyByDefault: true,
             iterationsRequired: 8,
+            copyByDefault: true,
         );
 
         $this->createHabit(

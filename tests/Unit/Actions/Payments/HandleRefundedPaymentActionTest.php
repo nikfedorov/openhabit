@@ -61,5 +61,7 @@ it('logs refund to the telegram-payments channel', function (): void {
 
     $channelSpy->shouldHaveReceived('info')
         ->once()
-        ->withArgs(fn (string $message): bool => str_contains($message, $payment->telegram_payment_charge_id));
+        ->withArgs(fn (string $message, array $context): bool => $message === 'Payment refunded'
+            && $context['charge_id'] === $payment->telegram_payment_charge_id
+            && $context['user_id'] === $user->id);
 });

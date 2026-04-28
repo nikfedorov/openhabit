@@ -35,7 +35,7 @@ test('respects configured log level', function (Level $level, bool $handlesError
     'critical' => [Level::Critical, false, false],
 ]);
 
-test('dispatches job with formatted text when chatId is set', function (Level $level, string $expectedEmoji): void {
+test('dispatches job with formatted text when chatId is set', function (Level $level): void {
     $handler = new TelegramMonologHandler(Level::Debug, 'my-channel-id');
 
     $handler->handle(makeTelegramRecord('Something went wrong', $level, ['key' => 'value']));
@@ -43,14 +43,13 @@ test('dispatches job with formatted text when chatId is set', function (Level $l
     Queue::assertPushed(SendTelegramErrorAlertJob::class, fn (SendTelegramErrorAlertJob $job): bool => $job->chatId === 'my-channel-id'
         && str_contains($job->text, 'Something went wrong')
         && str_contains($job->text, $level->name)
-        && str_contains($job->text, $expectedEmoji)
         && str_contains($job->text, 'key')
         && str_contains($job->text, 'value'));
 })->with([
-    'error' => [Level::Error, '❌'],
-    'critical' => [Level::Critical, '🔴'],
-    'warning' => [Level::Warning, '⚠️'],
-    'info' => [Level::Info, 'ℹ️'],
+    'error' => [Level::Error],
+    'critical' => [Level::Critical],
+    'warning' => [Level::Warning],
+    'info' => [Level::Info],
 ]);
 
 test('does not dispatch a job when chatId is empty', function (): void {
@@ -59,6 +58,23 @@ test('does not dispatch a job when chatId is empty', function (): void {
     $handler->handle(makeTelegramRecord('Something went wrong'));
 
     Queue::assertNothingPushed();
+});
+
+test('formats context values of various types', function (): void {
+    $handler = new TelegramMonologHandler(Level::Debug, 'my-channel-id');
+
+    $handler->handle(makeTelegramRecord('msg', Level::Info, [
+        'flag_true' => true,
+        'flag_false' => false,
+        'nothing' => null,
+        'nested' => ['a' => 1],
+    ]));
+
+    Queue::assertPushed(SendTelegramErrorAlertJob::class, fn (SendTelegramErrorAlertJob $job): bool => str_contains($job->text, 'true')
+        && str_contains($job->text, 'false')
+        && str_contains($job->text, 'null')
+        && str_contains($job->text, 'nested')
+        && str_contains($job->text, '&quot;a&quot;'));
 });
 
 test('telegram channel exists in logging config', function (): void {

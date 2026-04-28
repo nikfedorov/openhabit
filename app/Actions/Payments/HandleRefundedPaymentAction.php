@@ -31,8 +31,8 @@ final readonly class HandleRefundedPaymentAction
         });
 
         Log::channel('telegram-payments')->info(
-            sprintf('Payment refunded: %s', $telegramPaymentChargeId),
-            ['user_id' => $payment->user_id],
+            'Payment refunded',
+            ['user_id' => $payment->user_id, 'charge_id' => $telegramPaymentChargeId],
         );
 
         return true;

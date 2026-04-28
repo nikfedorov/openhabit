@@ -58,24 +58,34 @@ final class TelegramMonologHandler extends AbstractProcessingHandler
      */
     private function formatRecord(LogRecord $record): string
     {
-        $emoji = match ($record->level) {
-            Level::Emergency, Level::Alert, Level::Critical => '🔴',
-            Level::Error => '❌',
-            Level::Warning => '⚠️',
-            default => 'ℹ️',
-        };
-
         $env = config()->string('app.env', 'unknown');
+        $label = ucfirst(mb_strtolower($record->level->name));
+
         $lines = [
-            sprintf('%s <b>[%s]</b> %s', $emoji, $record->level->name, $env),
+            sprintf('<b>%s</b> · %s', $label, htmlspecialchars($env, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
             '',
             htmlspecialchars($record->message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
         ];
 
         if ($record->context !== []) {
-            $json = json_encode($record->context, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $maxKeyLength = max(array_map(mb_strlen(...), array_keys($record->context)));
+            $contextLines = [];
+
+            foreach ($record->context as $key => $value) {
+                $displayValue = match (true) {
+                    is_string($value) => $value,
+                    is_int($value), is_float($value) => (string) $value,
+                    is_bool($value) => $value ? 'true' : 'false',
+                    $value === null => 'null',
+                    default => (string) json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                };
+
+                $contextLines[] = mb_str_pad((string) $key, $maxKeyLength).'  '.$displayValue;
+            }
+
+            $contextText = htmlspecialchars(implode("\n", $contextLines), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $lines[] = '';
-            $lines[] = sprintf("<pre>Context:\n%s</pre>", htmlspecialchars((string) $json, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+            $lines[] = sprintf('<code>%s</code>', $contextText);
         }
 
         $text = implode("\n", $lines);
