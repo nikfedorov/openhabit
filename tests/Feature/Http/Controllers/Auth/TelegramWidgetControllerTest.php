@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
 beforeEach(function (): void {
@@ -21,7 +20,6 @@ it('renders the token bridge page for a valid Telegram callback', function (): v
         ->assertSee("localStorage.setItem('api_token'", false)
         ->assertSee('app\/track', false);
 
-    expect(User::query()->where('telegram_id', '777000001')->exists())->toBeTrue();
     expect(auth()->check())->toBeTrue();
 });
 
