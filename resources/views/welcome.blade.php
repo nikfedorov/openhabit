@@ -522,6 +522,95 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     Open source. ONE bordered surface that nods at a code/repo window: a
+     mono header strip with the repo path and branch, then a calm split body —
+     prose on the left, three quiet facts on the right. Different rhythm
+     from the editorial features list above and the bare-typography CTA
+     below. Restrained palette: tinted neutrals with a single green accent
+     on the live dot and the mono labels.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section id="open-source" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-10 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">
+            {{ __('welcome.open.eyebrow') }}
+        </p>
+        <h2 class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">
+            {{ __('welcome.open.title') }}
+        </h2>
+    </div>
+
+    <div class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 overflow-hidden">
+        {{-- Window-bar. Mono, hairline rule beneath. The pulsing dot reuses the hero motif. --}}
+        <div class="flex items-center justify-between gap-3 px-5 py-3 border-b rule">
+            <div class="flex items-center gap-2.5 font-mono text-[12px] text-neutral-500 dark:text-neutral-400 min-w-0">
+                <span class="relative flex h-1.5 w-1.5 flex-shrink-0">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60 pulse-soft"></span>
+                    <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                </span>
+                <span class="truncate">github.com/nikfedorov/openhabit</span>
+            </div>
+            <span class="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-neutral-400 dark:text-neutral-500 flex-shrink-0">
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="6" cy="6" r="2.5"/>
+                    <circle cx="6" cy="18" r="2.5"/>
+                    <circle cx="18" cy="18" r="2.5"/>
+                    <path d="M6 8.5v7"/>
+                    <path d="M18 15.5V11a2 2 0 00-2-2H8.5"/>
+                </svg>
+                main
+            </span>
+        </div>
+
+        {{-- Body: prose left, three facts right. Stacks on mobile with a hairline divider. --}}
+        <div class="grid grid-cols-1 md:grid-cols-[1.05fr_1fr]">
+            <div class="p-6 sm:p-8">
+                <p class="text-[15px] sm:text-base leading-relaxed text-neutral-600 dark:text-neutral-300 max-w-[44ch] mb-6">
+                    {{ __('welcome.open.body') }}
+                </p>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+                    <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                        </svg>
+                        {{ __('welcome.open.cta') }}
+                    </a>
+                    <a href="https://github.com/nikfedorov/openhabit/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-1 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200">
+                        {{ __('welcome.open.license_link') }}
+                        <svg class="w-3 h-3 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" aria-hidden="true">
+                            <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <ul class="border-t md:border-t-0 md:border-s rule">
+                @foreach ([
+                    ['key' => 'license',  'label' => 'MIT'],
+                    ['key' => 'selfhost', 'label' => 'docker'],
+                    ['key' => 'audit',    'label' => '0 trackers'],
+                ] as $fact)
+                    <li class="flex items-baseline justify-between gap-4 px-5 sm:px-7 py-4 border-t rule first:border-t-0">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium tracking-tight text-neutral-900 dark:text-white">
+                                {{ __('welcome.open.facts.'.$fact['key'].'.title') }}
+                            </p>
+                            <p class="text-[13px] text-neutral-500 dark:text-neutral-400 leading-snug mt-0.5">
+                                {{ __('welcome.open.facts.'.$fact['key'].'.body') }}
+                            </p>
+                        </div>
+                        <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-green-600 dark:text-green-500 flex-shrink-0 whitespace-nowrap">
+                            {{ $fact['label'] }}
+                        </span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Final CTA. Just typography on the page surface — no card background.
    ───────────────────────────────────────────────────────────────────────── --}}
 <section class="max-w-3xl mx-auto px-4 py-24 sm:py-32 text-center border-t rule">

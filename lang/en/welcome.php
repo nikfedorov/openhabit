@@ -91,6 +91,27 @@ return [
         'title' => 'Start today. Future you will be grateful.',
         'subtitle' => 'Free to use. Premium adds the AI digest, several reminders per habit, and CSV export.',
     ],
+    'open' => [
+        'eyebrow' => 'Open source',
+        'title' => 'Built in the open. Yours to read.',
+        'body' => 'Every line of OpenHabit lives on GitHub under the MIT license. Read it, audit it, fork it, run it on your own server. No telemetry, no lock-in, no surprises.',
+        'cta' => 'View on GitHub',
+        'license_link' => 'Read the license',
+        'facts' => [
+            'license' => [
+                'title' => 'Permissive license',
+                'body' => 'MIT. Fork it, ship it, change it.',
+            ],
+            'selfhost' => [
+                'title' => 'Self-hostable',
+                'body' => 'One Docker command and you are running it yourself.',
+            ],
+            'audit' => [
+                'title' => 'Nothing to hide',
+                'body' => 'No trackers, no analytics SDKs, no dark corners.',
+            ],
+        ],
+    ],
     'views' => [
         'week' => 'Week',
         'year' => 'Year',

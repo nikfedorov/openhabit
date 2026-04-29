@@ -91,6 +91,27 @@ return [
         'title' => '今天就开始。未来的你，会替自己说一声谢谢。',
         'subtitle' => '免费使用。高级版增加 AI 摘要、每个习惯多个提醒，以及 CSV 导出。',
     ],
+    'open' => [
+        'eyebrow' => '开源项目',
+        'title' => '公开构建，随时可读。',
+        'body' => 'OpenHabit 的每一行代码都托管在 GitHub，采用 MIT 许可证。随意阅读、审计、fork，或在自己的服务器上运行。没有遥测，没有锁定，没有惊喜。',
+        'cta' => '在 GitHub 上查看',
+        'license_link' => '阅读许可证',
+        'facts' => [
+            'license' => [
+                'title' => '宽松许可证',
+                'body' => 'MIT。随意 fork、发布、修改。',
+            ],
+            'selfhost' => [
+                'title' => '可自托管',
+                'body' => '一条 Docker 命令，自己部署上线。',
+            ],
+            'audit' => [
+                'title' => '无需隐瞒',
+                'body' => '无追踪器，无分析 SDK，无隐藏角落。',
+            ],
+        ],
+    ],
     'views' => [
         'week' => '一周',
         'year' => '一年',
