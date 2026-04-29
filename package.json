@@ -5,7 +5,7 @@
         "build": "vp build",
         "dev": "vp dev",
         "lint": "NODE_OPTIONS='--experimental-strip-types' vp fmt resources/",
-        "test:lint": "NODE_OPTIONS='--experimental-strip-types' vp fmt resources/",
+        "test:lint": "NODE_OPTIONS='--experimental-strip-types' vp fmt --check resources/",
         "test:vue": "vp test run --typecheck --coverage --reporter=agent"
     },
     "devDependencies": {

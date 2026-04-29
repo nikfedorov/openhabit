@@ -100,8 +100,8 @@
         ],
         "test:type-coverage": "pest --type-coverage --min=100 --compact",
         "test:lint": [
-            "pint --parallel --format agent",
-            "rector --output-format=json",
+            "pint --parallel --test",
+            "rector --dry-run --output-format=json",
             "bun run test:lint"
         ],
         "test:app": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
@@ -125,10 +125,18 @@
         "test:vue": "bun run test:vue",
         "test": [
             "@test:type-coverage",
-            "@test:lint",
+            "@lint",
             "@test:app",
             "@test:types",
             "@test:api-schema",
+            "@test:vue"
+        ],
+        "test-ci": [
+            "@test:type-coverage",
+            "@test:lint",
+            "@test:app",
+            "@test:suites",
+            "@test:types",
             "@test:vue"
         ],
         "watch": "vendor/bin/phpunit-watcher watch --filter models"
