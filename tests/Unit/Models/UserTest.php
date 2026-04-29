@@ -95,6 +95,20 @@ it('returns false for canReceiveTelegramNotifications when user is deleted', fun
     expect($user->canReceiveTelegramNotifications())->toBeFalse();
 });
 
+// ─── Attributes ─────────────────────────────────────────────
+
+it('returns telegram photo url when telegram_username is set', function (): void {
+    $user = User::factory()->telegram()->create(['telegram_username' => 'johndoe']);
+
+    expect($user->telegram_photo_url)->toBe('https://t.me/i/userpic/160/johndoe.jpg');
+});
+
+it('returns null for telegram_photo_url when telegram_username is null', function (): void {
+    $user = User::factory()->create(['telegram_username' => null]);
+
+    expect($user->telegram_photo_url)->toBeNull();
+});
+
 // ─── Relationships ──────────────────────────────────────────
 
 it('has many habits', function (): void {
