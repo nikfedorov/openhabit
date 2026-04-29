@@ -91,6 +91,27 @@ return [
         'title' => 'Empieza hoy. Tu yo de mañana lo agradecerá.',
         'subtitle' => 'Gratis para usar. Premium suma el resumen con IA, varios recordatorios por hábito y exportación CSV.',
     ],
+    'open' => [
+        'eyebrow' => 'Código abierto',
+        'title' => 'Desarrollado en abierto. Puedes leer el código.',
+        'body' => 'Cada línea de OpenHabit vive en GitHub bajo la licencia MIT. Léelo, audítalo, fórkalo, ejecútalo en tu propio servidor. Sin telemetría, sin bloqueo, sin sorpresas.',
+        'cta' => 'Ver en GitHub',
+        'license_link' => 'Leer la licencia',
+        'facts' => [
+            'license' => [
+                'title' => 'Licencia permisiva',
+                'body' => 'MIT. Fórkalo, publícalo, cámbialo.',
+            ],
+            'selfhost' => [
+                'title' => 'Autohospedable',
+                'body' => 'Un comando de Docker y lo tienes en marcha tú mismo.',
+            ],
+            'audit' => [
+                'title' => 'Nada que esconder',
+                'body' => 'Sin rastreadores, sin SDK de analítica, sin rincones oscuros.',
+            ],
+        ],
+    ],
     'views' => [
         'week' => 'Semana',
         'year' => 'Año',

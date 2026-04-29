@@ -132,6 +132,7 @@ return [
 
     'middleware' => [
         'web',
+        'can:viewPulse',
     ],
 
     /*

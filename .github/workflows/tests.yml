@@ -17,6 +17,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    services:
+      pgsql:
+        image: postgres:18
+        env:
+          POSTGRES_DB: testing
+          POSTGRES_USER: sail
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U sail"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +62,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: ${{ runner.os }}-bun-
 
       - name: Install Dependencies
@@ -64,25 +79,6 @@ jobs:
 
       - name: Build Assets
         run: bun run build
-
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(bun pm ls 2>/dev/null | grep playwright | head -1 | sed 's/.*@//')" >> $GITHUB_OUTPUT
-
-      - name: Cache Playwright Browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: bunx playwright install --with-deps
-
-      - name: Install Playwright System Dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps
 
       - name: Cache Rector
         uses: actions/cache@v4
@@ -102,11 +98,6 @@ jobs:
         run: mkdir -p /tmp/rector /tmp/phpstan
 
       - name: Tests
-        run: composer test
-
-      - name: Store Artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-screenshots
-          path: tests/Browser/Screenshots
+        run: composer test-ci
+        env:
+          DB_HOST: 127.0.0.1

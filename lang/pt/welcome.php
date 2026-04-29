@@ -40,7 +40,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Recursos',
-        'title' => 'Só o que você precisa. Nada além disso.',
+        'title' => 'Só o necessário, nada mais.',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -90,6 +90,27 @@ return [
     'cta' => [
         'title' => 'Comece hoje. O seu eu de amanhã agradece.',
         'subtitle' => 'Grátis. O Premium acrescenta o resumo com IA, vários lembretes por hábito e exportação em CSV.',
+    ],
+    'open' => [
+        'eyebrow' => 'Código aberto',
+        'title' => 'Desenvolvido em aberto. Você pode ler o código.',
+        'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Leia, audite, faça fork, rode no seu próprio servidor. Sem telemetria, sem amarras, sem surpresas.',
+        'cta' => 'Ver no GitHub',
+        'license_link' => 'Ler a licença',
+        'facts' => [
+            'license' => [
+                'title' => 'Licença permissiva',
+                'body' => 'MIT. Faça fork, publique, modifique.',
+            ],
+            'selfhost' => [
+                'title' => 'Auto-hospedável',
+                'body' => 'Um comando Docker e você está rodando por conta própria.',
+            ],
+            'audit' => [
+                'title' => 'Nada a esconder',
+                'body' => 'Sem rastreadores, sem SDKs de análise, sem cantos escuros.',
+            ],
+        ],
     ],
     'views' => [
         'week' => 'Semana',
