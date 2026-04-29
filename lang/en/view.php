@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'Week',
+    'year' => 'Year',
+    'life' => 'Life',
+    'previous_week' => 'Previous week',
+    'next_week' => 'Next week',
+    'this_week' => 'This Week',
+    'current_week' => 'Current Week',
+    'previous_year' => 'Previous year',
+    'next_year' => 'Next year',
+    'this_year' => 'This Year',
+    'current_year' => 'Current Year',
+    'age' => 'Age :age',
+    'less' => 'Less',
+    'more' => 'More',
+    'future' => 'Future',
+    'habits' => 'Habits',
+    'done' => 'Done',
+    'partial' => 'Partial',
+    'missed' => 'Missed',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => 'years old',
+    'years_left' => 'years left',
+    'weeks_lived' => 'weeks lived',
+    'each_square_year' => 'Each square represents one year.<br>Tap to see weeks.',
+    'each_square_week' => 'Each square represents one week.<br>Tap to view details.',
+    'seneca_quote' => '"It is not that we have a short time to live,<br>but that we waste much of it."',
+    'seneca_author' => 'Seneca',
+    'franklins_virtues' => "Franklin's Virtues",
+    'set_birthdate' => 'Set your birthdate in settings',
+    'to_see_year_visualization' => 'to see your year visualization',
+    'to_see_life_visualization' => 'to see your life visualization',
+    'insights' => 'Insights',
+];

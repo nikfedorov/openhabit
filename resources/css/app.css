@@ -1,10 +1,18 @@
 @import 'tailwindcss';
+@import './transitions.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 @source '../**/*.vue';
+
+/* Safe area support for iOS/mobile devices */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
 @theme {
     --font-sans:

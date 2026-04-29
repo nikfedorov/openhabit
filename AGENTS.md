@@ -1,4 +1,36 @@
 <laravel-boost-guidelines>
+# App/Actions guidelines
+
+- This application uses the Action pattern and prefers for much logic to live in reusable and composable Action classes.
+- Actions live in `app/Actions`, they are named based on what they do, with no suffix.
+- Actions will be called from many different places: jobs, commands, HTTP requests, API requests, MCP requests, and more.
+- Create dedicated Action classes for business logic with a single `handle()` method.
+- Inject dependencies via constructor using private properties.
+- Create new actions with `php artisan make:action "{name}" --no-interaction`
+- Wrap complex operations in `DB::transaction()` within actions when multiple models are involved.
+- Some actions won't require dependencies via `__construct` and they can use just the `handle()` method.
+
+@boostsnippet('Example action class', 'php')
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+final readonly class CreateFavorite
+{
+    public function __construct(private FavoriteService $favorites)
+    {
+        //
+    }
+
+    public function handle(User $user, string $favorite): bool
+    {
+        return $this->favorites->add($user, $favorite);
+    }
+}
+@endboostsnippet
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -11,12 +43,11 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 - php - 8.5
 - filament/filament (FILAMENT) - v5
-- inertiajs/inertia-laravel (INERTIA_LARAVEL) - v3
 - laravel/framework (LARAVEL) - v13
 - laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
 - laravel/sail (SAIL) - v1
-- laravel/wayfinder (WAYFINDER) - v0
+- laravel/sanctum (SANCTUM) - v4
 - livewire/livewire (LIVEWIRE) - v4
 - larastan/larastan (LARASTAN) - v3
 - laravel/boost (BOOST) - v2
@@ -32,12 +63,18 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
+- `karpathy-guidelines` — **ALWAYS load this skill for EVERY task, no exceptions.** Behavioral guidelines to avoid LLM coding mistakes: think before coding, simplicity first, surgical changes, goal-driven execution.
 - `laravel-best-practices` — Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code. This includes creating or modifying controllers, models, migrations, form requests, policies, jobs, scheduled commands, service classes, and Eloquent queries. Triggers for N+1 and query performance issues, caching strategies, authorization and security patterns, validation, error handling, queue and job configuration, route definitions, and architectural decisions. Also use for Laravel code reviews and refactoring existing Laravel code to follow best practices. Covers any task involving Laravel backend PHP code patterns.
 - `configuring-horizon` — Use this skill whenever the user mentions Horizon by name in a Laravel context. Covers the full Horizon lifecycle: installing Horizon (horizon:install, Sail setup), configuring config/horizon.php (supervisor blocks, queue assignments, balancing strategies, minProcesses/maxProcesses), fixing the dashboard (authorization via Gate::define viewHorizon, blank metrics, horizon:snapshot scheduling), and troubleshooting production issues (worker crashes, timeout chain ordering, LongWaitDetected notifications, waits config). Also covers job tagging and silencing. Do not use for generic Laravel queues without Horizon, SQS or database drivers, standalone Redis setup, Linux supervisord, Telescope, or job batching.
-- `wayfinder-development` — Use this skill for Laravel Wayfinder which auto-generates typed functions for Laravel controllers and routes. ALWAYS use this skill when frontend code needs to call backend routes or controller actions. Trigger when: connecting any React/Vue/Svelte/Inertia frontend to Laravel controllers, routes, building end-to-end features with both frontend and backend, wiring up forms or links to backend endpoints, fixing route-related TypeScript errors, importing from @/actions or @/routes, or running wayfinder:generate. Use Wayfinder route functions instead of hardcoded URLs. Covers: wayfinder() vite plugin, .url()/.get()/.post()/.form(), query params, route model binding, tree-shaking. Do not use for backend-only task
 - `livewire-development` — Use for any task or question involving Livewire. Activate if user mentions Livewire, wire: directives, or Livewire-specific concepts like wire:model, wire:click, wire:sort, or islands, invoke this skill. Covers building new components, debugging reactivity issues, real-time form validation, drag-and-drop, loading states, migrating from Livewire 3 to 4, converting component formats (SFC/MFC/class-based), and performance optimization. Do not use for non-Livewire reactive UI (React, Vue, Alpine-only, Inertia.js) or standard Laravel forms without Livewire.
 - `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
 - `tailwindcss-development` — Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS.
+- `vue` — Vue 3 Composition API, script setup macros, reactivity system, and built-in components. Use when writing Vue SFCs, defineProps/defineEmits/defineModel, watchers, or using Transition/Teleport/Suspense/KeepAlive.
+- `vue-best-practices` — MUST be used for Vue.js tasks. Strongly recommends Composition API with `<script setup>` and TypeScript as the standard approach. Covers Vue 3, SSR, Volar, vue-tsc. Load for any Vue, .vue files, Vue Router, Pinia, or Vite with Vue work. ALWAYS use Composition API unless the project explicitly requires Options API.
+- `vue-router-best-practices` — Vue Router 4 patterns, navigation guards, route params, and route-component lifecycle interactions. Use for any routing-related tasks.
+- `vue-testing-best-practices` — Use for Vue.js testing. Covers Vitest, Vue Test Utils, component testing, mocking, testing patterns, and Playwright for E2E testing.
+- `vitest` — Vitest fast unit testing framework powered by Vite with Jest-compatible API. Use when writing tests, mocking, configuring coverage, or working with test filtering and fixtures.
+- `impeccable` — Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.
 
 ## Conventions
 
@@ -53,6 +90,16 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
+
+## Code Coverage
+
+- Use `@codeCoverageIgnore` only in exceptional cases when code cannot be tested (e.g., code that can't run in test environment like database deletion in tests).
+- Prefer writing tests for all code paths including exception handling using mocks and `andThrow()`.
+
+## PHPStan
+
+- Do not use `@phpstan-ignore`, `@phpstan-ignore-line`, `@phpstan-ignore-next-line` or similar inline ignore comments.
+- If PHPStan reports type errors, fix them properly with correct type annotations or refactor the code.
 
 ## Frontend Bundling
 
@@ -113,7 +160,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 - Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
 - Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
 - Use TitleCase for Enum keys: `FavoritePerson`, `BestLake`, `Monthly`.
-- Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
+- Add PHPDoc blocks as well as inline comments for all logic.
 - Use array shape type definitions in PHPDoc blocks.
 
 === sail rules ===
@@ -136,28 +183,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
 - Run the minimum number of tests needed to ensure code quality and speed. Use `vendor/bin/sail artisan test --compact` with a specific filename or filter.
-
-=== inertia-laravel/core rules ===
-
-# Inertia
-
-- Inertia creates fully client-side rendered SPAs without modern SPA complexity, leveraging existing server-side patterns.
-- Components live in `resources/js/Pages` (unless specified in `vite.config.js`). Use `Inertia::render()` for server-side routing instead of Blade views.
-- ALWAYS use `search-docs` tool for version-specific Inertia documentation and updated code examples.
-
-# Inertia v3
-
-- Use all Inertia features from v1, v2, and v3. Check the documentation before making changes to ensure the correct approach.
-- New v3 features: standalone HTTP requests (`useHttp` hook), optimistic updates with automatic rollback, layout props (`useLayoutProps` hook), instant visits, simplified SSR via `@inertiajs/vite` plugin, custom exception handling for error pages.
-- Carried over from v2: deferred props, infinite scroll, merging props, polling, prefetching, once props, flash data.
-- When using deferred props, add an empty state with a pulsing or animated skeleton.
-- Axios has been removed. Use the built-in XHR client with interceptors, or install Axios separately if needed.
-- `Inertia::lazy()` / `LazyProp` has been removed. Use `Inertia::optional()` instead.
-- Prop types (`Inertia::optional()`, `Inertia::defer()`, `Inertia::merge()`) work inside nested arrays with dot-notation paths.
-- SSR works automatically in Vite dev mode with `@inertiajs/vite` - no separate Node.js server needed during development.
-- Event renames: `invalid` is now `httpException`, `exception` is now `networkError`.
-- `router.cancel()` replaced by `router.cancelAll()`.
-- The `future` configuration namespace has been removed - all v2 future options are now always enabled.
+- Test file structure must mirror the application structure. Each class should have its own dedicated test file (e.g. `app/Enums/Theme.php` → `tests/Unit/Enums/ThemeTest.php`, `app/Models/User.php` → `tests/Unit/Models/UserTest.php`). Do not merge tests for different classes into a single file.
 
 === laravel/core rules ===
 
@@ -189,12 +215,6 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `vendor/bin/sail bun run build` or ask the user to run `vendor/bin/sail bun run dev` or `vendor/bin/sail composer run dev`.
 
-=== wayfinder/core rules ===
-
-# Laravel Wayfinder
-
-Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `@/actions/` (controllers) or `@/routes/` (named routes).
-
 === livewire/core rules ===
 
 # Livewire
@@ -202,13 +222,6 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 - Livewire allow to build dynamic, reactive interfaces in PHP without writing JavaScript.
 - You can use Alpine.js for client-side interactions instead of JavaScript frameworks.
 - Keep state server-side so the UI reflects it. Validate and authorize in actions as you would in HTTP requests.
-
-=== pint/core rules ===
-
-# Laravel Pint Code Formatter
-
-- If you have modified any PHP files, you must run `vendor/bin/sail bin pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/sail bin pint --test --format agent`, simply run `vendor/bin/sail bin pint --format agent` to fix any formatting issues.
 
 === pest/core rules ===
 
@@ -368,4 +381,85 @@ livewire(ListUsers::class)
 - **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')` when public access is needed.
 - **Never assume full-width layout.** `Grid`, `Section`, and `Fieldset` do not span all columns by default. Explicitly set column spans when needed.
 
+=== design rules ===
+
+## Design System
+
+Follow Notion-inspired minimalist design principles for all pages.
+
+### Color Palette
+
+- Background: `bg-white dark:bg-neutral-900`
+- Cards/Sections: `bg-neutral-100 dark:bg-neutral-800` with `rounded-xl`
+- Primary text: `text-neutral-900 dark:text-white`
+- Secondary text: `text-neutral-500 dark:text-neutral-400`
+- Muted labels: `text-neutral-400 dark:text-neutral-500`
+- Success/Accent: `green-500`, `green-600`
+- Borders: `border-neutral-300 dark:border-neutral-600`
+
+### Typography
+
+- Headings: `text-lg` or `text-2xl` with `font-bold` or `font-semibold`
+- Body text: `text-sm` (14px) with `leading-5`
+- Small text/labels: `text-xs` (12px)
+- Always use `font-medium` for interactive elements
+
+### Spacing & Layout
+
+- Page container: `max-w-2xl mx-auto px-4 py-6`
+- Section spacing: `mb-6`
+- Card padding: `px-4 py-2`
+- Gap in flex: `gap-2`, `gap-3`
+
+### Interactive Elements
+
+- Hover states: Use `hover:bg-neutral-100 dark:hover:bg-neutral-800`
+- Transitions: `transition-all duration-150` or `duration-200`
+- Cursor: `cursor-pointer` on clickable elements
+- Completed items: `opacity-60`, `line-through` on text
+
+### Alignment Patterns
+
+- Checkbox + text: Wrap checkbox in `h-5 flex items-center`, use `leading-5` on text
+- Baseline alignment: Use `items-baseline` for mixed font sizes
+- Fixed elements: Use `flex-shrink-0`
+
+### Component Patterns
+
+- Cards: `bg-neutral-100 dark:bg-neutral-800 rounded-xl px-4 py-4`
+- Buttons: `px-3 py-1.5 text-xs font-medium rounded-full`
+- Icon buttons: `w-10 h-10 rounded-lg flex items-center justify-center`
+- Empty states: Center with icon, title, and description
+
+### Dark Mode
+
+- Always provide dark mode variants using `dark:` prefix
+- Test both modes visually
+- Green shades invert: `green-600 dark:green-500`, `green-200 dark:green-900`
+
+### Animations
+
+- Animations must be smooth, subtle, and non-intrusive — they should enhance the user experience, not distract from it.
+- Use entrance animations (`animate-fade-in-up`, `animate-stagger`) for content that appears on page load or state change.
+- Use `transition-all duration-150` or `duration-200` for interactive feedback (hover, focus, toggle).
+- Use Alpine `x-transition` for elements that show/hide dynamically (modals, dropdowns, banners).
+- Use `x-collapse` for expandable/collapsible sections.
+- Hover effects on small grid cells: `hover:scale-125` or `hover:scale-150` with `duration-150`.
+- Never add animation to static informational elements that don't change (legends, table headers).
+- Prefer CSS animations and Tailwind utilities over JavaScript-driven animations.
+- Keep durations between 120ms–400ms. Anything longer feels sluggish.
+- Always respect `prefers-reduced-motion` — use `motion-safe:` prefix when adding non-essential animations.
+
+=== finalization rules ===
+
+## Final Actions (🚨 CRITICAL - NEVER SKIP 🚨)
+
+⚠️ **MANDATORY REQUIREMENT - YOU MUST DO THIS BEFORE EVERY RESPONSE COMPLETION:**
+
+Before you finalize ANY task or tell the user you're done, you MUST:
+1. **RUN: `vendor/bin/sail composer test`** to run ALL tests in the application.
+2. **IF TESTS FAIL:** Fix ALL issues immediately. Do not ask the user - just fix them.
+3. **ONLY AFTER 100% SUCCESS:** Confirm completion to the user.
+
+**🛑 STOP AND RUN TESTS NOW 🛑** - If you haven't run `vendor/bin/sail composer test` yet, you are NOT done. Go back and run it.
 </laravel-boost-guidelines>

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 return [
@@ -124,8 +126,15 @@ return [
     | storage. By default, no PHP classes will be unserialized from your
     | cache to prevent gadget chain attacks if your APP_KEY is leaked.
     |
+    | Pulse caches Collection and stdClass instances for its dashboard
+    | widgets, so those classes must be explicitly allow-listed.
+    |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        Collection::class,
+        CarbonImmutable::class,
+        stdClass::class,
+    ],
 
 ];

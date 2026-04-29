@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'सप्ताह',
+    'year' => 'वर्ष',
+    'life' => 'जीवन',
+    'previous_week' => 'पिछला सप्ताह',
+    'next_week' => 'अगला सप्ताह',
+    'this_week' => 'यह सप्ताह',
+    'current_week' => 'वर्तमान सप्ताह',
+    'previous_year' => 'पिछला वर्ष',
+    'next_year' => 'अगला वर्ष',
+    'this_year' => 'यह वर्ष',
+    'current_year' => 'वर्तमान वर्ष',
+    'age' => ':age वर्ष',
+    'less' => 'कम',
+    'more' => 'ज़्यादा',
+    'future' => 'भविष्य',
+    'habits' => 'आदतें',
+    'done' => 'पूरा',
+    'partial' => 'आंशिक',
+    'missed' => 'छूट गया',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => 'वर्ष',
+    'years_left' => 'वर्ष शेष',
+    'weeks_lived' => 'सप्ताह बीते',
+    'each_square_year' => 'प्रत्येक वर्ग एक वर्ष दर्शाता है।<br>सप्ताह देखने के लिए टैप करें।',
+    'each_square_week' => 'प्रत्येक वर्ग एक सप्ताह दर्शाता है।<br>विवरण देखने के लिए टैप करें।',
+    'seneca_quote' => '"यह नहीं कि हमारे पास जीने के लिए कम समय है,<br>बल्कि हम इसे बहुत बर्बाद करते हैं।"',
+    'seneca_author' => 'सेनेका',
+    'franklins_virtues' => 'फ्रैंकलिन के गुण',
+    'set_birthdate' => 'सेटिंग्स में जन्मतिथि भरें',
+    'to_see_year_visualization' => 'वर्ष विज़ुअलाइज़ेशन देखने के लिए',
+    'to_see_life_visualization' => 'जीवन विज़ुअलाइज़ेशन देखने के लिए',
+    'insights' => 'एआई विश्लेषण',
+];

@@ -1,0 +1,2621 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenHabit",
+        "version": "0.0.1",
+        "description": "OpenHabit API provides endpoints for daily habit tracking, completion toggling, daily journaling, and visualization data (week grid, year heatmap, life grid). All endpoints require Sanctum token authentication."
+    },
+    "servers": [
+        {
+            "url": "http://localhost/api",
+            "description": "Local"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth"
+        },
+        {
+            "name": "Track"
+        },
+        {
+            "name": "View"
+        },
+        {
+            "name": "Edit"
+        },
+        {
+            "name": "Settings"
+        },
+        {
+            "name": "Story"
+        }
+    ],
+    "security": [
+        {
+            "http": []
+        }
+    ],
+    "paths": {
+        "/auth/telegram": {
+            "post": {
+                "operationId": "auth.telegram",
+                "summary": "Login via Telegram initData",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TelegramMiniAppRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "description": "Indicate successful authentication.",
+                                            "examples": [
+                                                true
+                                            ]
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "The API token for the authenticated user, to be used in subsequent requests.",
+                                            "examples": [
+                                                "1|AbCdEfGhIjKlMnOpQrStUvWxYz1234567890abcdefg"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "token"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/track": {
+            "get": {
+                "operationId": "track.",
+                "description": "Returns habits, completion progress, daily note, and activity heatmap data\nfor a specific date. Defaults to today when no date is provided.",
+                "summary": "Get daily tracking data",
+                "tags": [
+                    "Track"
+                ],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Date to retrieve tracking data for. Defaults to today.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        },
+                        "example": "2026-04-06"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TrackResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TrackResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitResource"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitActivityDataResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habits",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/track/toggle": {
+            "post": {
+                "operationId": "track.toggle",
+                "description": "Marks a habit as completed (or uncompleted) for a given date.\nReturns the refreshed daily tracking data.",
+                "summary": "Toggle habit completion",
+                "tags": [
+                    "Track"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ToggleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`TrackResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TrackResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitResource"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitActivityDataResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habits",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/track/daily-note": {
+            "post": {
+                "operationId": "track.daily-note",
+                "description": "Creates or updates the user's journal note for a specific date.\nSend null content to clear the note.",
+                "summary": "Save daily note",
+                "tags": [
+                    "Track"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/edit": {
+            "get": {
+                "operationId": "edit.",
+                "description": "Returns all habits including Franklin's Virtues (distinguishable via is_franklin_virtue),\nalong with translations for the edit page.",
+                "summary": "Get all habits for editing",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the edit view.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "minSortOrder": {
+                                            "type": "integer",
+                                            "description": "Minimum sort_order value for regular habits.",
+                                            "const": 101
+                                        },
+                                        "templates": {
+                                            "type": "array",
+                                            "description": "Habit templates with category names.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/HabitTemplateResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "minSortOrder",
+                                        "templates"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/create": {
+            "get": {
+                "operationId": "edit.create",
+                "description": "Returns translations and settings needed by the habit form\nwhen creating a new habit.",
+                "summary": "Get habit creation form data",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habitTranslations"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/{habit}": {
+            "get": {
+                "operationId": "edit.show",
+                "description": "Returns the habit with parsed RRule data for the edit form,\nalong with translations and settings needed by the habit form.",
+                "summary": "Get habit form data",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`HabitFormResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/HabitFormResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "habitTranslations": {
+                                            "type": "object",
+                                            "description": "Translations for habit attributes, including frequency and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "habitTranslations"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "edit.update",
+                "summary": "Update an existing habit",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreHabitRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/EditHabitResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "edit.destroy",
+                "description": "Soft-deletes the habit, or force-deletes if no completions exist.\nReorders remaining habits to close the sort_order gap.",
+                "summary": "Delete a habit",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits": {
+            "post": {
+                "operationId": "edit.store",
+                "summary": "Create a new habit",
+                "tags": [
+                    "Edit"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreHabitRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/{habit}/toggle": {
+            "post": {
+                "operationId": "edit.toggle",
+                "summary": "Toggle habit active/inactive",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habit",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/edit/toggle-franklin": {
+            "post": {
+                "operationId": "edit.toggle-franklin",
+                "summary": "Toggle all Franklin virtue habits active/inactive for the authenticated user",
+                "tags": [
+                    "Edit"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/edit/habits/reorder": {
+            "post": {
+                "operationId": "edit.reorder",
+                "summary": "Reorder habits by providing habit IDs in desired order",
+                "tags": [
+                    "Edit"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReorderHabitsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/edit/templates/{habitTemplate}/copy": {
+            "post": {
+                "operationId": "edit.templates.copy",
+                "description": "Creates a new habit from the given template and returns\nthe updated habit list in edit format.",
+                "summary": "Copy a template to the current user",
+                "tags": [
+                    "Edit"
+                ],
+                "parameters": [
+                    {
+                        "name": "habitTemplate",
+                        "in": "path",
+                        "required": true,
+                        "description": "The habit template ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `EditHabitResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EditHabitResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/view/week": {
+            "get": {
+                "operationId": "view.week",
+                "description": "Returns the Franklin virtue grid for the requested week.",
+                "summary": "Get week grid data",
+                "tags": [
+                    "View"
+                ],
+                "parameters": [
+                    {
+                        "name": "week",
+                        "in": "query",
+                        "description": "Start date of the week to display.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "format": "date-time"
+                        },
+                        "example": "2026-04-06"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`WeekViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WeekViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the week view, including virtue names and day labels.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "days": {
+                                            "type": "array",
+                                            "description": "Week day headers for the grid.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WeekDayResource"
+                                            }
+                                        },
+                                        "habits": {
+                                            "type": "array",
+                                            "description": "Habit rows with daily completion statuses.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/WeekGridHabitResource"
+                                            }
+                                        },
+                                        "aiDigests": {
+                                            "type": "array",
+                                            "description": "AI digests for the current week.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AiDigestResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "days",
+                                        "habits",
+                                        "aiDigests"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/view/year": {
+            "get": {
+                "operationId": "view.year",
+                "description": "Returns weekly activity data for the selected life year (age).",
+                "summary": "Get year heatmap data",
+                "tags": [
+                    "View"
+                ],
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Year index (age) for the year grid (0–79).",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 0,
+                            "maximum": 79
+                        },
+                        "example": 25
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`YearViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/YearViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the year view tab.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "description": "Weekly activity data for the selected life year.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/YearActivityResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/view/life": {
+            "get": {
+                "operationId": "view.life",
+                "description": "Returns yearly activity data and life statistics for the memento mori visualization.",
+                "summary": "Get life (memento mori) grid data",
+                "tags": [
+                    "View"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`LifeViewResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LifeViewResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "settings": {
+                                            "description": "Settings for the current user.",
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the life view tab.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "activityData": {
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ],
+                                            "description": "Yearly activity data for the life heatmap.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/LifeActivityResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "settings",
+                                        "translations",
+                                        "activityData"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/settings": {
+            "get": {
+                "operationId": "settings.",
+                "summary": "Show the current user's settings along with available options",
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`UserSettingResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        },
+                                        "navigationTranslations": {
+                                            "description": "Tabbar translations.",
+                                            "$ref": "#/components/schemas/NavigationTranslationResource"
+                                        },
+                                        "locales": {
+                                            "type": "object",
+                                            "description": "All available locales for the locale select input, in the format:",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "aiTones": {
+                                            "type": "array",
+                                            "description": "AI tones available for the user.",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AiToneResource"
+                                            }
+                                        },
+                                        "hasPremium": {
+                                            "type": "string",
+                                            "description": "Whether the user has access to premium features."
+                                        },
+                                        "translations": {
+                                            "type": "object",
+                                            "description": "Translations for the settings view.",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "timezones": {
+                                            "type": "object",
+                                            "description": "Timezone options grouped by region for the timezone select input.",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "navigationTranslations",
+                                        "locales",
+                                        "aiTones",
+                                        "hasPremium",
+                                        "translations",
+                                        "timezones"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "settings.update",
+                "summary": "Update one or more user settings",
+                "tags": [
+                    "Settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSettingsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`UserSettingResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserSettingResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/settings/trial-banner/dismiss": {
+            "post": {
+                "operationId": "settings.trial-banner.dismiss",
+                "summary": "Record that the user has dismissed the trial banner",
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/settings/export": {
+            "post": {
+                "operationId": "settings.export",
+                "summary": "Export user data and return a signed URL for download",
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "description": "The signed URL pointing to the file download route."
+                                        }
+                                    },
+                                    "required": [
+                                        "url"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/AuthorizationException"
+                    }
+                }
+            }
+        },
+        "/story/upload": {
+            "post": {
+                "operationId": "story.upload",
+                "summary": "Upload story image",
+                "tags": [
+                    "Story"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoryUploadRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "description": "URL of the uploaded story image to be shared to Telegram.",
+                                            "examples": [
+                                                "https://localhost/storage/stories/123.png"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "url"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "http": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "AiDigestResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "ISO 8601 date string (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "dateLabel": {
+                        "type": "string",
+                        "description": "Localized full date with day name.",
+                        "examples": [
+                            "April 6, 2026, Sunday"
+                        ]
+                    },
+                    "content": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "AI-generated digest content."
+                    }
+                },
+                "required": [
+                    "date",
+                    "dateLabel",
+                    "content"
+                ],
+                "title": "AiDigestResource"
+            },
+            "AiToneResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "The AI tone's unique identifier, used for saving the user's selection.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The display name of the AI tone.",
+                        "examples": [
+                            "Friendly"
+                        ]
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "A description of the AI tone's style or personality.",
+                        "examples": [
+                            "Provides responses in a warm and approachable manner."
+                        ]
+                    },
+                    "icon": {
+                        "type": "string",
+                        "description": "The name of the icon associated with this AI tone, used for display in the UI.",
+                        "examples": [
+                            "sun"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "icon"
+                ],
+                "title": "AiToneResource"
+            },
+            "EditHabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning meditation"
+                        ]
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "10 minutes before breakfast"
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether the habit is currently active and shown in the tracker."
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Position in the sorted habit list.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many completions are required per day.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "human_readable": {
+                        "type": "string",
+                        "description": "Human-readable schedule description derived from the RRule.",
+                        "examples": [
+                            "Monday, Wednesday, Friday"
+                        ]
+                    },
+                    "is_franklin_virtue": {
+                        "type": "boolean",
+                        "description": "Whether this habit belongs to the Franklin's Virtues category."
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "is_active",
+                    "sort_order",
+                    "iterations_required",
+                    "human_readable",
+                    "is_franklin_virtue"
+                ],
+                "title": "EditHabitResource"
+            },
+            "HabitActivityDataResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "Date of the activity entry (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "description": "Completion percentage for the day (0.0–100.0).",
+                        "examples": [
+                            66.7
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed on this day.",
+                        "examples": [
+                            4
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total number of habits planned for this day.",
+                        "examples": [
+                            6
+                        ]
+                    },
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    }
+                },
+                "required": [
+                    "date",
+                    "percentage",
+                    "completed",
+                    "total",
+                    "intensity"
+                ],
+                "title": "HabitActivityDataResource"
+            },
+            "HabitFormResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning meditation"
+                        ]
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "10 minutes before breakfast"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many completions are required per day.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether the habit is currently active and shown in the tracker."
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "description": "RRule frequency: DAILY, WEEKLY, or MONTHLY.",
+                        "examples": [
+                            "WEEKLY"
+                        ]
+                    },
+                    "weekly_days": {
+                        "type": "array",
+                        "description": "Days of the week the habit repeats (0 = Monday … 6 = Sunday). For WEEKLY habits.",
+                        "examples": [
+                            [
+                                0,
+                                2,
+                                4
+                            ]
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "monthly_days": {
+                        "type": "array",
+                        "description": "Specific calendar days of the month (1–31). For MONTHLY \"day\" mode.",
+                        "examples": [
+                            [
+                                1,
+                                15
+                            ]
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "monthly_mode": {
+                        "type": "string",
+                        "description": "Monthly recurrence mode: \"day\" for specific dates, \"position\" for ordinal weekday.",
+                        "examples": [
+                            "position"
+                        ]
+                    },
+                    "monthly_position": {
+                        "type": "integer",
+                        "description": "Ordinal position within the month (1, 2, 3, 4, or -1 for last). Used when monthly_mode is \"position\".",
+                        "examples": [
+                            2
+                        ]
+                    },
+                    "monthly_weekday": {
+                        "type": "integer",
+                        "description": "Day of the week for ordinal recurrence (0 = Monday … 6 = Sunday). Used when monthly_mode is \"position\".",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "notifications": {
+                        "type": "array",
+                        "description": "Scheduled reminder notifications for this habit.",
+                        "items": {
+                            "$ref": "#/components/schemas/HabitNotificationResource"
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "iterations_required",
+                    "is_active",
+                    "frequency",
+                    "weekly_days",
+                    "monthly_days",
+                    "monthly_mode",
+                    "monthly_position",
+                    "monthly_weekday",
+                    "notifications"
+                ],
+                "title": "HabitFormResource"
+            },
+            "HabitNotificationResource": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "type": "string",
+                        "description": "Time of day for the notification in HH:MM format.",
+                        "examples": [
+                            "08:00"
+                        ]
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "description": "Whether this notification is currently enabled."
+                    }
+                },
+                "required": [
+                    "time",
+                    "is_active"
+                ],
+                "title": "HabitNotificationResource"
+            },
+            "HabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique habit identifier."
+                    },
+                    "name": {
+                        "type": "array",
+                        "description": "Display name of the habit.",
+                        "examples": [
+                            "Morning exercise"
+                        ],
+                        "items": {}
+                    },
+                    "description": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "description": "Optional longer description.",
+                        "examples": [
+                            "Do 30 pushups"
+                        ],
+                        "items": {}
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "How many iterations are needed to complete.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "is_completed": {
+                        "type": "boolean",
+                        "description": "Whether the habit is fully completed for the day."
+                    },
+                    "current_iteration": {
+                        "description": "Number of iterations completed so far today.",
+                        "examples": [
+                            1
+                        ],
+                        "anyOf": [
+                            {},
+                            {
+                                "type": "integer",
+                                "enum": [
+                                    0
+                                ]
+                            }
+                        ]
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Position in the habit list.",
+                        "examples": [
+                            2
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "iterations_required",
+                    "is_completed",
+                    "current_iteration",
+                    "sort_order"
+                ],
+                "title": "HabitResource"
+            },
+            "HabitTemplateResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Habit template identifier.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Localized habit name.",
+                        "examples": [
+                            "Morning Meditation"
+                        ]
+                    },
+                    "human_readable": {
+                        "type": "string",
+                        "description": "Human-readable recurrence rule.",
+                        "examples": [
+                            "Every day"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "description": "Number of iterations required per occurrence.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": "Localized category name.",
+                        "examples": [
+                            "Health & Fitness"
+                        ]
+                    },
+                    "sort_order": {
+                        "type": "integer",
+                        "description": "Sort order within the category.",
+                        "examples": [
+                            1
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "human_readable",
+                    "iterations_required",
+                    "category",
+                    "sort_order"
+                ],
+                "title": "HabitTemplateResource"
+            },
+            "LifeActivityResource": {
+                "type": "object",
+                "properties": {
+                    "year": {
+                        "type": "integer",
+                        "description": "Life year index (age, 0-based).",
+                        "examples": [
+                            24
+                        ]
+                    },
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed that year.",
+                        "examples": [
+                            120
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total habit occurrences scheduled that year.",
+                        "examples": [
+                            200
+                        ]
+                    }
+                },
+                "required": [
+                    "year",
+                    "intensity",
+                    "completed",
+                    "total"
+                ],
+                "title": "LifeActivityResource"
+            },
+            "LifeViewResource": {
+                "type": "object",
+                "properties": {
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's birthdate (YYYY-MM-DD).",
+                        "examples": [
+                            "2001-03-15"
+                        ]
+                    },
+                    "currentAge": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "User's current age in years.",
+                        "examples": [
+                            25
+                        ]
+                    },
+                    "weeksLived": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Total weeks lived since birth.",
+                        "examples": [
+                            1300
+                        ]
+                    },
+                    "yearsRemaining": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Estimated years remaining (based on 80-year lifespan).",
+                        "examples": [
+                            55
+                        ]
+                    }
+                },
+                "required": [
+                    "birthdate",
+                    "currentAge",
+                    "weeksLived",
+                    "yearsRemaining"
+                ],
+                "title": "LifeViewResource"
+            },
+            "NavigationTranslationResource": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                },
+                "title": "NavigationTranslationResource"
+            },
+            "NoteRequest": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the note belongs to.",
+                        "example": "2026-04-06"
+                    },
+                    "content": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Note text content. Send null to clear.",
+                        "example": "Great day!",
+                        "maxLength": 5000
+                    }
+                },
+                "required": [
+                    "date"
+                ],
+                "title": "NoteRequest"
+            },
+            "ReorderHabitsRequest": {
+                "type": "object",
+                "properties": {
+                    "ordered_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "required": [
+                    "ordered_ids"
+                ],
+                "title": "ReorderHabitsRequest"
+            },
+            "StoreHabitRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 1000
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "enum": [
+                            "DAILY",
+                            "WEEKLY",
+                            "MONTHLY"
+                        ]
+                    },
+                    "iterations_required": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 99
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "monthly_mode": {
+                        "type": "string",
+                        "enum": [
+                            "day",
+                            "position"
+                        ]
+                    },
+                    "monthly_position": {
+                        "type": "integer",
+                        "enum": [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "-1"
+                        ]
+                    },
+                    "monthly_weekday": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 6
+                    },
+                    "weekly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 6
+                        }
+                    },
+                    "monthly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 31
+                        }
+                    },
+                    "notifications": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "time": {
+                                    "type": "string",
+                                    "pattern": "^\\d{2}:(00|05|10|15|20|25|30|35|40|45|50|55)$"
+                                },
+                                "is_active": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "time",
+                                "is_active"
+                            ]
+                        },
+                        "maxItems": 10
+                    }
+                },
+                "required": [
+                    "name",
+                    "frequency",
+                    "iterations_required",
+                    "is_active",
+                    "monthly_mode",
+                    "monthly_position",
+                    "monthly_weekday"
+                ],
+                "title": "StoreHabitRequest"
+            },
+            "StoryUploadRequest": {
+                "type": "object",
+                "properties": {
+                    "image": {
+                        "type": "string",
+                        "description": "Base64-encoded PNG image data URL.",
+                        "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+                    }
+                },
+                "required": [
+                    "image"
+                ],
+                "title": "StoryUploadRequest"
+            },
+            "TelegramMiniAppRequest": {
+                "type": "object",
+                "properties": {
+                    "init_data": {
+                        "type": "string",
+                        "description": "The init data from Telegram Web App.",
+                        "example": "user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+                    }
+                },
+                "required": [
+                    "init_data"
+                ],
+                "title": "TelegramMiniAppRequest"
+            },
+            "ToggleRequest": {
+                "type": "object",
+                "properties": {
+                    "habit_id": {
+                        "type": "integer",
+                        "description": "The habit to toggle.",
+                        "example": 1
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Completion date (must not be in the future).",
+                        "example": "2026-04-06"
+                    }
+                },
+                "required": [
+                    "habit_id",
+                    "date"
+                ],
+                "title": "ToggleRequest"
+            },
+            "TrackResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "ISO 8601 date string (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "dayName": {
+                        "type": "string",
+                        "description": "Localized day of week name.",
+                        "examples": [
+                            "Monday"
+                        ]
+                    },
+                    "dateFormatted": {
+                        "type": "string",
+                        "description": "Localized full date.",
+                        "examples": [
+                            "April 6, 2026"
+                        ]
+                    },
+                    "isToday": {
+                        "type": "boolean",
+                        "description": "Whether this date is today."
+                    },
+                    "totalHabits": {
+                        "type": "integer",
+                        "description": "Total number of habits scheduled for this day.",
+                        "examples": [
+                            5
+                        ]
+                    },
+                    "completedCount": {
+                        "type": "integer",
+                        "description": "Number of fully completed habits.",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "dailyNoteContent": {
+                        "type": "string",
+                        "description": "User's daily note text.",
+                        "examples": [
+                            "Great day!"
+                        ]
+                    },
+                    "translations": {
+                        "type": "object",
+                        "description": "Localized UI strings for the track page.",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "aiDigest": {
+                        "anyOf": [
+                            {
+                                "description": "AI-generated digest for this day, or null if not available.",
+                                "$ref": "#/components/schemas/AiDigestResource"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "date",
+                    "dayName",
+                    "dateFormatted",
+                    "isToday",
+                    "totalHabits",
+                    "completedCount",
+                    "dailyNoteContent",
+                    "translations",
+                    "aiDigest"
+                ],
+                "title": "TrackResource"
+            },
+            "TrialResource": {
+                "type": "object",
+                "properties": {
+                    "hasPremium": {
+                        "type": "boolean",
+                        "description": "Whether the user has an active premium subscription or is within the trial period."
+                    },
+                    "isTrialing": {
+                        "type": "boolean",
+                        "description": "Whether the user is currently in the free trial (not a paying subscriber).\nUsed to decide when to show the premium upsell."
+                    },
+                    "shouldShowBanner": {
+                        "type": "boolean",
+                        "description": "Whether to show the trial banner in the UI."
+                    },
+                    "bannerText": {
+                        "type": "string",
+                        "description": "Text to show in the trial banner, e.g. \"Your trial expires in 3 days\".",
+                        "examples": [
+                            "Your trial expires in 3 days"
+                        ]
+                    },
+                    "invoiceLink": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Premium invoice link for the current locale, if available.\nUsed in the trial banner and premium modal."
+                    },
+                    "learnMore": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal."
+                    },
+                    "featuresTitle": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
+                    },
+                    "featuresSubtitle": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
+                    },
+                    "featureNotifications": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
+                    },
+                    "featureAiDigest": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
+                    },
+                    "featureExport": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal features list."
+                    },
+                    "upgradeLabel": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal upgrade button."
+                    },
+                    "openInTelegramLabel": {
+                        "type": "string",
+                        "description": "Localization strings for the premium modal button to open the Telegram channel."
+                    }
+                },
+                "required": [
+                    "hasPremium",
+                    "isTrialing",
+                    "shouldShowBanner",
+                    "bannerText",
+                    "invoiceLink",
+                    "learnMore",
+                    "featuresTitle",
+                    "featuresSubtitle",
+                    "featureNotifications",
+                    "featureAiDigest",
+                    "featureExport",
+                    "upgradeLabel",
+                    "openInTelegramLabel"
+                ],
+                "title": "TrialResource"
+            },
+            "UpdateSettingsRequest": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "type": "string",
+                        "description": "UI theme preference.",
+                        "enum": [
+                            "light",
+                            "dark",
+                            "system"
+                        ],
+                        "example": "dark"
+                    },
+                    "locale": {
+                        "type": "string",
+                        "description": "Display language code.",
+                        "enum": [
+                            "en",
+                            "ru",
+                            "es",
+                            "zh",
+                            "hi",
+                            "bn",
+                            "pt",
+                            "ar"
+                        ],
+                        "example": "en"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "description": "IANA timezone identifier.",
+                        "example": "Europe/London"
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time",
+                        "description": "User's date of birth.",
+                        "example": "1990-01-15"
+                    },
+                    "dayStartsAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
+                        "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
+                        "example": "03:00"
+                    },
+                    "moveCompletedToEnd": {
+                        "type": "boolean",
+                        "description": "Whether completed habits are moved to the bottom of the list."
+                    },
+                    "aiDigestTime": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Scheduled time for the daily AI digest (HH:MM). Null disables it.",
+                        "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
+                        "example": "09:00"
+                    },
+                    "aiToneId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "AI tone to use for the digest.",
+                        "example": 1
+                    }
+                },
+                "title": "UpdateSettingsRequest"
+            },
+            "UserSettingResource": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string",
+                        "description": "Current locale code.",
+                        "examples": [
+                            "en"
+                        ]
+                    },
+                    "theme": {
+                        "type": "string",
+                        "description": "UI theme preference.",
+                        "examples": [
+                            "system"
+                        ]
+                    },
+                    "moveCompletedToEnd": {
+                        "type": "boolean",
+                        "description": "Whether completed habits are moved to bottom."
+                    },
+                    "timezone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "IANA timezone identifier.",
+                        "examples": [
+                            "Europe/London"
+                        ]
+                    },
+                    "dayStartsAt": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
+                        "examples": [
+                            "03:00"
+                        ]
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's date of birth.",
+                        "examples": [
+                            "1990-01-15"
+                        ]
+                    },
+                    "aiDigestTime": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Scheduled time for the daily AI digest (HH:MM). Null means disabled.",
+                        "examples": [
+                            "09:00"
+                        ]
+                    },
+                    "aiToneId": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "ID of the AI tone used for the digest."
+                    },
+                    "trial": {
+                        "description": "Trial banner and premium modal data.",
+                        "$ref": "#/components/schemas/TrialResource"
+                    },
+                    "telegramBotUsername": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Telegram bot username for story sharing widget link."
+                    }
+                },
+                "required": [
+                    "locale",
+                    "theme",
+                    "moveCompletedToEnd",
+                    "timezone",
+                    "dayStartsAt",
+                    "birthdate",
+                    "aiDigestTime",
+                    "aiToneId",
+                    "trial",
+                    "telegramBotUsername"
+                ],
+                "title": "UserSettingResource"
+            },
+            "WeekDayResource": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "Date in YYYY-MM-DD format.",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "day_name": {
+                        "type": "string",
+                        "description": "Short localized day name.",
+                        "examples": [
+                            "Mon"
+                        ]
+                    },
+                    "day_number": {
+                        "type": "integer",
+                        "description": "Day of month number.",
+                        "examples": [
+                            6
+                        ]
+                    },
+                    "is_today": {
+                        "type": "boolean",
+                        "description": "Whether this day is today."
+                    },
+                    "is_future": {
+                        "type": "boolean",
+                        "description": "Whether this day is in the future."
+                    }
+                },
+                "required": [
+                    "date",
+                    "day_name",
+                    "day_number",
+                    "is_today",
+                    "is_future"
+                ],
+                "title": "WeekDayResource"
+            },
+            "WeekGridHabitResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Habit ID.",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Habit name.",
+                        "examples": [
+                            "Exercise"
+                        ]
+                    },
+                    "category": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Category name, if any.",
+                        "examples": [
+                            "Health"
+                        ]
+                    },
+                    "is_weekly_focus": {
+                        "type": "boolean",
+                        "description": "Whether this habit is scheduled every day of the week."
+                    },
+                    "is_franklin_virtue": {
+                        "type": "boolean",
+                        "description": "Whether this habit belongs to Franklin's Virtues category."
+                    },
+                    "days": {
+                        "type": "object",
+                        "description": "Daily completion statuses.",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "completed": {
+                                    "type": "boolean"
+                                },
+                                "partial": {
+                                    "type": "boolean"
+                                },
+                                "scheduled": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "completed",
+                                "partial",
+                                "scheduled"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "category",
+                    "is_weekly_focus",
+                    "is_franklin_virtue",
+                    "days"
+                ],
+                "title": "WeekGridHabitResource"
+            },
+            "WeekViewResource": {
+                "type": "object",
+                "properties": {
+                    "start": {
+                        "type": "string",
+                        "description": "Week start date (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-06"
+                        ]
+                    },
+                    "end": {
+                        "type": "string",
+                        "description": "Week end date (YYYY-MM-DD).",
+                        "examples": [
+                            "2026-04-12"
+                        ]
+                    },
+                    "startFormatted": {
+                        "type": "string",
+                        "description": "Localized short start date.",
+                        "examples": [
+                            "Apr 6"
+                        ]
+                    },
+                    "endFormatted": {
+                        "type": "string",
+                        "description": "Localized short end date.",
+                        "examples": [
+                            "Apr 12"
+                        ]
+                    },
+                    "endFormattedFull": {
+                        "type": "string",
+                        "description": "Localized full end date with year.",
+                        "examples": [
+                            "Apr 12, 2026"
+                        ]
+                    },
+                    "year": {
+                        "type": "string",
+                        "description": "Year of the displayed week.",
+                        "examples": [
+                            "2026"
+                        ]
+                    },
+                    "isCurrent": {
+                        "type": "boolean",
+                        "description": "Whether the displayed week is the current week."
+                    }
+                },
+                "required": [
+                    "start",
+                    "end",
+                    "startFormatted",
+                    "endFormatted",
+                    "endFormattedFull",
+                    "year",
+                    "isCurrent"
+                ],
+                "title": "WeekViewResource"
+            },
+            "YearActivityResource": {
+                "type": "object",
+                "properties": {
+                    "weekNum": {
+                        "type": "integer",
+                        "description": "Week number within the life year (1-based).",
+                        "examples": [
+                            12
+                        ]
+                    },
+                    "intensity": {
+                        "type": "integer",
+                        "description": "Heatmap intensity level (0–4).",
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "completed": {
+                        "type": "integer",
+                        "description": "Number of habits completed that week.",
+                        "examples": [
+                            5
+                        ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total habit occurrences scheduled that week.",
+                        "examples": [
+                            7
+                        ]
+                    }
+                },
+                "required": [
+                    "weekNum",
+                    "intensity",
+                    "completed",
+                    "total"
+                ],
+                "title": "YearActivityResource"
+            },
+            "YearViewResource": {
+                "type": "object",
+                "properties": {
+                    "selected": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Selected year index (age) for the year grid.",
+                        "examples": [
+                            25
+                        ]
+                    },
+                    "birthdate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's birthdate (YYYY-MM-DD).",
+                        "examples": [
+                            "2001-03-15"
+                        ]
+                    },
+                    "currentAge": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "User's current age in years.",
+                        "examples": [
+                            25
+                        ]
+                    }
+                },
+                "required": [
+                    "selected",
+                    "birthdate",
+                    "currentAge"
+                ],
+                "title": "YearViewResource"
+            }
+        },
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            },
+            "AuthenticationException": {
+                "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            },
+            "ModelNotFoundException": {
+                "description": "Not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            },
+            "AuthorizationException": {
+                "description": "Authorization error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

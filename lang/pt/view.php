@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'Semana',
+    'year' => 'Ano',
+    'life' => 'Vida',
+    'previous_week' => 'Semana anterior',
+    'next_week' => 'Próxima semana',
+    'this_week' => 'Esta Semana',
+    'current_week' => 'Semana Atual',
+    'previous_year' => 'Ano anterior',
+    'next_year' => 'Próximo ano',
+    'this_year' => 'Este Ano',
+    'current_year' => 'Ano Atual',
+    'age' => 'Idade :age',
+    'less' => 'Menos',
+    'more' => 'Mais',
+    'future' => 'Futuro',
+    'habits' => 'Hábitos',
+    'done' => 'Feito',
+    'partial' => 'Parcial',
+    'missed' => 'Perdido',
+    'memento_mori' => 'Memento Mori',
+    'years_old' => 'anos',
+    'years_left' => 'anos restantes',
+    'weeks_lived' => 'semanas vividas',
+    'each_square_year' => 'Cada quadrado representa um ano.<br>Toque para ver semanas.',
+    'each_square_week' => 'Cada quadrado representa uma semana.<br>Toque para ver detalhes.',
+    'seneca_quote' => '«Não é que tenhamos pouco tempo de vida,<br>mas que desperdiçamos muito dele.»',
+    'seneca_author' => 'Sêneca',
+    'franklins_virtues' => 'Virtudes de Franklin',
+    'set_birthdate' => 'Defina sua data de nascimento nas configurações',
+    'to_see_year_visualization' => 'para ver sua visualização anual',
+    'to_see_life_visualization' => 'para ver sua visualização de vida',
+    'insights' => 'Insights de IA',
+];

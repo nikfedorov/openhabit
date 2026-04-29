@@ -37,4 +37,19 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+    ],
+
+    'horizon' => [
+        'username' => env('HORIZON_USERNAME'),
+        'password' => env('HORIZON_PASSWORD'),
+    ],
+
+    'pulse' => [
+        'username' => env('PULSE_USERNAME'),
+        'password' => env('PULSE_PASSWORD'),
+    ],
+
 ];

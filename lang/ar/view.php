@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'week' => 'أسبوع',
+    'year' => 'سنة',
+    'life' => 'حياة',
+    'previous_week' => 'الأسبوع السابق',
+    'next_week' => 'الأسبوع التالي',
+    'this_week' => 'هذا الأسبوع',
+    'current_week' => 'الأسبوع الحالي',
+    'previous_year' => 'السنة السابقة',
+    'next_year' => 'السنة التالية',
+    'this_year' => 'هذه السنة',
+    'current_year' => 'السنة الحالية',
+    'age' => 'العمر :age',
+    'less' => 'أقل',
+    'more' => 'أكثر',
+    'future' => 'المستقبل',
+    'habits' => 'العادات',
+    'done' => 'مكتمل',
+    'partial' => 'جزئي',
+    'missed' => 'فائت',
+    'memento_mori' => 'تذكّر الموت',
+    'years_old' => 'سنة',
+    'years_left' => 'سنة متبقية',
+    'weeks_lived' => 'أسبوع عاشه',
+    'each_square_year' => 'كل مربع يمثل سنة واحدة.<br>انقر لرؤية الأسابيع.',
+    'each_square_week' => 'كل مربع يمثل أسبوعًا واحدًا.<br>انقر لعرض التفاصيل.',
+    'seneca_quote' => '"ليس أن لدينا وقتًا قصيرًا للعيش،<br>بل إننا نضيع الكثير منه."',
+    'seneca_author' => 'سينيكا',
+    'franklins_virtues' => 'فضائل فرانكلين',
+    'set_birthdate' => 'حدد تاريخ ميلادك في الإعدادات',
+    'to_see_year_visualization' => 'لمشاهدة عرض السنة الخاص بك',
+    'to_see_life_visualization' => 'لمشاهدة عرض الحياة الخاص بك',
+    'insights' => 'تحليلات',
+];

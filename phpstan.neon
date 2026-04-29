@@ -17,3 +17,13 @@ parameters:
     level: max
 
     tmpDir: /tmp/phpstan
+
+    ignoreErrors:
+        # Pulse migration uses match without default — driver() is constrained by the package.
+        - identifier: match.unhandled
+          path: database/migrations/*_create_pulse_tables.php
+        # Pulse config accesses constants/methods on internal classes — not our code.
+        - identifier: classConstant.internalClass
+          path: config/pulse.php
+        - identifier: staticMethod.internalClass
+          path: config/pulse.php

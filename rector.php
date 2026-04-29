@@ -45,6 +45,10 @@ return RectorConfig::configure()
         AddOverrideAttributeToOverriddenMethodsRector::class,
         MakeInheritedMethodVisibilitySameAsParentRector::class,
         AddOverrideAttributeToOverriddenPropertiesRector::class,
+        __DIR__.'/public/frankenphp-worker.php',
+        // Scramble cannot resolve #[Group] attributes when routes use first-class callable syntax.
+        // Keep route actions as [Controller::class, 'method'] arrays.
+        Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class,
     ])
     ->withPreparedSets(
         deadCode: true,

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Logging\TelegramMonologHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -123,6 +124,24 @@ return [
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
+        ],
+
+        'telegram' => [
+            'driver' => 'monolog',
+            'handler' => TelegramMonologHandler::class,
+            'level' => env('LOG_TELEGRAM_LEVEL', 'error'),
+            'handler_with' => [
+                'chatId' => env('TELEGRAM_ERROR_CHAT_ID', ''),
+            ],
+        ],
+
+        'telegram-payments' => [
+            'driver' => 'monolog',
+            'handler' => TelegramMonologHandler::class,
+            'level' => 'info',
+            'handler_with' => [
+                'chatId' => env('TELEGRAM_PAYMENTS_CHAT_ID', ''),
+            ],
         ],
 
         'emergency' => [

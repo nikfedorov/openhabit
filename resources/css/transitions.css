@@ -1,0 +1,300 @@
+/*
+ * Accessibility — honor the user's OS-level "reduce motion" preference.
+ *
+ * This neutralizes CSS transitions, animations and smooth scrolling for
+ * users who request reduced motion. Inline `style.transition` values
+ * applied by JS are overridden too (thanks to `!important`).
+ *
+ * Individual JS-driven animations (Web Animations API, setTimeout-based
+ * effects) must be gated separately in their components via
+ * `prefersReducedMotion()`.
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/*
+ * Smooth anchor scrolling for the landing page nav links.
+ * Scoped to the html element so it only applies to full-page navigation,
+ * not programmatic scrollEl.scrollTop changes inside the app.
+ * The prefers-reduced-motion block above overrides this for users who opt out.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/*
+ * Shared directional slide transitions (RTL-aware).
+ *
+ * Usage: wrap the transitioning element in a parent with `.nav-forward`
+ * or `.nav-backward` class, then use any Vue <Transition> name —
+ * just define the base enter/leave rules and add the directional mixin:
+ *
+ *   .my-slide-enter-from  { transform: translateX(var(--slide-enter)); }
+ *   .my-slide-leave-to    { transform: translateX(var(--slide-leave)); }
+ */
+
+/* Direction variables — set by the parent wrapper class */
+.nav-forward {
+    --slide-enter: 30px;
+    --slide-leave: -30px;
+}
+
+.nav-backward {
+    --slide-enter: -30px;
+    --slide-leave: 30px;
+}
+
+/* RTL: reverse the direction */
+:dir(rtl) .nav-forward {
+    --slide-enter: -30px;
+    --slide-leave: 30px;
+}
+
+:dir(rtl) .nav-backward {
+    --slide-enter: 30px;
+    --slide-leave: -30px;
+}
+
+/*
+ * Navigator slide transition for date/week/year displays.
+ *
+ * Usage: <Transition name="nav-slide">
+ *   Wrap in a parent with `.nav-forward` or `.nav-backward`.
+ */
+.nav-slide-enter-active {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-slide-leave-active {
+    transition: all 0.2s ease-in-out;
+    position: absolute;
+    width: 100%;
+}
+
+.nav-slide-enter-from,
+.nav-slide-leave-to {
+    opacity: 0;
+}
+
+.nav-slide-enter-from {
+    transform: translateX(var(--slide-enter));
+}
+
+.nav-slide-leave-to {
+    transform: translateX(var(--slide-leave));
+}
+
+/*
+ * Collapse/expand transition for "go to today/current" buttons.
+ *
+ * Usage: <Transition name="collapse-btn">
+ */
+.collapse-btn-enter-active,
+.collapse-btn-leave-active {
+    overflow: hidden;
+    transition:
+        max-height 0.2s ease-in-out,
+        opacity 0.2s ease-in-out,
+        margin-top 0.2s ease-in-out;
+}
+
+.collapse-btn-enter-from,
+.collapse-btn-leave-to {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+}
+
+.collapse-btn-enter-to,
+.collapse-btn-leave-from {
+    max-height: 3rem;
+    opacity: 1;
+}
+
+/*
+ * Confirm modal — backdrop fades, panel slides up from bottom.
+ */
+.confirm-modal-enter-active {
+    transition: opacity 0.2s ease;
+}
+
+.confirm-modal-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.confirm-modal-enter-from,
+.confirm-modal-leave-to {
+    opacity: 0;
+}
+
+.confirm-modal-enter-active .confirm-modal-panel {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.confirm-modal-leave-active .confirm-modal-panel {
+    transition: transform 0.15s ease-in;
+}
+
+.confirm-modal-enter-from .confirm-modal-panel {
+    transform: translateY(12px) scale(0.97);
+}
+
+.confirm-modal-leave-to .confirm-modal-panel {
+    transform: translateY(8px) scale(0.98);
+}
+
+/*
+ * Premium modal — backdrop fades, panel scales in.
+ */
+.premium-modal-enter-active {
+    transition: opacity 0.2s ease;
+}
+
+.premium-modal-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.premium-modal-enter-from,
+.premium-modal-leave-to {
+    opacity: 0;
+}
+
+.premium-modal-enter-active .premium-modal-panel {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.premium-modal-leave-active .premium-modal-panel {
+    transition: transform 0.15s ease-in;
+}
+
+.premium-modal-enter-from .premium-modal-panel {
+    transform: scale(0.95);
+}
+
+.premium-modal-leave-to .premium-modal-panel {
+    transform: scale(0.95);
+}
+
+/*
+ * Trial banner — collapse/expand matching the collapse-btn pattern.
+ *
+ * Uses max-height + overflow:hidden for reliable smooth animation
+ * across all WebView engines.
+ */
+.trial-banner-enter-active,
+.trial-banner-leave-active {
+    overflow: hidden;
+    transition:
+        max-height 0.25s ease-in-out,
+        margin-bottom 0.25s ease-in-out,
+        opacity 0.25s ease-in-out;
+}
+
+.trial-banner-enter-from,
+.trial-banner-leave-to {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.trial-banner-enter-to,
+.trial-banner-leave-from {
+    max-height: 5rem;
+    opacity: 1;
+    margin-bottom: 1rem;
+}
+
+/*
+ * Life grid cell entrance animation.
+ * Each cell fades in and scales up from a smaller size.
+ * Apply with `animation-delay` inline style for stagger effect.
+ */
+@keyframes cell-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cell-appear {
+    animation: cell-appear 0.25s ease forwards;
+    opacity: 0;
+}
+
+/*
+ * Year grid cell — fade only (no scale).
+ */
+@keyframes cell-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.cell-fade {
+    animation: cell-fade 0.2s ease forwards;
+    opacity: 0;
+}
+
+/*
+ * Entrance animation: fade in while sliding up slightly.
+ * Used for banners and notices that appear after page load.
+ */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .animate-fade-in-up {
+        animation: fade-in-up 0.25s ease forwards;
+    }
+}
+
+/*
+ * Scroll-reveal pattern for landing page sections.
+ *
+ * Elements start hidden (opacity + translate). IntersectionObserver adds
+ * .revealed — the transition runs, then JS removes the transitionDelay so
+ * subsequent hover effects are instant.
+ *
+ * Users who prefer reduced motion: the @media guard means .reveal adds no
+ * opacity/transform change, so content is always visible. The JS still adds
+ * .revealed (harmless) without any delay.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    .reveal {
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+            opacity 0.35s ease,
+            transform 0.35s ease;
+    }
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
