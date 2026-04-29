@@ -2,48 +2,53 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Laravel\Sentinel\Sentinel;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Sentinel\Http\Middleware\SentinelMiddleware;
 
-test('pulse sentinel driver allows access in local environment', function (): void {
+test('viewPulse gate is defined', function (): void {
+    expect(Gate::has('viewPulse'))->toBeTrue();
+});
+
+test('viewPulse gate allows access in local environment', function (): void {
     /** @phpstan-ignore method.notFound */
     $this->app->detectEnvironment(fn (): string => 'local');
 
+    expect(Gate::allows('viewPulse'))->toBeTrue();
+});
+
+test('viewPulse gate denies unauthenticated access in non-local environment', function (): void {
+    /** @phpstan-ignore method.notFound */
+    $this->app->detectEnvironment(fn (): string => 'production');
+
+    expect(Gate::allows('viewPulse'))->toBeFalse();
+});
+
+test('viewPulse gate denies non-admin users in non-local environment', function (): void {
+    /** @phpstan-ignore method.notFound */
+    $this->app->detectEnvironment(fn (): string => 'production');
+
+    $this->actingAs(User::factory()->create(['is_admin' => false]));
+
+    expect(Gate::allows('viewPulse'))->toBeFalse();
+});
+
+test('viewPulse gate allows admin users in non-local environment', function (): void {
+    /** @phpstan-ignore method.notFound */
+    $this->app->detectEnvironment(fn (): string => 'production');
+
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+
+    expect(Gate::allows('viewPulse'))->toBeTrue();
+});
+
+test('SentinelMiddleware is bound as a pass-through', function (): void {
+    $middleware = resolve(SentinelMiddleware::class);
     $request = Request::create('/pulse');
+    $sentinel = new stdClass();
 
-    expect(Sentinel::driver('pulse')->authorize($request))->toBeTrue();
-});
+    $response = $middleware->handle($request, fn (Request $passed): object => $sentinel, 'pulse');
 
-test('pulse sentinel driver rejects unauthenticated access in non-local environment', function (): void {
-    /** @phpstan-ignore method.notFound */
-    $this->app->detectEnvironment(fn (): string => 'production');
-
-    $request = Request::create('/pulse');
-
-    expect(fn (): bool => Sentinel::driver('pulse')->authorize($request))
-        ->toThrow(HttpException::class);
-});
-
-test('pulse sentinel driver allows access with valid credentials', function (): void {
-    /** @phpstan-ignore method.notFound */
-    $this->app->detectEnvironment(fn (): string => 'production');
-
-    config(['services.pulse.username' => 'admin', 'services.pulse.password' => 'secret']);
-
-    $request = Request::create('/pulse', 'GET', [], [], [], ['PHP_AUTH_USER' => 'admin', 'PHP_AUTH_PW' => 'secret']);
-
-    expect(Sentinel::driver('pulse')->authorize($request))->toBeTrue();
-});
-
-test('pulse sentinel driver rejects invalid credentials', function (): void {
-    /** @phpstan-ignore method.notFound */
-    $this->app->detectEnvironment(fn (): string => 'production');
-
-    config(['services.pulse.username' => 'admin', 'services.pulse.password' => 'secret']);
-
-    $request = Request::create('/pulse', 'GET', [], [], [], ['PHP_AUTH_USER' => 'admin', 'PHP_AUTH_PW' => 'wrong']);
-
-    expect(fn (): bool => Sentinel::driver('pulse')->authorize($request))
-        ->toThrow(HttpException::class);
+    expect($response)->toBe($sentinel);
 });
