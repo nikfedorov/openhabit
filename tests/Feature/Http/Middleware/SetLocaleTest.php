@@ -65,3 +65,22 @@ it('prefers ?lang= over the authenticated user locale', function (): void {
 
     expect(app()->getLocale())->toBe('zh');
 });
+
+it('detects locale from Accept-Language header on first visit', function (): void {
+    $response = $this->withHeader('Accept-Language', 'ru,en;q=0.9')
+        ->get('/');
+
+    $response->assertOk();
+
+    expect(app()->getLocale())->toBe('ru');
+    $response->assertCookie(SetLocale::COOKIE, 'ru');
+});
+
+it('does not override cookie with Accept-Language header', function (): void {
+    $this->withCookie(SetLocale::COOKIE, 'es')
+        ->withHeader('Accept-Language', 'ru,en;q=0.9')
+        ->get('/')
+        ->assertOk();
+
+    expect(app()->getLocale())->toBe('es');
+});

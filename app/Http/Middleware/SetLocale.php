@@ -20,7 +20,7 @@ final class SetLocale
     /**
      * Set application locale.
      *
-     * Priority: explicit ?lang= query > authenticated user's locale > cookie.
+     * Priority: explicit ?lang= query > authenticated user's locale > cookie > Accept-Language header.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -38,6 +38,13 @@ final class SetLocale
             app()->setLocale($userLocale);
         } elseif (is_string($cookieLocale) && in_array($cookieLocale, $codes, true)) {
             app()->setLocale($cookieLocale);
+        } else {
+            // First visit: detect from the browser's Accept-Language header and remember it.
+            $browserLocale = $request->getPreferredLanguage($codes);
+            if (is_string($browserLocale) && in_array($browserLocale, $codes, true)) {
+                app()->setLocale($browserLocale);
+                $persistGuestLocale = $browserLocale;
+            }
         }
 
         /** @var Response $response */
