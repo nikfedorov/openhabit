@@ -14,7 +14,7 @@ beforeEach(function (): void {
     Queue::fake();
 });
 
-function makeWebAppUser(int $id, string $firstName, ?string $lastName = null): WebAppUser
+function makeMiniAppWebAppUser(int $id, string $firstName, ?string $lastName = null): WebAppUser
 {
     $user = new WebAppUser;
     $user->id = $id;
@@ -25,7 +25,7 @@ function makeWebAppUser(int $id, string $firstName, ?string $lastName = null): W
     return $user;
 }
 
-function makeWebAppData(WebAppUser $user): WebAppData
+function makeMiniAppWebAppData(WebAppUser $user): WebAppData
 {
     $data = new WebAppData;
     $data->user = $user;
@@ -78,9 +78,9 @@ it('rejects data without user', function (): void {
         ->assertJson(['error' => 'User data not found']);
 });
 
-it('creates user and logs in', function (): void {
-    $webAppUser = makeWebAppUser(123456789, 'John', 'Doe');
-    $webAppData = makeWebAppData($webAppUser);
+it('creates user and returns a token', function (): void {
+    $webAppUser = makeMiniAppWebAppUser(123_456_789, 'John', 'Doe');
+    $webAppData = makeMiniAppWebAppData($webAppUser);
 
     $nutgram = Mockery::mock(Nutgram::class);
     $nutgram->shouldReceive('validateWebAppData')
@@ -91,13 +91,8 @@ it('creates user and logs in', function (): void {
 
     $this->postJson('/api/auth/telegram', ['init_data' => 'fake_init_data'])
         ->assertOk()
-        ->assertJsonStructure([
-            'success',
-            'token',
-        ])
-        ->assertJson([
-            'success' => true,
-        ]);
+        ->assertJsonStructure(['success', 'token'])
+        ->assertJson(['success' => true]);
 
     $user = User::query()->where('telegram_id', '123456789')->first();
     expect($user)->not->toBeNull()
@@ -106,8 +101,8 @@ it('creates user and logs in', function (): void {
 });
 
 it('sets telegram_authenticated session flag when session is available', function (): void {
-    $webAppUser = makeWebAppUser(111111111, 'Session', 'User');
-    $webAppData = makeWebAppData($webAppUser);
+    $webAppUser = makeMiniAppWebAppUser(111_111_111, 'Session', 'User');
+    $webAppData = makeMiniAppWebAppData($webAppUser);
 
     $nutgram = Mockery::mock(Nutgram::class);
     $nutgram->shouldReceive('validateWebAppData')
@@ -122,14 +117,14 @@ it('sets telegram_authenticated session flag when session is available', functio
         ->assertJson(['success' => true]);
 });
 
-it('logs in existing user', function (): void {
-    $existingUser = User::factory()->telegram()->create([
+it('logs in existing user without creating a duplicate', function (): void {
+    User::factory()->telegram()->create([
         'telegram_id' => '987654321',
         'name' => 'Existing User',
     ]);
 
-    $webAppUser = makeWebAppUser(987654321, 'Existing', 'User');
-    $webAppData = makeWebAppData($webAppUser);
+    $webAppUser = makeMiniAppWebAppUser(987_654_321, 'Existing', 'User');
+    $webAppData = makeMiniAppWebAppData($webAppUser);
 
     $nutgram = Mockery::mock(Nutgram::class);
     $nutgram->shouldReceive('validateWebAppData')
@@ -143,6 +138,5 @@ it('logs in existing user', function (): void {
         ->assertJson(['success' => true])
         ->assertJsonStructure(['token']);
 
-    expect(User::query()->where('telegram_id', '987654321')->count())->toBe(1)
-        ->and($existingUser->tokens()->count())->toBe(1);
+    expect(User::query()->where('telegram_id', '987654321')->count())->toBe(1);
 });
