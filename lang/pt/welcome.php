@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 return [
     'meta' => [
-        'title' => 'OpenHabit — Construa hábitos que duram',
-        'description' => 'Um rastreador de hábitos minimalista que vive onde você já está — no Telegram. Acompanhe hábitos diários, semanais e mensais, receba lembretes gentis, veja suas sequências e reflita com um resumo de IA.',
-        'og_description' => 'Um rastreador de hábitos minimalista que vive no Telegram. Marque, reflita e cresça.',
+        'title' => 'OpenHabit · Hábitos que ficam',
+        'description' => 'Um rastreador de hábitos calmo, que vive dentro do Telegram. Acompanhe hábitos diários, semanais e mensais, receba lembretes gentis, veja suas sequências e leia um resumo diário feito por IA.',
+        'og_description' => 'Um rastreador de hábitos calmo, dentro do Telegram. Marque o dia. O resto vem sozinho.',
     ],
     'nav' => [
         'features' => 'Recursos',
@@ -19,55 +19,53 @@ return [
     ],
     'hero' => [
         'badge' => 'Feito para o Telegram',
-        'title_pre' => 'Construa hábitos que',
-        'title_accent' => 'duram.',
-        'subtitle' => 'Um rastreador de hábitos calmo e focado que vive no Telegram. Sem notificações gritando, sem culpa por quebrar a sequência — apenas um espaço tranquilo para marcar o seu dia e ver a consistência se acumular.',
-        'login_telegram' => 'Entrar com Telegram',
+        'title_pre' => 'Hábitos que',
+        'title_accent' => 'ficam.',
+        'subtitle' => 'Um rastreador de hábitos calmo e focado, que vive dentro do Telegram. Sem notificações gritando, sem culpa por ter perdido um dia. Só um espaço tranquilo para marcar o dia, e o resto vem sozinho.',
+        'login_telegram' => 'Entrar com o Telegram',
     ],
     'preview' => [
         'today' => 'Hoje',
         'date' => '28 abr',
         'habits' => [
-            'Meditação matinal',
+            'Meditação da manhã',
             'Ler 30 min',
-            'Corrida matinal',
+            'Corrida da manhã',
             'Treino',
             'Sem celular antes de dormir',
-            'Diário noturno',
+            'Diário da noite',
         ],
-        'last_n_days' => 'Últimos 35 dias',
         'less' => 'Menos',
         'more' => 'Mais',
-        'less_more' => 'Menos → Mais',
     ],
     'features' => [
         'eyebrow' => 'Recursos',
-        'title' => 'Só o que você precisa. Nada além.',
+        'title' => 'Só o que você precisa. Nada além disso.',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
                 'title' => 'Horários flexíveis',
-                'body' => 'Diário, semanal, mensal ou «a 2ª segunda-feira do mês». Escolha dias, datas ou vezes por dia — o que servir ao hábito.',
+                'body' => 'Diário, semanal, mensal ou «a segunda segunda-feira do mês». Você escolhe os dias, as datas ou as vezes por dia que combinam com o hábito, e não o contrário.',
             ],
             'streaks' => [
                 'title' => 'Sequências e mapa de calor',
-                'body' => 'Sua consistência num relance. Uma grade discreta mostra onde você apareceu — e onde não.',
+                'body' => 'Sua constância num só olhar. Uma grade discreta mostra os dias em que você apareceu e os dias em que não. Sem julgar, é só a foto.',
             ],
             'reminders' => [
                 'title' => 'Lembretes no Telegram',
-                'body' => 'Cutucões gentis bem onde você já conversa. Um ou vários por hábito. Sem spam, sem ansiedade.',
+                'body' => 'Toques gentis, exatamente onde você já conversa. Um por hábito, ou vários. Sem spam, sem ansiedade, sem vibração à toa.',
             ],
             'notes' => [
-                'title' => 'Notas diárias',
-                'body' => 'Um pequeno espaço opcional para anotar como foi o dia. Seus hábitos ganham contexto, não só marcações.',
+                'title' => 'Notas do dia',
+                'body' => 'Um cantinho opcional para anotar em uma frase ou duas como foi o dia. Para que seus hábitos não sejam só checks marcados, mas tenham história.',
             ],
             'ai' => [
-                'title' => 'Resumo de IA',
-                'body' => 'Um resumo semanal que revela padrões que você poderia perder — o que funciona, o que falha e por quê.',
+                'title' => 'Resumo com IA',
+                'body' => 'Um resumo diário que, sem alarde, mostra padrões que passariam batido: o que está dando certo, o que começou a escorregar e por quê.',
             ],
             'export' => [
-                'title' => 'Exporte a qualquer hora',
-                'body' => 'Seus dados são seus. Baixe um CSV limpo com cada hábito e marcação sempre que quiser.',
+                'title' => 'Exporte quando quiser',
+                'body' => 'Seus dados são seus. Baixe um CSV limpo com cada hábito e cada marcação sempre que der vontade, sem perguntas.',
             ],
         ],
     ],
@@ -77,36 +75,35 @@ return [
         'steps' => [
             [
                 'title' => 'Abra o bot no Telegram',
-                'body' => 'Toque no botão abaixo. Sem contas, sem email, sem senhas. Você está dentro.',
+                'body' => 'Toque no botão abaixo. Sem cadastro, sem e-mail, sem senha pra esquecer. Você já está dentro.',
             ],
             [
-                'title' => 'Adicione um ou dois hábitos',
-                'body' => 'Comece pequeno. Algo que você queira fazer quase todo dia. Adicione um lembrete se ajudar.',
+                'title' => 'Adicione um hábito ou dois',
+                'body' => 'Comece pequeno. Algo que você realmente queira fazer quase todo dia. Se ajudar, coloque um lembrete.',
             ],
             [
                 'title' => 'Marque presença, todo dia',
-                'body' => 'Um toque para marcar o dia. Veja sua sequência crescer. Reflita quando quiser.',
+                'body' => 'Um toque e pronto. A sequência cresce sozinha. Você reflete quando bater a vontade, não porque o app pediu.',
             ],
         ],
     ],
     'cta' => [
-        'title' => 'Comece hoje. Seu eu do futuro vai agradecer.',
-        'subtitle' => 'Gratuito. O Premium adiciona resumo de IA, vários lembretes por hábito e exportação em CSV.',
+        'title' => 'Comece hoje. O seu eu de amanhã agradece.',
+        'subtitle' => 'Grátis. O Premium acrescenta o resumo com IA, vários lembretes por hábito e exportação em CSV.',
     ],
     'views' => [
         'week' => 'Semana',
         'year' => 'Ano',
         'life' => 'Vida',
-        'week_desc' => 'Cada célula é um dia',
-        'year_desc' => 'Cada célula é uma semana do seu ano de vida',
-        'life_desc' => 'Cada célula é um ano — 80 no total',
+        'week_desc' => 'Cada linha é um hábito',
+        'year_desc' => 'Cada célula é uma semana do ano',
+        'life_desc' => 'Cada célula é um ano',
         'week_n' => 'Semana :n',
         'age' => ':n anos',
-        'weeks_lived' => ':n semanas vividas',
-        'years_left' => ':n anos à frente',
+
     ],
     'footer' => [
-        'tagline' => '© :year :app. Silencioso por desenho.',
+        'tagline' => '© :year :app. Silencioso de propósito.',
         'telegram' => 'Telegram',
         'app' => 'Abrir o app',
     ],
