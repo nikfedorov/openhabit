@@ -93,7 +93,7 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Código abierto',
-        'title' => 'Construido en abierto. Tuyo para leer.',
+        'title' => 'Desarrollado en abierto. Puedes leer el código.',
         'body' => 'Cada línea de OpenHabit vive en GitHub bajo la licencia MIT. Léelo, audítalo, fórkalo, ejecútalo en tu propio servidor. Sin telemetría, sin bloqueo, sin sorpresas.',
         'cta' => 'Ver en GitHub',
         'license_link' => 'Leer la licencia',

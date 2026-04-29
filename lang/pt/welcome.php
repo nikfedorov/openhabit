@@ -40,7 +40,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Recursos',
-        'title' => 'Só o que você precisa. Nada além disso.',
+        'title' => 'Só o necessário, nada mais.',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -93,7 +93,7 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Código aberto',
-        'title' => 'Construído de forma transparente. Seu para ler.',
+        'title' => 'Desenvolvido em aberto. Você pode ler o código.',
         'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Leia, audite, faça fork, rode no seu próprio servidor. Sem telemetria, sem amarras, sem surpresas.',
         'cta' => 'Ver no GitHub',
         'license_link' => 'Ler a licença',

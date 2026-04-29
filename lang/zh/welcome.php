@@ -71,7 +71,7 @@ return [
     ],
     'how' => [
         'eyebrow' => '怎么用',
-        'title' => '三小步，没有阻力。',
+        'title' => '三小步，毫不费力。',
         'steps' => [
             [
                 'title' => '在 Telegram 中打开机器人',
