@@ -36,7 +36,7 @@ function makeMiniAppWebAppData(WebAppUser $user): WebAppData
 }
 
 it('loads telegram miniapp page', function (): void {
-    $this->get('/telegram-miniapp')
+    $this->get('/auth/telegram/miniapp')
         ->assertOk()
         ->assertSee('id="loading"', false);
 });

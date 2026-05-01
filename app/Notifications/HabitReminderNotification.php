@@ -55,7 +55,7 @@ final class HabitReminderNotification extends Notification implements SendsTeleg
 
         return $message->inlineRow(
             InlineKeyboardButton::make(text: __('telegram.mark_as_done'), callback_data: 'complete_habit:'.$this->habit->id),
-            InlineKeyboardButton::make(text: __('telegram.open_app'), web_app: WebAppInfo::make(url('/telegram-miniapp'))),
+            InlineKeyboardButton::make(text: __('telegram.open_app'), web_app: WebAppInfo::make(url('/auth/telegram/miniapp'))),
         );
     }
 }

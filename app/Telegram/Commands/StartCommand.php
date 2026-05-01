@@ -77,7 +77,7 @@ final class StartCommand extends Command
 
     private function buildWebAppKeyboard(): InlineKeyboardMarkup
     {
-        $webAppUrl = Config::string('app.url').'/telegram-miniapp';
+        $webAppUrl = Config::string('app.url').'/auth/telegram/miniapp';
 
         return InlineKeyboardMarkup::make()
             ->addRow(

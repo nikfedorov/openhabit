@@ -45,6 +45,6 @@ final class AiDigestNotification extends Notification implements SendsTelegramNo
             ->line(sprintf('<b>%s</b>', $this->date))
             ->line('')
             ->line(e($this->content ?? ''))
-            ->webAppButton(__('telegram.open_app_plain'), url('/telegram-miniapp'));
+            ->webAppButton(__('telegram.open_app_plain'), url('/auth/telegram/miniapp'));
     }
 }

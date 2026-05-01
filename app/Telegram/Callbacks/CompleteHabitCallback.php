@@ -78,7 +78,7 @@ final class CompleteHabitCallback
                 ),
                 InlineKeyboardButton::make(
                     text: __('telegram.open_app'),
-                    web_app: WebAppInfo::make(url('/telegram-miniapp')),
+                    web_app: WebAppInfo::make(url('/auth/telegram/miniapp')),
                 ),
             );
     }
