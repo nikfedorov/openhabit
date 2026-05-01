@@ -54,7 +54,7 @@ function increment() {
                 type="number"
                 min="1"
                 max="99"
-                class="w-16 rounded-xl border-0 bg-neutral-100 px-3 py-2 text-center text-sm font-medium text-neutral-900 transition-colors focus:bg-white focus:ring-2 focus:ring-green-500 dark:bg-neutral-800 dark:text-white dark:focus:bg-neutral-700"
+                class="w-16 rounded-lg border-0 bg-neutral-100 px-3 py-2 text-center text-sm font-medium text-neutral-900 transition-colors focus:bg-white focus:ring-2 focus:ring-green-500 dark:bg-neutral-800 dark:text-white dark:focus:bg-neutral-700"
             />
             <button
                 type="button"

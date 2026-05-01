@@ -339,9 +339,11 @@ onMounted(() => {
 <template>
     <div v-if="weekData || yearData || lifeData" :class="navDirection">
         <!-- Tab Navigation -->
-        <div class="mb-4 flex items-stretch gap-2">
+        <div
+            class="mb-4 flex items-stretch gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+        >
             <div
-                class="flex flex-1 gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+                class="flex flex-1 gap-1"
                 role="tablist"
                 aria-label="View range"
             >
@@ -367,15 +369,16 @@ onMounted(() => {
             </div>
 
             <!-- Share Story Button -->
-            <div
-                v-if="isTelegramStoryAvailable"
-                class="flex-shrink-0 self-stretch rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
-            >
+            <template v-if="isTelegramStoryAvailable">
+                <div
+                    class="my-1 w-px self-stretch bg-neutral-200 dark:bg-neutral-700"
+                    aria-hidden="true"
+                />
                 <button
                     type="button"
                     :disabled="isSharing"
                     data-testid="share-story-btn"
-                    class="flex h-full w-10 items-center justify-center rounded-md text-neutral-500 transition-all duration-150 hover:bg-white hover:text-neutral-700 hover:shadow-sm dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+                    class="flex w-10 items-center justify-center rounded-md text-neutral-500 transition-all duration-150 hover:bg-white hover:text-neutral-700 hover:shadow-sm dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
                     :class="{ 'pointer-events-none opacity-50': isSharing }"
                     @click="shareToStory"
                 >
@@ -390,7 +393,7 @@ onMounted(() => {
                         />
                     </svg>
                 </button>
-            </div>
+            </template>
         </div>
 
         <TransitionGroup

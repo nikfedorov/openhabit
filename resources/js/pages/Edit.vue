@@ -203,7 +203,7 @@ defineExpose({ reorderHabits });
 <template>
     <div v-if="!loading && translations">
         <!-- Page Header -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="mb-6 flex items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-neutral-900 dark:text-white">
                     {{ translations.habits }}
@@ -237,32 +237,51 @@ defineExpose({ reorderHabits });
         <!-- Empty State -->
         <div
             v-if="habits.length === 0 && franklinHabits.length === 0"
-            class="flex flex-col items-center justify-center py-16 text-center"
+            class="flex flex-col items-center justify-center px-8 py-16 text-center"
         >
-            <svg
-                class="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
+            <div
+                class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-neutral-800"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-            </svg>
-            <h2 class="text-sm font-medium text-neutral-900 dark:text-white">
+                <svg
+                    class="h-8 w-8 text-neutral-400 dark:text-neutral-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                </svg>
+            </div>
+            <h2
+                class="mb-1 text-lg font-semibold text-neutral-900 dark:text-white"
+            >
                 {{ translations.no_habits_yet }}
             </h2>
-            <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+            <p class="max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
                 {{ translations.create_first_habit }}
             </p>
             <button
                 type="button"
-                class="mt-4 text-sm font-medium text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                class="mt-5 inline-flex items-center gap-1.5 rounded-full bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
                 @click="navigateToCreate"
             >
+                <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
                 {{ translations.create_a_habit }}
             </button>
         </div>
