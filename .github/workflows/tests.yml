@@ -106,7 +106,7 @@ jobs:
           DB_HOST: 127.0.0.1
 
       - name: Extract PHP Coverage
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         run: |
           PHP_COV=$(php -r "
             \$xml = simplexml_load_file('coverage/clover.xml');
@@ -118,7 +118,7 @@ jobs:
           echo "PHP_COV=${PHP_COV}" >> $GITHUB_ENV
 
       - name: Extract Vue Coverage
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         run: |
           VUE_COV=$(node -e "
             const s = JSON.parse(require('fs').readFileSync('coverage/coverage-summary.json', 'utf8'));
@@ -127,7 +127,7 @@ jobs:
           echo "VUE_COV=${VUE_COV}" >> $GITHUB_ENV
 
       - name: Update PHP Coverage Badge
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         uses: Schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
@@ -140,7 +140,7 @@ jobs:
           minColorRange: 0
 
       - name: Update Vue Coverage Badge
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         uses: Schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
