@@ -211,3 +211,52 @@ it('filters correctly for withoutPremium scope', function (): void {
 
     expect(User::query()->withoutPremium()->count())->toBe(2);
 });
+
+// ─── currentDate ─────────────────────────────────────────────
+
+it('currentDate returns calendar date in user timezone', function (): void {
+    // 10 PM UTC is still the same calendar day for a user in UTC
+    $this->travelTo(now()->setTimezone('UTC')->setTime(22, 0, 0));
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '00:00:00']);
+
+    expect($user->currentDate()->toDateString())->toBe(now()->toDateString());
+});
+
+it('currentDate returns previous day when current time is before day_starts_at', function (): void {
+    $this->travelTo(now()->setTime(2, 0, 0)); // 2 AM UTC
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    expect($user->currentDate()->toDateString())->toBe(now()->subDay()->toDateString());
+});
+
+it('currentDate returns current day when current time equals day_starts_at', function (): void {
+    $this->travelTo(now()->setTime(3, 0, 0)); // exactly 3 AM UTC
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    expect($user->currentDate()->toDateString())->toBe(now()->toDateString());
+});
+
+it('currentDate returns current day when current time is after day_starts_at', function (): void {
+    $this->travelTo(now()->setTime(10, 0, 0)); // 10 AM UTC
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    expect($user->currentDate()->toDateString())->toBe(now()->toDateString());
+});
+
+it('currentDate considers user timezone together with day_starts_at', function (): void {
+    // UTC is 8 AM, but user is UTC+3 so local time is 11 AM; day starts at 03:00 local
+    $this->travelTo(now()->setTimezone('UTC')->setTime(8, 0, 0));
+    $user = User::factory()->create(['timezone' => 'Europe/Moscow', 'day_starts_at' => '03:00:00']); // UTC+3
+
+    // 11 AM local time, which is >= 03:00, so it's today in the user's timezone
+    expect($user->currentDate()->toDateString())->toBe(now()->setTimezone('Europe/Moscow')->toDateString());
+});
+
+it('currentDate falls back to UTC when timezone is null', function (): void {
+    $this->travelTo(now()->setTime(10, 0, 0));
+    // Test the null guard in currentDate() by creating the user and then nulling the timezone in memory
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '00:00:00']);
+    $user->timezone = null;
+
+    expect($user->currentDate()->toDateString())->toBe(now()->toDateString());
+});

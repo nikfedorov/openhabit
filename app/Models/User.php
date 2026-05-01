@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\Theme;
 use App\Observers\UserObserver;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -214,6 +215,34 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    // ─── Business Logic ──────────────────────────────────────────
+
+    /**
+     * Get the current date for this user, taking into account their timezone and day start time.
+     *
+     * If the current time in the user's timezone is before `day_starts_at`,
+     * the "current day" is considered to be the previous calendar day.
+     */
+    public function currentDate(): CarbonImmutable
+    {
+        $timezone = $this->timezone ?? 'UTC';
+        $now = CarbonImmutable::now($timezone);
+
+        if ($this->day_starts_at !== null) {
+            $parts = explode(':', $this->day_starts_at);
+            $hour = (int) $parts[0];
+            $minute = (int) $parts[1];
+
+            $dayStartTime = $now->setTime($hour, $minute, 0);
+
+            if ($now->lt($dayStartTime)) {
+                return $now->subDay()->startOfDay();
+            }
+        }
+
+        return $now->startOfDay();
     }
 
     // ─── Attributes ─────────────────────────────────────────────

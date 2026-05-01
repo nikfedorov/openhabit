@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'a11y' => [
+        'skip' => 'Saltar al contenido',
+        'primary_nav' => 'Principal',
+        'preview' => 'Vista previa de la app',
+        'lenses' => 'Visualizaciones',
+    ],
     'meta' => [
         'title' => 'OpenHabit · Hábitos que se quedan',
         'description' => 'Un rastreador de hábitos tranquilo, dentro de Telegram. Sigue tus hábitos diarios, semanales y mensuales, recibe recordatorios suaves, observa tus rachas y reflexiona con un resumen diario de IA.',
@@ -10,6 +16,8 @@ return [
     ],
     'nav' => [
         'features' => 'Funciones',
+        'news' => 'Novedades',
+        'menu' => 'Menú',
         'how' => 'Cómo funciona',
         'cta_telegram' => 'Abrir en Telegram',
         'cta_app' => 'Abrir la app',
@@ -49,7 +57,7 @@ return [
             ],
             'streaks' => [
                 'title' => 'Rachas y mapa de calor',
-                'body' => 'Tu constancia, de un vistazo. Una cuadrícula tranquila muestra los días en los que estuviste y los días en los que no. Sin juicios, solo la foto.',
+                'body' => 'Tu constancia, de un vistazo. La cuadrícula muestra los días en los que apareciste y los que no. Sin juicios, solo la imagen.',
             ],
             'reminders' => [
                 'title' => 'Recordatorios en Telegram',
@@ -126,6 +134,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. Tranquilo a propósito.',
         'telegram' => 'Telegram',
+        'news' => 'Canal de novedades',
         'app' => 'Abrir la app',
     ],
 ];

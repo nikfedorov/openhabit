@@ -52,7 +52,7 @@ final class SetTelegramMenuButtonJob implements ShouldQueue
             chat_id: (int) $user->telegram_id,
             menu_button: new MenuButtonWebApp(
                 text: __('telegram.open_app'),
-                web_app: WebAppInfo::make(Config::string('app.url').'/telegram-miniapp'),
+                web_app: WebAppInfo::make(Config::string('app.url').'/auth/telegram/miniapp'),
             ),
         );
     }

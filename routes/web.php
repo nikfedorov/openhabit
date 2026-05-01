@@ -17,9 +17,16 @@ Route::get('/', fn (): View => view('welcome', [
     'isLoggedIn' => auth()->check(),
 ]))->name('welcome');
 
-// Telegram Login Widget callback (browser redirect with auth params).
-Route::get('/auth/telegram/callback', TelegramWidgetController::class)
-    ->name('auth.telegram.callback');
+// Authentication
+Route::prefix('auth')->name('auth.')->group(function (): void {
+    // Telegram Login Widget callback (browser redirect with auth params)
+    Route::get('/telegram/callback', TelegramWidgetController::class)
+        ->name('telegram.callback');
+
+    // Telegram Mini App entry point
+    Route::get('/telegram/miniapp', fn (): View => view('auth/telegram-miniapp'))
+        ->name('telegram.miniapp');
+});
 
 // Export data download (signed URL, no auth required)
 Route::get('/export/{filename}', ExportDownloadController::class)
@@ -32,9 +39,6 @@ Route::middleware(InjectDevToken::class)->group(function (): void {
     Route::get('/app', fn (): View => view('app'))->name('app');
     Route::get('/app/{any}', fn (): View => view('app'))->where('any', '.*')->name('app.spa');
 });
-
-// Telegram Mini App auth
-Route::get('/telegram-miniapp', fn (): View => view('telegram-miniapp'))->name('telegram-miniapp');
 
 // Telegram webhook
 Route::post('/telegram/webhook', WebhookController::class)

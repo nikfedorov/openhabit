@@ -31,9 +31,10 @@ final readonly class GetTrackDataAction
 
     public function handle(User $user, ?string $dateInput = null): TrackData
     {
-        $date = $dateInput !== null ? CarbonImmutable::parse($dateInput) : CarbonImmutable::today();
-        if ($date->isFuture()) {
-            $date = CarbonImmutable::today();
+        $today = $user->currentDate();
+        $date = $dateInput !== null ? CarbonImmutable::parse($dateInput) : $today;
+        if ($date->toDateString() > $today->toDateString()) {
+            $date = $today;
         }
 
         $habitsData = $this->habitsData($user, $date);
@@ -49,12 +50,12 @@ final readonly class GetTrackDataAction
             date: $date->toDateString(),
             dayName: Str::ucfirst($date->isoFormat('dddd')),
             dateFormatted: $date->isoFormat('LL'),
-            isToday: $date->isToday(),
+            isToday: $date->toDateString() === $today->toDateString(),
             habits: $habitsData,
             totalHabits: $totalHabits,
             completedCount: $completedCount,
             dailyNoteContent: $dailyNoteContent ?? '',
-            activityData: $this->activityData($user),
+            activityData: $this->activityData($user, $today),
             translations: $this->translations(),
             aiDigest: $this->getAiDigest($user, $date),
         );
@@ -99,7 +100,7 @@ final readonly class GetTrackDataAction
     /**
      * @return array<int, DailyActivity>
      */
-    private function activityData(User $user): array
+    private function activityData(User $user, CarbonImmutable $today): array
     {
         /** @var array<int, array{date: string, percentage: float, completed: int, total: int, intensity: int}> $cached */
         $cached = Cache::remember(
@@ -108,7 +109,7 @@ final readonly class GetTrackDataAction
             callback: fn (): array => $user->stats()
                 ->select(['user_id', 'period_start', 'completed_count', 'planned_count'])
                 ->daily()
-                ->where('period_start', '>=', CarbonImmutable::today()->subDays(self::ACTIVITY_DAYS - 1)->toDateString())
+                ->where('period_start', '>=', $today->subDays(self::ACTIVITY_DAYS - 1)->toDateString())
                 ->orderBy('period_start')
                 ->get()
                 ->map(fn (Stat $stat): array => new DailyActivity(

@@ -98,3 +98,22 @@ it('returns empty arrays for empty habits', function (): void {
 
     expect($result->habits)->toBeEmpty();
 });
+
+it('uses provided today to mark isToday and isFuture correctly', function (): void {
+    Habit::factory()->daily()->for($this->user)->create();
+
+    $weekStart = now()->startOfWeek();
+    // Set "today" to Wednesday of the current week
+    $wednesday = $weekStart->copy()->addDays(2);
+    $thursday = $weekStart->copy()->addDays(3);
+
+    $result = $this->service->getFranklinGridData(loadHabits($this->user), $weekStart, $wednesday);
+
+    $wednesdayDay = collect($result->days)->firstWhere('date', $wednesday->toDateString());
+    $thursdayDay = collect($result->days)->firstWhere('date', $thursday->toDateString());
+
+    expect($wednesdayDay->isToday)->toBeTrue()
+        ->and($wednesdayDay->isFuture)->toBeFalse()
+        ->and($thursdayDay->isToday)->toBeFalse()
+        ->and($thursdayDay->isFuture)->toBeTrue();
+});

@@ -33,12 +33,12 @@ final readonly class HabitActivityService
      *
      * @param  EloquentCollection<int, Habit>  $habits
      */
-    public function getFranklinGridData(EloquentCollection $habits, ?CarbonInterface $weekStart = null): FranklinGridData
+    public function getFranklinGridData(EloquentCollection $habits, ?CarbonInterface $weekStart = null, ?CarbonInterface $today = null): FranklinGridData
     {
         $weekStart = ($weekStart ?? now())->startOfWeek();
         $weekEnd = $weekStart->copy()->endOfWeek();
 
-        $days = $this->buildWeekDays($weekStart);
+        $days = $this->buildWeekDays($weekStart, $today ?? today());
         $completionsByHabit = $this->loadCompletionsForHabits($habits, $weekStart, $weekEnd);
 
         $allHabits = [];
@@ -59,9 +59,8 @@ final readonly class HabitActivityService
      *
      * @return array<int, WeekDay>
      */
-    private function buildWeekDays(CarbonInterface $weekStart): array
+    private function buildWeekDays(CarbonInterface $weekStart, CarbonInterface $today): array
     {
-        $today = today();
         $days = [];
 
         for ($i = 0; $i < 7; $i++) {

@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'a11y' => [
+        'skip' => 'Skip to content',
+        'primary_nav' => 'Primary',
+        'preview' => 'App preview',
+        'lenses' => 'Visualizations',
+    ],
     'meta' => [
         'title' => 'OpenHabit · Build habits that stick',
         'description' => 'A quiet habit tracker that lives inside Telegram. Track daily, weekly, and monthly habits, get gentle reminders, watch your streaks grow, and reflect with a daily AI digest.',
@@ -11,6 +17,8 @@ return [
     'nav' => [
         'features' => 'Features',
         'how' => 'How it works',
+        'news' => 'News',
+        'menu' => 'Menu',
         'cta_telegram' => 'Open in Telegram',
         'cta_app' => 'Open the app',
         'theme_light' => 'Switch to light theme',
@@ -126,6 +134,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. Quiet by design.',
         'telegram' => 'Telegram',
+        'news' => 'News channel',
         'app' => 'Open the app',
     ],
 ];

@@ -105,3 +105,26 @@ it('includes daily note, activity data and ai digest', function (): void {
         ->and($data->aiDigest?->content)->toBe('digest')
         ->and($data->translations)->toHaveKey('last_n_days');
 });
+
+it('defaults to previous calendar day when current time is before day_starts_at', function (): void {
+    $this->travelTo(now()->setTime(2, 0, 0)); // 2 AM UTC
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    $data = resolve(GetTrackDataAction::class)->handle($user);
+
+    expect($data->date)->toBe(now()->subDay()->toDateString())
+        ->and($data->isToday)->toBeTrue();
+});
+
+it('clamps a date that is in the future from the user perspective to current day', function (): void {
+    $this->travelTo(now()->setTime(2, 0, 0)); // 2 AM UTC; user's "today" is yesterday
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    // From the user's perspective, calendar "today" (e.g. 2026-05-01) is a future date
+    $futureFromUserPerspective = now()->toDateString();
+
+    $data = resolve(GetTrackDataAction::class)->handle($user, $futureFromUserPerspective);
+
+    expect($data->date)->toBe(now()->subDay()->toDateString())
+        ->and($data->isToday)->toBeTrue();
+});

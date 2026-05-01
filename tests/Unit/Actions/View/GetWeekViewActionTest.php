@@ -35,3 +35,16 @@ it('returns week data for a specific week and includes ai digests', function ():
         ->and($data->aiDigests)->toHaveCount(1)
         ->and($data->aiDigests->first()?->content)->toBe('Weekly digest');
 });
+
+it('defaults to previous calendar week when current time is before day_starts_at', function (): void {
+    // 2 AM UTC on Monday; user's "today" is Sunday (previous calendar week)
+    $this->travelTo(now()->startOfWeek()->setTime(2, 0, 0));
+    $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '03:00:00']);
+
+    $data = resolve(GetWeekViewAction::class)->handle($user);
+
+    // The user's current date is Sunday (previous week from calendar perspective)
+    // isCurrent is true because this IS the user's current week
+    expect($data->isCurrent)->toBeTrue()
+        ->and($data->start)->toBe(now()->subWeek()->startOfWeek()->toDateString());
+});
