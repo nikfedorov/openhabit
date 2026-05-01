@@ -215,7 +215,7 @@ it('filters correctly for withoutPremium scope', function (): void {
 // ─── currentDate ─────────────────────────────────────────────
 
 it('currentDate returns calendar date in user timezone', function (): void {
-    // 10 PM UTC = next calendar day in UTC, but previous day in UTC-5
+    // 10 PM UTC is still the same calendar day for a user in UTC
     $this->travelTo(now()->setTimezone('UTC')->setTime(22, 0, 0));
     $user = User::factory()->create(['timezone' => 'UTC', 'day_starts_at' => '00:00:00']);
 
