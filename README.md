@@ -11,10 +11,10 @@ Habit tracker with AI integration and a Telegram bot.
 </div>
 
 <div align="center">
-  <img src="art/track.png" width="24%" alt="Track" />
-  <img src="art/week.png" width="24%" alt="Week" />
-  <img src="art/year.png" width="24%" alt="Year" />
-  <img src="art/life.png" width="24%" alt="Life" />
+  <img src="art/track.png" alt="Track" />
+  <img src="art/week.png" alt="Week" />
+  <img src="art/year.png" alt="Year" />
+  <img src="art/life.png" alt="Life" />
 </div>
 
 ## About
