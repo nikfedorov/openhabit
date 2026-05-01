@@ -1,9 +1,21 @@
+<div align="center">
+  <img src="public/favicon.svg" width="80" alt="OpenHabit" />
+
 # OpenHabit
 
 [![PHP Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nikfedorov/092caf1e443783b3fec1ce6486ae02d7/raw/openhabit-php-coverage.json)](https://github.com/nikfedorov/openhabit/actions/workflows/tests.yml)
 [![Vue Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nikfedorov/092caf1e443783b3fec1ce6486ae02d7/raw/openhabit-vue-coverage.json)](https://github.com/nikfedorov/openhabit/actions/workflows/tests.yml)
 
-A habit tracker with AI integration and a Telegram bot.
+Habit tracker with AI integration and a Telegram bot.
+
+</div>
+
+<div align="center">
+  <img src="art/track.png" width="24%" alt="Track" />
+  <img src="art/week.png" width="24%" alt="Week" />
+  <img src="art/year.png" width="24%" alt="Year" />
+  <img src="art/life.png" width="24%" alt="Life" />
+</div>
 
 ## About
 
