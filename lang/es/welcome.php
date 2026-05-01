@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'a11y' => [
+        'skip' => 'Saltar al contenido',
+        'primary_nav' => 'Principal',
+        'preview' => 'Vista previa de la app',
+        'lenses' => 'Visualizaciones',
+    ],
     'meta' => [
         'title' => 'OpenHabit · Hábitos que se quedan',
         'description' => 'Un rastreador de hábitos tranquilo, dentro de Telegram. Sigue tus hábitos diarios, semanales y mensuales, recibe recordatorios suaves, observa tus rachas y reflexiona con un resumen diario de IA.',

@@ -85,9 +85,15 @@
 </head>
 <body class="welcome antialiased text-neutral-900 dark:text-neutral-100">
 
+{{-- Skip link for keyboard / screen-reader users --}}
+<a href="#main"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-full focus:bg-neutral-900 focus:text-white focus:dark:bg-white focus:dark:text-neutral-900 focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none">
+    {{ __('welcome.a11y.skip') }}
+</a>
+
 {{-- Top navigation --}}
 <header class="fixed inset-x-0 top-0 z-20 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm sm:relative sm:bg-transparent sm:dark:bg-transparent sm:backdrop-blur-none">
-    <nav class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between gap-3">
+    <nav aria-label="{{ __('welcome.a11y.primary_nav') }}" class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between gap-3">
         <a href="/" class="flex items-center gap-2 group flex-shrink-0">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800/80 transition-transform duration-200 group-hover:scale-105">
                 <svg viewBox="0 0 512 512" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
@@ -262,12 +268,14 @@
     </div>
 </header>
 
+<main id="main" tabindex="-1" class="focus:outline-none">
+
 {{-- ─────────────────────────────────────────────────────────────────────────
      Hero. Generous breathing room. Restrained color: tinted neutrals + a
      single green accent on the title word and the live dot. The preview
      surface beneath uses a single bordered card (no nested cards).
    ───────────────────────────────────────────────────────────────────────── --}}
-<section class="relative">
+<section aria-labelledby="hero-heading" class="relative">
     <div class="hero-wash absolute inset-x-0 top-0 h-[480px] pointer-events-none" aria-hidden="true"></div>
 
     <div class="relative max-w-3xl mx-auto px-4 pt-[calc(4rem+72px)] pb-16 sm:pt-24 sm:pb-24">
@@ -280,7 +288,7 @@
                 {{ __('welcome.hero.badge') }}
             </span>
 
-            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]">
+            <h1 id="hero-heading" class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]">
                 {{ __('welcome.hero.title_pre') }}
                 <span class="text-green-600 dark:text-green-500">{{ __('welcome.hero.title_accent') }}</span>
             </h1>
@@ -323,9 +331,9 @@
         {{-- Preview surface. ONE card — not card-in-card. Hairline border,
              generous internal padding, the "Today" list and the heatmap share
              a single container, separated by a subtle rule. --}}
-        <div class="mt-16 sm:mt-20 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-neutral-900/60 backdrop-blur-[2px] p-5 sm:p-7 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_24px_48px_-24px_rgba(15,23,42,0.16)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-24px_rgba(0,0,0,0.7)]">
+        <div role="region" aria-label="{{ __('welcome.a11y.preview') }}" class="mt-16 sm:mt-20 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-neutral-900/60 backdrop-blur-[2px] p-5 sm:p-7 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_24px_48px_-24px_rgba(15,23,42,0.16)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-24px_rgba(0,0,0,0.7)]">
             <div class="flex items-baseline justify-between mb-5">
-                <h3 class="text-sm font-semibold tracking-tight">{{ __('welcome.preview.today') }}</h3>
+                <h2 class="text-sm font-semibold tracking-tight">{{ __('welcome.preview.today') }}</h2>
                 <span class="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.date') }}</span>
             </div>
             @php
@@ -381,7 +389,7 @@
                         'bg-green-600 dark:bg-green-500',
                     ];
                 @endphp
-                <div class="flex justify-center mb-3">
+                <div class="flex justify-center mb-3" aria-hidden="true">
                     <div class="grid gap-1"
                          style="grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px;">
                         @foreach ($intensities as $i)
@@ -389,7 +397,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="flex items-center justify-end gap-1">
+                <div class="flex items-center justify-end gap-1" aria-hidden="true">
                     <span class="me-1 text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.less') }}</span>
                     @foreach ([0, 1, 2, 3, 4] as $level)
                         <span class="h-3 w-3 rounded-[3px] {{ $heatShades[$level] }}"></span>
@@ -407,7 +415,7 @@
      bordered surface. Different visual densities deliberately vary the
      rhythm.
    ───────────────────────────────────────────────────────────────────────── --}}
-<section class="max-w-5xl mx-auto px-4 pb-20">
+<section aria-label="{{ __('welcome.a11y.lenses') }}" class="max-w-5xl mx-auto px-4 pb-20">
     @php
         // Mon=1 … Sun=7; Jan 6 2025 is a Monday (anchor for IntlDateFormatter)
         $weekDayLetters = [];
@@ -529,10 +537,10 @@
      Features. Editorial 2-column list with hairline dividers — no card grid.
      Icon as a small accent, not a heavy badge. Tighter rhythm than the hero.
    ───────────────────────────────────────────────────────────────────────── --}}
-<section id="features" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24">
+<section id="features" aria-labelledby="features-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24">
     <div class="reveal mb-12 max-w-2xl">
         <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.features.eyebrow') }}</p>
-        <h2 class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.features.title') }}</h2>
+        <h2 id="features-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.features.title') }}</h2>
     </div>
 
     <ul class="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10">
@@ -590,10 +598,10 @@
      How it works. Three steps shown as large display numerals — typography
      IS the ornament. No card backgrounds. Different rhythm again.
    ───────────────────────────────────────────────────────────────────────── --}}
-<section id="how" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+<section id="how" aria-labelledby="how-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
     <div class="reveal mb-14 max-w-2xl">
         <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.how.eyebrow') }}</p>
-        <h2 class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.how.title') }}</h2>
+        <h2 id="how-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.how.title') }}</h2>
     </div>
 
     @php $steps = (array) __('welcome.how.steps'); @endphp
@@ -621,12 +629,12 @@
      below. Restrained palette: tinted neutrals with a single green accent
      on the live dot and the mono labels.
    ───────────────────────────────────────────────────────────────────────── --}}
-<section id="open-source" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+<section id="open-source" aria-labelledby="open-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
     <div class="reveal mb-10 max-w-2xl">
         <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">
             {{ __('welcome.open.eyebrow') }}
         </p>
-        <h2 class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">
+        <h2 id="open-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">
             {{ __('welcome.open.title') }}
         </h2>
     </div>
@@ -705,9 +713,9 @@
 {{-- ─────────────────────────────────────────────────────────────────────────
      Final CTA. Just typography on the page surface — no card background.
    ───────────────────────────────────────────────────────────────────────── --}}
-<section class="max-w-3xl mx-auto px-4 py-24 sm:py-32 text-center border-t rule">
+<section aria-labelledby="cta-heading" class="max-w-3xl mx-auto px-4 py-24 sm:py-32 text-center border-t rule">
     <div class="reveal flex flex-col items-center gap-6">
-        <h2 class="text-4xl sm:text-5xl font-semibold tracking-[-0.025em] leading-[1.05] max-w-[20ch]">{{ __('welcome.cta.title') }}</h2>
+        <h2 id="cta-heading" class="text-4xl sm:text-5xl font-semibold tracking-[-0.025em] leading-[1.05] max-w-[20ch]">{{ __('welcome.cta.title') }}</h2>
         <p class="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[48ch]">
             {{ __('welcome.cta.subtitle') }}
         </p>
@@ -720,6 +728,8 @@
         </a>
     </div>
 </section>
+
+</main>
 
 {{-- Footer --}}
 <footer class="border-t rule">

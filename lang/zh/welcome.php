@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 return [
+    'a11y' => [
+        'skip' => '跳到内容',
+        'primary_nav' => '主导航',
+        'preview' => '应用预览',
+        'lenses' => '可视化',
+    ],
     'meta' => [
         'title' => 'OpenHabit · 让习惯真正留下来',
         'description' => '一个安静的习惯追踪器，住在你每天都会打开的 Telegram 里。记录每日、每周、每月的习惯，收到温柔的提醒，看着连续记录慢慢长出来，再用每天一份的 AI 摘要回顾自己。',
