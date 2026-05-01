@@ -33,6 +33,7 @@
         "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
     },
     "dependencies": {
+        "@sentry/vue": "^10.51.0",
         "@vueuse/core": "^14.3.0",
         "canvas-confetti": "^1.9.4",
         "html2canvas-pro": "^2.0.2",
