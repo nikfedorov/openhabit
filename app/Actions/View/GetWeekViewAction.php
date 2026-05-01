@@ -24,14 +24,15 @@ final readonly class GetWeekViewAction
 
     public function handle(User $user, ?string $weekStartInput = null): WeekData
     {
+        $today = $user->currentDate();
         $weekStart = $weekStartInput !== null
             ? Date::parse($weekStartInput)->startOfWeek()
-            : now()->startOfWeek();
+            : $today->startOfWeek();
 
         $weekEnd = $weekStart->copy()->endOfWeek();
         $habits = $this->getHabits($user, $weekStart, $weekEnd);
 
-        $gridData = $this->habitActivityService->getFranklinGridData($habits, $weekStart);
+        $gridData = $this->habitActivityService->getFranklinGridData($habits, $weekStart, $today);
 
         return new WeekData(
             start: $weekStart->toDateString(),
@@ -40,7 +41,7 @@ final readonly class GetWeekViewAction
             endFormatted: $weekEnd->isoFormat('MMM D'),
             endFormattedFull: $weekEnd->isoFormat('ll'),
             year: $weekStart->isoFormat('YYYY'),
-            isCurrent: $weekStart->toDateString() === now()->startOfWeek()->toDateString(),
+            isCurrent: $weekStart->toDateString() === $today->startOfWeek()->toDateString(),
             days: $gridData->days,
             habits: $gridData->habits,
             aiDigests: $this->getAiDigests($user, $weekStart->toDateString(), $weekEnd->toDateString()),

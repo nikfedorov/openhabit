@@ -90,3 +90,35 @@ it('returns habit not found when habit belongs to another user', function (): vo
 
     expect(HabitCompletion::query()->count())->toBe(0);
 });
+
+it('records completion for the previous calendar day when current time is before day_starts_at', function (): void {
+    $this->travelTo(now()->setTime(2, 0, 0)); // 2 AM UTC, before day starts at 03:00
+
+    $user = User::factory()->telegram()->create([
+        'telegram_id' => '12345',
+        'timezone' => 'UTC',
+        'day_starts_at' => '03:00:00',
+        'locale' => 'en',
+    ]);
+    $habit = Habit::factory()->create(['user_id' => $user->id]);
+
+    /** @var FakeNutgram $bot */
+    $bot = resolve(Nutgram::class);
+
+    $telegramUser = TelegramUser::make(
+        id: 12345,
+        is_bot: false,
+        first_name: 'Test',
+    );
+
+    $bot->setCommonUser($telegramUser)
+        ->hearCallbackQueryData('complete_habit:'.$habit->id)
+        ->reply()
+        ->assertSequence(
+            fn ($bot) => $bot->assertReply('editMessageReplyMarkup'),
+            fn ($bot) => $bot->assertReply('answerCallbackQuery'),
+        );
+
+    $completion = HabitCompletion::query()->where('habit_id', $habit->id)->first();
+    expect($completion?->completed_at->toDateString())->toBe(now()->subDay()->toDateString());
+});

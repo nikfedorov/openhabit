@@ -24,7 +24,7 @@ final class CompleteHabitCallback
     public function __invoke(Nutgram $bot, string $habitId): void
     {
         $habit = Habit::query()
-            ->with('user:id,timezone,locale')
+            ->with('user:id,timezone,locale,day_starts_at')
             ->whereRelation('user', 'telegram_id', (string) $bot->userId())
             ->find((int) $habitId);
 
@@ -36,7 +36,7 @@ final class CompleteHabitCallback
 
         $user = $habit->user;
         app()->setLocale($user->preferredLocale());
-        $today = now()->timezone($user->timezone ?? 'UTC')->toDateString();
+        $today = $user->currentDate()->toDateString();
 
         // Check if already completed today
         $alreadyCompleted = $habit->completions()
