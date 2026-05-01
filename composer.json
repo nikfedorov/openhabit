@@ -104,7 +104,7 @@
             "rector --dry-run --output-format=json",
             "bun run test:lint"
         ],
-        "test:app": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --exactly=100.0",
+        "test:app": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --coverage-clover coverage/clover.xml --exactly=100.0",
         "test:commands": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Commands --coverage --coverage-filter=app/Console/Commands --exactly=100.0",
         "test:actions": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Actions --coverage --coverage-filter=app/Actions --exactly=100.0",
         "test:jobs": "XDEBUG_MODE=\"coverage\" pest --parallel --configuration=phpunit-suites.xml --testsuite=Jobs --coverage --coverage-filter=app/Jobs --exactly=100.0",
