@@ -127,6 +127,8 @@ return [
     ],
     'footer' => [
         'tagline' => '© :year :app। शांत, जान-बूझकर।',
-        'telegram' => 'Telegram',        'news' => 'समाचार चैनल',        'app' => 'ऐप खोलें',
+        'telegram' => 'Telegram',
+        'news' => 'समाचार चैनल',
+        'app' => 'ऐप खोलें',
     ],
 ];
