@@ -177,7 +177,7 @@
 
     <div class="relative max-w-3xl mx-auto px-4 pt-16 pb-16 sm:pt-24 sm:pb-24">
         <div class="flex flex-col items-start gap-7">
-            <span class="animate-fade-in-up inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
+            <span class="inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
                 <span class="relative flex h-1.5 w-1.5">
                     <span class="absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-60 pulse-soft"></span>
                     <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500"></span>
@@ -185,18 +185,16 @@
                 {{ __('welcome.hero.badge') }}
             </span>
 
-            <h1 class="animate-fade-in-up text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]"
-                style="animation-delay:80ms">
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]">
                 {{ __('welcome.hero.title_pre') }}
                 <span class="text-green-600 dark:text-green-500">{{ __('welcome.hero.title_accent') }}</span>
             </h1>
 
-            <p class="animate-fade-in-up text-lg sm:text-xl text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[58ch]"
-               style="animation-delay:160ms">
+            <p class="text-lg sm:text-xl text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[58ch]">
                 {{ __('welcome.hero.subtitle') }}
             </p>
 
-            <div class="animate-fade-in-up flex flex-col sm:flex-row sm:items-center gap-3 mt-1" style="animation-delay:240ms">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-1">
                 <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
                     {{ $primaryLabel }}
@@ -230,8 +228,7 @@
         {{-- Preview surface. ONE card — not card-in-card. Hairline border,
              generous internal padding, the "Today" list and the heatmap share
              a single container, separated by a subtle rule. --}}
-        <div class="animate-fade-in-up mt-16 sm:mt-20 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-neutral-900/60 backdrop-blur-[2px] p-5 sm:p-7 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_24px_48px_-24px_rgba(15,23,42,0.16)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-24px_rgba(0,0,0,0.7)]"
-             style="animation-delay:340ms">
+        <div class="mt-16 sm:mt-20 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-neutral-900/60 backdrop-blur-[2px] p-5 sm:p-7 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_24px_48px_-24px_rgba(15,23,42,0.16)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-24px_rgba(0,0,0,0.7)]">
             <div class="flex items-baseline justify-between mb-5">
                 <h3 class="text-sm font-semibold tracking-tight">{{ __('welcome.preview.today') }}</h3>
                 <span class="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.date') }}</span>
