@@ -49,7 +49,7 @@ return [
             ],
             'streaks' => [
                 'title' => '连续与热力图',
-                'body' => '一眼就能看清自己的坚持。安静的活动网格显示你哪些日子来了，哪些没来。不评判，只是把画面摆在那里。',
+                'body' => '一眼就能看清自己的坚持。记录表清楚地显示你哪些日子来了，哪些没来。不评判，只是把画面摆在那里。',
             ],
             'reminders' => [
                 'title' => 'Telegram 提醒',
@@ -124,7 +124,7 @@ return [
 
     ],
     'footer' => [
-        'tagline' => '© :year :app。安静，是有意为之。',
+        'tagline' => '© :year :app。安静，本来如此。',
         'telegram' => 'Telegram',
         'app' => '打开应用',
     ],

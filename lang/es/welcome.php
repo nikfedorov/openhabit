@@ -49,7 +49,7 @@ return [
             ],
             'streaks' => [
                 'title' => 'Rachas y mapa de calor',
-                'body' => 'Tu constancia, de un vistazo. Una cuadrícula tranquila muestra los días en los que estuviste y los días en los que no. Sin juicios, solo la foto.',
+                'body' => 'Tu constancia, de un vistazo. La cuadrícula muestra los días en los que apareciste y los que no. Sin juicios, solo la imagen.',
             ],
             'reminders' => [
                 'title' => 'Recordatorios en Telegram',
