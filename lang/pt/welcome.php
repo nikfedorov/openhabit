@@ -10,6 +10,8 @@ return [
     ],
     'nav' => [
         'features' => 'Recursos',
+        'news' => 'Novidades',
+        'menu' => 'Menu',
         'how' => 'Como funciona',
         'cta_telegram' => 'Abrir no Telegram',
         'cta_app' => 'Abrir o app',
@@ -126,6 +128,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. Silencioso de propósito.',
         'telegram' => 'Telegram',
+        'news' => 'Canal de novidades',
         'app' => 'Abrir o app',
     ],
 ];

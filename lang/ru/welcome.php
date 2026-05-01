@@ -11,6 +11,8 @@ return [
     'nav' => [
         'features' => 'Возможности',
         'how' => 'Как это работает',
+        'news' => 'Новости',
+        'menu' => 'Меню',
         'cta_telegram' => 'Открыть в Telegram',
         'cta_app' => 'Открыть приложение',
         'theme_light' => 'Светлая тема',
@@ -126,6 +128,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. Создан быть тихим.',
         'telegram' => 'Telegram',
+        'news' => 'Канал новостей',
         'app' => 'Открыть приложение',
     ],
 ];

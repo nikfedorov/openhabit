@@ -10,6 +10,8 @@ return [
     ],
     'nav' => [
         'features' => 'المزايا',
+        'news' => 'الأخبار',
+        'menu' => 'القائمة',
         'how' => 'كيف يعمل',
         'cta_telegram' => 'فتح في Telegram',
         'cta_app' => 'فتح التطبيق',
@@ -126,6 +128,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. الهدوء عن قصد.',
         'telegram' => 'Telegram',
+        'news' => 'قناة الأخبار',
         'app' => 'فتح التطبيق',
     ],
 ];

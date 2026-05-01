@@ -10,6 +10,8 @@ return [
     ],
     'nav' => [
         'features' => 'क्या-क्या है',
+        'news' => 'समाचार',
+        'menu' => 'मेनू',
         'how' => 'काम कैसे करता है',
         'cta_telegram' => 'Telegram में खोलें',
         'cta_app' => 'ऐप खोलें',
@@ -125,7 +127,6 @@ return [
     ],
     'footer' => [
         'tagline' => '© :year :app। शांत, जान-बूझकर।',
-        'telegram' => 'Telegram',
-        'app' => 'ऐप खोलें',
+        'telegram' => 'Telegram',        'news' => 'समाचार चैनल',        'app' => 'ऐप खोलें',
     ],
 ];

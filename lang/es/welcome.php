@@ -10,6 +10,8 @@ return [
     ],
     'nav' => [
         'features' => 'Funciones',
+        'news' => 'Novedades',
+        'menu' => 'Menú',
         'how' => 'Cómo funciona',
         'cta_telegram' => 'Abrir en Telegram',
         'cta_app' => 'Abrir la app',
@@ -126,6 +128,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app. Tranquilo a propósito.',
         'telegram' => 'Telegram',
+        'news' => 'Canal de novedades',
         'app' => 'Abrir la app',
     ],
 ];

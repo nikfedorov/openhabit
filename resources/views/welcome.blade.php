@@ -8,6 +8,7 @@
     $primaryUrl = ($isLoggedIn || !$telegramUrl) ? $appUrl : $telegramUrl;
     $primaryLabel = ($isLoggedIn || !$telegramUrl) ? __('welcome.nav.cta_app') : __('welcome.nav.cta_telegram');
     $callbackUrl = url('/auth/telegram/callback');
+    $newsUrl = 'https://t.me/openhabit_news';
 @endphp
 <html lang="{{ str_replace('_', '-', $currentLocale) }}" @if ($isRtl) dir="rtl" @endif>
 <head>
@@ -85,7 +86,7 @@
 <body class="welcome antialiased text-neutral-900 dark:text-neutral-100">
 
 {{-- Top navigation --}}
-<header class="relative z-10">
+<header class="fixed inset-x-0 top-0 z-20 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm sm:relative sm:bg-transparent sm:dark:bg-transparent sm:backdrop-blur-none">
     <nav class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between gap-3">
         <a href="/" class="flex items-center gap-2 group flex-shrink-0">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800/80 transition-transform duration-200 group-hover:scale-105">
@@ -99,12 +100,20 @@
             <span class="font-semibold text-base tracking-tight">{{ config('app.name', 'OpenHabit') }}</span>
         </a>
 
-        <div class="flex items-center gap-1 sm:gap-2">
-            <a href="#features" class="hidden sm:inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+        {{-- Desktop nav (sm+) --}}
+        <div class="hidden sm:flex items-center gap-1 sm:gap-2">
+            <a href="#features" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.features') }}
             </a>
-            <a href="#how" class="hidden sm:inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+            <a href="#how" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.how') }}
+            </a>
+            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+                </svg>
+                {{ __('welcome.nav.news') }}
             </a>
 
             {{-- Language selector --}}
@@ -164,7 +173,93 @@
                 </svg>
             </a>
         </div>
+
+        {{-- Mobile burger toggle (sm hidden) --}}
+        <button type="button"
+                data-menu-toggle
+                aria-controls="mobile-menu"
+                aria-expanded="false"
+                aria-label="{{ __('welcome.nav.menu') }}"
+                class="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
+            <svg data-icon-burger class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16"/>
+            </svg>
+            <svg data-icon-close class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </button>
     </nav>
+
+    {{-- Mobile menu panel --}}
+    <div id="mobile-menu" data-menu-panel hidden
+         class="sm:hidden border-t rule bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col">
+            {{-- Primary links --}}
+            <a href="#features" data-menu-link
+               class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
+                {{ __('welcome.nav.features') }}
+            </a>
+            <a href="#how" data-menu-link
+               class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
+                {{ __('welcome.nav.how') }}
+            </a>
+            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
+                <svg class="w-4 h-4 text-green-600 dark:text-green-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+                </svg>
+                {{ __('welcome.nav.news') }}
+            </a>
+            <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+                GitHub
+            </a>
+
+            {{-- Language section --}}
+            <div class="mt-2 pt-3 border-t rule">
+                <p class="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500">
+                    {{ __('welcome.nav.language') }}
+                </p>
+                <div class="flex flex-wrap gap-1">
+                    @foreach (LocaleService::all() as $code => $label)
+                        <a href="{{ request()->fullUrlWithQuery(['lang' => $code]) }}"
+                           class="inline-flex items-center gap-1 px-2.5 py-1.5 text-[13px] rounded-full transition-colors duration-150 {{ $code === $currentLocale ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900' : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800' }}">
+                            <span>{{ $label }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Theme + CTA --}}
+            <div class="mt-3 pt-3 border-t rule flex items-center justify-between gap-3">
+                <button type="button"
+                        data-theme-toggle
+                        aria-label="{{ __('welcome.nav.theme_dark') }}"
+                        class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
+                    <svg class="w-4 h-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                    <svg class="w-4 h-4 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                    </svg>
+                    <span class="dark:hidden">{{ __('welcome.nav.theme_dark') }}</span>
+                    <span class="hidden dark:inline">{{ __('welcome.nav.theme_light') }}</span>
+                </button>
+
+                <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
+                    {{ $primaryLabel }}
+                    <svg class="w-3 h-3 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" aria-hidden="true">
+                        <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
 </header>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
@@ -175,7 +270,7 @@
 <section class="relative">
     <div class="hero-wash absolute inset-x-0 top-0 h-[480px] pointer-events-none" aria-hidden="true"></div>
 
-    <div class="relative max-w-3xl mx-auto px-4 pt-16 pb-16 sm:pt-24 sm:pb-24">
+    <div class="relative max-w-3xl mx-auto px-4 pt-[calc(4rem+72px)] pb-16 sm:pt-24 sm:pb-24">
         <div class="flex flex-col items-start gap-7">
             <span class="inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
                 <span class="relative flex h-1.5 w-1.5">
@@ -634,6 +729,12 @@
             @if ($telegramUrl)
                 <a href="{{ $telegramUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.telegram') }}</a>
             @endif
+            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+                </svg>
+                {{ __('welcome.footer.news') }}
+            </a>
             <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
@@ -650,21 +751,51 @@
 {{-- Theme toggle + language menu interactions --}}
 <script>
     (function () {
-        // Theme toggle
-        var btn = document.querySelector('[data-theme-toggle]');
-        if (btn) {
+        // Theme toggle (works for both desktop + mobile buttons)
+        var themeButtons = document.querySelectorAll('[data-theme-toggle]');
+        if (themeButtons.length) {
             var labelLight = @json(__('welcome.nav.theme_light'));
             var labelDark = @json(__('welcome.nav.theme_dark'));
             var sync = function () {
                 var isDark = document.documentElement.classList.contains('dark');
-                btn.setAttribute('aria-label', isDark ? labelLight : labelDark);
+                themeButtons.forEach(function (b) {
+                    b.setAttribute('aria-label', isDark ? labelLight : labelDark);
+                });
                 document.documentElement.style.backgroundColor = isDark ? '#0c0d0c' : '#fafaf7';
             };
             sync();
-            btn.addEventListener('click', function () {
-                var isDark = document.documentElement.classList.toggle('dark');
-                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
-                sync();
+            themeButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var isDark = document.documentElement.classList.toggle('dark');
+                    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                    sync();
+                });
+            });
+        }
+
+        // Mobile burger menu
+        var menuToggle = document.querySelector('[data-menu-toggle]');
+        var menuPanel = document.querySelector('[data-menu-panel]');
+        if (menuToggle && menuPanel) {
+            var iconBurger = menuToggle.querySelector('[data-icon-burger]');
+            var iconClose = menuToggle.querySelector('[data-icon-close]');
+            var setMenu = function (open) {
+                if (open) { menuPanel.removeAttribute('hidden'); } else { menuPanel.setAttribute('hidden', ''); }
+                menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (iconBurger && iconClose) {
+                    iconBurger.classList.toggle('hidden', open);
+                    iconClose.classList.toggle('hidden', !open);
+                }
+            };
+            menuToggle.addEventListener('click', function () {
+                setMenu(menuPanel.hasAttribute('hidden'));
+            });
+            // Close on in-page anchor click
+            menuPanel.querySelectorAll('a[href^="#"]').forEach(function (a) {
+                a.addEventListener('click', function () { setMenu(false); });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !menuPanel.hasAttribute('hidden')) { setMenu(false); }
             });
         }
 

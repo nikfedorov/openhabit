@@ -10,6 +10,8 @@ return [
     ],
     'nav' => [
         'features' => '功能',
+        'news' => '新闻',
+        'menu' => '菜单',
         'how' => '怎么用',
         'cta_telegram' => '在 Telegram 中打开',
         'cta_app' => '打开应用',
@@ -126,6 +128,7 @@ return [
     'footer' => [
         'tagline' => '© :year :app。安静，本来如此。',
         'telegram' => 'Telegram',
+        'news' => '新闻频道',
         'app' => '打开应用',
     ],
 ];
