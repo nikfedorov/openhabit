@@ -34,6 +34,9 @@ final class AddAiModelCommand extends Command
             label: 'Slug',
             default: Str::slug($name),
             required: true,
+            validate: fn (string $value): ?string => AiModel::query()->where('slug', $value)->exists()
+                ? sprintf('Slug "%s" is already taken.', $value)
+                : null,
         );
 
         $baseUrl = text(

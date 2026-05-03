@@ -52,6 +52,16 @@ it('auto-generates slug from name', function (): void {
     expect(AiModel::query()->where('slug', 'my-custom-model')->exists())->toBeTrue();
 });
 
+it('rejects a duplicate slug', function (): void {
+    AiModel::factory()->create(['slug' => 'gpt-4o']);
+
+    $this->artisan('app:add-ai-model')
+        ->expectsQuestion('Model name', 'GPT-4o')
+        ->expectsQuestion('Slug', 'gpt-4o')
+        ->expectsOutputToContain('Slug "gpt-4o" is already taken.')
+        ->assertFailed();
+});
+
 it('aborts when user declines confirmation', function (): void {
     $this->artisan('app:add-ai-model')
         ->expectsQuestion('Model name', 'GPT-4o')
