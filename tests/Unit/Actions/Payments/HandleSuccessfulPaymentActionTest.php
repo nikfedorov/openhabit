@@ -59,6 +59,26 @@ it('logs payment to the telegram-payments channel', function (): void {
         ->withArgs(fn (string $message): bool => str_contains($message, '500') && str_contains($message, 'XTR'));
 });
 
+it('is idempotent when the same charge id is delivered twice', function (): void {
+    $user = User::factory()->create(['subscription_expires_at' => null]);
+    $expirationDate = now()->addDays(30)->getTimestamp();
+    $attributes = successfulPaymentAttributes([
+        'subscription_expiration_date' => $expirationDate,
+        'is_recurring' => true,
+        'is_first_recurring' => true,
+        'telegram_payment_charge_id' => 'duplicate_charge',
+    ]);
+
+    $action = resolve(HandleSuccessfulPaymentAction::class);
+
+    $first = $action->handle(SuccessfulPayment::fromArray($attributes), $user);
+    $second = $action->handle(SuccessfulPayment::fromArray($attributes), $user);
+
+    expect($first)->toBeTrue()
+        ->and($second)->toBeFalse()
+        ->and(Payment::query()->where('telegram_payment_charge_id', 'duplicate_charge')->count())->toBe(1);
+});
+
 /**
  * @return array<string, bool|int|string|null>
  */
