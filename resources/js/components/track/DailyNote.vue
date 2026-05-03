@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTextareaAutosize } from '@vueuse/core';
 import { ref, computed, watch } from 'vue';
 import { apiFetch } from '@/utils/api';
 
@@ -14,6 +15,12 @@ const props = defineProps<{
 const dailyNote = ref(props.content);
 const processing = ref(false);
 const focused = ref(false);
+const textareaRef = ref<HTMLTextAreaElement>();
+
+useTextareaAutosize({
+    element: textareaRef,
+    input: computed(() => dailyNote.value),
+});
 
 const showButton = computed(() => focused.value || processing.value);
 
@@ -72,19 +79,14 @@ async function save() {
                 >
                     {{ noteLabel }}
                 </span>
-                <span
-                    v-if="processing"
-                    class="text-xs text-neutral-400 dark:text-neutral-500"
-                >
-                    {{ savingLabel }}
-                </span>
             </div>
             <textarea
+                ref="textareaRef"
                 v-model="dailyNote"
                 :placeholder="placeholder"
-                rows="3"
+                rows="1"
                 maxlength="5000"
-                class="w-full resize-none overflow-hidden rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
+                class="min-h-[5rem] w-full resize-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
                 @focus="onFocus"
                 @blur="onBlur"
             />
