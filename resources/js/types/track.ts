@@ -1,3 +1,5 @@
+import type { AiDigestItem } from './view';
+
 export type Habit = {
     id: number;
     name: string;
@@ -14,12 +16,6 @@ export type ActivityDay = {
     completed: number;
     total: number;
     intensity: number;
-};
-
-export type AiDigestItem = {
-    date: string;
-    dateLabel: string;
-    content: string | null;
 };
 
 export type TrackTranslations = {

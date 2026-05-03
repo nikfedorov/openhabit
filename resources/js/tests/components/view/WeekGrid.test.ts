@@ -12,6 +12,24 @@ beforeEach(() => {
     localStorage.clear();
 });
 
+function makeFranklinHabits(): GridHabit[] {
+    return [
+        makeGridHabit(),
+        makeGridHabit({
+            id: 2,
+            name: 'Temperance',
+            is_weekly_focus: true,
+            is_franklin_virtue: true,
+        }),
+        makeGridHabit({
+            id: 3,
+            name: 'Silence',
+            is_weekly_focus: false,
+            is_franklin_virtue: true,
+        }),
+    ];
+}
+
 describe('WeekGrid', () => {
     it('renders habit names and day headers', () => {
         const wrapper = mount(WeekGrid, {
@@ -133,21 +151,7 @@ describe('WeekGrid', () => {
         const wrapper = mount(WeekGrid, {
             props: {
                 days: makeDays(),
-                habits: [
-                    makeGridHabit(),
-                    makeGridHabit({
-                        id: 2,
-                        name: 'Temperance',
-                        is_weekly_focus: true,
-                        is_franklin_virtue: true,
-                    }),
-                    makeGridHabit({
-                        id: 3,
-                        name: 'Silence',
-                        is_weekly_focus: false,
-                        is_franklin_virtue: true,
-                    }),
-                ],
+                habits: makeFranklinHabits(),
                 translations: defaultWeekTranslations,
             },
         });
@@ -162,21 +166,7 @@ describe('WeekGrid', () => {
         const wrapper = mount(WeekGrid, {
             props: {
                 days: makeDays(),
-                habits: [
-                    makeGridHabit(),
-                    makeGridHabit({
-                        id: 2,
-                        name: 'Temperance',
-                        is_weekly_focus: true,
-                        is_franklin_virtue: true,
-                    }),
-                    makeGridHabit({
-                        id: 3,
-                        name: 'Silence',
-                        is_weekly_focus: false,
-                        is_franklin_virtue: true,
-                    }),
-                ],
+                habits: makeFranklinHabits(),
                 translations: defaultWeekTranslations,
             },
         });

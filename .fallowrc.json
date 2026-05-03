@@ -1,0 +1,21 @@
+{
+    "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+    "entry": [
+        "resources/js/app.ts",
+        "resources/css/app.css",
+        "resources/css/transitions.css",
+        "vite.config.ts",
+        "vitest.config.ts"
+    ],
+    "ignorePatterns": [
+        ".github/**",
+        "vendor/**",
+        "node_modules/**",
+        "public/build/**",
+        "coverage/**",
+        "storage/**",
+        "bootstrap/cache/**",
+        "**/*.d.ts",
+        "resources/js/api-schema.json"
+    ]
+}

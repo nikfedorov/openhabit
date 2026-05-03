@@ -103,73 +103,112 @@ async function shareToStory() {
     if (isSharing.value || !isTelegramStoryAvailable.value) return;
     isSharing.value = true;
     try {
-        const target =
-            document.getElementById('view-panel-week') ??
-            document.getElementById('view-panel-year') ??
-            document.getElementById('view-panel-life');
+        const target = findShareTarget();
         if (!target) return;
 
-        const { default: html2canvas } = await import('html2canvas-pro');
-        const isDark = document.documentElement.classList.contains('dark');
-        const bg = isDark ? '#171717' : '#ffffff';
+        const bg = getThemeBackground();
+        const canvas = await captureCanvas(target, bg);
+        const storyCanvas = composeStoryCanvas(canvas, bg);
 
-        const canvas = await html2canvas(target, {
-            backgroundColor: bg,
-            scale: 2,
-            useCORS: true,
-        });
+        const url = await uploadStoryImage(storyCanvas);
+        if (!url) return;
 
-        const storyCanvas = document.createElement('canvas');
-        storyCanvas.width = 1080;
-        storyCanvas.height = 1920;
-        const ctx = storyCanvas.getContext('2d')!;
-
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, 1080, 1920);
-
-        const padding = 40;
-        const ratio = Math.min(
-            (1080 - padding * 2) / canvas.width,
-            (1920 - padding * 2) / canvas.height,
-            1,
-        );
-        const drawW = Math.round(canvas.width * ratio);
-        const drawH = Math.round(canvas.height * ratio);
-
-        ctx.drawImage(
-            canvas,
-            Math.round((1080 - drawW) / 2),
-            Math.round((1920 - drawH) / 2),
-            drawW,
-            drawH,
-        );
-
-        const token = getToken();
-        const response = await fetch('/api/story/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify({ image: storyCanvas.toDataURL('image/png') }),
-        });
-
-        if (!response.ok) return;
-
-        const data = (await response.json()) as { url: string };
-        const params: Record<string, unknown> = {};
-        if (telegramBotUsername.value) {
-            params.widget_link = {
-                url: `https://t.me/${telegramBotUsername.value}`,
-                name: document.title,
-            };
-        }
-
-        window.Telegram!.WebApp!.shareToStory!(data.url, params);
+        window.Telegram!.WebApp!.shareToStory!(url, buildShareParams());
     } finally {
         isSharing.value = false;
     }
+}
+
+function findShareTarget(): HTMLElement | null {
+    return (
+        document.getElementById('view-panel-week') ??
+        document.getElementById('view-panel-year') ??
+        document.getElementById('view-panel-life')
+    );
+}
+
+function getThemeBackground(): string {
+    return document.documentElement.classList.contains('dark')
+        ? '#171717'
+        : '#ffffff';
+}
+
+async function captureCanvas(
+    target: HTMLElement,
+    bg: string,
+): Promise<HTMLCanvasElement> {
+    const { default: html2canvas } = await import('html2canvas-pro');
+    return html2canvas(target, {
+        backgroundColor: bg,
+        scale: 2,
+        useCORS: true,
+    });
+}
+
+function composeStoryCanvas(
+    source: HTMLCanvasElement,
+    bg: string,
+): HTMLCanvasElement {
+    const STORY_W = 1080;
+    const STORY_H = 1920;
+    const PADDING = 40;
+
+    const storyCanvas = document.createElement('canvas');
+    storyCanvas.width = STORY_W;
+    storyCanvas.height = STORY_H;
+
+    const ctx = storyCanvas.getContext('2d')!;
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, STORY_W, STORY_H);
+
+    const ratio = Math.min(
+        (STORY_W - PADDING * 2) / source.width,
+        (STORY_H - PADDING * 2) / source.height,
+        1,
+    );
+    const drawW = Math.round(source.width * ratio);
+    const drawH = Math.round(source.height * ratio);
+
+    ctx.drawImage(
+        source,
+        Math.round((STORY_W - drawW) / 2),
+        Math.round((STORY_H - drawH) / 2),
+        drawW,
+        drawH,
+    );
+
+    return storyCanvas;
+}
+
+async function uploadStoryImage(
+    storyCanvas: HTMLCanvasElement,
+): Promise<string | null> {
+    const token = getToken();
+    const response = await fetch('/api/story/upload', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ image: storyCanvas.toDataURL('image/png') }),
+    });
+
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as { url: string };
+    return data.url;
+}
+
+function buildShareParams(): Record<string, unknown> {
+    const params: Record<string, unknown> = {};
+    if (telegramBotUsername.value) {
+        params.widget_link = {
+            url: `https://t.me/${telegramBotUsername.value}`,
+            name: document.title,
+        };
+    }
+    return params;
 }
 
 function queryParam(key: string): string | undefined {

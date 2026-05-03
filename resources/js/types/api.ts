@@ -56,10 +56,6 @@ export type CommonData = {
     settings: UserSettings;
 };
 
-export type ApiResponse<T> = CommonData & {
-    data: T;
-};
-
 export type TrackApiResponse = CommonData & {
     data: Omit<TrackData, 'habits' | 'activityData'>;
     habits: Habit[];
