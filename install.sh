@@ -18,7 +18,7 @@ docker run --rm \
     -v "$(pwd):/var/www/html" \
     -w /var/www/html \
     composer:latest \
-    composer install --ignore-platform-reqs
+    composer install --ignore-platform-reqs --no-scripts
 
 echo -e "\n${bold}> sail build${normal}"
 vendor/bin/sail build
