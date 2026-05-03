@@ -21,7 +21,15 @@ final readonly class HandleSuccessfulPaymentAction
         $subscriptionExpiresAt = $this->subscriptionExpiresAt($payment);
 
         $activated = DB::transaction(function () use ($payment, $subscriptionExpiresAt, $user): bool {
-            Payment::query()->create($this->paymentAttributes($payment, $subscriptionExpiresAt, $user));
+            // Telegram may redeliver the same successful_payment update; key on the unique charge id to stay idempotent.
+            $record = Payment::query()->firstOrCreate(
+                ['telegram_payment_charge_id' => $payment->telegram_payment_charge_id],
+                $this->paymentAttributes($payment, $subscriptionExpiresAt, $user),
+            );
+
+            if (! $record->wasRecentlyCreated) {
+                return false;
+            }
 
             if (! $this->shouldActivatePremium($payment, $subscriptionExpiresAt)) {
                 return false;

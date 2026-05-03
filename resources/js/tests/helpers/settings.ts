@@ -61,18 +61,6 @@ export const defaultTrial: TrialData = {
     openInTelegramLabel: 'To upgrade, please open the app in Telegram.',
 };
 
-export const defaultSettings: UserSettings = {
-    locale: 'en',
-    theme: 'system',
-    moveCompletedToEnd: true,
-    timezone: 'UTC',
-    dayStartsAt: '03:00',
-    birthdate: null,
-    aiDigestTime: null,
-    aiToneId: null,
-    trial: defaultTrial,
-};
-
 export const defaultAiTones: AiTone[] = [
     {
         id: 1,
@@ -84,6 +72,18 @@ export const defaultAiTones: AiTone[] = [
     { id: 3, name: 'Caring', description: 'Warm tone', icon: 'heart' },
     { id: 4, name: 'Strict', description: 'Disciplined tone', icon: 'shield' },
 ];
+
+const defaultSettings: UserSettings = {
+    locale: 'en',
+    theme: 'system',
+    moveCompletedToEnd: true,
+    timezone: 'UTC',
+    dayStartsAt: '03:00',
+    birthdate: null,
+    aiDigestTime: null,
+    aiToneId: null,
+    trial: defaultTrial,
+};
 
 export function makeSettingsResponse(
     settingsOverrides: Partial<UserSettings> = {},

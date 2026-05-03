@@ -65,32 +65,49 @@ export function useSwipeToDelete({
         const dx = touch.clientX - startX;
         const dy = touch.clientY - startY;
 
-        if (!direction) {
-            if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
-            direction = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
-        }
+        if (!resolveDirection(dx, dy)) return;
 
         if (direction === 'vertical') {
-            swiping = false;
-            const content = contentEl.value;
-            if (content) {
-                content.style.willChange = '';
-            }
+            cancelSwipe();
             return;
         }
 
         if (e.cancelable) e.preventDefault();
 
-        const isRtl = getIsRtl();
-        let diff = dx;
-        if (isRtl) {
-            if (diff < 0) diff = 0;
-        } else {
-            if (diff > 0) diff = 0;
-        }
-
+        const diff = clampToSwipeAxis(dx, getIsRtl());
         currentX = diff;
+        applyTransform(diff);
+    }
 
+    /**
+     * Decides the gesture axis once the touch crosses the dead zone.
+     * Returns false while the gesture is still ambiguous.
+     */
+    function resolveDirection(dx: number, dy: number): boolean {
+        if (direction) return true;
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return false;
+        direction = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+        return true;
+    }
+
+    function cancelSwipe() {
+        swiping = false;
+        const content = contentEl.value;
+        if (content) {
+            content.style.willChange = '';
+        }
+    }
+
+    /**
+     * Restricts the gesture delta to the deletion direction (left in LTR,
+     * right in RTL).
+     */
+    function clampToSwipeAxis(dx: number, isRtl: boolean): number {
+        if (isRtl) return dx < 0 ? 0 : dx;
+        return dx > 0 ? 0 : dx;
+    }
+
+    function applyTransform(diff: number) {
         const content = contentEl.value;
         const deleteBtn = deleteBtnEl.value;
         if (content) {
@@ -116,21 +133,33 @@ export function useSwipeToDelete({
         const w = content.parentElement?.offsetWidth ?? content.offsetWidth;
 
         if (Math.abs(currentX) > w * 0.75) {
-            revealed = false;
-            content.style.transform = `translateX(${isRtl ? '' : '-'}${w.toString()}px)`;
-            onDeleteSwipe();
+            commitDelete(content, w, isRtl);
         } else if (Math.abs(currentX) > 48) {
-            revealed = true;
-            currentX = isRtl ? 48 : -48;
-            content.style.transform = `translateX(${(isRtl ? 48 : -48).toString()}px)`;
+            settleRevealed(content, isRtl);
         } else {
-            revealed = false;
-            currentX = 0;
-            content.style.transform = 'translateX(0)';
-            const deleteBtn = deleteBtnEl.value;
-            if (deleteBtn) {
-                deleteBtn.style.opacity = '0';
-            }
+            settleClosed(content);
+        }
+    }
+
+    function commitDelete(content: HTMLElement, width: number, isRtl: boolean) {
+        revealed = false;
+        content.style.transform = `translateX(${isRtl ? '' : '-'}${width.toString()}px)`;
+        onDeleteSwipe();
+    }
+
+    function settleRevealed(content: HTMLElement, isRtl: boolean) {
+        revealed = true;
+        currentX = isRtl ? 48 : -48;
+        content.style.transform = `translateX(${currentX.toString()}px)`;
+    }
+
+    function settleClosed(content: HTMLElement) {
+        revealed = false;
+        currentX = 0;
+        content.style.transform = 'translateX(0)';
+        const deleteBtn = deleteBtnEl.value;
+        if (deleteBtn) {
+            deleteBtn.style.opacity = '0';
         }
     }
 

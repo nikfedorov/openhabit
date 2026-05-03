@@ -52,21 +52,84 @@ function fireTouchEnd(el: HTMLElement) {
     el.dispatchEvent(new TouchEvent('touchend'));
 }
 
+/**
+ * Stubs `getComputedStyle` so the document's `direction` reads as RTL.
+ * Restored automatically via `vi.restoreAllMocks()` in the test.
+ */
+function mockRtl() {
+    const original = window.getComputedStyle;
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
+        const result = original(el);
+        if (el === document.documentElement) {
+            return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
+        }
+        return result;
+    });
+}
+
+type SwipeCallbacks = {
+    onDeleteSwipe?: ReturnType<typeof vi.fn>;
+    onDeleteTap?: ReturnType<typeof vi.fn>;
+};
+
+/**
+ * Mounts the composable with fresh DOM elements, wires the listeners and
+ * returns the produced refs and spies. Centralises the boilerplate shared
+ * by every behavioural test in this suite.
+ */
+function setupSwipe(callbacks: SwipeCallbacks = {}) {
+    const { content, deleteBtn, wrapper } = createElements();
+    const contentEl = ref<HTMLElement | null>(content);
+    const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
+    const onDeleteSwipe = callbacks.onDeleteSwipe ?? vi.fn();
+    const onDeleteTap = callbacks.onDeleteTap ?? vi.fn();
+
+    const swipe = useSwipeToDelete({
+        contentEl,
+        deleteBtnEl,
+        onDeleteSwipe,
+        onDeleteTap,
+    });
+    swipe.setup();
+
+    return {
+        content,
+        deleteBtn,
+        wrapper,
+        contentEl,
+        deleteBtnEl,
+        onDeleteSwipe,
+        onDeleteTap,
+        ...swipe,
+    };
+}
+
+/**
+ * Builds the composable without invoking `setup()`, optionally with a null
+ * delete button. Useful for tests that need to install spies or refs before
+ * the listeners are attached.
+ */
+function buildSwipe(opts: { withDeleteBtn?: boolean } = {}) {
+    const { content, deleteBtn } = createElements();
+    const contentEl = ref<HTMLElement | null>(content);
+    const deleteBtnEl = ref<HTMLElement | null>(
+        opts.withDeleteBtn === false ? null : deleteBtn,
+    );
+
+    const swipe = useSwipeToDelete({
+        contentEl,
+        deleteBtnEl,
+        onDeleteSwipe: vi.fn(),
+        onDeleteTap: vi.fn(),
+    });
+
+    return { content, deleteBtn, contentEl, deleteBtnEl, ...swipe };
+}
+
 describe('useSwipeToDelete', () => {
     it('sets up touch listeners on content element', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
+        const { content, setup } = buildSwipe();
         const spy = vi.spyOn(content, 'addEventListener');
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
         setup();
 
         expect(spy).toHaveBeenCalledWith('touchstart', expect.any(Function), {
@@ -79,37 +142,14 @@ describe('useSwipeToDelete', () => {
     });
 
     it('calls onDeleteTap when delete button is clicked', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-        const onDeleteTap = vi.fn();
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap,
-        });
-
-        setup();
+        const { content, deleteBtn, onDeleteTap } = setupSwipe();
         deleteBtn.click();
 
         expect(onDeleteTap).toHaveBeenCalledOnce();
     });
 
     it('resetSwipe resets transform to 0', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup, resetSwipe } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn, resetSwipe } = setupSwipe();
         content.style.transform = 'translateX(-48px)';
         deleteBtn.style.opacity = '1';
 
@@ -120,18 +160,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('cleans up listeners on cleanup call', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
+        const { content, setup, cleanup } = buildSwipe();
         const removeSpy = vi.spyOn(content, 'removeEventListener');
-
-        const { setup, cleanup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
 
         setup();
         cleanup();
@@ -151,18 +181,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('translates content left on horizontal swipe', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 140); // -60px (negative = left)
@@ -172,18 +191,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('does not translate content right (positive direction)', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 260); // +60px (right = blocked in LTR)
@@ -193,18 +201,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('reveals delete button on partial swipe (>48px)', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 140); // -60px > 48px threshold
@@ -214,18 +211,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('snaps back on small swipe (<48px)', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 175); // -25px < 48px threshold
@@ -236,19 +222,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('calls onDeleteSwipe on large swipe (>75% width)', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-        const onDeleteSwipe = vi.fn();
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe,
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn, onDeleteSwipe } = setupSwipe();
 
         fireTouchStart(content, 400);
         fireTouchMove(content, 80); // -320px > 75% of 400
@@ -258,18 +232,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('ignores vertical swipes', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200, 200);
         fireTouchMove(content, 200, 140); // vertical movement only
@@ -279,18 +242,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('ignores tiny movements below 5px threshold', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200, 200);
         fireTouchMove(content, 202, 201); // dx=2, dy=1 — both < 5
@@ -300,19 +252,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('does not call onDeleteSwipe if touchend without swiping', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-        const onDeleteSwipe = vi.fn();
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe,
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn, onDeleteSwipe } = setupSwipe();
 
         // Fire touchend without touchstart
         fireTouchEnd(content);
@@ -321,18 +261,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('ignores touchmove without prior touchstart', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         // Fire touchmove without touchstart — swiping is false
         fireTouchMove(content, 140);
@@ -373,18 +302,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles non-cancelable touchmove events', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
 
@@ -399,29 +317,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles RTL direction (blocks negative, allows positive)', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-        const onDeleteSwipe = vi.fn();
-
-        // Mock RTL direction
-        const originalGetComputedStyle = window.getComputedStyle;
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
-            const result = originalGetComputedStyle(el);
-            if (el === document.documentElement) {
-                return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
-            }
-            return result;
-        });
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe,
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        mockRtl();
+        const { content } = setupSwipe();
 
         // In RTL, swiping right (positive diff) should work
         fireTouchStart(content, 200);
@@ -438,27 +335,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('blocks left swipe in RTL mode', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const originalGetComputedStyle = window.getComputedStyle;
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
-            const result = originalGetComputedStyle(el);
-            if (el === document.documentElement) {
-                return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
-            }
-            return result;
-        });
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        mockRtl();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 140); // -60px (blocked in RTL)
@@ -470,28 +348,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('auto-deletes on large swipe in RTL mode', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-        const onDeleteSwipe = vi.fn();
-
-        const originalGetComputedStyle = window.getComputedStyle;
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
-            const result = originalGetComputedStyle(el);
-            if (el === document.documentElement) {
-                return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
-            }
-            return result;
-        });
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe,
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        mockRtl();
+        const { content, onDeleteSwipe } = setupSwipe();
 
         fireTouchStart(content, 50);
         fireTouchMove(content, 370); // +320px > 75% of 400
@@ -503,27 +361,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('adjusts start position when already revealed in RTL', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const originalGetComputedStyle = window.getComputedStyle;
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
-            const result = originalGetComputedStyle(el);
-            if (el === document.documentElement) {
-                return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
-            }
-            return result;
-        });
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        mockRtl();
+        const { content } = setupSwipe();
 
         // First swipe to reveal
         fireTouchStart(content, 200);
@@ -541,18 +380,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('adjusts start position when already revealed', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         // First swipe to reveal
         fireTouchStart(content, 200);
@@ -570,19 +398,8 @@ describe('useSwipeToDelete', () => {
     });
 
     it('sets up without delete button element', () => {
-        const { content } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(null);
-
+        const { content, setup } = buildSwipe({ withDeleteBtn: false });
         const spy = vi.spyOn(content, 'addEventListener');
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
         setup();
 
         // Content listeners are set up
@@ -593,17 +410,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('snaps back without delete button element', () => {
-        const { content } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(null);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
+        const { content, setup } = buildSwipe({ withDeleteBtn: false });
         setup();
 
         fireTouchStart(content, 200);
@@ -614,18 +421,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles content ref becoming null before touchend', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, contentEl } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 140);
@@ -638,18 +434,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles content ref becoming null during touchmove', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, contentEl } = setupSwipe();
 
         fireTouchStart(content, 200);
 
@@ -664,15 +449,7 @@ describe('useSwipeToDelete', () => {
         const { content, deleteBtn } = createElements();
         const contentEl = ref<HTMLElement | null>(content);
         const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const originalGetComputedStyle = window.getComputedStyle;
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
-            const result = originalGetComputedStyle(el);
-            if (el === document.documentElement) {
-                return { ...result, direction: 'rtl' } as CSSStyleDeclaration;
-            }
-            return result;
-        });
+        mockRtl();
 
         const { setup } = useSwipeToDelete({
             contentEl,
@@ -694,18 +471,10 @@ describe('useSwipeToDelete', () => {
     });
 
     it('cleans up without delete button element', () => {
-        const { content } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(null);
-
-        const removeSpy = vi.spyOn(content, 'removeEventListener');
-
-        const { setup, cleanup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
+        const { content, setup, cleanup } = buildSwipe({
+            withDeleteBtn: false,
         });
+        const removeSpy = vi.spyOn(content, 'removeEventListener');
 
         setup();
         cleanup();
@@ -717,18 +486,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles content ref null during touchstart', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, contentEl } = setupSwipe();
 
         // Null out content ref before dispatching touchstart
         contentEl.value = null;
@@ -738,18 +496,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('continues swiping when direction already determined', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, deleteBtn } = setupSwipe();
 
         fireTouchStart(content, 200);
         fireTouchMove(content, 190); // First move: determines direction as horizontal
@@ -759,18 +506,7 @@ describe('useSwipeToDelete', () => {
     });
 
     it('handles content ref null during vertical swipe detection', () => {
-        const { content, deleteBtn } = createElements();
-        const contentEl = ref<HTMLElement | null>(content);
-        const deleteBtnEl = ref<HTMLElement | null>(deleteBtn);
-
-        const { setup } = useSwipeToDelete({
-            contentEl,
-            deleteBtnEl,
-            onDeleteSwipe: vi.fn(),
-            onDeleteTap: vi.fn(),
-        });
-
-        setup();
+        const { content, contentEl } = setupSwipe();
 
         fireTouchStart(content, 200, 200);
 

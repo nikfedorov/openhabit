@@ -20,6 +20,37 @@ function mountPremiumModal(overrides: Partial<typeof defaultTrial> = {}) {
     });
 }
 
+function stubTelegramWebApp(openInvoice: (...args: unknown[]) => void) {
+    Object.defineProperty(window, 'Telegram', {
+        writable: true,
+        configurable: true,
+        value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
+    });
+}
+
+function clickUpgradeButton() {
+    const upgradeBtn = document.body.querySelector(
+        '[data-testid="premium-modal-upgrade"]',
+    ) as HTMLElement;
+    upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+}
+
+/**
+ * Mounts the modal with a stubbed Telegram WebApp that records calls to
+ * `openInvoice`, then triggers the upgrade click. Returns the wrapper plus
+ * the `openInvoice` mock and the status callback Telegram passes back.
+ */
+function setupInvoiceFlow(overrides?: Partial<typeof defaultTrial>) {
+    const openInvoice = vi.fn();
+    stubTelegramWebApp(openInvoice);
+    const wrapper = mountPremiumModal(overrides);
+    clickUpgradeButton();
+    const callback = openInvoice.mock.calls[0]?.[1] as
+        | ((status: string) => void)
+        | undefined;
+    return { wrapper, openInvoice, callback };
+}
+
 afterEach(() => {
     document.body.innerHTML = '';
     delete (window as unknown as Record<string, unknown>).Telegram;
@@ -88,20 +119,7 @@ describe('PremiumModal', () => {
     });
 
     it('opens the invoice in Telegram WebApp when available', async () => {
-        const openInvoice = vi.fn();
-
-        Object.defineProperty(window, 'Telegram', {
-            writable: true,
-            configurable: true,
-            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
-        });
-
-        mountPremiumModal();
-
-        const upgradeBtn = document.body.querySelector(
-            '[data-testid="premium-modal-upgrade"]',
-        ) as HTMLElement;
-        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        const { openInvoice } = setupInvoiceFlow();
         await nextTick();
 
         expect(openInvoice).toHaveBeenCalledWith(
@@ -116,24 +134,7 @@ describe('PremiumModal', () => {
     });
 
     it('emits payment-success when Telegram reports a paid invoice', async () => {
-        const openInvoice = vi.fn();
-
-        Object.defineProperty(window, 'Telegram', {
-            writable: true,
-            configurable: true,
-            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
-        });
-
-        const wrapper = mountPremiumModal();
-
-        const upgradeBtn = document.body.querySelector(
-            '[data-testid="premium-modal-upgrade"]',
-        ) as HTMLElement;
-        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-        const callback = openInvoice.mock.calls[0]?.[1] as
-            | ((status: string) => void)
-            | undefined;
+        const { wrapper, callback } = setupInvoiceFlow();
 
         expect(callback).toBeTypeOf('function');
 
@@ -144,24 +145,7 @@ describe('PremiumModal', () => {
     });
 
     it('does not emit payment-success when Telegram reports a non-paid status', async () => {
-        const openInvoice = vi.fn();
-
-        Object.defineProperty(window, 'Telegram', {
-            writable: true,
-            configurable: true,
-            value: { WebApp: { openInvoice, isVersionAtLeast: () => true } },
-        });
-
-        const wrapper = mountPremiumModal();
-
-        const upgradeBtn = document.body.querySelector(
-            '[data-testid="premium-modal-upgrade"]',
-        ) as HTMLElement;
-        upgradeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-        const callback = openInvoice.mock.calls[0]?.[1] as
-            | ((status: string) => void)
-            | undefined;
+        const { wrapper, callback } = setupInvoiceFlow();
 
         callback?.('cancelled');
         await nextTick();

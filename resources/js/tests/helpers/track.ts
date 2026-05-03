@@ -4,14 +4,6 @@ import type { UserSettings } from '@/types/api';
 import type { ActivityDay, Habit, TrackData } from '@/types/track';
 import { defaultTrial } from './settings';
 
-type TrackVm = {
-    data: { habits: Habit[]; completedCount: number } | null;
-};
-
-export function getTrackData(wrapper: ReturnType<typeof mount>) {
-    return (wrapper.vm as unknown as TrackVm).data;
-}
-
 export function deferredPromise<T = unknown>() {
     let resolve!: (value: T | PromiseLike<T>) => void;
     let reject!: (reason: unknown) => void;
@@ -92,7 +84,7 @@ export function makeHabits(count: number, completed: boolean): Habit[] {
     );
 }
 
-export const defaultTrackData: TrackData = {
+const defaultTrackData: TrackData = {
     date: '2026-04-06',
     dayName: 'Monday',
     dateFormatted: 'April 6, 2026',
