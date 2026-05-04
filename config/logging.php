@@ -126,6 +126,11 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'deprecations' => [
+            'driver' => 'monolog',
+            'handler' => NullHandler::class,
+        ],
+
         'telegram' => [
             'driver' => 'monolog',
             'handler' => TelegramMonologHandler::class,

@@ -220,6 +220,18 @@ final class User extends Authenticatable implements HasLocalePreference, MustVer
     // ─── Business Logic ──────────────────────────────────────────
 
     /**
+     * Return the hashed password value used for session cookie validation.
+     *
+     * Overridden to return an empty string instead of null for passwordless
+     * users (e.g. Telegram-only accounts) to avoid a PHP 8.1+ deprecation
+     * in hash_hmac() when the password column is null.
+     */
+    public function getAuthPassword(): string
+    {
+        return $this->password ?? '';
+    }
+
+    /**
      * Get the current date for this user, taking into account their timezone and day start time.
      *
      * If the current time in the user's timezone is before `day_starts_at`,
