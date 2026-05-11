@@ -38,7 +38,7 @@ return [
         'habits' => [
             'Morning meditation',
             'Read 30 min',
-            'Morning run',
+            'Daily run',
             'Workout',
             'No phone before bed',
             'Evening journal',
