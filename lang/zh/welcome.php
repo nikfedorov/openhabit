@@ -16,6 +16,7 @@ return [
     ],
     'nav' => [
         'features' => '功能',
+        'compare' => '对比',
         'news' => '新闻',
         'menu' => '菜单',
         'how' => '怎么用',
@@ -98,6 +99,35 @@ return [
     'cta' => [
         'title' => '今天就开始。未来的你，会替自己说一声谢谢。',
         'subtitle' => '免费使用。高级版增加 AI 摘要、每个习惯多个提醒，以及 CSV 导出。',
+    ],
+    'compare' => [
+        'eyebrow' => '对比',
+        'title' => '安静地与众不同。',
+        'subtitle' => '看看 OpenHabit 与人们常用的习惯追踪器相比表现如何。每一行都如实呈现，未经挑选。',
+        'caption' => '常见习惯追踪器对比',
+        'criterion' => '维度',
+        'us_tag' => '我们的选择',
+        'rows' => [
+            'telegram' => '活在 Telegram 中',
+            'open_source' => '开源',
+            'free' => '免费，无付费墙',
+            'free_habits' => '免费习惯数',
+            'ai' => 'AI 每日摘要',
+            'export' => '纯文本导出',
+            'cross' => '全平台可用',
+        ],
+        'cells' => [
+            'paid' => '付费',
+            'premium' => 'Premium',
+            'freemium' => 'Freemium',
+            'limited' => '受限',
+            'ios_only' => '仅 iOS',
+        ],
+        'a11y' => [
+            'yes' => '支持',
+            'no' => '不支持',
+        ],
+        'footnote' => '基于公开信息。产品名称为各自所有者的商标。',
     ],
     'open' => [
         'eyebrow' => '开源项目',

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Logging\TelegramMonologHandler;
+use Freshbitsweb\LaravelLogEnhancer\LogEnhancer;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -54,6 +55,13 @@ return [
     */
 
     'channels' => [
+
+        'production_stack' => [
+            'driver' => 'stack',
+            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'tap' => [LogEnhancer::class],
+            'ignore_exceptions' => false,
+        ],
 
         'stack' => [
             'driver' => 'stack',
@@ -122,6 +130,11 @@ return [
         ],
 
         'null' => [
+            'driver' => 'monolog',
+            'handler' => NullHandler::class,
+        ],
+
+        'deprecations' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],

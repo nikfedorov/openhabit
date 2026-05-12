@@ -29,7 +29,7 @@ final class UserFactory extends Factory
             'is_admin' => false,
             'subscription_expires_at' => null,
             'theme' => Theme::System,
-            'timezone' => 'UTC',
+            'timezone' => null,
             'locale' => null,
             'day_starts_at' => '00:00:00',
             'move_completed_to_end' => true,

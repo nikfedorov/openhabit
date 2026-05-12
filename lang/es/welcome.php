@@ -16,6 +16,7 @@ return [
     ],
     'nav' => [
         'features' => 'Funciones',
+        'compare' => 'Comparar',
         'news' => 'Novedades',
         'menu' => 'Menú',
         'how' => 'Cómo funciona',
@@ -98,6 +99,35 @@ return [
     'cta' => [
         'title' => 'Empieza hoy. Tu yo de mañana lo agradecerá.',
         'subtitle' => 'Gratis para usar. Premium suma el resumen con IA, varios recordatorios por hábito y exportación CSV.',
+    ],
+    'compare' => [
+        'eyebrow' => 'Comparativa',
+        'title' => 'Sutilmente distinto al resto.',
+        'subtitle' => 'Cómo se compara OpenHabit con los rastreadores que la gente suele elegir. No elegimos las filas a dedo.',
+        'caption' => 'Comparativa de rastreadores populares de hábitos',
+        'criterion' => 'Criterio',
+        'us_tag' => 'Nuestra elección',
+        'rows' => [
+            'telegram' => 'Vive en Telegram',
+            'open_source' => 'Código abierto',
+            'free' => 'Gratis, sin paywall',
+            'free_habits' => 'Hábitos gratuitos',
+            'ai' => 'Resumen diario con IA',
+            'export' => 'Exportación en texto plano',
+            'cross' => 'Funciona en todos los dispositivos',
+        ],
+        'cells' => [
+            'paid' => 'De pago',
+            'premium' => 'Premium',
+            'freemium' => 'Freemium',
+            'limited' => 'Limitada',
+            'ios_only' => 'Solo iOS',
+        ],
+        'a11y' => [
+            'yes' => 'Sí',
+            'no' => 'No',
+        ],
+        'footnote' => 'Según información pública. Los nombres de productos pertenecen a sus respectivos dueños.',
     ],
     'open' => [
         'eyebrow' => 'Código abierto',

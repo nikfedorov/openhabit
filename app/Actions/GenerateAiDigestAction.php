@@ -32,7 +32,7 @@ final readonly class GenerateAiDigestAction
      */
     public function handle(User $user): ?AiDigest
     {
-        $yesterday = CarbonImmutable::now($user->timezone)->subDay()->startOfDay();
+        $yesterday = CarbonImmutable::now($user->timezone ?? 'UTC')->subDay()->startOfDay();
 
         $user->loadMissing(['aiTone', 'memories']);
 

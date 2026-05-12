@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Schedule;
 // Send habit reminder notifications every 5 minutes
 Schedule::command('app:send-notifications')->everyFiveMinutes();
 
-// Generate and send AI daily digests every 15 minutes
-Schedule::command('app:send-ai-digests')->everyFifteenMinutes();
+// Generate and send AI daily digests every 5 minutes
+Schedule::command('app:send-ai-digests')->everyFiveMinutes();
 
 // Clean up old story images every hour
 Schedule::command('app:clean-story-images')->hourly();
