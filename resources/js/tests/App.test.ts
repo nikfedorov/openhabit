@@ -647,4 +647,134 @@ describe('App', () => {
 
         removeSpy.mockRestore();
     });
+
+    it('auto-detects timezone and PATCHes when user timezone is null', async () => {
+        const resolvedOptionsSpy = vi
+            .spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions')
+            .mockReturnValue({
+                timeZone: 'Europe/Berlin',
+            } as Intl.ResolvedDateTimeFormatOptions);
+        mockApiFetch.mockResolvedValue({ data: {} });
+
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: null,
+            trial: defaultTrial,
+        });
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                method: 'PATCH',
+                body: JSON.stringify({ timezone: 'Europe/Berlin' }),
+            }),
+            { silent: true },
+        );
+
+        resolvedOptionsSpy.mockRestore();
+    });
+
+    it('does not auto-detect timezone when it is already set', async () => {
+        mockApiFetch.mockResolvedValue({ data: {} });
+
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: 'America/New_York',
+            trial: defaultTrial,
+        });
+        await flushPromises();
+
+        expect(mockApiFetch).not.toHaveBeenCalled();
+    });
+
+    it('skips timezone auto-detect when Intl returns no timezone', async () => {
+        const resolvedOptionsSpy = vi
+            .spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions')
+            .mockReturnValue({
+                timeZone: '',
+            } as Intl.ResolvedDateTimeFormatOptions);
+        mockApiFetch.mockResolvedValue({ data: {} });
+
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: null,
+            trial: defaultTrial,
+        });
+        await flushPromises();
+
+        expect(mockApiFetch).not.toHaveBeenCalled();
+        resolvedOptionsSpy.mockRestore();
+    });
+
+    it('does not re-trigger timezone auto-detect when one is in-flight', async () => {
+        const resolvedOptionsSpy = vi
+            .spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions')
+            .mockReturnValue({
+                timeZone: 'Europe/Berlin',
+            } as Intl.ResolvedDateTimeFormatOptions);
+
+        let resolveFirst!: (value: unknown) => void;
+        mockApiFetch.mockImplementationOnce(
+            () =>
+                new Promise((resolve) => {
+                    resolveFirst = resolve;
+                }),
+        );
+
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: null,
+            trial: defaultTrial,
+        });
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: null,
+            trial: defaultTrial,
+        });
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledTimes(1);
+
+        resolveFirst({ data: {} });
+        resolvedOptionsSpy.mockRestore();
+    });
+
+    it('logs and swallows errors during timezone auto-detect', async () => {
+        const resolvedOptionsSpy = vi
+            .spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions')
+            .mockReturnValue({
+                timeZone: 'Europe/Berlin',
+            } as Intl.ResolvedDateTimeFormatOptions);
+        const consoleSpy = vi
+            .spyOn(console, 'error')
+            .mockImplementation(() => {});
+        mockApiFetch.mockRejectedValue(new Error('boom'));
+
+        const { wrapper } = await mountApp();
+        await emitTrackSettings(wrapper, {
+            locale: 'en',
+            theme: 'system',
+            timezone: null,
+            trial: defaultTrial,
+        });
+        await flushPromises();
+
+        expect(consoleSpy).toHaveBeenCalledWith(
+            'Failed to auto-detect timezone',
+            expect.any(Error),
+        );
+
+        consoleSpy.mockRestore();
+        resolvedOptionsSpy.mockRestore();
+    });
 });

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('subscription_expires_at')->nullable();
 
             $table->string('theme')->default('system');
-            $table->string('timezone')->default('UTC');
+            $table->string('timezone')->nullable();
             $table->string('locale', 10)->nullable();
 
             $table->time('day_starts_at')->default('03:00');

@@ -976,7 +976,7 @@ CREATE TABLE public.users (
     is_admin boolean DEFAULT false NOT NULL,
     subscription_expires_at timestamp(0) without time zone,
     theme character varying(255) DEFAULT 'system'::character varying NOT NULL,
-    timezone character varying(255) DEFAULT 'UTC'::character varying NOT NULL,
+    timezone character varying(255),
     locale character varying(10),
     day_starts_at time(0) without time zone DEFAULT '03:00:00'::time without time zone NOT NULL,
     move_completed_to_end boolean DEFAULT true NOT NULL,

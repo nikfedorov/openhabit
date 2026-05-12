@@ -11,6 +11,7 @@ import { useTrialUiState } from '@/composables/useTrialUiState';
 import type { UserSettings } from '@/types/api';
 import type { NavigationTranslations } from '@/types/navigation';
 import { prefersReducedMotion } from '@/utils/accessibility';
+import { apiFetch } from '@/utils/api';
 
 const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
 
@@ -70,6 +71,41 @@ function updateSettings(settings: UserSettings) {
     applyTheme(settings.theme);
 
     setTrialData(settings.trial);
+
+    if (settings.timezone === null) {
+        void autoDetectTimezone();
+    }
+}
+
+let timezoneAutoDetectInFlight = false;
+
+async function autoDetectTimezone() {
+    if (timezoneAutoDetectInFlight) {
+        return;
+    }
+
+    const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (!detected) {
+        return;
+    }
+
+    timezoneAutoDetectInFlight = true;
+
+    try {
+        await apiFetch(
+            '/api/settings',
+            {
+                method: 'PATCH',
+                body: JSON.stringify({ timezone: detected }),
+            },
+            { silent: true },
+        );
+    } catch (error) {
+        console.error('Failed to auto-detect timezone', error);
+    } finally {
+        timezoneAutoDetectInFlight = false;
+    }
 }
 
 async function handleTrialBannerDismiss() {
