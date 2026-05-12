@@ -111,6 +111,9 @@
             <a href="#features" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.features') }}
             </a>
+            <a href="#compare" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+                {{ __('welcome.nav.compare') }}
+            </a>
             <a href="#how" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.how') }}
             </a>
@@ -204,6 +207,10 @@
             <a href="#features" data-menu-link
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
                 {{ __('welcome.nav.features') }}
+            </a>
+            <a href="#compare" data-menu-link
+               class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
+                {{ __('welcome.nav.compare') }}
             </a>
             <a href="#how" data-menu-link
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
@@ -592,6 +599,103 @@
             </li>
         @endforeach
     </ul>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
+     Comparison. A plain editorial table — no card wrapper, hairline row
+     dividers, single bordered surface broken by rules. The OpenHabit
+     column is the only one that earns the green accent (header tag,
+     filled checks, mono pill text). Competitor columns stay restrained:
+     muted outlined check icons and a thin dash for absent features.
+     Variant labels ("MIT", "iOS only", "Premium") use the same mono
+     uppercase voice as the open-source section.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section id="compare" aria-labelledby="compare-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.compare.eyebrow') }}</p>
+        <h2 id="compare-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-3">{{ __('welcome.compare.title') }}</h2>
+        <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ __('welcome.compare.subtitle') }}</p>
+    </div>
+
+    <div class="reveal -mx-4 sm:mx-0 overflow-x-auto">
+        @php
+            // Truthful, public-info comparison. Cell values:
+            //   'yes' — full check (rendered the same for every column; fair)
+            //   'no'  — small × mark
+            //   ['label' => '…'] — qualifying tag (license, platform, tier, count)
+            //
+            // Columns: OpenHabit, Habitica, Streaks, Productive.
+            // Productive (apploft) is the freemium pick: 3-habit free tier.
+            $compareColumns = [
+                ['name' => 'OpenHabit',  'us' => true],
+                ['name' => 'Habitica',   'us' => false],
+                ['name' => 'Streaks',    'us' => false],
+                ['name' => 'Productive', 'us' => false],
+            ];
+            $compareRows = [
+                ['key' => 'telegram',    'cells' => ['yes', 'no', 'no', 'no']],
+                ['key' => 'open_source', 'cells' => [['label' => 'MIT'], ['label' => 'GPL'], 'no', 'no']],
+                ['key' => 'free',        'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.paid')], ['label' => __('welcome.compare.cells.freemium')]]],
+                ['key' => 'free_habits', 'cells' => [['label' => '∞'], ['label' => '∞'], ['label' => '24'], ['label' => '3']]],
+                ['key' => 'ai',          'cells' => [['label' => __('welcome.compare.cells.premium')], 'no', 'no', 'no']],
+                ['key' => 'export',      'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.limited')], ['label' => __('welcome.compare.cells.premium')]]],
+                ['key' => 'cross',       'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.ios_only')], 'yes']],
+            ];
+        @endphp
+
+        <table class="w-full min-w-[600px] sm:min-w-0 text-sm border-collapse px-4 sm:px-0" role="table">
+            <caption class="sr-only">{{ __('welcome.compare.caption') }}</caption>
+            <thead>
+                <tr class="text-left align-bottom [&>th:not(:first-child)]:text-center">
+                    <th scope="col" class="pb-5 ps-4 sm:ps-0 pe-3 sm:pe-4 w-[34%]">
+                        <span class="sr-only">{{ __('welcome.compare.criterion') }}</span>
+                    </th>
+                    @foreach ($compareColumns as $col)
+                        <th scope="col" class="pb-5 px-3 sm:px-4 font-normal">
+                            <span class="block text-[15px] font-semibold tracking-tight {{ $col['us'] ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400' }}">
+                                {{ $col['name'] }}
+                            </span>
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($compareRows as $row)
+                    <tr class="border-t rule">
+                        <th scope="row" class="py-4 ps-4 sm:ps-0 pe-3 sm:pe-4 text-left text-[14px] font-medium text-neutral-700 dark:text-neutral-200 leading-snug">
+                            {{ __('welcome.compare.rows.'.$row['key']) }}
+                        </th>
+                        @foreach ($row['cells'] as $i => $cell)
+                            @php $isUs = $compareColumns[$i]['us'] ?? false; @endphp
+                            <td class="py-4 px-3 sm:px-4 align-middle text-center">
+                                @if ($cell === 'yes')
+                                    {{-- Single, identical green check for every column — fair by default. --}}
+                                    <span class="inline-flex w-5 h-5 rounded-md items-center justify-center bg-green-500 text-white"
+                                          aria-label="{{ __('welcome.compare.a11y.yes') }}">
+                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </span>
+                                @elseif ($cell === 'no')
+                                    {{-- Muted × — not red, not loud. Honest absence, no judgment. --}}
+                                    <span class="inline-flex w-5 h-5 items-center justify-center text-neutral-300 dark:text-neutral-600"
+                                          aria-label="{{ __('welcome.compare.a11y.no') }}">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                                    </span>
+                                @elseif (is_array($cell))
+                                    <span class="inline-flex items-center font-mono uppercase tabular-nums {{ $cell['label'] === '∞' ? 'text-[24px] leading-none' : 'text-[11px] tracking-[0.16em]' }} {{ $isUs ? 'text-green-600 dark:text-green-500' : 'text-neutral-500 dark:text-neutral-400' }}">
+                                        {{ $cell['label'] }}
+                                    </span>
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    <p class="reveal mt-6 px-4 sm:px-0 text-[11px] text-neutral-400 dark:text-neutral-500 max-w-[60ch] leading-relaxed">
+        {{ __('welcome.compare.footnote') }}
+    </p>
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────

@@ -16,6 +16,7 @@ return [
     ],
     'nav' => [
         'features' => 'Features',
+        'compare' => 'Compare',
         'how' => 'How it works',
         'news' => 'News',
         'menu' => 'Menu',
@@ -98,6 +99,35 @@ return [
     'cta' => [
         'title' => 'Start today. Future you will be grateful.',
         'subtitle' => 'Free to use. Premium adds the AI digest, several reminders per habit, and CSV export.',
+    ],
+    'compare' => [
+        'eyebrow' => 'Compared',
+        'title' => 'Quietly different from the rest.',
+        'subtitle' => "How OpenHabit stacks up against the trackers people reach for. We didn't cherry-pick the rows.",
+        'caption' => 'Comparison of popular habit trackers',
+        'criterion' => 'Criterion',
+        'us_tag' => 'Our pick',
+        'rows' => [
+            'telegram' => 'Lives in Telegram',
+            'open_source' => 'Open source',
+            'free' => 'Free, no paywall',
+            'free_habits' => 'Free habits limit',
+            'ai' => 'AI daily digest',
+            'export' => 'Plain-text export',
+            'cross' => 'Works on every device',
+        ],
+        'cells' => [
+            'paid' => 'Paid',
+            'premium' => 'Premium',
+            'freemium' => 'Freemium',
+            'limited' => 'Limited',
+            'ios_only' => 'iOS only',
+        ],
+        'a11y' => [
+            'yes' => 'Supported',
+            'no' => 'Not supported',
+        ],
+        'footnote' => 'Based on publicly available information. Product names are trademarks of their respective owners.',
     ],
     'open' => [
         'eyebrow' => 'Open source',
