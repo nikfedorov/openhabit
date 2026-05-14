@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Notifications\Channels;
 
+use App\Actions\Telegram\FlagTelegramDeliveryFailure;
 use App\Models\User;
 use App\Notifications\Contracts\SendsTelegramNotification;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
@@ -16,18 +16,7 @@ use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
  */
 final readonly class TelegramChannel
 {
-    /**
-     * Map of Telegram error substrings to the user column we flag on match.
-     *
-     * @var array<string, string>
-     */
-    private const array DELIVERY_FAILURE_MAP = [
-        'bot was blocked by the user' => 'telegram_bot_blocked_at',
-        'user is deactivated' => 'telegram_user_deleted_at',
-        'chat not found' => 'telegram_user_deleted_at',
-    ];
-
-    public function __construct(private Nutgram $bot) {}
+    public function __construct(private Nutgram $bot, private FlagTelegramDeliveryFailure $flag) {}
 
     /**
      * Send the given notification.
@@ -71,19 +60,6 @@ final readonly class TelegramChannel
     private function handleTelegramException(TelegramException $e, object $notifiable): void
     {
         throw_unless($notifiable instanceof User, $e);
-
-        foreach (self::DELIVERY_FAILURE_MAP as $needle => $column) {
-            if (str_contains($e->getMessage(), $needle)) {
-                $notifiable->updateQuietly([$column => now()]);
-                Log::info('TelegramChannel: delivery failure', [
-                    'user_id' => $notifiable->id,
-                    'reason' => $needle,
-                ]);
-
-                return;
-            }
-        }
-
-        throw $e;
+        throw_unless($this->flag->handle($notifiable, $e), $e);
     }
 }
