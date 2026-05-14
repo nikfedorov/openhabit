@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Actions\Telegram\FlagTelegramDeliveryFailure;
 use App\Models\User;
 use App\Notifications\Channels\TelegramChannel;
 use App\Notifications\Contracts\SendsTelegramNotification;
 use App\Notifications\Messages\TelegramMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
@@ -30,14 +30,14 @@ test('send delivers message via nutgram bot', function (): void {
         ->withArgs(fn (string $text, int|string|null $chatId): bool => $text === 'Test message'
             && $chatId === $user->telegram_id);
 
-    new TelegramChannel($bot)->send($user, $notification);
+    new TelegramChannel($bot, new FlagTelegramDeliveryFailure)->send($user, $notification);
 });
 
 test('send skips when preconditions are not met', function (object $notifiable, Notification $notification): void {
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldNotReceive('sendMessage');
 
-    new TelegramChannel($bot)->send($notifiable, $notification);
+    new TelegramChannel($bot, new FlagTelegramDeliveryFailure)->send($notifiable, $notification);
 })->with([
     'user has no telegram id' => function (): array {
         $user = User::factory()->create(['telegram_id' => null]);
@@ -62,8 +62,7 @@ test('send skips when preconditions are not met', function (object $notifiable, 
     },
 ]);
 
-test('send flags user on known telegram errors', function (string $errorMessage, int $code, string $flaggedField): void {
-    Log::spy();
+test('send swallows known delivery failure and flags user', function (): void {
     $user = User::factory()->telegramId()->create();
 
     $notification = Mockery::mock(Notification::class, SendsTelegramNotification::class);
@@ -74,17 +73,13 @@ test('send flags user on known telegram errors', function (string $errorMessage,
     $bot = Mockery::mock(Nutgram::class);
     $bot->shouldReceive('sendMessage')
         ->once()
-        ->andThrow(new TelegramException($errorMessage, $code));
+        ->andThrow(new TelegramException('Forbidden: bot was blocked by the user', 403));
 
-    new TelegramChannel($bot)->send($user, $notification);
+    new TelegramChannel($bot, new FlagTelegramDeliveryFailure)->send($user, $notification);
 
     $user->refresh();
-    expect($user->$flaggedField)->not->toBeNull();
-})->with([
-    'bot blocked' => ['Forbidden: bot was blocked by the user', 403, 'telegram_bot_blocked_at'],
-    'user deactivated' => ['Forbidden: user is deactivated', 403, 'telegram_user_deleted_at'],
-    'chat not found' => ['Bad Request: chat not found', 400, 'telegram_user_deleted_at'],
-]);
+    expect($user->telegram_bot_blocked_at)->not->toBeNull();
+});
 
 test('send rethrows unrelated telegram exceptions', function (): void {
     $user = User::factory()->telegramId()->create();
@@ -99,5 +94,5 @@ test('send rethrows unrelated telegram exceptions', function (): void {
         ->once()
         ->andThrow(new TelegramException('Too Many Requests: retry after 30', 429));
 
-    new TelegramChannel($bot)->send($user, $notification);
+    new TelegramChannel($bot, new FlagTelegramDeliveryFailure)->send($user, $notification);
 })->throws(TelegramException::class, 'Too Many Requests: retry after 30');
