@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace App\Actions\Telegram;
 
 use App\Models\User;
+use Closure;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
 /**
- * Checks if a TelegramException is a known delivery failure and, if so,
- * flags the user's account accordingly.
+ * Detects known Telegram delivery failures (blocked bot, deactivated user,
+ * missing chat) and flags the affected user's account.
  *
- * Returns true when the exception is a known failure (caller should swallow it),
- * false otherwise (caller should re-throw).
+ * Returns true when the exception is a known failure so the caller can
+ * swallow it; false otherwise so the caller can re-throw.
  */
 final readonly class FlagTelegramDeliveryFailure
 {
     /**
-     * Map of Telegram error substrings to the user column we flag on match.
+     * Telegram error message substrings mapped to the user column we flag.
      *
      * @var array<string, string>
      */
@@ -29,23 +30,29 @@ final readonly class FlagTelegramDeliveryFailure
     ];
 
     /**
-     * Returns true when the exception is a known delivery failure.
-     * If a user is supplied, flags their account and logs the event.
+     * The user resolver is only invoked when the exception matches a known
+     * failure, so callers can defer (potentially expensive) DB lookups.
+     *
+     * @param  Closure(): ?User  $resolveUser
      */
-    public function handle(?User $user, TelegramException $e): bool
+    public function handle(TelegramException $e, Closure $resolveUser): bool
     {
         foreach (self::DELIVERY_FAILURE_MAP as $needle => $column) {
-            if (str_contains($e->getMessage(), $needle)) {
-                if ($user instanceof User) {
-                    $user->updateQuietly([$column => now()]);
-                    Log::info('Telegram: delivery failure', [
-                        'user_id' => $user->id,
-                        'reason' => $needle,
-                    ]);
-                }
-
-                return true;
+            if (! str_contains($e->getMessage(), $needle)) {
+                continue;
             }
+
+            $user = $resolveUser();
+
+            if ($user instanceof User) {
+                $user->updateQuietly([$column => now()]);
+                Log::info('Telegram: delivery failure', [
+                    'user_id' => $user->id,
+                    'reason' => $needle,
+                ]);
+            }
+
+            return true;
         }
 
         return false;

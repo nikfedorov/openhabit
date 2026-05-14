@@ -13,120 +13,42 @@ beforeEach(function (): void {
     Queue::fake();
 });
 
-test('rethrows unrelated telegram exceptions', function (): void {
-    $bot = Mockery::mock(Nutgram::class);
-    $bot->shouldReceive('userId')->andReturn(12345);
-
-    expect(fn () => (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Too Many Requests: retry after 30', 429)))
-        ->toThrow(TelegramException::class, 'Too Many Requests');
-});
-
-test('rethrows non-telegram exceptions', function (): void {
-    $bot = Mockery::mock(Nutgram::class);
-
-    expect(fn () => (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new RuntimeException('Something went wrong')))
-        ->toThrow(RuntimeException::class, 'Something went wrong');
-});
-
-test('does nothing when userId returns empty', function (): void {
-    $bot = Mockery::mock(Nutgram::class);
-    $bot->shouldReceive('userId')->andReturn(0);
-
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
-
-    expect(User::query()->whereNotNull('telegram_bot_blocked_at')->count())->toBe(0);
-});
-
-
-beforeEach(function (): void {
-    Queue::fake();
-});
-
-/**
- * @return MockInterface&Nutgram
- */
-function mockBotWithUserId(string $telegramId): MockInterface
+function deliveryFailureHandler(): DeliveryFailureHandler
 {
-    $bot = Mockery::mock(Nutgram::class);
-    $bot->shouldReceive('userId')->andReturn((int) $telegramId);
-
-    return $bot;
+    return new DeliveryFailureHandler(new FlagTelegramDeliveryFailure);
 }
 
-test('flags telegram_bot_blocked_at when bot is blocked by user', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_bot_blocked_at' => null]);
-
-    $bot = mockBotWithUserId($user->telegram_id);
-
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
-
-    $user->refresh();
-    expect($user->telegram_bot_blocked_at)->not->toBeNull();
+test('rethrows non-telegram exceptions untouched', function (): void {
+    expect(fn () => (deliveryFailureHandler())(Mockery::mock(Nutgram::class), new RuntimeException('boom')))
+        ->toThrow(RuntimeException::class, 'boom');
 });
 
-test('flags telegram_user_deleted_at when user is deactivated', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_user_deleted_at' => null]);
-
-    $bot = mockBotWithUserId($user->telegram_id);
-
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Forbidden: user is deactivated', 403));
-
-    $user->refresh();
-    expect($user->telegram_user_deleted_at)->not->toBeNull();
-});
-
-test('flags telegram_user_deleted_at when chat not found', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_user_deleted_at' => null]);
-
-    $bot = mockBotWithUserId($user->telegram_id);
-
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Bad Request: chat not found', 400));
-
-    $user->refresh();
-    expect($user->telegram_user_deleted_at)->not->toBeNull();
-});
-
-test('rethrows unrelated telegram exceptions', function (): void {
+test('rethrows telegram exceptions that are not known delivery failures', function (): void {
+    // Note: bot->userId() must NOT be called for unknown errors — the user
+    // lookup is deferred until the action matches a known failure.
     $bot = Mockery::mock(Nutgram::class);
-    $bot->shouldReceive('userId')->andReturn(12345);
+    $bot->shouldNotReceive('userId');
 
-    expect(fn () => (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Too Many Requests: retry after 30', 429)))
+    expect(fn () => (deliveryFailureHandler())($bot, new TelegramException('Too Many Requests: retry after 30', 429)))
         ->toThrow(TelegramException::class, 'Too Many Requests');
 });
 
-test('rethrows non-telegram exceptions', function (): void {
-    $bot = Mockery::mock(Nutgram::class);
+test('resolves user by telegram_id and flags them on known delivery failure', function (): void {
+    $user = User::factory()->telegram()->create(['telegram_bot_blocked_at' => null]);
 
-    expect(fn () => (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new RuntimeException('Something went wrong')))
-        ->toThrow(RuntimeException::class, 'Something went wrong');
+    $bot = Mockery::mock(Nutgram::class);
+    $bot->shouldReceive('userId')->andReturn((int) $user->telegram_id);
+
+    (deliveryFailureHandler())($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
+
+    expect($user->fresh()->telegram_bot_blocked_at)->not->toBeNull();
 });
 
-test('does nothing when userId returns empty', function (): void {
-    Log::spy();
+test('swallows known delivery failures even when userId is missing', function (): void {
     $bot = Mockery::mock(Nutgram::class);
-    $bot->shouldReceive('userId')->andReturn(0);
+    $bot->shouldReceive('userId')->andReturn(null);
 
-    // Should not throw and not touch the database
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
+    (deliveryFailureHandler())($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
 
     expect(User::query()->whereNotNull('telegram_bot_blocked_at')->count())->toBe(0);
-});
-
-test('logs delivery failure with user id and reason', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create();
-
-    $bot = mockBotWithUserId($user->telegram_id);
-
-    (new DeliveryFailureHandler(new FlagTelegramDeliveryFailure))($bot, new TelegramException('Forbidden: bot was blocked by the user', 403));
-
-    Log::shouldHaveReceived('info')
-        ->once()
-        ->with('Telegram: delivery failure', [
-            'user_id' => $user->id,
-            'reason' => 'bot was blocked by the user',
-        ]);
 });

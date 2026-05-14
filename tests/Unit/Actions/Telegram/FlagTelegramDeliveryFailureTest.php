@@ -10,61 +10,58 @@ use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
 beforeEach(function (): void {
     Queue::fake();
-});
-
-it('flags telegram_bot_blocked_at and returns true when bot is blocked', function (): void {
     Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_bot_blocked_at' => null]);
-
-    $result = (new FlagTelegramDeliveryFailure)->handle($user, new TelegramException('Forbidden: bot was blocked by the user', 403));
-
-    expect($result)->toBeTrue();
-    $user->refresh();
-    expect($user->telegram_bot_blocked_at)->not->toBeNull();
 });
 
-it('flags telegram_user_deleted_at and returns true when user is deactivated', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_user_deleted_at' => null]);
+it('flags the matching user column for each known delivery failure', function (string $message, string $column): void {
+    $user = User::factory()->telegram()->create([$column => null]);
 
-    $result = (new FlagTelegramDeliveryFailure)->handle($user, new TelegramException('Forbidden: user is deactivated', 403));
+    $result = (new FlagTelegramDeliveryFailure)->handle(
+        new TelegramException($message, 400),
+        fn (): User => $user,
+    );
 
-    expect($result)->toBeTrue();
-    $user->refresh();
-    expect($user->telegram_user_deleted_at)->not->toBeNull();
+    expect($result)->toBeTrue()
+        ->and($user->fresh()->{$column})->not->toBeNull();
+})->with([
+    'bot blocked' => ['Forbidden: bot was blocked by the user', 'telegram_bot_blocked_at'],
+    'user deactivated' => ['Forbidden: user is deactivated', 'telegram_user_deleted_at'],
+    'chat not found' => ['Bad Request: chat not found', 'telegram_user_deleted_at'],
+]);
+
+it('returns false and skips user resolution for unknown exceptions', function (): void {
+    $resolverCalled = false;
+
+    $result = (new FlagTelegramDeliveryFailure)->handle(
+        new TelegramException('Too Many Requests: retry after 30', 429),
+        function () use (&$resolverCalled): ?User {
+            $resolverCalled = true;
+
+            return null;
+        },
+    );
+
+    expect($result)->toBeFalse()
+        ->and($resolverCalled)->toBeFalse();
 });
 
-it('flags telegram_user_deleted_at and returns true when chat not found', function (): void {
-    Log::spy();
-    $user = User::factory()->telegram()->create(['telegram_user_deleted_at' => null]);
-
-    $result = (new FlagTelegramDeliveryFailure)->handle($user, new TelegramException('Bad Request: chat not found', 400));
-
-    expect($result)->toBeTrue();
-    $user->refresh();
-    expect($user->telegram_user_deleted_at)->not->toBeNull();
-});
-
-it('returns false for unknown exceptions', function (): void {
-    $user = User::factory()->telegram()->create();
-
-    $result = (new FlagTelegramDeliveryFailure)->handle($user, new TelegramException('Too Many Requests: retry after 30', 429));
-
-    expect($result)->toBeFalse();
-});
-
-it('returns true without touching db when user is null', function (): void {
-    $result = (new FlagTelegramDeliveryFailure)->handle(null, new TelegramException('Forbidden: bot was blocked by the user', 403));
+it('returns true without touching the database when resolver yields null', function (): void {
+    $result = (new FlagTelegramDeliveryFailure)->handle(
+        new TelegramException('Forbidden: bot was blocked by the user', 403),
+        fn (): ?User => null,
+    );
 
     expect($result)->toBeTrue()
         ->and(User::query()->whereNotNull('telegram_bot_blocked_at')->count())->toBe(0);
 });
 
-it('logs delivery failure with user id and reason', function (): void {
-    Log::spy();
+it('logs the failure with user id and reason', function (): void {
     $user = User::factory()->telegram()->create();
 
-    (new FlagTelegramDeliveryFailure)->handle($user, new TelegramException('Forbidden: bot was blocked by the user', 403));
+    (new FlagTelegramDeliveryFailure)->handle(
+        new TelegramException('Forbidden: bot was blocked by the user', 403),
+        fn (): User => $user,
+    );
 
     Log::shouldHaveReceived('info')
         ->once()

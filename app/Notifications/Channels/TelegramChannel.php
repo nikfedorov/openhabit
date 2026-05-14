@@ -60,6 +60,6 @@ final readonly class TelegramChannel
     private function handleTelegramException(TelegramException $e, object $notifiable): void
     {
         throw_unless($notifiable instanceof User, $e);
-        throw_unless($this->flag->handle($notifiable, $e), $e);
+        throw_unless($this->flag->handle($e, fn (): User => $notifiable), $e);
     }
 }

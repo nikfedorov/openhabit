@@ -26,9 +26,21 @@ final readonly class DeliveryFailureHandler
     {
         throw_unless($e instanceof TelegramException, $e);
 
-        $userId = (string) $bot->userId();
-        $user = $userId !== '' ? User::query()->where('telegram_id', $userId)->first() : null;
+        // User lookup is deferred so we don't hit the DB for unrelated errors
+        // (e.g. rate limits) that we just re-throw.
+        $resolveUser = function () use ($bot): ?User {
+            $telegramId = (string) $bot->userId();
 
-        throw_unless($this->flag->handle($user, $e), $e);
+            if ($telegramId === '') {
+                return null;
+            }
+
+            return User::query()
+                ->select(['id'])
+                ->where('telegram_id', $telegramId)
+                ->first();
+        };
+
+        throw_unless($this->flag->handle($e, $resolveUser), $e);
     }
 }
