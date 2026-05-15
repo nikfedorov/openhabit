@@ -110,7 +110,7 @@ final readonly class GenerateAiDigestAction
     private function tryModel(User $user, AiModel $aiModel, string $userPrompt): ?string
     {
         $result = new DigestResult;
-        $agent = DailyDigestAgent::make(user: $user, result: $result);
+        $agent = DailyDigestAgent::make(user: $user, result: $result)->forUser($user);
         $systemPrompt = $agent->instructions();
 
         $startedAt = hrtime(true);

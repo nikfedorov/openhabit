@@ -10,6 +10,7 @@ use App\Ai\Tools\UpdateUserMemory;
 use App\Models\User;
 use App\Services\AiPromptService;
 use Laravel\Ai\Attributes\Timeout;
+use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Contracts\Tool;
@@ -26,6 +27,7 @@ use Laravel\Ai\Promptable;
 final class DailyDigestAgent implements Agent, HasTools
 {
     use Promptable;
+    use RemembersConversations;
 
     public function __construct(
         public readonly User $user,
