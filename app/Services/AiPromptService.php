@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Models\UserMemory;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Builds system and user prompts for AI digest generation.
@@ -141,59 +140,6 @@ final class AiPromptService
     }
 
     /**
-     * Parse AI JSON response to extract digest content and memory updates.
-     *
-     * @return array{digest: string, memory_updates: array<string, string>}
-     */
-    public function parseResponse(string $response): array
-    {
-        $response = mb_trim($response);
-
-        // Strip markdown code fences if present
-        if (str_starts_with($response, '```')) {
-            $response = (string) preg_replace('/^```(?:json)?\s*/i', '', $response);
-            $response = (string) preg_replace('/\s*```$/', '', $response);
-        }
-
-        /** @var array<string, mixed>|null $data */
-        $data = json_decode($response, true);
-
-        if (is_array($data) && isset($data['digest']) && is_string($data['digest'])) {
-            $memoryUpdates = [];
-
-            if (isset($data['memory_updates']) && is_array($data['memory_updates'])) {
-                /** @var mixed $value */
-                foreach ($data['memory_updates'] as $key => $value) {
-                    if (is_string($key) && is_string($value) && MemoryCategory::tryFrom($key) !== null) {
-                        // Flat map format: {"long_term": "content"}
-                        $memoryUpdates[$key] = $value;
-                    } elseif (is_array($value) && isset($value['category'], $value['content'])
-                        && is_string($value['category']) && is_string($value['content'])
-                        && MemoryCategory::tryFrom($value['category']) !== null
-                    ) {
-                        // Array-of-objects format: [{"category": "long_term", "content": "..."}]
-                        $memoryUpdates[$value['category']] = $value['content'];
-                    }
-                }
-            }
-
-            return [
-                'digest' => mb_trim($data['digest']),
-                'memory_updates' => $memoryUpdates,
-            ];
-        }
-
-        Log::warning('AI response is not valid JSON, treating as plain digest', [
-            'response_preview' => mb_substr($response, 0, 200),
-        ]);
-
-        return [
-            'digest' => $response,
-            'memory_updates' => [],
-        ];
-    }
-
-    /**
      * Get recent digests for a user to include as prompt context.
      *
      * @return Collection<int, AiDigest>
@@ -201,7 +147,7 @@ final class AiPromptService
     public function getRecentDigests(User $user): Collection
     {
         return $user->aiDigests()
-            ->select(['id', 'user_id', 'date', 'content'])
+            ->select(['date', 'content'])
             ->orderByDesc('date')
             ->limit(self::RECENT_DIGESTS_COUNT)
             ->get()

@@ -12,13 +12,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Ai\Enums\Lab;
 
 /**
  * @property-read int $id
  * @property-read string $slug
  * @property-read string $name
- * @property-read string $base_url
- * @property-read string|null $api_key
+ * @property-read Lab $provider
  * @property-read int $priority
  * @property-read bool $is_active
  * @property CarbonInterface|null $disabled_until
@@ -66,7 +66,7 @@ final class AiModel extends Model
             'id' => 'integer',
             'priority' => 'integer',
             'is_active' => 'boolean',
-            'api_key' => 'encrypted',
+            'provider' => Lab::class,
             'disabled_until' => 'datetime',
         ];
     }

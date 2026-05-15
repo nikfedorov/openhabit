@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Models\UserMemory;
 use App\Services\AiPromptService;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Log;
 
 test('sanitize strips HTML, truncates, and passes clean content through', function (): void {
     expect(AiPromptService::sanitizeUserContent('<script>alert("xss")</script>Hello', 1000))
@@ -23,89 +22,6 @@ test('sanitize strips HTML, truncates, and passes clean content through', functi
 
     $clean = 'I completed my reading habit today. Feeling great about my progress!';
     expect(AiPromptService::sanitizeUserContent($clean, 1000))->toBe($clean);
-});
-
-test('parseResponse extracts digest and categorized memory updates from JSON', function (): void {
-    $service = new AiPromptService();
-
-    // Valid JSON with memory updates
-    $json = json_encode([
-        'digest' => 'Great job today!',
-        'memory_updates' => [
-            'long_term' => 'User is consistent with reading.',
-            'challenges' => 'Struggles with morning exercise.',
-        ],
-    ], JSON_THROW_ON_ERROR);
-    $parsed = $service->parseResponse($json);
-    expect($parsed['digest'])->toBe('Great job today!')
-        ->and($parsed['memory_updates'])->toBe([
-            'long_term' => 'User is consistent with reading.',
-            'challenges' => 'Struggles with morning exercise.',
-        ]);
-
-    // Empty memory updates
-    $json = json_encode(['digest' => 'Just a digest.', 'memory_updates' => []], JSON_THROW_ON_ERROR);
-    expect($service->parseResponse($json)['memory_updates'])->toBe([]);
-
-    // Code-fenced JSON
-    $response = "```json\n".json_encode([
-        'digest' => 'Fenced response.',
-        'memory_updates' => ['goals' => 'Wants to run a marathon.'],
-    ], JSON_THROW_ON_ERROR)."\n```";
-    $parsed = $service->parseResponse($response);
-    expect($parsed['digest'])->toBe('Fenced response.')
-        ->and($parsed['memory_updates'])->toBe(['goals' => 'Wants to run a marathon.']);
-
-    // Non-JSON fallback
-    Log::spy();
-    $parsed = $service->parseResponse('Just a plain text response.');
-    expect($parsed['digest'])->toBe('Just a plain text response.')
-        ->and($parsed['memory_updates'])->toBe([]);
-
-    // Invalid categories are filtered out
-    $json = json_encode([
-        'digest' => 'Test digest.',
-        'memory_updates' => [
-            'long_term' => 'Valid category.',
-            'invalid_category' => 'Should be filtered.',
-            'goals' => 'Also valid.',
-        ],
-    ], JSON_THROW_ON_ERROR);
-    expect($service->parseResponse($json)['memory_updates'])->toBe([
-        'long_term' => 'Valid category.',
-        'goals' => 'Also valid.',
-    ]);
-});
-
-test('parseResponse handles array-of-objects memory_updates format', function (): void {
-    $service = new AiPromptService();
-
-    // Array-of-objects format from AI
-    $json = json_encode([
-        'digest' => 'Good day!',
-        'memory_updates' => [
-            ['category' => 'successes', 'content' => 'Completed all habits.'],
-            ['category' => 'challenges', 'content' => 'Struggled with early wake-up.'],
-        ],
-    ], JSON_THROW_ON_ERROR);
-    $parsed = $service->parseResponse($json);
-    expect($parsed['digest'])->toBe('Good day!')
-        ->and($parsed['memory_updates'])->toBe([
-            'successes' => 'Completed all habits.',
-            'challenges' => 'Struggled with early wake-up.',
-        ]);
-
-    // Invalid categories in array-of-objects are filtered
-    $json = json_encode([
-        'digest' => 'Test.',
-        'memory_updates' => [
-            ['category' => 'goals', 'content' => 'Valid.'],
-            ['category' => 'invalid', 'content' => 'Filtered.'],
-        ],
-    ], JSON_THROW_ON_ERROR);
-    expect($service->parseResponse($json)['memory_updates'])->toBe([
-        'goals' => 'Valid.',
-    ]);
 });
 
 test('buildSystemPrompt replaces placeholders and includes categorized memories', function (): void {
