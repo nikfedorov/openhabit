@@ -45,9 +45,11 @@ final class AddAiModelCommand extends Command
             ->mapWithKeys(fn (Lab $lab): array => [$lab->value => $lab->value])
             ->all();
 
+        info('Only providers configured in config/ai.php with valid credentials will work. Selecting an unconfigured provider may fail later during digest generation.');
+
         /** @var string $provider */
         $provider = select(
-            label: 'Provider',
+            label: 'Provider (must be configured in config/ai.php)',
             options: $providerOptions,
             default: Lab::OpenRouter->value,
         );
