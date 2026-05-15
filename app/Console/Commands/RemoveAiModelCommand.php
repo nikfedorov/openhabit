@@ -110,7 +110,7 @@ final class RemoveAiModelCommand extends Command
             '  ─────────────────────────────────────',
             '  Name     : '.$model->name,
             '  Slug     : '.$model->slug,
-            '  Base URL : '.$model->base_url,
+            '  Provider : '.$model->provider->value,
             '  Priority : '.$model->priority,
             '  Status   : '.($model->is_active ? 'active' : 'inactive'),
             '',

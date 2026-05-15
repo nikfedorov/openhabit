@@ -6,17 +6,13 @@ namespace Database\Seeders;
 
 use App\Models\AiModel;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Config;
+use Laravel\Ai\Enums\Lab;
 
 final class AiModelSeeder extends Seeder
 {
     public function run(): void
     {
-        $openRouterBaseUrl = Config::string('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
-        $openRouterApiKey = Config::string('services.openrouter.api_key');
-
         $models = [
-            ['slug' => 'z-ai/glm-4.5-air:free', 'name' => 'GLM 4.5 Air'],
             ['slug' => 'minimax/minimax-m2.5:free', 'name' => 'Minimax M2.5'],
 
             ['slug' => 'openai/gpt-oss-120b:free', 'name' => 'GPT OSS 120B'],
@@ -38,8 +34,7 @@ final class AiModelSeeder extends Seeder
             AiModel::query()->updateOrCreate(
                 ['slug' => $model['slug']],
                 [
-                    'base_url' => $openRouterBaseUrl,
-                    'api_key' => $openRouterApiKey,
+                    'provider' => Lab::OpenRouter,
                     'is_active' => true,
                     'priority' => $i + 1,
                     ...$model,

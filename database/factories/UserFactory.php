@@ -31,7 +31,7 @@ final class UserFactory extends Factory
             'theme' => Theme::System,
             'timezone' => null,
             'locale' => null,
-            'day_starts_at' => '00:00:00',
+            'day_starts_at' => '03:00:00',
             'move_completed_to_end' => true,
             'birthdate' => fake()->dateTimeBetween('-50 years', '-18 years')->format('Y-m-d'),
             'ai_digest_time' => null,

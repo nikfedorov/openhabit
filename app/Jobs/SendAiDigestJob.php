@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 /**
  * Generates an AI digest for a user and sends the notification.
  */
-#[Timeout(90)]
+#[Timeout(180)]
 #[Tries(1)]
 #[UniqueFor(1800)]
 final class SendAiDigestJob implements ShouldBeUnique, ShouldQueue

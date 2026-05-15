@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\AiModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Laravel\Ai\Enums\Lab;
 
 /**
  * @extends Factory<AiModel>
@@ -20,8 +21,7 @@ final class AiModelFactory extends Factory
         return [
             'name' => fake()->unique()->words(3, true),
             'slug' => fake()->unique()->slug(3),
-            'base_url' => 'https://openrouter.ai/api/v1',
-            'api_key' => 'test-key',
+            'provider' => Lab::OpenRouter,
             'priority' => fake()->numberBetween(0, 100),
             'is_active' => true,
         ];

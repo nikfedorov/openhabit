@@ -9,10 +9,11 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Laravel\Ai\Enums\Lab;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
-use function Laravel\Prompts\password;
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('app:add-ai-model')]
@@ -39,14 +40,18 @@ final class AddAiModelCommand extends Command
                 : null,
         );
 
-        $baseUrl = text(
-            label: 'Base URL',
-            placeholder: 'e.g. https://api.openai.com/v1',
-            required: true,
-        );
+        /** @var array<string, string> $providerOptions */
+        $providerOptions = collect(Lab::cases())
+            ->mapWithKeys(fn (Lab $lab): array => [$lab->value => $lab->value])
+            ->all();
 
-        $apiKey = password(
-            label: 'API key (leave empty to skip)',
+        info('Only providers configured in config/ai.php with valid credentials will work. Selecting an unconfigured provider may fail later during digest generation.');
+
+        /** @var string $provider */
+        $provider = select(
+            label: 'Provider (must be configured in config/ai.php)',
+            options: $providerOptions,
+            default: Lab::OpenRouter->value,
         );
 
         $priority = (int) text(
@@ -65,8 +70,7 @@ final class AddAiModelCommand extends Command
         AiModel::query()->create([
             'name' => $name,
             'slug' => $slug,
-            'base_url' => $baseUrl,
-            'api_key' => $apiKey !== '' ? $apiKey : null,
+            'provider' => Lab::from($provider),
             'priority' => $priority,
             'is_active' => true,
         ]);
