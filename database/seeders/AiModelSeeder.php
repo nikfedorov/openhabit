@@ -16,7 +16,6 @@ final class AiModelSeeder extends Seeder
         $openRouterApiKey = Config::string('services.openrouter.api_key');
 
         $models = [
-            ['slug' => 'z-ai/glm-4.5-air:free', 'name' => 'GLM 4.5 Air'],
             ['slug' => 'minimax/minimax-m2.5:free', 'name' => 'Minimax M2.5'],
 
             ['slug' => 'openai/gpt-oss-120b:free', 'name' => 'GPT OSS 120B'],
