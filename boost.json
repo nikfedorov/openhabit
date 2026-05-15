@@ -2,18 +2,23 @@
     "agents": [
         "copilot"
     ],
+    "cloud": false,
     "guidelines": true,
     "mcp": true,
-    "nightwatch_mcp": false,
+    "nightwatch": false,
     "packages": [
-        "filament/filament"
+        "filament/filament",
+        "spatie/laravel-translatable"
     ],
     "sail": true,
     "skills": [
+        "ai-sdk-development",
         "laravel-best-practices",
         "configuring-horizon",
+        "pulse-development",
         "livewire-development",
         "pest-testing",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "translatable-development"
     ]
 }
