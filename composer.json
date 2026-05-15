@@ -13,6 +13,7 @@
         "dedoc/scramble": "^0.13.22",
         "filament/filament": "^5.6.3",
         "freshbitsweb/laravel-log-enhancer": "^2.1",
+        "laravel/ai": "^0.6.8",
         "laravel/framework": "^13.9.0",
         "laravel/horizon": "^5.46.0",
         "laravel/octane": "^2.17.3",
