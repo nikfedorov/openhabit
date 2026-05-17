@@ -24,7 +24,7 @@ use Laravel\Ai\Promptable;
  * uses the UpdateUserMemory tool to refresh memory cells, and signals
  * completion via the TaskDone tool which carries the final digest text.
  *
- * The loop budget caps tool-calling: up to 6 MemoryCategory updates plus
+ * The loop budget caps tool-calling: up to 7 MemoryCategory updates plus
  * one TaskDone plus a small safety margin for retries on validation errors.
  */
 #[Timeout(60)]

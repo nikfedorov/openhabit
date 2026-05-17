@@ -37,12 +37,13 @@ final class UpdateUserMemory implements Tool
         $valid = implode(', ', array_column(MemoryCategory::cases(), 'value'));
 
         return <<<TXT
-Refresh one of the user's long-term memory cells. Fully replaces the previous
+Refresh one of the user's memory cells. Fully replaces the previous
 content for the given category. The memory is persistent off-context storage
 (Manus-style "filesystem as memory") — read before composing, then update what
 materially changed.
 
-Use when: you have a meaningful, durable update (1-3 concise sentences).
+Use when: you have a meaningful update for a category (typically 1-3 concise
+sentences, or a coaching_log entry formatted as described below).
 Do not use: for trivia, restating yesterday's digest, or to clear a category
 without a replacement. Skip categories that did not change meaningfully.
 Side effect: persists immediately. The change is visible to the next turn.

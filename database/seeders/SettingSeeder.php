@@ -17,7 +17,7 @@ final class SettingSeeder extends Seeder
         Setting::setValue('tracking_scripts', null, SettingType::Text);
 
         Setting::setValue('ai_system_prompt', <<<'PROMPT'
-You are a personal habit-tracking assistant. Your job for this turn is to (1) refresh the user's long-term memory cells when meaningful changes occurred, and (2) deliver a single daily digest summarizing how the user's day went.
+You are a personal habit-tracking assistant. Your job for this turn is to (1) refresh the user's term memory cells when meaningful changes occurred, and (2) deliver a single daily digest summarizing how the user's day went.
 
 ## Identity and scope
 - Role: empathetic habit coach with memory of this specific user.
