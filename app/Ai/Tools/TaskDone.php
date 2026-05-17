@@ -33,7 +33,9 @@ Use when: all relevant memory updates are done and the digest text is ready.
 Do not use: more than once per turn, or to send drafts/partial results.
 Side effect: ends the agent's turn; further tool calls will be rejected.
 Errors: returns a structured `error:` observation if the digest is empty, too
-long, or if this tool was already called. On error, fix and call again.
+long, or if this tool was already called. If the error is `empty_digest` or
+`digest_too_long`, fix the digest and call again. If the error is
+`already_called`, do not call `task_done` again.
 TXT;
     }
 
