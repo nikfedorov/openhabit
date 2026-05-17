@@ -23,7 +23,7 @@ use Laravel\Ai\Promptable;
  * uses the UpdateUserMemory tool to refresh memory cells, and signals
  * completion via the TaskDone tool which carries the final digest text.
  */
-#[Timeout(20)]
+#[Timeout(60)]
 final class DailyDigestAgent implements Agent, HasTools
 {
     use Promptable;
