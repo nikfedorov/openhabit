@@ -12,19 +12,58 @@ use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 
 /**
- * Updates a single user memory cell (category → content).
+ * Draft-class tool: updates a single user memory cell (category → content).
  *
- * The agent calls this once per category it wants to refresh. The value
- * fully replaces any existing content for that category.
+ * Each call replaces the previous content for one category. Calling twice
+ * for the same category in one turn overwrites the earlier value and the
+ * harness returns a structured warning so the agent can correct course.
  */
-final readonly class UpdateUserMemory implements Tool
+final class UpdateUserMemory implements Tool
 {
-    public function __construct(private User $user) {}
+    /** Reasonable upper bound for a 1-3 sentence cell, or a short coaching_log of 5 entries. */
+    public const int MAX_CONTENT_CHARS = 800;
+
+    /**
+     * Categories already updated in this turn — used to flag duplicates.
+     *
+     * @var array<string, true>
+     */
+    private array $updatedCategories = [];
+
+    public function __construct(private readonly User $user) {}
 
     public function description(): string
     {
-        return "Update one of the user's memory cells. Call once per category you want to refresh. The provided content fully replaces the previous value for that category. Valid categories: "
-            .implode(', ', array_column(MemoryCategory::cases(), 'value'));
+        $valid = implode(', ', array_column(MemoryCategory::cases(), 'value'));
+
+        return <<<TXT
+Refresh one of the user's memory cells. Fully replaces the previous
+content for the given category. The memory is persistent off-context storage
+(Manus-style "filesystem as memory") — read before composing, then update what
+materially changed.
+
+Use when: you have a meaningful update for a category (typically 1-3 concise
+sentences, or a coaching_log entry formatted as described below).
+Do not use: for trivia, restating yesterday's digest, or to clear a category
+without a replacement. Skip categories that did not change meaningfully.
+Side effect: persists immediately. The change is visible to the next turn.
+Errors: returns `error:` for unknown category or empty/too-long content;
+returns `ok` with `warning: duplicate_category` if the same category is
+updated twice in one turn (last write wins).
+
+Category conventions:
+- long_term, personality: stable traits. Update rarely.
+- short_term: this week's context. Refresh whenever it goes stale.
+- challenges, successes: recurring patterns. Update when a pattern shifts.
+- goals: 1-3 concrete current goals.
+- coaching_log: APPEND-STYLE record of recent advice you have given. Prepend
+  a new line of the form "YYYY-MM-DD: <one-sentence tip you delivered>".
+  Keep at most the 5 newest entries (drop older ones when you replace).
+  Read this BEFORE composing the digest, so you do not repeat the same tip.
+
+Valid categories: {$valid}.
+Max content length: {$this->maxLen()} characters.
+TXT;
     }
 
     public function handle(Request $request): string
@@ -38,7 +77,7 @@ final readonly class UpdateUserMemory implements Tool
 
         if ($category === null) {
             return sprintf(
-                'Error: unknown category "%s". Valid categories: %s.',
+                'error: unknown_category "%s". next: choose one of: %s.',
                 $rawCategory,
                 implode(', ', array_column(MemoryCategory::cases(), 'value')),
             );
@@ -47,7 +86,16 @@ final readonly class UpdateUserMemory implements Tool
         $content = mb_trim($content);
 
         if ($content === '') {
-            return 'Error: content must not be empty.';
+            return 'error: empty_content. next: provide 1-3 concise sentences or skip this category.';
+        }
+
+        $length = mb_strlen($content);
+        if ($length > self::MAX_CONTENT_CHARS) {
+            return sprintf(
+                'error: content_too_long (%d chars, max %d). next: shorten and retry.',
+                $length,
+                self::MAX_CONTENT_CHARS,
+            );
         }
 
         UserMemory::query()->updateOrCreate(
@@ -55,7 +103,20 @@ final readonly class UpdateUserMemory implements Tool
             ['content' => $content],
         );
 
-        return sprintf('Memory "%s" updated.', $category->value);
+        $duplicate = isset($this->updatedCategories[$category->value]);
+        $this->updatedCategories[$category->value] = true;
+
+        if ($duplicate) {
+            return sprintf(
+                'ok: memory "%s" updated. warning: duplicate_category — previous value overwritten. next: do not update this category again.',
+                $category->value,
+            );
+        }
+
+        return sprintf(
+            'ok: memory "%s" updated. next: update another category if needed, then call task_done.',
+            $category->value,
+        );
     }
 
     /**
@@ -69,8 +130,15 @@ final readonly class UpdateUserMemory implements Tool
                 ->description('Memory cell to update.')
                 ->required(),
             'content' => $schema->string()
-                ->description('Full replacement content for this memory cell (1-3 sentences).')
+                ->min(1)
+                ->max(self::MAX_CONTENT_CHARS)
+                ->description('Full replacement content for this memory cell (1-3 sentences, max '.self::MAX_CONTENT_CHARS.' characters).')
                 ->required(),
         ];
+    }
+
+    private function maxLen(): int
+    {
+        return self::MAX_CONTENT_CHARS;
     }
 }

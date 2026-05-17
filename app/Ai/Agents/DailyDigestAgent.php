@@ -9,6 +9,7 @@ use App\Ai\Tools\TaskDone;
 use App\Ai\Tools\UpdateUserMemory;
 use App\Models\User;
 use App\Services\AiPromptService;
+use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Attributes\Timeout;
 use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
@@ -22,8 +23,12 @@ use Laravel\Ai\Promptable;
  * The agent receives the user's habit data + daily note as the prompt,
  * uses the UpdateUserMemory tool to refresh memory cells, and signals
  * completion via the TaskDone tool which carries the final digest text.
+ *
+ * The loop budget caps tool-calling: up to 7 MemoryCategory updates plus
+ * one TaskDone plus a small safety margin for retries on validation errors.
  */
-#[Timeout(20)]
+#[Timeout(60)]
+#[MaxSteps(10)]
 final class DailyDigestAgent implements Agent, HasTools
 {
     use Promptable;

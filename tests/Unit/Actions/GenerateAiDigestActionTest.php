@@ -98,6 +98,34 @@ it('disables the model for one hour on a generic throwable', function (): void {
         ->and($model->refresh()->disabled_until?->isFuture())->toBeTrue();
 });
 
+it('sends habit name and description in the user locale', function (): void {
+    $tone = AiTone::factory()->create(['system_instruction' => 'Be kind.']);
+    $user = User::factory()->create(['timezone' => 'UTC', 'locale' => 'ru', 'ai_tone_id' => $tone->id]);
+    Habit::factory()->for($user)->create([
+        'is_active' => true,
+        'rrule' => null,
+        'iterations_required' => 1,
+        'name' => ['en' => 'Morning exercise', 'ru' => 'Утренняя зарядка'],
+        'description' => ['en' => 'Do push-ups', 'ru' => 'Отжимания'],
+    ]);
+    AiModel::factory()->create(['slug' => 'gpt-4o', 'provider' => Lab::OpenAI, 'priority' => 1]);
+
+    DailyDigestAgent::fake([
+        new ToolCall('1', 'TaskDone', ['digest' => 'ok']),
+        'wrap-up',
+    ]);
+
+    resolve(GenerateAiDigestAction::class)->handle($user);
+
+    $log = AiLog::query()->where('user_id', $user->id)->sole();
+
+    expect($log->user_prompt)
+        ->toContain('Утренняя зарядка')
+        ->toContain('Отжимания')
+        ->not->toContain('Morning exercise')
+        ->not->toContain('Do push-ups');
+});
+
 it('logs an error when the agent finishes without calling TaskDone', function (): void {
     $user = makeDigestUser();
     AiModel::factory()->create(['slug' => 'lazy-model', 'provider' => Lab::OpenAI, 'priority' => 1]);

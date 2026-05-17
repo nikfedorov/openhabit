@@ -12,6 +12,7 @@ enum MemoryCategory: string
     case Successes = 'successes';
     case Goals = 'goals';
     case Personality = 'personality';
+    case CoachingLog = 'coaching_log';
 
     /**
      * Human-readable label used in AI prompts.
@@ -25,6 +26,7 @@ enum MemoryCategory: string
             self::Successes => 'Achievements & successes',
             self::Goals => 'Goals & aspirations',
             self::Personality => 'Personality & preferences',
+            self::CoachingLog => 'Coaching log (recent advice given, newest first)',
         };
     }
 }
