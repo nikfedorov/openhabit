@@ -18,7 +18,7 @@ it('creates a new memory cell for the user', function (): void {
         'content' => 'User is consistent with reading.',
     ]));
 
-    expect($result)->toBe('Memory "long_term" updated.');
+    expect($result)->toStartWith('ok: memory "long_term" updated');
 
     $memory = UserMemory::query()->where('user_id', $user->id)->sole();
     expect($memory->category)->toBe(MemoryCategory::LongTerm)
@@ -41,6 +41,24 @@ it('replaces existing content for the same category', function (): void {
         ->toBe('New goals.');
 });
 
+it('warns when the same category is updated twice in one turn', function (): void {
+    $user = User::factory()->create();
+    $tool = new UpdateUserMemory($user);
+
+    $tool->handle(new Request([
+        'category' => MemoryCategory::Goals->value,
+        'content' => 'First.',
+    ]));
+    $second = $tool->handle(new Request([
+        'category' => MemoryCategory::Goals->value,
+        'content' => 'Second.',
+    ]));
+
+    expect($second)->toContain('warning: duplicate_category')
+        ->and(UserMemory::query()->where('user_id', $user->id)->where('category', MemoryCategory::Goals)->sole()->content)
+        ->toBe('Second.');
+});
+
 it('returns an error for an unknown category', function (): void {
     $user = User::factory()->create();
 
@@ -49,7 +67,7 @@ it('returns an error for an unknown category', function (): void {
         'content' => 'irrelevant',
     ]));
 
-    expect($result)->toStartWith('Error: unknown category');
+    expect($result)->toStartWith('error: unknown_category');
     expect(UserMemory::query()->where('user_id', $user->id)->count())->toBe(0);
 });
 
@@ -61,7 +79,19 @@ it('returns an error for empty content', function (): void {
         'content' => '   ',
     ]));
 
-    expect($result)->toBe('Error: content must not be empty.');
+    expect($result)->toStartWith('error: empty_content');
+    expect(UserMemory::query()->where('user_id', $user->id)->count())->toBe(0);
+});
+
+it('returns an error when content exceeds the harness cap', function (): void {
+    $user = User::factory()->create();
+
+    $result = new UpdateUserMemory($user)->handle(new Request([
+        'category' => MemoryCategory::Goals->value,
+        'content' => str_repeat('a', UpdateUserMemory::MAX_CONTENT_CHARS + 1),
+    ]));
+
+    expect($result)->toStartWith('error: content_too_long');
     expect(UserMemory::query()->where('user_id', $user->id)->count())->toBe(0);
 });
 
