@@ -169,14 +169,21 @@ final readonly class GenerateAiDigestAction
             ->get()
             ->keyBy('habit_id');
 
-        return $habits->map(function (Habit $habit) use ($completionsByHabit, $date): array {
+        $locale = $user->preferredLocale();
+
+        return $habits->map(function (Habit $habit) use ($completionsByHabit, $date, $locale): array {
             $scheduled = $habit->rrule === null || $this->rruleService->matchesDate($habit->rrule, $date);
             $currentIteration = $completionsByHabit->get($habit->id)->current_iteration ?? 0;
             $required = $habit->iterations_required;
 
+            /** @var string $name */
+            $name = $habit->getTranslation('name', $locale);
+            /** @var string|null $description */
+            $description = $habit->getTranslation('description', $locale);
+
             return [
-                'name' => $habit->name ?? '',
-                'description' => $habit->description,
+                'name' => $name,
+                'description' => $description === '' ? null : $description,
                 'scheduled' => $scheduled,
                 'completed' => $scheduled && $currentIteration >= $required,
                 'partial' => $scheduled && $currentIteration > 0 && $currentIteration < $required,
