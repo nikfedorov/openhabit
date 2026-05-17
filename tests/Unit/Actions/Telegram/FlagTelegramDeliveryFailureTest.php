@@ -10,7 +10,6 @@ use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
 beforeEach(function (): void {
     Queue::fake();
-    Log::spy();
 });
 
 it('flags the matching user column for each known delivery failure', function (string $message, string $column): void {
@@ -56,6 +55,8 @@ it('returns true without touching the database when resolver yields null', funct
 });
 
 it('logs the failure with user id and reason', function (): void {
+    Log::spy();
+
     $user = User::factory()->telegram()->create();
 
     (new FlagTelegramDeliveryFailure)->handle(
