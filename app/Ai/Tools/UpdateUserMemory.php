@@ -20,8 +20,8 @@ use Laravel\Ai\Tools\Request;
  */
 final class UpdateUserMemory implements Tool
 {
-    /** Reasonable upper bound for a 1-3 sentence memory cell. */
-    public const int MAX_CONTENT_CHARS = 600;
+    /** Reasonable upper bound for a 1-3 sentence cell, or a short coaching_log of 5 entries. */
+    public const int MAX_CONTENT_CHARS = 800;
 
     /**
      * Categories already updated in this turn — used to flag duplicates.
@@ -38,7 +38,9 @@ final class UpdateUserMemory implements Tool
 
         return <<<TXT
 Refresh one of the user's long-term memory cells. Fully replaces the previous
-content for the given category.
+content for the given category. The memory is persistent off-context storage
+(Manus-style "filesystem as memory") — read before composing, then update what
+materially changed.
 
 Use when: you have a meaningful, durable update (1-3 concise sentences).
 Do not use: for trivia, restating yesterday's digest, or to clear a category
@@ -47,6 +49,16 @@ Side effect: persists immediately. The change is visible to the next turn.
 Errors: returns `error:` for unknown category or empty/too-long content;
 returns `ok` with `warning: duplicate_category` if the same category is
 updated twice in one turn (last write wins).
+
+Category conventions:
+- long_term, personality: stable traits. Update rarely.
+- short_term: this week's context. Refresh whenever it goes stale.
+- challenges, successes: recurring patterns. Update when a pattern shifts.
+- goals: 1-3 concrete current goals.
+- coaching_log: APPEND-STYLE record of recent advice you have given. Prepend
+  a new line of the form "YYYY-MM-DD: <one-sentence tip you delivered>".
+  Keep at most the 5 newest entries (drop older ones when you replace).
+  Read this BEFORE composing the digest, so you do not repeat the same tip.
 
 Valid categories: {$valid}.
 Max content length: {$this->maxLen()} characters.
