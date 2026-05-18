@@ -48,3 +48,21 @@ it('defaults to previous calendar week when current time is before day_starts_at
     expect($data->isCurrent)->toBeTrue()
         ->and($data->start)->toBe(now()->subWeek()->startOfWeek()->toDateString());
 });
+
+it('does not mark today as future when week param equals current week start in a UTC+ timezone', function (): void {
+    // User is in UTC+3 (Moscow). 10:00 Moscow = 07:00 UTC.
+    // The week start date string (Monday 2026-05-18) parsed in UTC gives
+    // 2026-05-18 00:00 UTC, which is 3h *after* the user's today (2026-05-17 21:00 UTC).
+    // Without the fix this caused today to be flagged as is_future.
+    $this->travelTo('2026-05-18 07:00:00'); // 10:00 Moscow = 07:00 UTC
+    $user = User::factory()->create(['timezone' => 'Europe/Moscow']);
+    Habit::factory()->daily()->for($user)->create();
+
+    // Pass today's Monday date explicitly, as the browser does when navigating back
+    $data = resolve(GetWeekViewAction::class)->handle($user, '2026-05-18');
+
+    $todayDay = collect($data->days)->firstWhere('date', '2026-05-18');
+
+    expect($todayDay->isToday)->toBeTrue()
+        ->and($todayDay->isFuture)->toBeFalse();
+});

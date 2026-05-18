@@ -34,3 +34,12 @@ it('aborts when user declines overwrite confirmation', function (): void {
 
     expect(Setting::getValue('ai_system_prompt'))->toBe('old prompt');
 });
+
+it('overwrites without confirmation when --force is passed', function (): void {
+    Setting::setValue('ai_system_prompt', 'old prompt', SettingType::Markdown);
+
+    $this->artisan('app:update-ai-system-prompt', ['--force' => true])
+        ->assertSuccessful();
+
+    expect(Setting::getValue('ai_system_prompt'))->toContain('personal habit-tracking assistant');
+});

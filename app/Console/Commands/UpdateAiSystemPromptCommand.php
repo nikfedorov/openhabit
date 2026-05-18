@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
 
-#[Signature('app:update-ai-system-prompt')]
+#[Signature('app:update-ai-system-prompt {--force : Skip confirmation prompt}')]
 #[Description('Reset the AI system prompt to the default value from SettingSeeder')]
 final class UpdateAiSystemPromptCommand extends Command
 {
@@ -25,7 +25,7 @@ final class UpdateAiSystemPromptCommand extends Command
     {
         $current = Setting::getValue('ai_system_prompt');
 
-        if ($current !== null && ! confirm('This will overwrite the existing AI system prompt. Continue?')) {
+        if ($current !== null && ! $this->option('force') && ! confirm('This will overwrite the existing AI system prompt. Continue?')) {
             return self::FAILURE;
         }
 

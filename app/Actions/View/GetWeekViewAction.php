@@ -26,7 +26,7 @@ final readonly class GetWeekViewAction
     {
         $today = $user->currentDate();
         $weekStart = $weekStartInput !== null
-            ? Date::parse($weekStartInput)->startOfWeek()
+            ? Date::parse($weekStartInput, $user->timezone ?? 'UTC')->startOfWeek()
             : $today->startOfWeek();
 
         $weekEnd = $weekStart->copy()->endOfWeek();
