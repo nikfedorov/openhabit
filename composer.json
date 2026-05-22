@@ -82,6 +82,7 @@
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
             "@php artisan clear",
+            "@php artisan boost:update",
             "@update:requirements"
         ],
         "post-root-package-install": [

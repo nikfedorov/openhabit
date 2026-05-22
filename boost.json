@@ -19,6 +19,13 @@
         "livewire-development",
         "pest-testing",
         "tailwindcss-development",
-        "translatable-development"
+        "translatable-development",
+        "impeccable",
+        "karpathy-guidelines",
+        "vitest",
+        "vue",
+        "vue-best-practices",
+        "vue-router-best-practices",
+        "vue-testing-best-practices"
     ]
 }
