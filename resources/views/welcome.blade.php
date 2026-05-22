@@ -763,33 +763,6 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
-     How it works. Three steps shown as large display numerals — typography
-     IS the ornament. No card backgrounds. Different rhythm again.
-   ───────────────────────────────────────────────────────────────────────── --}}
-<section id="how" aria-labelledby="how-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
-    <div class="reveal mb-14 max-w-2xl">
-        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.how.eyebrow') }}</p>
-        <h2 id="how-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.how.title') }}</h2>
-    </div>
-
-    @php $steps = (array) __('welcome.how.steps'); @endphp
-    <ol class="flex flex-col gap-12 sm:gap-14">
-        @foreach ($steps as $i => $step)
-            <li class="reveal grid grid-cols-[auto,1fr] gap-6 sm:gap-10 items-baseline"
-                data-reveal-delay="{{ $loop->index * 90 }}">
-                <span class="display-numeral text-[64px] sm:text-[88px] font-semibold text-neutral-200 dark:text-neutral-800 select-none" aria-hidden="true">
-                    {{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}
-                </span>
-                <div class="pt-2 sm:pt-4">
-                    <h3 class="text-xl sm:text-2xl font-semibold tracking-tight mb-2">{{ $step['title'] }}</h3>
-                    <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ $step['body'] }}</p>
-                </div>
-            </li>
-        @endforeach
-    </ol>
-</section>
-
-{{-- ─────────────────────────────────────────────────────────────────────────
      Open source. ONE bordered surface that nods at a code/repo window: a
      mono header strip with the repo path and branch, then a calm split body —
      prose on the left, three quiet facts on the right. Different rhythm
