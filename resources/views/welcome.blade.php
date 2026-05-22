@@ -81,6 +81,25 @@
         @media (prefers-reduced-motion: no-preference) {
             .pulse-soft { animation: pulse-soft 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
         }
+
+        /* FAQ accordion — height + padding animate together.
+           The grid-template-rows trick lets us transition from 0fr → 1fr
+           without knowing the exact pixel height of the content. */
+        .faq-item > summary { list-style: none; }
+        .faq-item > summary::-webkit-details-marker { display: none; }
+        .faq-answer {
+            display: grid;
+            grid-template-rows: 0fr;
+            padding-bottom: 0;
+            transition: grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                        padding-bottom    280ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .faq-answer > div { overflow: hidden; }
+        .faq-chevron {
+            flex-shrink: 0;
+            transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .faq-item[open] .faq-chevron { transform: rotate(180deg); }
     </style>
 </head>
 <body class="welcome antialiased text-neutral-900 dark:text-neutral-100">
@@ -114,15 +133,8 @@
             <a href="#compare" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.compare') }}
             </a>
-            <a href="#how" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
-                {{ __('welcome.nav.how') }}
-            </a>
-            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
-                </svg>
-                {{ __('welcome.nav.news') }}
+            <a href="#faq" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+                {{ __('welcome.nav.faq') }}
             </a>
 
             {{-- Language selector --}}
@@ -212,16 +224,9 @@
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
                 {{ __('welcome.nav.compare') }}
             </a>
-            <a href="#how" data-menu-link
+            <a href="#faq" data-menu-link
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
-                {{ __('welcome.nav.how') }}
-            </a>
-            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
-               class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
-                <svg class="w-4 h-4 text-green-600 dark:text-green-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
-                </svg>
-                {{ __('welcome.nav.news') }}
+                {{ __('welcome.nav.faq') }}
             </a>
             <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer"
                class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
@@ -815,6 +820,34 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     FAQ. Accordion with smooth height + padding animation.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section id="faq" aria-labelledby="faq-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.faq.eyebrow') }}</p>
+        <h2 id="faq-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.faq.title') }}</h2>
+    </div>
+
+    <div class="flex flex-col">
+        @foreach ((array) __('welcome.faq.items') as $faqItem)
+            <details class="faq-item reveal border-t rule first:border-t-0" data-reveal-delay="{{ $loop->index * 60 }}">
+                <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer select-none group">
+                    <span class="text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-white group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors duration-150">{{ $faqItem['q'] }}</span>
+                    <svg class="faq-chevron w-4 h-4 text-neutral-400 dark:text-neutral-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </summary>
+                <div class="faq-answer">
+                    <div>
+                        <p class="text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[60ch]">{{ $faqItem['a'] }}</p>
+                    </div>
+                </div>
+            </details>
+        @endforeach
+    </div>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Final CTA. Just typography on the page surface — no card background.
    ───────────────────────────────────────────────────────────────────────── --}}
 <section aria-labelledby="cta-heading" class="max-w-3xl mx-auto px-4 py-24 sm:py-32 text-center border-t rule">
@@ -957,6 +990,39 @@
         } else {
             reveals.forEach(function (el) { el.classList.add('revealed'); });
         }
+
+        // FAQ accordion — smooth height + padding animation.
+        // Intercepts <summary> clicks to animate both grid-template-rows
+        // (height proxy) and padding-bottom before toggling `open`.
+        document.querySelectorAll('.faq-item').forEach(function (details) {
+            var answer = details.querySelector('.faq-answer');
+            var summary = details.querySelector('summary');
+            if (!summary || !answer) { return; }
+
+            summary.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (details.open) {
+                    // Animate to closed, then remove the `open` attribute.
+                    answer.style.gridTemplateRows = '0fr';
+                    answer.style.paddingBottom = '0';
+                    answer.addEventListener('transitionend', function handler(ev) {
+                        if (ev.propertyName !== 'grid-template-rows') { return; }
+                        details.removeAttribute('open');
+                        answer.removeEventListener('transitionend', handler);
+                    });
+                } else {
+                    // Set `open` so the content is in the DOM, then on the
+                    // next two frames animate from the closed state.
+                    details.setAttribute('open', '');
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            answer.style.gridTemplateRows = '1fr';
+                            answer.style.paddingBottom = '1.25rem';
+                        });
+                    });
+                }
+            });
+        });
     })();
 </script>
 

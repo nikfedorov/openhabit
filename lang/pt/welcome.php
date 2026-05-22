@@ -20,6 +20,7 @@ return [
         'news' => 'Novidades',
         'menu' => 'Menu',
         'how' => 'Como funciona',
+        'faq' => 'FAQ',
         'cta_telegram' => 'Abrir no Telegram',
         'cta_app' => 'Abrir o app',
         'theme_light' => 'Mudar para tema claro',
@@ -166,5 +167,31 @@ return [
         'telegram' => 'Telegram',
         'news' => 'Canal de novidades',
         'app' => 'Abrir o app',
+    ],
+    'faq' => [
+        'eyebrow' => 'Perguntas frequentes',
+        'title' => 'Perguntas que vale a pena fazer.',
+        'items' => [
+            [
+                'q' => 'Quanto custa o OpenHabit?',
+                'a' => 'As funções principais são completamente gratuitas — sem limite de tempo ou de hábitos. O Premium adiciona o resumo diário de IA, vários lembretes por hábito no Telegram e exportação em CSV. Comece grátis e decida depois.',
+            ],
+            [
+                'q' => 'Preciso de uma conta no Telegram?',
+                'a' => 'Sim. O OpenHabit funciona como bot e mini app do Telegram, por isso basta ter uma conta no Telegram. Sem cadastro adicional, sem senha para esquecer.',
+            ],
+            [
+                'q' => 'O que é o resumo de IA?',
+                'a' => 'Uma breve mensagem diária que identifica padrões nos seus hábitos: o que está melhorando, o que está caindo e por quê. Analisa seus registros recentes e notas.',
+            ],
+            [
+                'q' => 'Meus dados são privados?',
+                'a' => 'Seus dados ficam no nosso banco de dados sem SDKs de análise de terceiros. Se quiser controle total, você pode hospedar o app no seu próprio servidor.',
+            ],
+            [
+                'q' => 'Posso hospedar por conta própria?',
+                'a' => 'Sim. O código completo está no GitHub sob a licença MIT. Um comando Docker e o app roda no seu servidor — seus dados nunca saem da sua máquina.',
+            ],
+        ],
     ],
 ];

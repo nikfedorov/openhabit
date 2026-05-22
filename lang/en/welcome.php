@@ -18,6 +18,7 @@ return [
         'features' => 'Features',
         'compare' => 'Compare',
         'how' => 'How it works',
+        'faq' => 'FAQ',
         'news' => 'News',
         'menu' => 'Menu',
         'cta_telegram' => 'Open in Telegram',
@@ -166,5 +167,31 @@ return [
         'telegram' => 'Telegram',
         'news' => 'News channel',
         'app' => 'Open the app',
+    ],
+    'faq' => [
+        'eyebrow' => 'FAQ',
+        'title' => 'Questions worth asking.',
+        'items' => [
+            [
+                'q' => 'How much does OpenHabit cost?',
+                'a' => 'The core features are completely free — no time limit, no habit cap. Premium adds an AI daily digest, multiple Telegram reminders per habit, and CSV export. Start free and decide later.',
+            ],
+            [
+                'q' => 'Do I need a Telegram account?',
+                'a' => 'Yes. OpenHabit is built as a Telegram bot and mini app, so a Telegram account is all you need. No separate sign-up, no password to forget.',
+            ],
+            [
+                'q' => 'What is the AI digest?',
+                'a' => 'A short daily message that surfaces patterns in your habits — what’s trending up, what’s slipping, and a brief thought on why. It analyses your recent check-ins and notes.',
+            ],
+            [
+                'q' => 'Is my data private?',
+                'a' => 'Your data is stored in our database with no third-party analytics or tracking SDKs. If you prefer complete control, you can self-host the entire app.',
+            ],
+            [
+                'q' => 'Can I self-host OpenHabit?',
+                'a' => 'Yes. The full source code is on GitHub under the MIT licence. One Docker command and the app runs on your own server — your data never leaves your machine.',
+            ],
+        ],
     ],
 ];
