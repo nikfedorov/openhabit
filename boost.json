@@ -20,6 +20,8 @@
         "pest-testing",
         "tailwindcss-development",
         "translatable-development",
+        "design-taste-frontend",
+        "humanizer",
         "impeccable",
         "karpathy-guidelines",
         "vitest",
