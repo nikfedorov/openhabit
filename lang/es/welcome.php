@@ -50,7 +50,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Funciones',
-        'title' => 'Lo justo, y nada más.',
+        'title' => 'Solo lo que de verdad necesitas.',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -63,7 +63,7 @@ return [
             ],
             'reminders' => [
                 'title' => 'Recordatorios en Telegram',
-                'body' => 'Avisos suaves, justo donde ya conversas. Uno por hábito, o varios. Sin spam, sin ansiedad, sin vibraciones que no llevan a ninguna parte.',
+                'body' => 'Avisos suaves, justo donde ya conversas. Uno por hábito, o varios si quieres. Nada salta a menos que tú lo pidas.',
             ],
             'notes' => [
                 'title' => 'Notas del día',
@@ -71,7 +71,7 @@ return [
             ],
             'ai' => [
                 'title' => 'Resumen con IA',
-                'body' => 'Un resumen diario que, sin ruido, saca a la luz patrones que se te escaparían: qué está funcionando, qué empieza a aflojar y por qué puede estar pasando.',
+                'body' => 'Un resumen diario que detecta patrones que se te escaparían: qué está funcionando, qué empieza a aflojar y una breve idea de por qué.',
             ],
             'export' => [
                 'title' => 'Exporta cuando quieras',
@@ -82,13 +82,13 @@ return [
     'digest_examples' => [
         'eyebrow' => 'AI Digest',
         'title' => 'Así es el resumen diario',
-        'subtitle' => 'Ejemplos reales — lo que reciben los usuarios.',
+        'subtitle' => 'Ejemplos reales de lo que reciben los usuarios.',
         'items' => [
             [
                 'date_machine' => '2026-05-20',
                 'date' => '20 may. 2026',
-                'paragraph_1' => 'Hoy mostró un progreso real — rompiste el patrón de recaída en redes sociales y mantuviste los hábitos clave: madrugar, entrenar, meditar y trabajar en profundidad. Tu fortaleza es recuperarte rápido y aprender del día anterior.',
-                'paragraph_2' => 'Las páginas matutinas se pierden cuando el sueño es tardío — ese es el punto a cerrar. Esta noche escribe una oración sobre algo bueno que ocurrió. Un pequeño ancla que conecta hoy con los rituales de mañana.',
+                'paragraph_1' => 'Hoy hubo un progreso real. Rompiste el patrón de recaída en redes sociales y mantuviste los hábitos clave: madrugar, entrenar, meditar y trabajar en profundidad. Lo fuerte es la rapidez con la que te recuperas y aprendes de un día flojo.',
+                'paragraph_2' => 'Las páginas matutinas se pierden cuando duermes tarde. Ese es el punto a cerrar. Esta noche escribe una oración sobre algo bueno que pasó hoy.',
                 'habits' => [
                     ['name' => 'Despertar a las 8am', 'done' => true],
                     ['name' => 'Entrenamiento, 60 min', 'done' => true],
@@ -101,7 +101,7 @@ return [
             [
                 'date_machine' => '2026-05-19',
                 'date' => '19 may. 2026',
-                'paragraph_1' => 'Madrugar y entrenar completados, alimentación limpia — ejecución sólida en el lado físico. Pero la caída en redes sociales al mediodía desencadenó pérdida de enfoque y trabajo profundo perdido.',
+                'paragraph_1' => 'Madrugar y entrenar completados, alimentación limpia. El lado físico aguantó. Pero la caída en redes sociales al mediodía desencadenó pérdida de enfoque y trabajo profundo perdido.',
                 'paragraph_2' => 'La disciplina nutricional se mantiene incluso después de caídas, lo cual es un activo real. Para los límites digitales, añade fricción: cuando sientas el impulso de desplazarte, haz cinco sentadillas primero.',
                 'habits' => [
                     ['name' => 'Despertar a las 8am', 'done' => true],
@@ -116,11 +116,11 @@ return [
     ],
     'how' => [
         'eyebrow' => 'Cómo funciona',
-        'title' => 'Tres pasos pequeños. Cero fricción.',
+        'title' => 'Tres pasos pequeños para empezar.',
         'steps' => [
             [
                 'title' => 'Abre el bot en Telegram',
-                'body' => 'Toca el botón de abajo. Sin cuentas, sin email, sin contraseñas que olvidar. Ya estás dentro.',
+                'body' => 'Toca el botón de abajo. No hace falta cuenta nueva, ni email, ni contraseña que olvidar. Si tienes Telegram, ya estás dentro.',
             ],
             [
                 'title' => 'Añade un hábito o dos',
@@ -138,8 +138,8 @@ return [
     ],
     'compare' => [
         'eyebrow' => 'Comparativa',
-        'title' => 'Sutilmente distinto al resto.',
-        'subtitle' => 'Cómo se compara OpenHabit con los rastreadores que la gente suele elegir. No elegimos las filas a dedo.',
+        'title' => 'Diferente donde importa.',
+        'subtitle' => 'Cómo se compara OpenHabit con los rastreadores que la gente suele elegir. Las filas no están elegidas a dedo.',
         'caption' => 'Comparativa de rastreadores populares de hábitos',
         'criterion' => 'Criterio',
         'us_tag' => 'Nuestra elección',
@@ -167,14 +167,14 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Código abierto',
-        'title' => 'Desarrollado en abierto. Puedes leer el código.',
-        'body' => 'Cada línea de OpenHabit vive en GitHub bajo la licencia MIT. Léelo, audítalo, fórkalo, ejecútalo en tu propio servidor. Sin telemetría, sin bloqueo, sin sorpresas.',
+        'title' => 'Desarrollado en abierto.',
+        'body' => 'Cada línea de OpenHabit vive en GitHub bajo la licencia MIT. Puedes leerlo, forkearlo o ejecutarlo en tu propio servidor. No hay telemetría ni bloqueo de proveedor.',
         'cta' => 'Ver en GitHub',
         'license_link' => 'Leer la licencia',
         'facts' => [
             'license' => [
                 'title' => 'Licencia permisiva',
-                'body' => 'MIT. Fórkalo, publícalo, cámbialo.',
+                'body' => 'Con licencia MIT. Fórkalo, modifícalo y publica lo que quieras.',
             ],
             'selfhost' => [
                 'title' => 'Autohospedable',
@@ -182,7 +182,7 @@ return [
             ],
             'audit' => [
                 'title' => 'Nada que esconder',
-                'body' => 'Sin rastreadores, sin SDK de analítica, sin rincones oscuros.',
+                'body' => 'Sin rastreadores de terceros ni SDK de analítica.',
             ],
         ],
     ],
@@ -225,7 +225,7 @@ return [
             ],
             [
                 'q' => '¿Puedo alojarla yo mismo (self-host)?',
-                'a' => 'Sí. El código fuente completo está en GitHub bajo la licencia MIT. Un comando de Docker y la app funciona en tu servidor — tus datos nunca salen de tu máquina.',
+                'a' => 'Sí. El código fuente completo está en GitHub bajo la licencia MIT. Un comando de Docker y la app funciona en tu servidor. Tus datos nunca salen de tu máquina.',
             ],
         ],
     ],
