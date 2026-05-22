@@ -79,6 +79,41 @@ return [
             ],
         ],
     ],
+    'digest_examples' => [
+        'eyebrow' => 'AI Digest',
+        'title' => 'Como é o resumo diário',
+        'subtitle' => 'Exemplos reais — o que os usuários recebem.',
+        'items' => [
+            [
+                'date_machine' => '2026-05-20',
+                'date' => '20 mai. 2026',
+                'paragraph_1' => 'Hoje mostrou progresso real — você quebrou o padrão de recaída nas redes sociais e manteve os hábitos-chave: acordar cedo, treinar, meditar e trabalho profundo. Sua força é se recuperar rápido e aprender com o dia anterior.',
+                'paragraph_2' => 'As páginas matinais continuam escapando quando o sono é tardio — esse é o ponto a fechar. Esta noite escreva uma frase sobre algo bom. Uma pequena âncora que leva hoje para os rituais de amanhã.',
+                'habits' => [
+                    ['name' => 'Acordar às 8h', 'done' => true],
+                    ['name' => 'Treino, 60 min', 'done' => true],
+                    ['name' => 'Meditação 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matinais', 'done' => false],
+                    ['name' => 'Trabalho profundo 2–4h', 'done' => true],
+                    ['name' => 'Sem redes sociais até 18:00', 'done' => true],
+                ],
+            ],
+            [
+                'date_machine' => '2026-05-19',
+                'date' => '19 mai. 2026',
+                'paragraph_1' => 'Acordar cedo e treino concluídos, alimentação limpa — execução sólida no lado físico. Mas uma queda nas redes sociais ao meio-dia resultou em trabalho profundo perdido e tarde comprometida.',
+                'paragraph_2' => 'A disciplina nutricional se mantém mesmo após quedas, o que é um ativo real. Para os limites digitais, adicione atrito: quando sentir o impulso de rolar a tela, faça cinco agachamentos primeiro.',
+                'habits' => [
+                    ['name' => 'Acordar às 8h', 'done' => true],
+                    ['name' => 'Treino, 60 min', 'done' => true],
+                    ['name' => 'Meditação 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matinais', 'done' => false],
+                    ['name' => 'Trabalho profundo 2–4h', 'done' => false],
+                    ['name' => 'Sem redes sociais até 18:00', 'done' => false],
+                ],
+            ],
+        ],
+    ],
     'how' => [
         'eyebrow' => 'Como funciona',
         'title' => 'Três passinhos. Zero atrito.',

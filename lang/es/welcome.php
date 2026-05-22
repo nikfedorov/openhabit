@@ -79,6 +79,41 @@ return [
             ],
         ],
     ],
+    'digest_examples' => [
+        'eyebrow' => 'AI Digest',
+        'title' => 'Así es el resumen diario',
+        'subtitle' => 'Ejemplos reales — lo que reciben los usuarios.',
+        'items' => [
+            [
+                'date_machine' => '2026-05-20',
+                'date' => '20 may. 2026',
+                'paragraph_1' => 'Hoy mostró un progreso real — rompiste el patrón de recaída en redes sociales y mantuviste los hábitos clave: madrugar, entrenar, meditar y trabajar en profundidad. Tu fortaleza es recuperarte rápido y aprender del día anterior.',
+                'paragraph_2' => 'Las páginas matutinas se pierden cuando el sueño es tardío — ese es el punto a cerrar. Esta noche escribe una oración sobre algo bueno que ocurrió. Un pequeño ancla que conecta hoy con los rituales de mañana.',
+                'habits' => [
+                    ['name' => 'Despertar a las 8am', 'done' => true],
+                    ['name' => 'Entrenamiento, 60 min', 'done' => true],
+                    ['name' => 'Meditación 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matutinas', 'done' => false],
+                    ['name' => 'Trabajo profundo 2–4h', 'done' => true],
+                    ['name' => 'Sin redes sociales hasta las 18:00', 'done' => true],
+                ],
+            ],
+            [
+                'date_machine' => '2026-05-19',
+                'date' => '19 may. 2026',
+                'paragraph_1' => 'Madrugar y entrenar completados, alimentación limpia — ejecución sólida en el lado físico. Pero la caída en redes sociales al mediodía desencadenó pérdida de enfoque y trabajo profundo perdido.',
+                'paragraph_2' => 'La disciplina nutricional se mantiene incluso después de caídas, lo cual es un activo real. Para los límites digitales, añade fricción: cuando sientas el impulso de desplazarte, haz cinco sentadillas primero.',
+                'habits' => [
+                    ['name' => 'Despertar a las 8am', 'done' => true],
+                    ['name' => 'Entrenamiento, 60 min', 'done' => true],
+                    ['name' => 'Meditación 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matutinas', 'done' => false],
+                    ['name' => 'Trabajo profundo 2–4h', 'done' => false],
+                    ['name' => 'Sin redes sociales hasta las 18:00', 'done' => false],
+                ],
+            ],
+        ],
+    ],
     'how' => [
         'eyebrow' => 'Cómo funciona',
         'title' => 'Tres pasos pequeños. Cero fricción.',

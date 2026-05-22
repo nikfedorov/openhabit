@@ -607,6 +607,65 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     AI Digest examples. Two real digest cards side-by-side. Each card shows
+     the AI-written text and a compact habit status strip.
+   ───────────────────────────────────────────────────────────────────────── --}}
+@php $digestItems = (array) __('welcome.digest_examples.items'); @endphp
+@if (count($digestItems) > 0)
+<section aria-labelledby="digest-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.digest_examples.eyebrow') }}</p>
+        <h2 id="digest-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-3">{{ __('welcome.digest_examples.title') }}</h2>
+        <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ __('welcome.digest_examples.subtitle') }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        @foreach ($digestItems as $i => $digest)
+            <article class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 flex flex-col overflow-hidden"
+                     data-reveal-delay="{{ $i * 80 }}">
+                {{-- Card header --}}
+                <div class="flex items-center justify-between gap-3 px-5 py-3 border-b rule">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-green-100 dark:bg-green-950/60 text-green-600 dark:text-green-500 flex-shrink-0">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
+                                <path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z"/>
+                            </svg>
+                        </span>
+                        <span class="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">{{ __('welcome.digest_examples.eyebrow') }}</span>
+                    </div>
+                    <time class="text-[11px] font-mono text-neutral-400 dark:text-neutral-500 flex-shrink-0" datetime="{{ $digest['date_machine'] }}">
+                        {{ $digest['date'] }}
+                    </time>
+                </div>
+
+                {{-- Digest text --}}
+                <div class="px-5 py-4 flex-1 space-y-2">
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_1'] }}</p>
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_2'] }}</p>
+                </div>
+
+                {{-- Habit status strip --}}
+                @if (!empty($digest['habits']))
+                    <div class="px-5 pb-4 pt-1 border-t rule flex flex-wrap gap-1.5">
+                        @foreach ($digest['habits'] as $habit)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                         {{ $habit['done'] ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400' }}">
+                                @if ($habit['done'])
+                                    <svg class="w-2.5 h-2.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                @endif
+                                <span class="{{ $habit['done'] ? 'line-through opacity-70' : '' }}">{{ $habit['name'] }}</span>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+            </article>
+        @endforeach
+    </div>
+</section>
+@endif
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Comparison. A plain editorial table — no card wrapper, hairline row
      dividers, single bordered surface broken by rules. The OpenHabit
      column is the only one that earns the green accent (header tag,

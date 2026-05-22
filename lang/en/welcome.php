@@ -79,6 +79,41 @@ return [
             ],
         ],
     ],
+    'digest_examples' => [
+        'eyebrow' => 'AI Digest',
+        'title' => 'What a daily digest looks like',
+        'subtitle' => 'Real examples — what users actually receive.',
+        'items' => [
+            [
+                'date_machine' => '2026-05-20',
+                'date' => '20 May 2026',
+                'paragraph_1' => 'Today showed real progress — you broke a social media relapse pattern and held the key habits: early rise, workout, meditation, and deep work. Your strength is recovering fast and learning from the day before.',
+                'paragraph_2' => 'Morning pages keep slipping when sleep is late — that is the gap to close. Tonight write one sentence about something good that happened. A small anchor that carries today into tomorrow morning.',
+                'habits' => [
+                    ['name' => 'Wake up by 8am', 'done' => true],
+                    ['name' => 'Workout, 60 min', 'done' => true],
+                    ['name' => 'Meditation 10–20 min', 'done' => true],
+                    ['name' => 'Morning pages', 'done' => false],
+                    ['name' => 'Deep work 2–4h', 'done' => true],
+                    ['name' => 'No social media until 18:00', 'done' => true],
+                ],
+            ],
+            [
+                'date_machine' => '2026-05-19',
+                'date' => '19 May 2026',
+                'paragraph_1' => 'Early rise and workout done, nutrition clean — solid execution on the physical side. But a midday social media slip cascaded into missed deep work and a lost afternoon.',
+                'paragraph_2' => 'Nutritional discipline holds even after slips — that is a real asset. For digital limits, add friction: when the urge to scroll hits, do five squats first. Small pause, big reset.',
+                'habits' => [
+                    ['name' => 'Wake up by 8am', 'done' => true],
+                    ['name' => 'Workout, 60 min', 'done' => true],
+                    ['name' => 'Meditation 10–20 min', 'done' => true],
+                    ['name' => 'Morning pages', 'done' => false],
+                    ['name' => 'Deep work 2–4h', 'done' => false],
+                    ['name' => 'No social media until 18:00', 'done' => false],
+                ],
+            ],
+        ],
+    ],
     'how' => [
         'eyebrow' => 'How it works',
         'title' => 'Three small steps. No friction.',
