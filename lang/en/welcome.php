@@ -50,7 +50,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Features',
-        'title' => 'Only what you actually need.',
+        'title' => 'Only what you actually need',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -133,12 +133,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Start today. Future you will be grateful.',
+        'title' => 'Start today. Future you will be grateful',
         'subtitle' => 'Free to use. Premium adds the AI digest, several reminders per habit, and CSV export.',
     ],
     'compare' => [
         'eyebrow' => 'Compared',
-        'title' => 'Different where it counts.',
+        'title' => 'Different where it counts',
         'subtitle' => 'How OpenHabit compares to the trackers people usually pick. The rows are not cherry-picked.',
         'caption' => 'Comparison of popular habit trackers',
         'criterion' => 'Criterion',
@@ -167,7 +167,7 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Open source',
-        'title' => 'Built in the open.',
+        'title' => 'Built in the open',
         'body' => 'Every line of OpenHabit is on GitHub under the MIT license. You can read it, fork it, or run it on your own server. There is no telemetry and no lock-in.',
         'cta' => 'View on GitHub',
         'license_link' => 'Read the license',
@@ -205,7 +205,7 @@ return [
     ],
     'faq' => [
         'eyebrow' => 'FAQ',
-        'title' => 'Questions worth asking.',
+        'title' => 'Questions worth asking',
         'items' => [
             [
                 'q' => 'How much does OpenHabit cost?',

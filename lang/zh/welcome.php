@@ -50,7 +50,7 @@ return [
     ],
     'features' => [
         'eyebrow' => '功能',
-        'title' => '需要的，刚刚好。',
+        'title' => '需要的，刚刚好',
         'premium' => '高级版',
         'items' => [
             'schedules' => [
@@ -133,12 +133,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => '今天就开始。未来的你，会替自己说一声谢谢。',
+        'title' => '今天就开始。未来的你，会替自己说一声谢谢',
         'subtitle' => '免费使用。高级版增加 AI 摘要、每个习惯多个提醒，以及 CSV 导出。',
     ],
     'compare' => [
         'eyebrow' => '对比',
-        'title' => '在要紧的地方不同。',
+        'title' => '在要紧的地方不同',
         'subtitle' => '看看 OpenHabit 与人们常用的习惯追踪器相比表现如何。每一行都如实呈现，未经挑选。',
         'caption' => '常见习惯追踪器对比',
         'criterion' => '维度',
@@ -167,7 +167,7 @@ return [
     ],
     'open' => [
         'eyebrow' => '开源项目',
-        'title' => '公开构建。',
+        'title' => '公开构建',
         'body' => 'OpenHabit 的每一行代码都托管在 GitHub，采用 MIT 许可证。随意阅读、fork，或在自己的服务器上运行。没有遥测，也没有锁定。',
         'cta' => '在 GitHub 上查看',
         'license_link' => '阅读许可证',
@@ -205,7 +205,7 @@ return [
     ],
     'faq' => [
         'eyebrow' => '常见问题',
-        'title' => '值得一问的问题。',
+        'title' => '値得一问的问题',
         'items' => [
             [
                 'q' => 'OpenHabit 收费吗?',

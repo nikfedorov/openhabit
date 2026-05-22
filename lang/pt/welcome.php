@@ -50,7 +50,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Recursos',
-        'title' => 'Só o que você realmente precisa.',
+        'title' => 'Só o que você realmente precisa',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -133,12 +133,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Comece hoje. O seu eu de amanhã agradece.',
+        'title' => 'Comece hoje. O seu eu de amanhã agradece',
         'subtitle' => 'Grátis. O Premium acrescenta o resumo com IA, vários lembretes por hábito e exportação em CSV.',
     ],
     'compare' => [
         'eyebrow' => 'Comparativo',
-        'title' => 'Diferente onde importa.',
+        'title' => 'Diferente onde importa',
         'subtitle' => 'Como o OpenHabit se sai diante dos rastreadores que as pessoas mais usam. Não escolhemos as linhas a dedo.',
         'caption' => 'Comparativo dos rastreadores de hábitos populares',
         'criterion' => 'Critério',
@@ -167,7 +167,7 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Código aberto',
-        'title' => 'Feito às claras.',
+        'title' => 'Feito às claras',
         'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Você pode ler, fazer fork ou rodar no seu próprio servidor. Não tem telemetria nem lock-in.',
         'cta' => 'Ver no GitHub',
         'license_link' => 'Ler a licença',
@@ -205,7 +205,7 @@ return [
     ],
     'faq' => [
         'eyebrow' => 'Perguntas frequentes',
-        'title' => 'Perguntas que vale a pena fazer.',
+        'title' => 'Perguntas que vale a pena fazer',
         'items' => [
             [
                 'q' => 'Quanto custa o OpenHabit?',
