@@ -18,6 +18,7 @@ return [
         'features' => 'Features',
         'compare' => 'Compare',
         'how' => 'How it works',
+        'faq' => 'FAQ',
         'news' => 'News',
         'menu' => 'Menu',
         'cta_telegram' => 'Open in Telegram',
@@ -30,8 +31,9 @@ return [
         'badge' => 'Built for Telegram',
         'title_pre' => 'Build habits that',
         'title_accent' => 'stick.',
-        'subtitle' => 'A calm, focused habit tracker that lives inside Telegram. No notifications shouting at you, no streak guilt. Just a quiet space to mark your day and let consistency do the rest.',
+        'subtitle' => 'A calm, focused habit tracker that lives inside Telegram. No noisy notifications, no guilt about a broken streak. Just a quiet space to mark your day and watch the rest add up.',
         'login_telegram' => 'Log in with Telegram',
+        'trial_note' => ':days days of Premium free to start. No card needed.',
     ],
     'preview' => [
         'today' => 'Today',
@@ -49,7 +51,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Features',
-        'title' => "Just what you need. Nothing you don't.",
+        'title' => 'Only what you actually need',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -58,11 +60,11 @@ return [
             ],
             'streaks' => [
                 'title' => 'Streaks and a heatmap',
-                'body' => "See your consistency at a glance. A quiet activity grid shows where you showed up, and where you didn't. No judgment, just the picture.",
+                'body' => 'See your consistency at a glance. The activity grid shows which days you marked and which you missed. No judgment, just the picture.',
             ],
             'reminders' => [
                 'title' => 'Telegram reminders',
-                'body' => 'Gentle nudges, sent right where you already chat. One per habit, or several. No spam, no anxiety, no buzzing your phone for nothing.',
+                'body' => 'Gentle nudges, sent right where you already chat. One per habit, or several if you want them. Nothing fires unless you ask it to.',
             ],
             'notes' => [
                 'title' => 'Daily notes',
@@ -70,7 +72,7 @@ return [
             ],
             'ai' => [
                 'title' => 'AI digest',
-                'body' => "A daily summary that quietly surfaces patterns you'd otherwise miss: what's working, what's slipping, and why it might be.",
+                'body' => "A daily summary that picks up patterns you'd otherwise miss: what's working, what's slipping, and a short thought on why.",
             ],
             'export' => [
                 'title' => 'Export anytime',
@@ -78,13 +80,48 @@ return [
             ],
         ],
     ],
+    'digest_examples' => [
+        'eyebrow' => 'AI Digest',
+        'title' => 'What a daily digest looks like',
+        'subtitle' => 'Real examples of what users actually receive.',
+        'items' => [
+            [
+                'date_machine' => '2026-05-20',
+                'date' => '20 May 2026',
+                'paragraph_1' => 'Today was real progress. You broke the social media relapse pattern and held the key habits: early rise, workout, meditation, deep work. The strong thing is how quickly you bounce back and learn from a rough day.',
+                'paragraph_2' => 'Morning pages keep slipping when sleep runs late. That is the gap to close. Tonight, write one sentence about something good that happened today.',
+                'habits' => [
+                    ['name' => 'Wake up by 8am', 'done' => true],
+                    ['name' => 'Workout, 60 min', 'done' => true],
+                    ['name' => 'Meditation 10–20 min', 'done' => true],
+                    ['name' => 'Morning pages', 'done' => false],
+                    ['name' => 'Deep work 2–4h', 'done' => true],
+                    ['name' => 'No social media until 18:00', 'done' => true],
+                ],
+            ],
+            [
+                'date_machine' => '2026-05-19',
+                'date' => '19 May 2026',
+                'paragraph_1' => 'Early rise and workout done, nutrition clean. The physical side held up. But a midday social media slip cascaded into missed deep work and a lost afternoon.',
+                'paragraph_2' => 'Nutritional discipline holds even after a slip, which is a real asset. For digital limits, try adding friction: when the urge to scroll hits, do five squats first. That tiny pause is usually enough to reset.',
+                'habits' => [
+                    ['name' => 'Wake up by 8am', 'done' => true],
+                    ['name' => 'Workout, 60 min', 'done' => true],
+                    ['name' => 'Meditation 10–20 min', 'done' => true],
+                    ['name' => 'Morning pages', 'done' => false],
+                    ['name' => 'Deep work 2–4h', 'done' => false],
+                    ['name' => 'No social media until 18:00', 'done' => false],
+                ],
+            ],
+        ],
+    ],
     'how' => [
         'eyebrow' => 'How it works',
-        'title' => 'Three small steps. No friction.',
+        'title' => 'Three small steps to get going.',
         'steps' => [
             [
                 'title' => 'Open the bot in Telegram',
-                'body' => "Tap the button below. No accounts, no email, no password to forget. You're already in.",
+                'body' => 'Tap the button below. No signup, no email, no password to forget. If you have Telegram, you are already in.',
             ],
             [
                 'title' => 'Add a habit or two',
@@ -97,13 +134,14 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Start today. Future you will be grateful.',
+        'title' => 'Start today. Future you will be grateful',
         'subtitle' => 'Free to use. Premium adds the AI digest, several reminders per habit, and CSV export.',
+        'trial_note' => ':days-day free trial on Premium, no card needed.',
     ],
     'compare' => [
         'eyebrow' => 'Compared',
-        'title' => 'Quietly different from the rest.',
-        'subtitle' => "How OpenHabit stacks up against the trackers people reach for. We didn't cherry-pick the rows.",
+        'title' => 'Different where it counts',
+        'subtitle' => 'How OpenHabit compares to the trackers people usually pick. The rows are not cherry-picked.',
         'caption' => 'Comparison of popular habit trackers',
         'criterion' => 'Criterion',
         'us_tag' => 'Our pick',
@@ -131,14 +169,14 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Open source',
-        'title' => 'Built in the open. Yours to read.',
-        'body' => 'Every line of OpenHabit lives on GitHub under the MIT license. Read it, audit it, fork it, run it on your own server. No telemetry, no lock-in, no surprises.',
+        'title' => 'Built in the open',
+        'body' => 'Every line of OpenHabit is on GitHub under the MIT license. You can read it, fork it, or run it on your own server. There is no telemetry and no lock-in.',
         'cta' => 'View on GitHub',
         'license_link' => 'Read the license',
         'facts' => [
             'license' => [
                 'title' => 'Permissive license',
-                'body' => 'MIT. Fork it, ship it, change it.',
+                'body' => 'MIT licensed. Fork, modify, and ship whatever you want.',
             ],
             'selfhost' => [
                 'title' => 'Self-hostable',
@@ -146,7 +184,7 @@ return [
             ],
             'audit' => [
                 'title' => 'Nothing to hide',
-                'body' => 'No trackers, no analytics SDKs, no dark corners.',
+                'body' => 'No third-party trackers and no analytics SDKs.',
             ],
         ],
     ],
@@ -166,5 +204,35 @@ return [
         'telegram' => 'Telegram',
         'news' => 'News channel',
         'app' => 'Open the app',
+    ],
+    'faq' => [
+        'eyebrow' => 'FAQ',
+        'title' => 'Questions worth asking',
+        'items' => [
+            [
+                'q' => 'How much does OpenHabit cost?',
+                'a' => 'The core features are completely free, with no time limit or habit cap. Premium adds an AI daily digest, multiple Telegram reminders per habit, and CSV export. New accounts get a :days-day free trial of Premium automatically.',
+            ],
+            [
+                'q' => 'Do I need a Telegram account?',
+                'a' => 'Yes. OpenHabit is built as a Telegram bot and mini app, so a Telegram account is all you need. No separate sign-up, no password to forget.',
+            ],
+            [
+                'q' => 'Can I use OpenHabit in a browser?',
+                'a' => 'Yes. Log in once with your Telegram account on the web and the full app opens in your browser. Same habits, same history — just a bigger screen.',
+            ],
+            [
+                'q' => 'What is the AI digest?',
+                'a' => 'A short daily message that picks up patterns in your habits: what is trending up, what is slipping, and a brief thought on why. It looks at your recent check-ins and notes.',
+            ],
+            [
+                'q' => 'Is my data private?',
+                'a' => 'Your data is stored in our database with no third-party analytics or tracking SDKs. If you prefer complete control, you can self-host the entire app.',
+            ],
+            [
+                'q' => 'Can I self-host OpenHabit?',
+                'a' => 'Yes. The full source code is on GitHub under the MIT licence. One Docker command and the app runs on your own server. Your data never leaves your machine.',
+            ],
+        ],
     ],
 ];

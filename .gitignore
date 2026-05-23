@@ -28,5 +28,6 @@ Homestead.yaml
 **/caddy
 **/composer
 /config/configstore/
+/config/psysh/
 frankenphp
 frankenphp-worker.php

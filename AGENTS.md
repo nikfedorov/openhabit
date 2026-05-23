@@ -1,5 +1,7 @@
 <laravel-boost-guidelines>
-# App/Actions guidelines
+=== .ai/actions rules ===
+
+## App/Actions guidelines
 
 - This application uses the Action pattern and prefers for much logic to live in reusable and composable Action classes.
 - Actions live in `app/Actions`, they are named based on what they do, with no suffix.
@@ -29,7 +31,100 @@ final readonly class CreateFavorite
         return $this->favorites->add($user, $favorite);
     }
 }
-@endboostsnippet
+
+=== .ai/code-quality rules ===
+
+## Code Coverage
+
+- Use `@codeCoverageIgnore` only in exceptional cases when code cannot be tested (e.g., code that can't run in test environment like database deletion in tests).
+- Prefer writing tests for all code paths including exception handling using mocks and `andThrow()`.
+
+## PHPStan
+
+- Do not use `@phpstan-ignore`, `@phpstan-ignore-line`, `@phpstan-ignore-next-line` or similar inline ignore comments.
+- If PHPStan reports type errors, fix them properly with correct type annotations or refactor the code.
+
+=== .ai/design rules ===
+
+## Design System
+
+Follow Notion-inspired minimalist design principles for all pages.
+
+### Color Palette
+
+- Background: `bg-white dark:bg-neutral-900`
+- Cards/Sections: `bg-neutral-100 dark:bg-neutral-800` with `rounded-xl`
+- Primary text: `text-neutral-900 dark:text-white`
+- Secondary text: `text-neutral-500 dark:text-neutral-400`
+- Muted labels: `text-neutral-400 dark:text-neutral-500`
+- Success/Accent: `green-500`, `green-600`
+- Borders: `border-neutral-300 dark:border-neutral-600`
+
+### Typography
+
+- Headings: `text-lg` or `text-2xl` with `font-bold` or `font-semibold`
+- Body text: `text-sm` (14px) with `leading-5`
+- Small text/labels: `text-xs` (12px)
+- Always use `font-medium` for interactive elements
+
+### Spacing & Layout
+
+- Page container: `max-w-2xl mx-auto px-4 py-6`
+- Section spacing: `mb-6`
+- Card padding: `px-4 py-2`
+- Gap in flex: `gap-2`, `gap-3`
+
+### Interactive Elements
+
+- Hover states: Use `hover:bg-neutral-100 dark:hover:bg-neutral-800`
+- Transitions: `transition-all duration-150` or `duration-200`
+- Cursor: `cursor-pointer` on clickable elements
+- Completed items: `opacity-60`, `line-through` on text
+
+### Alignment Patterns
+
+- Checkbox + text: Wrap checkbox in `h-5 flex items-center`, use `leading-5` on text
+- Baseline alignment: Use `items-baseline` for mixed font sizes
+- Fixed elements: Use `flex-shrink-0`
+
+### Component Patterns
+
+- Cards: `bg-neutral-100 dark:bg-neutral-800 rounded-xl px-4 py-4`
+- Buttons: `px-3 py-1.5 text-xs font-medium rounded-full`
+- Icon buttons: `w-10 h-10 rounded-lg flex items-center justify-center`
+- Empty states: Center with icon, title, and description
+
+### Dark Mode
+
+- Always provide dark mode variants using `dark:` prefix
+- Test both modes visually
+- Green shades invert: `green-600 dark:green-500`, `green-200 dark:green-900`
+
+### Animations
+
+- Animations must be smooth, subtle, and non-intrusive — they should enhance the user experience, not distract from it.
+- Use entrance animations (`animate-fade-in-up`, `animate-stagger`) for content that appears on page load or state change.
+- Use `transition-all duration-150` or `duration-200` for interactive feedback (hover, focus, toggle).
+- Use Alpine `x-transition` for elements that show/hide dynamically (modals, dropdowns, banners).
+- Use `x-collapse` for expandable/collapsible sections.
+- Hover effects on small grid cells: `hover:scale-125` or `hover:scale-150` with `duration-150`.
+- Never add animation to static informational elements that don't change (legends, table headers).
+- Prefer CSS animations and Tailwind utilities over JavaScript-driven animations.
+- Keep durations between 120ms–400ms. Anything longer feels sluggish.
+- Always respect `prefers-reduced-motion` — use `motion-safe:` prefix when adding non-essential animations.
+
+=== .ai/finalization rules ===
+
+## Final Actions (🚨 CRITICAL - NEVER SKIP 🚨)
+
+⚠️ **MANDATORY REQUIREMENT - YOU MUST DO THIS BEFORE EVERY RESPONSE COMPLETION:**
+
+Before you finalize ANY task or tell the user you're done, you MUST:
+1. **RUN: `vendor/bin/sail composer test`** to run ALL tests in the application.
+2. **IF TESTS FAIL:** Fix ALL issues immediately. Do not ask the user - just fix them.
+3. **ONLY AFTER 100% SUCCESS:** Confirm completion to the user.
+
+**🛑 STOP AND RUN TESTS NOW 🛑** - If you haven't run `vendor/bin/sail composer test` yet, you are NOT done. Go back and run it.
 
 === foundation rules ===
 
@@ -67,7 +162,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 ## Skills Activation
 
 This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
-- `karpathy-guidelines` — **ALWAYS load this skill for EVERY task, no exceptions.** Behavioral guidelines to avoid LLM coding mistakes: think before coding, simplicity first, surgical changes, goal-driven execution.
 
 ## Conventions
 
@@ -83,16 +177,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
-
-## Code Coverage
-
-- Use `@codeCoverageIgnore` only in exceptional cases when code cannot be tested (e.g., code that can't run in test environment like database deletion in tests).
-- Prefer writing tests for all code paths including exception handling using mocks and `andThrow()`.
-
-## PHPStan
-
-- Do not use `@phpstan-ignore`, `@phpstan-ignore-line`, `@phpstan-ignore-next-line` or similar inline ignore comments.
-- If PHPStan reports type errors, fix them properly with correct type annotations or refactor the code.
 
 ## Frontend Bundling
 
@@ -137,7 +221,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Run Artisan commands directly via the command line (e.g., `vendor/bin/sail artisan route:list`). Use `vendor/bin/sail artisan list` to discover available commands and `vendor/bin/sail artisan [command] --help` to check parameters.
 - Inspect routes with `vendor/bin/sail artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
 - Read configuration values using dot notation: `vendor/bin/sail artisan config:show app.name`, `vendor/bin/sail artisan config:show database.default`. Or read config files directly from the `config/` directory.
-- To check environment variables, read the `.env` file directly.
 
 ## Tinker
 
@@ -153,8 +236,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
 - Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
 - Follow existing application Enum naming conventions.
-- Add PHPDoc blocks as well as inline comments for all logic.
+- Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
+
+=== deployments rules ===
+
+# Deployment
+
+- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
 
 === sail rules ===
 
@@ -176,7 +265,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
 - Run the minimum number of tests needed to ensure code quality and speed. Use `vendor/bin/sail artisan test --compact` with a specific filename or filter.
-- Test file structure must mirror the application structure. Each class should have its own dedicated test file (e.g. `app/Enums/Theme.php` → `tests/Unit/Enums/ThemeTest.php`, `app/Models/User.php` → `tests/Unit/Models/UserTest.php`). Do not merge tests for different classes into a single file.
 
 === laravel/core rules ===
 
@@ -233,6 +321,13 @@ $this->app->singleton(Service::class, fn () => new Service(fn () => request()));
 - Livewire allow to build dynamic, reactive interfaces in PHP without writing JavaScript.
 - You can use Alpine.js for client-side interactions instead of JavaScript frameworks.
 - Keep state server-side so the UI reflects it. Validate and authorize in actions as you would in HTTP requests.
+
+=== pint/core rules ===
+
+# Laravel Pint Code Formatter
+
+- If you have modified any PHP files, you must run `vendor/bin/sail bin pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
+- Do not run `vendor/bin/sail bin pint --test --format agent`, simply run `vendor/bin/sail bin pint --format agent` to fix any formatting issues.
 
 === pest/core rules ===
 
@@ -479,85 +574,4 @@ livewire(ListUsers::class)
   - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
   - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
 
-=== design rules ===
-
-## Design System
-
-Follow Notion-inspired minimalist design principles for all pages.
-
-### Color Palette
-
-- Background: `bg-white dark:bg-neutral-900`
-- Cards/Sections: `bg-neutral-100 dark:bg-neutral-800` with `rounded-xl`
-- Primary text: `text-neutral-900 dark:text-white`
-- Secondary text: `text-neutral-500 dark:text-neutral-400`
-- Muted labels: `text-neutral-400 dark:text-neutral-500`
-- Success/Accent: `green-500`, `green-600`
-- Borders: `border-neutral-300 dark:border-neutral-600`
-
-### Typography
-
-- Headings: `text-lg` or `text-2xl` with `font-bold` or `font-semibold`
-- Body text: `text-sm` (14px) with `leading-5`
-- Small text/labels: `text-xs` (12px)
-- Always use `font-medium` for interactive elements
-
-### Spacing & Layout
-
-- Page container: `max-w-2xl mx-auto px-4 py-6`
-- Section spacing: `mb-6`
-- Card padding: `px-4 py-2`
-- Gap in flex: `gap-2`, `gap-3`
-
-### Interactive Elements
-
-- Hover states: Use `hover:bg-neutral-100 dark:hover:bg-neutral-800`
-- Transitions: `transition-all duration-150` or `duration-200`
-- Cursor: `cursor-pointer` on clickable elements
-- Completed items: `opacity-60`, `line-through` on text
-
-### Alignment Patterns
-
-- Checkbox + text: Wrap checkbox in `h-5 flex items-center`, use `leading-5` on text
-- Baseline alignment: Use `items-baseline` for mixed font sizes
-- Fixed elements: Use `flex-shrink-0`
-
-### Component Patterns
-
-- Cards: `bg-neutral-100 dark:bg-neutral-800 rounded-xl px-4 py-4`
-- Buttons: `px-3 py-1.5 text-xs font-medium rounded-full`
-- Icon buttons: `w-10 h-10 rounded-lg flex items-center justify-center`
-- Empty states: Center with icon, title, and description
-
-### Dark Mode
-
-- Always provide dark mode variants using `dark:` prefix
-- Test both modes visually
-- Green shades invert: `green-600 dark:green-500`, `green-200 dark:green-900`
-
-### Animations
-
-- Animations must be smooth, subtle, and non-intrusive — they should enhance the user experience, not distract from it.
-- Use entrance animations (`animate-fade-in-up`, `animate-stagger`) for content that appears on page load or state change.
-- Use `transition-all duration-150` or `duration-200` for interactive feedback (hover, focus, toggle).
-- Use Alpine `x-transition` for elements that show/hide dynamically (modals, dropdowns, banners).
-- Use `x-collapse` for expandable/collapsible sections.
-- Hover effects on small grid cells: `hover:scale-125` or `hover:scale-150` with `duration-150`.
-- Never add animation to static informational elements that don't change (legends, table headers).
-- Prefer CSS animations and Tailwind utilities over JavaScript-driven animations.
-- Keep durations between 120ms–400ms. Anything longer feels sluggish.
-- Always respect `prefers-reduced-motion` — use `motion-safe:` prefix when adding non-essential animations.
-
-=== finalization rules ===
-
-## Final Actions (🚨 CRITICAL - NEVER SKIP 🚨)
-
-⚠️ **MANDATORY REQUIREMENT - YOU MUST DO THIS BEFORE EVERY RESPONSE COMPLETION:**
-
-Before you finalize ANY task or tell the user you're done, you MUST:
-1. **RUN: `vendor/bin/sail composer test`** to run ALL tests in the application.
-2. **IF TESTS FAIL:** Fix ALL issues immediately. Do not ask the user - just fix them.
-3. **ONLY AFTER 100% SUCCESS:** Confirm completion to the user.
-
-**🛑 STOP AND RUN TESTS NOW 🛑** - If you haven't run `vendor/bin/sail composer test` yet, you are NOT done. Go back and run it.
 </laravel-boost-guidelines>

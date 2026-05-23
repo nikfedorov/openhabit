@@ -15,6 +15,7 @@ Route::get('/', fn (): View => view('welcome', [
     'botUsername' => Setting::botUsername(),
     'trackingScripts' => Setting::trackingScripts(),
     'isLoggedIn' => auth()->check(),
+    'trialPeriodDays' => Setting::trialPeriodDays(),
 ]))->name('welcome');
 
 // Authentication

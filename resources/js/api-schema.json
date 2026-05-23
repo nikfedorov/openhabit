@@ -1566,21 +1566,7 @@
                         "type": "boolean",
                         "description": "Whether the habit is fully completed for the day."
                     },
-                    "current_iteration": {
-                        "description": "Number of iterations completed so far today.",
-                        "examples": [
-                            1
-                        ],
-                        "anyOf": [
-                            {},
-                            {
-                                "type": "integer",
-                                "enum": [
-                                    0
-                                ]
-                            }
-                        ]
-                    },
+                    "current_iteration": {},
                     "sort_order": {
                         "type": "integer",
                         "description": "Position in the habit list.",

@@ -20,6 +20,7 @@ return [
         'news' => 'Novidades',
         'menu' => 'Menu',
         'how' => 'Como funciona',
+        'faq' => 'FAQ',
         'cta_telegram' => 'Abrir no Telegram',
         'cta_app' => 'Abrir o app',
         'theme_light' => 'Mudar para tema claro',
@@ -32,6 +33,7 @@ return [
         'title_accent' => 'ficam.',
         'subtitle' => 'Um rastreador de hábitos calmo e focado, que vive dentro do Telegram. Sem notificações gritando, sem culpa por ter perdido um dia. Só um espaço tranquilo para marcar o dia, e o resto vem sozinho.',
         'login_telegram' => 'Entrar com o Telegram',
+        'trial_note' => ':days dias de Premium grátis para começar. Sem cartão.',
     ],
     'preview' => [
         'today' => 'Hoje',
@@ -49,7 +51,7 @@ return [
     ],
     'features' => [
         'eyebrow' => 'Recursos',
-        'title' => 'Só o necessário, nada mais.',
+        'title' => 'Só o que você realmente precisa',
         'premium' => 'Premium',
         'items' => [
             'schedules' => [
@@ -58,11 +60,11 @@ return [
             ],
             'streaks' => [
                 'title' => 'Sequências e mapa de calor',
-                'body' => 'Sua constância num só olhar. Uma grade discreta mostra os dias em que você apareceu e os dias em que não. Sem julgar, é só a foto.',
+                'body' => 'Sua constância num só olhar. A grade mostra os dias em que você apareceu e os dias em que faltou. Sem julgar, é só a foto.',
             ],
             'reminders' => [
                 'title' => 'Lembretes no Telegram',
-                'body' => 'Toques gentis, exatamente onde você já conversa. Um por hábito, ou vários. Sem spam, sem ansiedade, sem vibração à toa.',
+                'body' => 'Toques gentis, exatamente onde você já conversa. Um por hábito, ou vários se quiser. Nada dispara até você pedir.',
             ],
             'notes' => [
                 'title' => 'Notas do dia',
@@ -70,7 +72,7 @@ return [
             ],
             'ai' => [
                 'title' => 'Resumo com IA',
-                'body' => 'Um resumo diário que, sem alarde, mostra padrões que passariam batido: o que está dando certo, o que começou a escorregar e por quê.',
+                'body' => 'Um resumo diário que pega padrões que passariam batido: o que está dando certo, o que começou a escorregar e uma breve ideia do porquê.',
             ],
             'export' => [
                 'title' => 'Exporte quando quiser',
@@ -78,13 +80,48 @@ return [
             ],
         ],
     ],
+    'digest_examples' => [
+        'eyebrow' => 'AI Digest',
+        'title' => 'Como é o resumo diário',
+        'subtitle' => 'Exemplos reais do que os usuários recebem.',
+        'items' => [
+            [
+                'date_machine' => '2026-05-20',
+                'date' => '20 mai. 2026',
+                'paragraph_1' => 'Hoje foi progresso de verdade. Você quebrou o padrão de recaída nas redes sociais e manteve os hábitos-chave: acordar cedo, treinar, meditar e trabalho profundo. O ponto forte é a rapidez com que você se recupera depois de um dia ruim.',
+                'paragraph_2' => 'As páginas matinais escapam quando você dorme tarde. Essa é a brecha a fechar. Hoje à noite escreva uma frase sobre algo bom que aconteceu.',
+                'habits' => [
+                    ['name' => 'Acordar às 8h', 'done' => true],
+                    ['name' => 'Treino, 60 min', 'done' => true],
+                    ['name' => 'Meditação 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matinais', 'done' => false],
+                    ['name' => 'Trabalho profundo 2–4h', 'done' => true],
+                    ['name' => 'Sem redes sociais até 18:00', 'done' => true],
+                ],
+            ],
+            [
+                'date_machine' => '2026-05-19',
+                'date' => '19 mai. 2026',
+                'paragraph_1' => 'Acordar cedo e treino concluídos, alimentação limpa. O lado físico se segurou. Mas uma queda nas redes sociais ao meio-dia resultou em trabalho profundo perdido e tarde comprometida.',
+                'paragraph_2' => 'A disciplina nutricional se mantém mesmo após quedas, o que é um ativo real. Para os limites digitais, adicione atrito: quando sentir o impulso de rolar a tela, faça cinco agachamentos primeiro.',
+                'habits' => [
+                    ['name' => 'Acordar às 8h', 'done' => true],
+                    ['name' => 'Treino, 60 min', 'done' => true],
+                    ['name' => 'Meditação 10–20 min', 'done' => true],
+                    ['name' => 'Páginas matinais', 'done' => false],
+                    ['name' => 'Trabalho profundo 2–4h', 'done' => false],
+                    ['name' => 'Sem redes sociais até 18:00', 'done' => false],
+                ],
+            ],
+        ],
+    ],
     'how' => [
         'eyebrow' => 'Como funciona',
-        'title' => 'Três passinhos. Zero atrito.',
+        'title' => 'Três passinhos para começar.',
         'steps' => [
             [
                 'title' => 'Abra o bot no Telegram',
-                'body' => 'Toque no botão abaixo. Sem cadastro, sem e-mail, sem senha pra esquecer. Você já está dentro.',
+                'body' => 'Toque no botão abaixo. Não tem cadastro, e-mail ou senha pra esquecer. Se você tem Telegram, já está dentro.',
             ],
             [
                 'title' => 'Adicione um hábito ou dois',
@@ -97,12 +134,13 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Comece hoje. O seu eu de amanhã agradece.',
+        'title' => 'Comece hoje. O seu eu de amanhã agradece',
         'subtitle' => 'Grátis. O Premium acrescenta o resumo com IA, vários lembretes por hábito e exportação em CSV.',
+        'trial_note' => ':days dias de Premium grátis. Sem cartão.',
     ],
     'compare' => [
         'eyebrow' => 'Comparativo',
-        'title' => 'Silenciosamente diferente dos demais.',
+        'title' => 'Diferente onde importa',
         'subtitle' => 'Como o OpenHabit se sai diante dos rastreadores que as pessoas mais usam. Não escolhemos as linhas a dedo.',
         'caption' => 'Comparativo dos rastreadores de hábitos populares',
         'criterion' => 'Critério',
@@ -131,14 +169,14 @@ return [
     ],
     'open' => [
         'eyebrow' => 'Código aberto',
-        'title' => 'Feito às claras. Confira você mesmo.',
-        'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Leia, audite, faça fork, rode no seu próprio servidor. Sem telemetria, sem amarras, sem surpresas.',
+        'title' => 'Feito às claras',
+        'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Você pode ler, fazer fork ou rodar no seu próprio servidor. Não tem telemetria nem lock-in.',
         'cta' => 'Ver no GitHub',
         'license_link' => 'Ler a licença',
         'facts' => [
             'license' => [
                 'title' => 'Licença permissiva',
-                'body' => 'MIT. Faça fork, publique, modifique.',
+                'body' => 'Licença MIT. Faça fork, modifique e publique o que quiser.',
             ],
             'selfhost' => [
                 'title' => 'Auto-hospedável',
@@ -146,7 +184,7 @@ return [
             ],
             'audit' => [
                 'title' => 'Nada a esconder',
-                'body' => 'Sem rastreadores, sem SDKs de análise, sem cantos escuros.',
+                'body' => 'Sem rastreadores de terceiros e sem SDKs de análise.',
             ],
         ],
     ],
@@ -166,5 +204,35 @@ return [
         'telegram' => 'Telegram',
         'news' => 'Canal de novidades',
         'app' => 'Abrir o app',
+    ],
+    'faq' => [
+        'eyebrow' => 'Perguntas frequentes',
+        'title' => 'Perguntas que vale a pena fazer',
+        'items' => [
+            [
+                'q' => 'Quanto custa o OpenHabit?',
+                'a' => 'As funções principais são completamente gratuitas, sem limite de tempo ou de hábitos. O Premium adiciona o resumo diário de IA, vários lembretes por hábito no Telegram e exportação em CSV. Novas contas recebem automaticamente :days dias de Premium grátis.',
+            ],
+            [
+                'q' => 'Preciso de uma conta no Telegram?',
+                'a' => 'Sim. O OpenHabit funciona como bot e mini app do Telegram, por isso basta ter uma conta no Telegram. Sem cadastro adicional, sem senha para esquecer.',
+            ],
+            [
+                'q' => 'Posso usar o OpenHabit no navegador?',
+                'a' => 'Sim. Faça login com sua conta do Telegram na web e o app completo abre no navegador. Os mesmos hábitos, o mesmo histórico — só numa tela maior.',
+            ],
+            [
+                'q' => 'O que é o resumo de IA?',
+                'a' => 'Uma breve mensagem diária que identifica padrões nos seus hábitos: o que está melhorando, o que está caindo e por quê. Analisa seus registros recentes e notas.',
+            ],
+            [
+                'q' => 'Meus dados são privados?',
+                'a' => 'Seus dados ficam no nosso banco de dados sem SDKs de análise de terceiros. Se quiser controle total, você pode hospedar o app no seu próprio servidor.',
+            ],
+            [
+                'q' => 'Posso hospedar por conta própria?',
+                'a' => 'Sim. O código completo está no GitHub sob a licença MIT. Um comando Docker e o app roda no seu servidor. Seus dados nunca saem da sua máquina.',
+            ],
+        ],
     ],
 ];

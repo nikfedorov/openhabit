@@ -81,6 +81,25 @@
         @media (prefers-reduced-motion: no-preference) {
             .pulse-soft { animation: pulse-soft 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
         }
+
+        /* FAQ accordion — height + padding animate together.
+           The grid-template-rows trick lets us transition from 0fr → 1fr
+           without knowing the exact pixel height of the content. */
+        .faq-item > summary { list-style: none; }
+        .faq-item > summary::-webkit-details-marker { display: none; }
+        .faq-answer {
+            display: grid;
+            grid-template-rows: 0fr;
+            padding-bottom: 0;
+            transition: grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1),
+                        padding-bottom    280ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .faq-answer > div { overflow: hidden; }
+        .faq-chevron {
+            flex-shrink: 0;
+            transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .faq-item[open] .faq-chevron { transform: rotate(180deg); }
     </style>
 </head>
 <body class="welcome antialiased text-neutral-900 dark:text-neutral-100">
@@ -114,15 +133,8 @@
             <a href="#compare" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
                 {{ __('welcome.nav.compare') }}
             </a>
-            <a href="#how" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
-                {{ __('welcome.nav.how') }}
-            </a>
-            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
-                </svg>
-                {{ __('welcome.nav.news') }}
+            <a href="#faq" class="inline-block px-3 py-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white rounded-full transition-colors duration-200">
+                {{ __('welcome.nav.faq') }}
             </a>
 
             {{-- Language selector --}}
@@ -212,16 +224,9 @@
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
                 {{ __('welcome.nav.compare') }}
             </a>
-            <a href="#how" data-menu-link
+            <a href="#faq" data-menu-link
                class="flex items-center px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
-                {{ __('welcome.nav.how') }}
-            </a>
-            <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer"
-               class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
-                <svg class="w-4 h-4 text-green-600 dark:text-green-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
-                </svg>
-                {{ __('welcome.nav.news') }}
+                {{ __('welcome.nav.faq') }}
             </a>
             <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer"
                class="flex items-center gap-2 px-2 py-2.5 text-[15px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-150">
@@ -304,34 +309,40 @@
                 {{ __('welcome.hero.subtitle') }}
             </p>
 
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-1">
-                <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
-                    {{ $primaryLabel }}
-                    <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
-                    </svg>
-                </a>
+            <div class="flex flex-col items-start gap-2 mt-1">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
+                        {{ $primaryLabel }}
+                        <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
+                        </svg>
+                    </a>
 
-                @if ($botUsername && !$isLoggedIn)
-                    {{-- Telegram Login Widget. Renders an iframe button that redirects --}}
-                    {{-- the browser to the auth callback after the user confirms.    --}}
-                    <div class="inline-flex items-center" aria-label="{{ __('welcome.hero.login_telegram') }}">
-                        <script async
-                                src="https://telegram.org/js/telegram-widget.js?22"
-                                data-telegram-login="{{ $botUsername }}"
-                                data-size="large"
-                                data-radius="20"
-                                data-userpic="false"
-                                data-auth-url="{{ $callbackUrl }}"
-                                data-request-access="write"></script>
-                        <noscript>
-                            <span class="text-sm text-neutral-500 dark:text-neutral-400">
-                                {{ __('welcome.hero.login_telegram') }}
-                            </span>
-                        </noscript>
-                    </div>
-                @endif
+                    @if ($botUsername && !$isLoggedIn)
+                        {{-- Telegram Login Widget. Renders an iframe button that redirects --}}
+                        {{-- the browser to the auth callback after the user confirms.    --}}
+                        <div class="inline-flex items-center" aria-label="{{ __('welcome.hero.login_telegram') }}">
+                            <script async
+                                    src="https://telegram.org/js/telegram-widget.js?22"
+                                    data-telegram-login="{{ $botUsername }}"
+                                    data-size="large"
+                                    data-radius="20"
+                                    data-userpic="false"
+                                    data-auth-url="{{ $callbackUrl }}"
+                                    data-request-access="write"></script>
+                            <noscript>
+                                <span class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    {{ __('welcome.hero.login_telegram') }}
+                                </span>
+                            </noscript>
+                        </div>
+                    @endif
+                </div>
+                <p class="flex items-center gap-1.5 text-[13px] text-neutral-500 dark:text-neutral-400">
+                    <svg class="w-3 h-3 text-green-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    {{ __('welcome.hero.trial_note', ['days' => $trialPeriodDays]) }}
+                </p>
             </div>
         </div>
 
@@ -602,6 +613,65 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     AI Digest examples. Two real digest cards side-by-side. Each card shows
+     the AI-written text and a compact habit status strip.
+   ───────────────────────────────────────────────────────────────────────── --}}
+@php $digestItems = (array) __('welcome.digest_examples.items'); @endphp
+@if (count($digestItems) > 0)
+<section aria-labelledby="digest-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.digest_examples.eyebrow') }}</p>
+        <h2 id="digest-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-3">{{ __('welcome.digest_examples.title') }}</h2>
+        <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ __('welcome.digest_examples.subtitle') }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        @foreach ($digestItems as $i => $digest)
+            <article class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 flex flex-col overflow-hidden"
+                     data-reveal-delay="{{ $i * 80 }}">
+                {{-- Card header --}}
+                <div class="flex items-center justify-between gap-3 px-5 py-3 border-b rule">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-green-100 dark:bg-green-950/60 text-green-600 dark:text-green-500 flex-shrink-0">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
+                                <path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z"/>
+                            </svg>
+                        </span>
+                        <span class="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">{{ __('welcome.digest_examples.eyebrow') }}</span>
+                    </div>
+                    <time class="text-[11px] font-mono text-neutral-400 dark:text-neutral-500 flex-shrink-0" datetime="{{ $digest['date_machine'] }}">
+                        {{ $digest['date'] }}
+                    </time>
+                </div>
+
+                {{-- Digest text --}}
+                <div class="px-5 py-4 flex-1 space-y-2">
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_1'] }}</p>
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_2'] }}</p>
+                </div>
+
+                {{-- Habit status strip --}}
+                @if (!empty($digest['habits']))
+                    <div class="px-5 pb-4 pt-1 border-t rule flex flex-wrap gap-1.5">
+                        @foreach ($digest['habits'] as $habit)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                         {{ $habit['done'] ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400' }}">
+                                @if ($habit['done'])
+                                    <svg class="w-2.5 h-2.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                @endif
+                                <span class="{{ $habit['done'] ? 'line-through opacity-70' : '' }}">{{ $habit['name'] }}</span>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+            </article>
+        @endforeach
+    </div>
+</section>
+@endif
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Comparison. A plain editorial table — no card wrapper, hairline row
      dividers, single bordered surface broken by rules. The OpenHabit
      column is the only one that earns the green accent (header tag,
@@ -699,33 +769,6 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
-     How it works. Three steps shown as large display numerals — typography
-     IS the ornament. No card backgrounds. Different rhythm again.
-   ───────────────────────────────────────────────────────────────────────── --}}
-<section id="how" aria-labelledby="how-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
-    <div class="reveal mb-14 max-w-2xl">
-        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.how.eyebrow') }}</p>
-        <h2 id="how-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.how.title') }}</h2>
-    </div>
-
-    @php $steps = (array) __('welcome.how.steps'); @endphp
-    <ol class="flex flex-col gap-12 sm:gap-14">
-        @foreach ($steps as $i => $step)
-            <li class="reveal grid grid-cols-[auto,1fr] gap-6 sm:gap-10 items-baseline"
-                data-reveal-delay="{{ $loop->index * 90 }}">
-                <span class="display-numeral text-[64px] sm:text-[88px] font-semibold text-neutral-200 dark:text-neutral-800 select-none" aria-hidden="true">
-                    {{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}
-                </span>
-                <div class="pt-2 sm:pt-4">
-                    <h3 class="text-xl sm:text-2xl font-semibold tracking-tight mb-2">{{ $step['title'] }}</h3>
-                    <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ $step['body'] }}</p>
-                </div>
-            </li>
-        @endforeach
-    </ol>
-</section>
-
-{{-- ─────────────────────────────────────────────────────────────────────────
      Open source. ONE bordered surface that nods at a code/repo window: a
      mono header strip with the repo path and branch, then a calm split body —
      prose on the left, three quiet facts on the right. Different rhythm
@@ -815,6 +858,34 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     FAQ. Accordion with smooth height + padding animation.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section id="faq" aria-labelledby="faq-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.faq.eyebrow') }}</p>
+        <h2 id="faq-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.faq.title') }}</h2>
+    </div>
+
+    <div class="flex flex-col">
+        @foreach ((array) __('welcome.faq.items') as $faqItem)
+            <details class="faq-item reveal border-t rule first:border-t-0" data-reveal-delay="{{ $loop->index * 60 }}">
+                <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer select-none group">
+                    <span class="text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-white group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors duration-150">{{ $faqItem['q'] }}</span>
+                    <svg class="faq-chevron w-4 h-4 text-neutral-400 dark:text-neutral-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </summary>
+                <div class="faq-answer">
+                    <div>
+                        <p class="text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[60ch]">{{ __('welcome.faq.items.' . $loop->index . '.a', ['days' => $trialPeriodDays]) }}</p>
+                    </div>
+                </div>
+            </details>
+        @endforeach
+    </div>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Final CTA. Just typography on the page surface — no card background.
    ───────────────────────────────────────────────────────────────────────── --}}
 <section aria-labelledby="cta-heading" class="max-w-3xl mx-auto px-4 py-24 sm:py-32 text-center border-t rule">
@@ -830,6 +901,9 @@
                 <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
             </svg>
         </a>
+        <p class="text-[13px] text-neutral-500 dark:text-neutral-400">
+            {{ __('welcome.cta.trial_note', ['days' => $trialPeriodDays]) }}
+        </p>
     </div>
 </section>
 
@@ -957,6 +1031,39 @@
         } else {
             reveals.forEach(function (el) { el.classList.add('revealed'); });
         }
+
+        // FAQ accordion — smooth height + padding animation.
+        // Intercepts <summary> clicks to animate both grid-template-rows
+        // (height proxy) and padding-bottom before toggling `open`.
+        document.querySelectorAll('.faq-item').forEach(function (details) {
+            var answer = details.querySelector('.faq-answer');
+            var summary = details.querySelector('summary');
+            if (!summary || !answer) { return; }
+
+            summary.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (details.open) {
+                    // Animate to closed, then remove the `open` attribute.
+                    answer.style.gridTemplateRows = '0fr';
+                    answer.style.paddingBottom = '0';
+                    answer.addEventListener('transitionend', function handler(ev) {
+                        if (ev.propertyName !== 'grid-template-rows') { return; }
+                        details.removeAttribute('open');
+                        answer.removeEventListener('transitionend', handler);
+                    });
+                } else {
+                    // Set `open` so the content is in the DOM, then on the
+                    // next two frames animate from the closed state.
+                    details.setAttribute('open', '');
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            answer.style.gridTemplateRows = '1fr';
+                            answer.style.paddingBottom = '1.25rem';
+                        });
+                    });
+                }
+            });
+        });
     })();
 </script>
 
