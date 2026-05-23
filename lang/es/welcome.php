@@ -33,6 +33,7 @@ return [
         'title_accent' => 'se quedan.',
         'subtitle' => 'Un rastreador de hábitos tranquilo y enfocado, que vive dentro de Telegram. Sin notificaciones que griten ni culpa por romper una racha. Solo un espacio sereno donde marcar tu día, y lo demás llega solo.',
         'login_telegram' => 'Entrar con Telegram',
+        'trial_note' => ':days días de Premium gratis para empezar. Sin tarjeta.',
     ],
     'preview' => [
         'today' => 'Hoy',
@@ -135,6 +136,7 @@ return [
     'cta' => [
         'title' => 'Empieza hoy. Tu yo de mañana lo agradecerá',
         'subtitle' => 'Gratis para usar. Premium suma el resumen con IA, varios recordatorios por hábito y exportación CSV.',
+        'trial_note' => ':days días de prueba de Premium, sin tarjeta.',
     ],
     'compare' => [
         'eyebrow' => 'Comparativa',
@@ -209,7 +211,7 @@ return [
         'items' => [
             [
                 'q' => '¿Cuánto cuesta OpenHabit?',
-                'a' => 'Las funciones principales son completamente gratuitas, sin límite de tiempo ni de hábitos. Premium añade el resumen diario de IA, varios recordatorios por hábito en Telegram y exportación en CSV. Empieza gratis y decide después.',
+                'a' => 'Las funciones principales son completamente gratuitas, sin límite de tiempo ni de hábitos. Premium añade el resumen diario de IA, varios recordatorios por hábito en Telegram y exportación en CSV. Las cuentas nuevas reciben :days días de Premium gratis de forma automática.',
             ],
             [
                 'q' => '¿Necesito una cuenta de Telegram?',

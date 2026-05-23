@@ -309,34 +309,40 @@
                 {{ __('welcome.hero.subtitle') }}
             </p>
 
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-1">
-                <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
-                    {{ $primaryLabel }}
-                    <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
-                    </svg>
-                </a>
+            <div class="flex flex-col items-start gap-2 mt-1">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors duration-200">
+                        {{ $primaryLabel }}
+                        <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
+                        </svg>
+                    </a>
 
-                @if ($botUsername && !$isLoggedIn)
-                    {{-- Telegram Login Widget. Renders an iframe button that redirects --}}
-                    {{-- the browser to the auth callback after the user confirms.    --}}
-                    <div class="inline-flex items-center" aria-label="{{ __('welcome.hero.login_telegram') }}">
-                        <script async
-                                src="https://telegram.org/js/telegram-widget.js?22"
-                                data-telegram-login="{{ $botUsername }}"
-                                data-size="large"
-                                data-radius="20"
-                                data-userpic="false"
-                                data-auth-url="{{ $callbackUrl }}"
-                                data-request-access="write"></script>
-                        <noscript>
-                            <span class="text-sm text-neutral-500 dark:text-neutral-400">
-                                {{ __('welcome.hero.login_telegram') }}
-                            </span>
-                        </noscript>
-                    </div>
-                @endif
+                    @if ($botUsername && !$isLoggedIn)
+                        {{-- Telegram Login Widget. Renders an iframe button that redirects --}}
+                        {{-- the browser to the auth callback after the user confirms.    --}}
+                        <div class="inline-flex items-center" aria-label="{{ __('welcome.hero.login_telegram') }}">
+                            <script async
+                                    src="https://telegram.org/js/telegram-widget.js?22"
+                                    data-telegram-login="{{ $botUsername }}"
+                                    data-size="large"
+                                    data-radius="20"
+                                    data-userpic="false"
+                                    data-auth-url="{{ $callbackUrl }}"
+                                    data-request-access="write"></script>
+                            <noscript>
+                                <span class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    {{ __('welcome.hero.login_telegram') }}
+                                </span>
+                            </noscript>
+                        </div>
+                    @endif
+                </div>
+                <p class="flex items-center gap-1.5 text-[13px] text-neutral-500 dark:text-neutral-400">
+                    <svg class="w-3 h-3 text-green-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    {{ __('welcome.hero.trial_note', ['days' => $trialPeriodDays]) }}
+                </p>
             </div>
         </div>
 
@@ -871,7 +877,7 @@
                 </summary>
                 <div class="faq-answer">
                     <div>
-                        <p class="text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[60ch]">{{ $faqItem['a'] }}</p>
+                        <p class="text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[60ch]">{{ __('welcome.faq.items.' . $loop->index . '.a', ['days' => $trialPeriodDays]) }}</p>
                     </div>
                 </div>
             </details>
@@ -895,6 +901,9 @@
                 <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
             </svg>
         </a>
+        <p class="text-[13px] text-neutral-500 dark:text-neutral-400">
+            {{ __('welcome.cta.trial_note', ['days' => $trialPeriodDays]) }}
+        </p>
     </div>
 </section>
 

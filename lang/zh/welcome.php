@@ -33,6 +33,7 @@ return [
         'title_accent' => '留下来。',
         'subtitle' => '一个安静、专注的习惯追踪器，住在你常用的 Telegram 里。没有屌耳的通知，也没有连续断了的负罪感。只是一个平静的小角落，打个卡，其他的慢慢来就好。',
         'login_telegram' => '使用 Telegram 登录',
+        'trial_note' => 'Premium :days 天免费体验。无需信用卡。',
     ],
     'preview' => [
         'today' => '今天',
@@ -135,6 +136,7 @@ return [
     'cta' => [
         'title' => '今天就开始。未来的你，会替自己说一声谢谢',
         'subtitle' => '免费使用。高级版增加 AI 摘要、每个习惯多个提醒，以及 CSV 导出。',
+        'trial_note' => 'Premium :days 天免费试用，无需信用卡。',
     ],
     'compare' => [
         'eyebrow' => '对比',
@@ -209,7 +211,7 @@ return [
         'items' => [
             [
                 'q' => 'OpenHabit 收费吗?',
-                'a' => '核心功能完全免费，无时间限制，无习惯数量上限。Premium 增加每日 AI 摘要、每个习惯多个 Telegram 提醒和 CSV 导出。先免费开始，之后再决定。',
+                'a' => '核心功能完全免费，无时间限制，无习惯数量上限。Premium 增加每日 AI 摘要、每个习惯多个 Telegram 提醒和 CSV 导出。新账号自动获赠 :days 天 Premium 免费体验。',
             ],
             [
                 'q' => '我需要 Telegram 账号吗?',

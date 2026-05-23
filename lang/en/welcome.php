@@ -33,6 +33,7 @@ return [
         'title_accent' => 'stick.',
         'subtitle' => 'A calm, focused habit tracker that lives inside Telegram. No noisy notifications, no guilt about a broken streak. Just a quiet space to mark your day and watch the rest add up.',
         'login_telegram' => 'Log in with Telegram',
+        'trial_note' => ':days days of Premium free to start. No card needed.',
     ],
     'preview' => [
         'today' => 'Today',
@@ -135,6 +136,7 @@ return [
     'cta' => [
         'title' => 'Start today. Future you will be grateful',
         'subtitle' => 'Free to use. Premium adds the AI digest, several reminders per habit, and CSV export.',
+        'trial_note' => ':days-day free trial on Premium, no card needed.',
     ],
     'compare' => [
         'eyebrow' => 'Compared',
@@ -209,7 +211,7 @@ return [
         'items' => [
             [
                 'q' => 'How much does OpenHabit cost?',
-                'a' => 'The core features are completely free, with no time limit or habit cap. Premium adds an AI daily digest, multiple Telegram reminders per habit, and CSV export. You can start on the free plan and decide later.',
+                'a' => 'The core features are completely free, with no time limit or habit cap. Premium adds an AI daily digest, multiple Telegram reminders per habit, and CSV export. New accounts get a :days-day free trial of Premium automatically.',
             ],
             [
                 'q' => 'Do I need a Telegram account?',
