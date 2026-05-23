@@ -218,6 +218,10 @@ return [
                 'a' => 'Yes. OpenHabit is built as a Telegram bot and mini app, so a Telegram account is all you need. No separate sign-up, no password to forget.',
             ],
             [
+                'q' => 'Can I use OpenHabit in a browser?',
+                'a' => 'Yes. Log in once with your Telegram account on the web and the full app opens in your browser. Same habits, same history — just a bigger screen.',
+            ],
+            [
                 'q' => 'What is the AI digest?',
                 'a' => 'A short daily message that picks up patterns in your habits: what is trending up, what is slipping, and a brief thought on why. It looks at your recent check-ins and notes.',
             ],

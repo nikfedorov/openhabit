@@ -218,6 +218,10 @@ return [
                 'a' => 'Sim. O OpenHabit funciona como bot e mini app do Telegram, por isso basta ter uma conta no Telegram. Sem cadastro adicional, sem senha para esquecer.',
             ],
             [
+                'q' => 'Posso usar o OpenHabit no navegador?',
+                'a' => 'Sim. Faça login com sua conta do Telegram na web e o app completo abre no navegador. Os mesmos hábitos, o mesmo histórico — só numa tela maior.',
+            ],
+            [
                 'q' => 'O que é o resumo de IA?',
                 'a' => 'Uma breve mensagem diária que identifica padrões nos seus hábitos: o que está melhorando, o que está caindo e por quê. Analisa seus registros recentes e notas.',
             ],

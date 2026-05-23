@@ -218,6 +218,10 @@ return [
                 'a' => 'Sí. OpenHabit es un bot y una mini app de Telegram, así que solo necesitas una cuenta de Telegram. Sin registro adicional, sin contraseña que olvidar.',
             ],
             [
+                'q' => '¿Puedo usar OpenHabit en el navegador?',
+                'a' => 'Sí. Inicia sesión con tu cuenta de Telegram en la web y la app completa se abre en el navegador. Los mismos hábitos, el mismo historial — solo una pantalla más grande.',
+            ],
+            [
                 'q' => '¿Qué es el resumen de IA?',
                 'a' => 'Un breve mensaje diario que detecta patrones en tus hábitos: qué va bien, qué está decayendo y por qué. Analiza tus registros recientes y notas.',
             ],
