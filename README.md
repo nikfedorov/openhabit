@@ -64,7 +64,7 @@ Docker is required. All commands run through Laravel Sail.
 ### First-time install
 
 ```bash
-./install.sh
+./scripts/local.sh
 ```
 
 The script will:
@@ -81,7 +81,7 @@ The script will:
 For a full rebuild that wipes volumes:
 
 ```bash
-./install.sh --rebuild
+./scripts/local.sh --rebuild
 ```
 
 The app will be available at <http://localhost>.
@@ -111,6 +111,59 @@ vendor/bin/sail bun run build         # Build frontend
 vendor/bin/sail artisan horizon       # Queues
 vendor/bin/sail artisan pail          # Live logs
 ```
+
+## Production deployment
+
+Docker and Git are required on the server.
+
+### First-time setup
+
+```bash
+git clone https://github.com/nikfedorov/openhabit.git && cd openhabit
+./scripts/prod.sh
+```
+
+The script will interactively ask for the app URL, database password, Telegram Bot Token, and OpenRouter API key, then handle everything:
+
+1. Create `.env` with production defaults and your answers.
+2. Install Composer dependencies (`--no-dev`).
+3. Build the production Docker image (`docker/production/Dockerfile`).
+4. Start all containers with `restart: unless-stopped`.
+5. Generate `APP_KEY`, create `storage:link`, run migrations.
+6. Cache config, events, routes, and views.
+7. Build frontend assets via Bun.
+8. Restart workers so they pick up the fresh config cache.
+
+### Subsequent deployments
+
+```bash
+./scripts/prod.sh
+```
+
+On re-runs the `.env` already exists so no prompts appear — it goes straight to `git pull` and redeploy.
+
+### Services running in production
+
+All daemons are managed by Supervisor inside a single container:
+
+| Process | Command |
+|---|---|
+| **Octane** (FrankenPHP) | `artisan octane:start --server=frankenphp --port=80` |
+| **Horizon** | `artisan horizon` |
+| **Pulse** | `artisan pulse:work` |
+| **Scheduler** | `while true; do artisan schedule:run; sleep 60; done` |
+
+### Useful production commands
+
+```bash
+docker compose -f compose.prod.yaml logs -f app               # Tail all logs
+docker compose -f compose.prod.yaml exec app php artisan horizon:status
+docker compose -f compose.prod.yaml exec app php artisan pulse:status
+docker compose -f compose.prod.yaml exec app php artisan migrate --force
+docker compose -f compose.prod.yaml down                      # Stop everything
+```
+
+`scripts/prod.sh --fresh` re-seeds the database and re-registers the Telegram webhook.
 
 ## Testing & code quality
 
