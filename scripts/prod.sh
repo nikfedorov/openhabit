@@ -2,6 +2,16 @@
 
 set -e
 
+if ! command -v docker &>/dev/null; then
+    echo "Error: docker is not installed or not in PATH." >&2
+    exit 1
+fi
+
+if ! docker compose version &>/dev/null; then
+    echo "Error: docker compose plugin is not available." >&2
+    exit 1
+fi
+
 COMPOSE_FILE="compose.prod.yaml"
 ARTISAN="docker compose -f $COMPOSE_FILE exec app php artisan"
 bold=$(tput bold 2>/dev/null || echo '')
@@ -75,8 +85,10 @@ docker compose -f "$COMPOSE_FILE" up -d && sleep 5
 $ARTISAN storage:link --force
 
 if [ "$FIRST_RUN" = true ] || [[ "$1" == "--fresh" ]]; then
-    step "artisan migrate:fresh --seed"
-    $ARTISAN migrate:fresh --seed --force --no-interaction
+    step "artisan migrate"
+    $ARTISAN migrate --force --no-interaction
+    step "artisan db:seed"
+    $ARTISAN db:seed --force --no-interaction
     step "artisan app:setup"
     $ARTISAN app:setup
     step "artisan app:generate-invoice-links"
