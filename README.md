@@ -143,6 +143,36 @@ Auto-fixes:
 vendor/bin/sail composer lint                 # Pint + Rector + Vue formatter
 ```
 
+## AI configuration
+
+By default the project ships with **DeepSeek via OpenRouter** as the active model. No extra setup is needed beyond setting `OPENROUTER_API_KEY` in your `.env`.
+
+### Managing models
+
+Models are stored in the database and can be added or removed interactively:
+
+```bash
+vendor/bin/sail artisan app:add-ai-model    # Add a model
+vendor/bin/sail artisan app:remove-ai-model # Remove a model
+```
+
+### Adding other providers
+
+Set the relevant API key(s) in `.env` and select the corresponding provider when adding a model:
+
+```ini
+ANTHROPIC_API_KEY=
+AZURE_OPENAI_API_KEY=
+DEEPSEEK_API_KEY=
+GEMINI_API_KEY=
+GROQ_API_KEY=
+MISTRAL_API_KEY=
+OLLAMA_API_KEY=
+OPENAI_API_KEY=
+OPENROUTER_API_KEY=
+XAI_API_KEY=
+```
+
 ## Conventions
 
 The project follows an Action-class architecture (`app/Actions`) with a single `handle()` method per action. Detailed rules and active skills are in [AGENTS.md](AGENTS.md).
