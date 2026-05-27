@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\AiTone;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 it('requires authentication', function (): void {
     $this->getJson('/api/settings')
@@ -27,13 +28,21 @@ it('returns all user settings', function (): void {
     $this->actingAs($user, 'sanctum')
         ->getJson('/api/settings')
         ->assertOk()
-        ->assertJsonPath('data.theme', 'dark')
-        ->assertJsonPath('data.moveCompletedToEnd', false)
-        ->assertJsonPath('data.timezone', 'Europe/London')
-        ->assertJsonPath('data.dayStartsAt', '06:00')
-        ->assertJsonPath('data.birthdate', '1990-05-20')
-        ->assertJsonPath('data.aiDigestTime', '08:30')
-        ->assertJsonPath('data.aiToneId', $tone->id);
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json
+            ->has('data', fn (AssertableJson $json): AssertableJson => $json
+                ->where('theme', 'dark')
+                ->where('locale', 'ru')
+                ->where('timezone', 'Europe/London')
+                ->where('dayStartsAt', '06:00')
+                ->where('moveCompletedToEnd', false)
+                ->where('birthdate', '1990-05-20')
+                ->where('aiDigestTime', '08:30')
+                ->where('aiToneId', $tone->id)
+                ->where('longTermGoal', null)
+                ->etc()
+            )
+            ->etc()
+        );
 });
 
 it('returns premium and trial state in the settings payload', function (): void {
