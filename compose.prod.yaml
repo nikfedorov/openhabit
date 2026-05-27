@@ -13,8 +13,6 @@ services:
             WWWUSER: '${WWWUSER:-1337}'
         volumes:
             - '.:/var/www/html'
-            - '/var/www/html/vendor'
-            - '/var/www/html/node_modules'
         networks:
             - prod
         depends_on:
@@ -48,6 +46,7 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+            interval: 5s
 
     valkey:
         image: 'valkey/valkey:alpine'
@@ -65,6 +64,7 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+            interval: 5s
 
 networks:
     prod:
