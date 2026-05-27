@@ -671,6 +671,51 @@ describe('Settings - Personal', () => {
             expect.anything(),
         );
     });
+
+    it('saves longTermGoal on textarea blur', async () => {
+        const wrapper = await mountSettings(mockApiFetch, {
+            longTermGoal: null,
+        });
+        mockApiFetch.mockResolvedValueOnce({
+            data: { longTermGoal: 'Run a marathon' },
+        });
+
+        const textarea = wrapper.find('textarea');
+        await textarea.trigger('focus');
+        await textarea.setValue('Run a marathon');
+        await textarea.trigger('blur');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                body: expect.stringContaining(
+                    '"longTermGoal":"Run a marathon"',
+                ),
+            }),
+            expect.anything(),
+        );
+    });
+
+    it('saves null when longTermGoal textarea is cleared', async () => {
+        const wrapper = await mountSettings(mockApiFetch, {
+            longTermGoal: 'Old goal',
+        });
+        mockApiFetch.mockResolvedValueOnce({ data: { longTermGoal: null } });
+
+        const textarea = wrapper.find('textarea');
+        await textarea.setValue('');
+        await textarea.trigger('blur');
+        await flushPromises();
+
+        expect(mockApiFetch).toHaveBeenCalledWith(
+            '/api/settings',
+            expect.objectContaining({
+                body: expect.stringContaining('"longTermGoal":null'),
+            }),
+            expect.anything(),
+        );
+    });
 });
 
 // ─── AI Digest ────────────────────────────────────────────────

@@ -138,6 +138,11 @@ test('buildUserPrompt includes habits, daily note, and recent digests', function
         ->and($prompt)->toContain('Had a great productive day!')
         ->and($prompt)->toContain('## Recent digest history')
         ->and($prompt)->toContain('Previous digest content.');
+
+    // With long-term goal
+    $prompt = $service->buildUserPrompt([], null, collect(), $date, 'Run a marathon by end of year');
+    expect($prompt)->toContain("## User's long-term goal:")
+        ->and($prompt)->toContain('Run a marathon by end of year');
 });
 
 test('getRecentDigests returns up to 5 in chronological order', function (): void {

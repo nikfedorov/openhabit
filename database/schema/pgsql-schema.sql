@@ -983,6 +983,7 @@ CREATE TABLE public.users (
     birthdate date,
     ai_digest_time character varying(5) DEFAULT '08:00'::character varying,
     ai_tone_id bigint DEFAULT '1'::bigint,
+    long_term_goal text,
     last_active_at timestamp(0) without time zone,
     trial_banner_dismissed_at timestamp(0) without time zone,
     remember_token character varying(100),
@@ -1929,6 +1930,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 20	2026_04_07_200800_create_personal_access_tokens_table	1
 21	2026_04_17_154428_create_telescope_entries_table	1
 22	2026_04_27_225928_create_pulse_tables	1
+23	2026_05_27_193741_add_long_term_goal_to_users_table	1
 \.
 
 
@@ -1936,7 +1938,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 22, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 23, true);
 
 
 --
