@@ -57,6 +57,7 @@ final readonly class GenerateAiDigestAction
             is_string($dailyNote) ? $dailyNote : null,
             $recentDigests,
             $yesterday,
+            is_string($user->long_term_goal) ? $user->long_term_goal : null,
         );
 
         $digestText = $this->runAgent($user, $userPrompt);

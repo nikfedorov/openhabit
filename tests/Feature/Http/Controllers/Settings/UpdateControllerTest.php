@@ -19,14 +19,56 @@ it('updates individual settings fields', function (array $initial, array $payloa
 
     $this->assertDatabaseHas('users', ['id' => $user->id, ...$dbExpected]);
 })->with([
-    'theme' => [['theme' => 'system'],        ['theme' => 'dark'],               ['theme' => 'dark']],
-    'locale' => [['locale' => 'en'],           ['locale' => 'ru'],                ['locale' => 'ru']],
-    'timezone' => [['timezone' => 'UTC'],        ['timezone' => 'Europe/London'],   ['timezone' => 'Europe/London']],
-    'birthdate' => [['birthdate' => null],        ['birthdate' => '1990-05-20'],     ['birthdate' => '1990-05-20']],
-    'clear birthdate' => [['birthdate' => '1990-05-20'], ['birthdate' => null],            ['birthdate' => null]],
-    'dayStartsAt' => [['day_starts_at' => '03:00:00'], ['dayStartsAt' => '06:00'],    ['day_starts_at' => '06:00:00']],
-    'moveCompletedToEnd' => [['move_completed_to_end' => true], ['moveCompletedToEnd' => false], ['move_completed_to_end' => false]],
-    'aiDigestTime null' => [['ai_digest_time' => '09:00'], ['aiDigestTime' => null],        ['ai_digest_time' => null]],
+    'theme' => [
+        ['theme' => 'system'],
+        ['theme' => 'dark'],
+        ['theme' => 'dark'],
+    ],
+    'locale' => [
+        ['locale' => 'en'],
+        ['locale' => 'ru'],
+        ['locale' => 'ru'],
+    ],
+    'timezone' => [
+        ['timezone' => 'UTC'],
+        ['timezone' => 'Europe/London'],
+        ['timezone' => 'Europe/London'],
+    ],
+    'birthdate' => [
+        ['birthdate' => null],
+        ['birthdate' => '1990-05-20'],
+        ['birthdate' => '1990-05-20'],
+    ],
+    'clear birthdate' => [
+        ['birthdate' => '1990-05-20'],
+        ['birthdate' => null],
+        ['birthdate' => null],
+    ],
+    'dayStartsAt' => [
+        ['day_starts_at' => '03:00:00'],
+        ['dayStartsAt' => '06:00'],
+        ['day_starts_at' => '06:00:00'],
+    ],
+    'moveCompletedToEnd' => [
+        ['move_completed_to_end' => true],
+        ['moveCompletedToEnd' => false],
+        ['move_completed_to_end' => false],
+    ],
+    'aiDigestTime null' => [
+        ['ai_digest_time' => '09:00'],
+        ['aiDigestTime' => null],
+        ['ai_digest_time' => null],
+    ],
+    'longTermGoal' => [
+        ['long_term_goal' => null],
+        ['longTermGoal' => 'Run a marathon by end of year'],
+        ['long_term_goal' => 'Run a marathon by end of year'],
+    ],
+    'clear longTermGoal' => [
+        ['long_term_goal' => 'Run a marathon by end of year'],
+        ['longTermGoal' => null],
+        ['long_term_goal' => null],
+    ],
 ]);
 
 it('updates ai digest time for premium user', function (): void {

@@ -28,6 +28,7 @@ final readonly class UpdateUserSettingsAction
      *     moveCompletedToEnd?: bool,
      *     aiDigestTime?: string|null,
      *     aiToneId?: int|null,
+     *     longTermGoal?: string|null,
      * }  $data
      */
     public function handle(User $user, array $data): void

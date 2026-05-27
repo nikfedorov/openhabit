@@ -38,6 +38,10 @@ export const defaultSettingsTranslations: SettingsTranslations = {
     when_to_send_the_digest: 'When to send the digest',
     ai_tone: 'AI tone',
     tone_of_the_daily_summary: 'Tone of the daily summary',
+    long_term_goal: 'Long-term goal',
+    long_term_goal_placeholder: 'What is your main goal?',
+    saving: 'Saving...',
+    save: 'Save',
     data: 'Data',
     export_data: 'Export data',
     export_data_desc: 'Download all your data as CSV',
@@ -82,6 +86,7 @@ const defaultSettings: UserSettings = {
     birthdate: null,
     aiDigestTime: null,
     aiToneId: null,
+    longTermGoal: null,
     trial: defaultTrial,
 };
 

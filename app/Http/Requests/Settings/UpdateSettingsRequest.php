@@ -73,6 +73,13 @@ final class UpdateSettingsRequest extends FormRequest
              * @example 1
              */
             'aiToneId' => ['sometimes', 'nullable', 'integer', Rule::exists('ai_tones', 'id')->where('is_active', true)],
+
+            /**
+             * User's long-term goal.
+             *
+             * @example "Run a marathon by end of year"
+             */
+            'longTermGoal' => ['sometimes', 'nullable', 'string', 'max:500'],
         ];
     }
 
@@ -110,11 +117,12 @@ final class UpdateSettingsRequest extends FormRequest
      *     moveCompletedToEnd?: bool,
      *     aiDigestTime?: string|null,
      *     aiToneId?: int|null,
+     *     longTermGoal?: string|null,
      * }
      */
     public function settingsData(): array
     {
-        /** @var array{theme?: string, locale?: string, timezone?: string, birthdate?: string|null, dayStartsAt?: string|null, moveCompletedToEnd?: bool, aiDigestTime?: string|null, aiToneId?: int|null} */
+        /** @var array{theme?: string, locale?: string, timezone?: string, birthdate?: string|null, dayStartsAt?: string|null, moveCompletedToEnd?: bool, aiDigestTime?: string|null, aiToneId?: int|null, longTermGoal?: string|null} */
         return $this->safe()->all();
     }
 }

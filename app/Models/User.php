@@ -47,6 +47,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read CarbonInterface|null $birthdate
  * @property-read string|null $ai_digest_time
  * @property-read int|null $ai_tone_id
+ * @property-read string|null $long_term_goal
  * @property-read CarbonInterface|null $trial_banner_dismissed_at
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at

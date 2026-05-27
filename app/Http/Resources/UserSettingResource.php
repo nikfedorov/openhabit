@@ -114,6 +114,13 @@ final class UserSettingResource extends JsonResource
             'aiToneId' => $this->resource->ai_tone_id,
 
             /**
+             * User's long-term goal used as context for AI digest generation.
+             *
+             * @var string|null
+             */
+            'longTermGoal' => $this->resource->long_term_goal,
+
+            /**
              * Trial banner and premium modal data.
              */
             'trial' => new TrialResource($this->premiumState()),
