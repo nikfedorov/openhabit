@@ -34,14 +34,16 @@ if [ ! -f .env ]; then
     sedi "s/APP_ENV=local/APP_ENV=production/" .env
     sedi "s/APP_DEBUG=true/APP_DEBUG=false/" .env
     sedi "s/LOG_LEVEL=debug/LOG_LEVEL=error/" .env
+    sedi "s/OCTANE_HTTPS=false/OCTANE_HTTPS=true/" .env
 
     while true; do
-        echo -e "\n${bold}App URL (e.g. https://example.com):${normal}"
+        echo -e "\n${bold}Domain name (e.g. example.com):${normal}"
         read -r v
-        [[ "$v" == https://* ]] && break
-        echo "URL must start with https://"
+        [[ "$v" != *"://"* ]] && [[ "$v" == *"."* ]] && break
+        echo "Enter the domain only, without protocol (e.g. example.com)"
     done
-    sedi "s|APP_URL=http://localhost|APP_URL=$v|" .env
+    sedi "s|APP_URL=http://localhost|APP_URL=https://$v|" .env
+    echo "APP_HOST=$v" >> .env
 
     db_password=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
     sedi "s/DB_PASSWORD=password/DB_PASSWORD=$db_password/" .env
@@ -59,6 +61,13 @@ if [ ! -f .env ]; then
 fi
 
 source .env
+
+# Derive APP_HOST from APP_URL for the Caddy Docker service
+if [ -z "${APP_HOST:-}" ]; then
+    APP_HOST=$(echo "$APP_URL" | sed 's|https\?://||' | cut -d'/' -f1)
+    echo "APP_HOST=$APP_HOST" >> .env
+fi
+
 export WWWUSER="${WWWUSER:-$(id -u)}"
 export WWWGROUP="${WWWGROUP:-$(id -g)}"
 
