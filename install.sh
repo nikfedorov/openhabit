@@ -38,6 +38,15 @@ if [ "$APP_KEY" == "" ]; then
     vendor/bin/sail artisan key:generate
 fi
 
+if [ "$TELEGRAM_TOKEN" == "" ]; then
+    echo -e "\n${bold}Enter your Telegram Bot Token (leave empty to skip):${normal}"
+    read -r telegram_token
+    if [ "$telegram_token" != "" ]; then
+        sed -i '' "s/^TELEGRAM_TOKEN=.*/TELEGRAM_TOKEN=$telegram_token/" .env
+        echo -e "TELEGRAM_TOKEN set."
+    fi
+fi
+
 echo -e "\n${bold}> sail artisan migrate:fresh --seed${normal}"
 vendor/bin/sail artisan migrate:fresh --seed --force --no-interaction
 
