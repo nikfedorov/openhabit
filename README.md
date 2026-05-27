@@ -123,9 +123,9 @@ git clone https://github.com/nikfedorov/openhabit.git && cd openhabit
 ./scripts/prod.sh
 ```
 
-The script will interactively ask for the app URL, database password, Telegram Bot Token, and OpenRouter API key, then handle everything:
+The script will interactively ask for the app URL, Telegram Bot Token, and OpenRouter API key, then handle everything:
 
-1. Create `.env` with production defaults and your answers.
+1. Create `.env` with production defaults. The database password is generated automatically — check `.env` after the first run.
 2. Install Composer dependencies (`--no-dev`).
 3. Build the production Docker image (`docker/production/Dockerfile`).
 4. Start all containers with `restart: unless-stopped`.

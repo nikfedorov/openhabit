@@ -28,8 +28,9 @@ if [ ! -f .env ]; then
     echo -e "\n${bold}App URL (e.g. https://example.com):${normal}"
     read -r v && sedi "s|APP_URL=http://localhost|APP_URL=$v|" .env
 
-    echo -e "\n${bold}Database password:${normal}"
-    read -r v && sedi "s/DB_PASSWORD=password/DB_PASSWORD=$v/" .env
+    db_password=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
+    sedi "s/DB_PASSWORD=password/DB_PASSWORD=$db_password/" .env
+    echo -e "Database password generated (see .env)."
 
     echo -e "\n${bold}Telegram Bot Token:${normal}"
     read -r v && sedi "s/^TELEGRAM_TOKEN=.*/TELEGRAM_TOKEN=$v/" .env
