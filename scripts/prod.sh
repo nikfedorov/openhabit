@@ -25,8 +25,13 @@ if [ ! -f .env ]; then
     sedi "s/APP_DEBUG=true/APP_DEBUG=false/" .env
     sedi "s/LOG_LEVEL=debug/LOG_LEVEL=error/" .env
 
-    echo -e "\n${bold}App URL (e.g. https://example.com):${normal}"
-    read -r v && sedi "s|APP_URL=http://localhost|APP_URL=$v|" .env
+    while true; do
+        echo -e "\n${bold}App URL (e.g. https://example.com):${normal}"
+        read -r v
+        [[ "$v" == https://* ]] && break
+        echo "URL must start with https://"
+    done
+    sedi "s|APP_URL=http://localhost|APP_URL=$v|" .env
 
     db_password=$(openssl rand -base64 24 | tr -d '/+=' | head -c 32)
     sedi "s/DB_PASSWORD=password/DB_PASSWORD=$db_password/" .env
