@@ -80,7 +80,7 @@ docker compose -f "$COMPOSE_FILE" up -d && sleep 5
 
 # ── Octane / FrankenPHP ────────────────────────────────────────────────────────
 
-if [ ! -f ./config/octane.php ] || [ ! -f ./frankenphp ]; then
+if [ ! -f ./frankenphp ]; then
     step "artisan octane:install --server=frankenphp"
     [ -f ./config/octane.php ] && cp ./config/octane.php ./config/octane.php.bak
     $ARTISAN octane:install --server=frankenphp --force

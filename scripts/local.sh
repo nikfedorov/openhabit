@@ -26,10 +26,10 @@ vendor/bin/sail build
 echo -e "\n${bold}> sail up -d${normal}"
 vendor/bin/sail up -d
 
-if [ ! -f ./config/octane.php ] || [ ! -f ./frankenphp ]; then
+if [ ! -f ./frankenphp ]; then
     echo -e "\n${bold}> sail artisan octane:install --server=frankenphp${normal}"
     [ -f ./config/octane.php ] && cp ./config/octane.php ./config/octane.php.bak
-    vendor/bin/sail artisan octane:install --server=frankenphp --force
+    vendor/bin/sail artisan octane:install --force --server=frankenphp --force
     [ -f ./config/octane.php.bak ] && mv ./config/octane.php.bak ./config/octane.php
 fi
 
