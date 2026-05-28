@@ -112,7 +112,46 @@ vendor/bin/sail artisan horizon       # Queues
 vendor/bin/sail artisan pail          # Live logs
 ```
 
-## Production deployment
+## Deployment
+
+OpenHabit can be deployed through managed platforms or self-hosted via Docker.
+
+### Managed platforms
+
+| Platform | Notes |
+|---|---|
+| [Laravel Cloud](https://cloud.laravel.com) | Serverless, fully managed — no server to provision |
+| [Laravel Forge](https://forge.laravel.com) | Provisions and manages your server (DigitalOcean, Hetzner, etc.) |
+| [Ploi](https://ploi.io) | Similar to Forge — manages deploys and services on your own VPS |
+
+**Minimum server requirements for Forge / Ploi:**
+
+| Resource | Minimum |
+|---|---|
+| RAM | 1 GB |
+| CPU | 1 vCPU |
+| Disk | 10 GB |
+| PHP | 8.5+ |
+| Database | PostgreSQL 16+ |
+| Cache | Redis 7+ / Valkey 8+ |
+
+The platform handles PHP, database, Redis, and process management — no Docker required.
+
+For Laravel Cloud no server is needed at all.
+
+### Self-hosted via Docker
+
+**Minimum server requirements:**
+
+| Resource | Minimum | Recommended |
+|---|---|---|
+| OS | Ubuntu 22.04 / Debian 12 | — |
+| RAM | 2 GB | 4 GB |
+| CPU | 1 vCPU | 2 vCPU |
+| Disk | 10 GB | 20 GB |
+| Docker | 24+ with Compose v2 | — |
+
+> **Note:** 1 GB RAM is not enough for Docker. The daemon, containers, and build tools (Bun) together peak above 1 GB during deployment. Use a managed platform if your server has only 1 GB.
 
 Docker and Git are required on the server.
 
