@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Database\Factories\CategoryTemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,14 +23,13 @@ use Spatie\Translatable\HasTranslations;
  * @property-read bool $copy_by_default
  * @property-read int $sort_order
  */
+#[WithoutTimestamps]
 final class CategoryTemplate extends Model
 {
     /** @use HasFactory<CategoryTemplateFactory> */
     use HasFactory;
 
     use HasTranslations;
-
-    public $timestamps = false;
 
     /** @var array<int, string> */
     public array $translatable = ['name', 'description'];

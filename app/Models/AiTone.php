@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Database\Factories\AiToneFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,14 +20,13 @@ use Spatie\Translatable\HasTranslations;
  * @property-read int $sort_order
  * @property-read bool $is_active
  */
+#[WithoutTimestamps]
 final class AiTone extends Model
 {
     /** @use HasFactory<AiToneFactory> */
     use HasFactory;
 
     use HasTranslations;
-
-    public $timestamps = false;
 
     /** @var array<int, string> */
     public array $translatable = ['name', 'description'];

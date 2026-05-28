@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
+#[Description('Delete story images older than one hour')]
+#[Signature('app:clean-story-images')]
 final class CleanStoryImagesCommand extends Command
 {
-    protected $signature = 'app:clean-story-images';
-
-    protected $description = 'Delete story images older than one hour';
-
     public function handle(): int
     {
         $disk = Storage::disk('public');

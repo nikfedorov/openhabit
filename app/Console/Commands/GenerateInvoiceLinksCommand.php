@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Services\LocaleService;
@@ -13,12 +15,10 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 use SergiX44\Nutgram\Telegram\Types\Payment\LabeledPrice;
 
+#[Description('Generate Telegram Stars invoice links for all invoices')]
+#[Signature('app:generate-invoice-links')]
 final class GenerateInvoiceLinksCommand extends Command
 {
-    protected $signature = 'app:generate-invoice-links';
-
-    protected $description = 'Generate Telegram Stars invoice links for all invoices';
-
     public function handle(Nutgram $bot): int
     {
         $invoices = Invoice::query()->get();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use App\Enums\SettingType;
 use Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
  * @property-read string|null $value
  * @property-read SettingType $type
  */
+#[WithoutTimestamps]
 final class Setting extends Model
 {
     /** @use HasFactory<SettingFactory> */
@@ -26,8 +28,6 @@ final class Setting extends Model
     public const string TRIAL_PERIOD_DAYS_CACHE_KEY = 'setting:trial_period_days';
 
     public const string TRACKING_SCRIPTS_CACHE_KEY = 'setting:tracking_scripts';
-
-    public $timestamps = false;
 
     /**
      * Get the Telegram bot username from settings.

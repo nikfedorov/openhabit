@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Actions\ResolvePremiumStateAction;
 use App\Jobs\SendAiDigestJob;
 use App\Models\User;
@@ -11,12 +13,10 @@ use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
+#[Description('Generate and send AI daily digests via Telegram')]
+#[Signature('app:send-ai-digests')]
 final class SendAiDigestsCommand extends Command
 {
-    protected $signature = 'app:send-ai-digests';
-
-    protected $description = 'Generate and send AI daily digests via Telegram';
-
     public function handle(ResolvePremiumStateAction $resolvePremiumState): int
     {
         $users = $this->getEligibleUsers($resolvePremiumState);

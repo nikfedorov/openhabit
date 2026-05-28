@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,14 +20,13 @@ use Spatie\Translatable\HasTranslations;
  * @property-read string|null $invoice_link
  * @property-read string $slug
  */
+#[WithoutTimestamps]
 final class Invoice extends Model
 {
     /** @use HasFactory<InvoiceFactory> */
     use HasFactory;
 
     use HasTranslations;
-
-    public $timestamps = false;
 
     /** @var array<int, string> */
     public array $translatable = ['title', 'description', 'invoice_link'];

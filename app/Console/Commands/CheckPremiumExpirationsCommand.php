@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Habit;
 use App\Models\HabitNotification;
 use App\Models\User;
@@ -12,12 +14,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection as BaseCollection;
 
+#[Description('Disable premium features for users whose trial or subscription has expired')]
+#[Signature('app:check-premium-expirations')]
 final class CheckPremiumExpirationsCommand extends Command
 {
-    protected $signature = 'app:check-premium-expirations';
-
-    protected $description = 'Disable premium features for users whose trial or subscription has expired';
-
     public function handle(): int
     {
         /** @var BaseCollection<int, string> $expiredUserIds */

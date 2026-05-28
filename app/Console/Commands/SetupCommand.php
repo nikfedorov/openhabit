@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use App\Models\Setting;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Console\Command;
@@ -12,12 +14,10 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 
+#[Description('Setup the application (configure Telegram webhook)')]
+#[Signature('app:setup')]
 final class SetupCommand extends Command
 {
-    protected $signature = 'app:setup';
-
-    protected $description = 'Setup the application (configure Telegram webhook)';
-
     public function handle(Nutgram $bot): int
     {
         $this->setupTelegramWebhook($bot);

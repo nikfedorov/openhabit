@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use App\Models\Concerns\HasRRule;
 use Database\Factories\HabitTemplateFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -25,6 +26,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read bool $show_in_templates
  * @property-read int $sort_order
  */
+#[WithoutTimestamps]
 final class HabitTemplate extends Model
 {
     /** @use HasFactory<HabitTemplateFactory> */
@@ -32,8 +34,6 @@ final class HabitTemplate extends Model
 
     use HasRRule;
     use HasTranslations;
-
-    public $timestamps = false;
 
     /** @var array<int, string> */
     public array $translatable = ['name', 'description'];
