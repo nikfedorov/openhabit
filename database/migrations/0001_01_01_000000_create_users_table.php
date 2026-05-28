@@ -35,6 +35,7 @@ return new class extends Migration
 
             $table->string('ai_digest_time', 5)->nullable()->default('08:00');
             $table->foreignId('ai_tone_id')->nullable()->default(1);
+            $table->text('long_term_goal')->nullable();
 
             $table->timestamp('last_active_at')->nullable();
             $table->timestamp('trial_banner_dismissed_at')->nullable();

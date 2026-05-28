@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict f5wiAxsH4R8LoEGlsph2dcUsTYsWUjWxJzfdEj1xolZCIUvXcQ6bgonZG2bkGHd
+\restrict dQwnvBDWhsBqHESZMqkC5dgOJs4EILvC55kW2LE2HkWDuQIYqoMkzN44aODmt1U
 
 -- Dumped from database version 18.3
--- Dumped by pg_dump version 18.3 (Ubuntu 18.3-1.pgdg24.04+1)
+-- Dumped by pg_dump version 18.4 (Ubuntu 18.4-1.pgdg24.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,6 +22,40 @@ SET row_security = off;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: agent_conversation_messages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.agent_conversation_messages (
+    id character varying(36) NOT NULL,
+    conversation_id character varying(36) NOT NULL,
+    user_id bigint,
+    agent character varying(255) NOT NULL,
+    role character varying(25) NOT NULL,
+    content text NOT NULL,
+    attachments text NOT NULL,
+    tool_calls text NOT NULL,
+    tool_results text NOT NULL,
+    usage text NOT NULL,
+    meta text NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
+
+--
+-- Name: agent_conversations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.agent_conversations (
+    id character varying(36) NOT NULL,
+    user_id bigint,
+    title character varying(255) NOT NULL,
+    created_at timestamp(0) without time zone,
+    updated_at timestamp(0) without time zone
+);
+
 
 --
 -- Name: ai_digests; Type: TABLE; Schema: public; Owner: -
@@ -105,13 +139,12 @@ CREATE TABLE public.ai_models (
     id bigint NOT NULL,
     name character varying(255) NOT NULL,
     slug character varying(255) NOT NULL,
-    base_url character varying(255) NOT NULL,
-    api_key text,
     priority integer DEFAULT 0 NOT NULL,
     is_active boolean DEFAULT true NOT NULL,
     disabled_until timestamp(0) without time zone,
     created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    updated_at timestamp(0) without time zone,
+    provider character varying(255) DEFAULT 'openrouter'::character varying NOT NULL
 );
 
 
@@ -1188,6 +1221,22 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
+-- Name: agent_conversation_messages agent_conversation_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.agent_conversation_messages
+    ADD CONSTRAINT agent_conversation_messages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: agent_conversations agent_conversations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.agent_conversations
+    ADD CONSTRAINT agent_conversations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: ai_digests ai_digests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1596,6 +1645,27 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: agent_conversation_messages_conversation_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX agent_conversation_messages_conversation_id_index ON public.agent_conversation_messages USING btree (conversation_id);
+
+
+--
+-- Name: agent_conversation_messages_user_id_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX agent_conversation_messages_user_id_index ON public.agent_conversation_messages USING btree (user_id);
+
+
+--
+-- Name: agent_conversations_user_id_updated_at_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX agent_conversations_user_id_updated_at_index ON public.agent_conversations USING btree (user_id, updated_at);
+
+
+--
 -- Name: ai_logs_created_at_index; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1607,6 +1677,13 @@ CREATE INDEX ai_logs_created_at_index ON public.ai_logs USING btree (created_at)
 --
 
 CREATE INDEX categories_slug_index ON public.categories USING btree (slug);
+
+
+--
+-- Name: conversation_index; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX conversation_index ON public.agent_conversation_messages USING btree (conversation_id, user_id, updated_at);
 
 
 --
@@ -1880,16 +1957,16 @@ ALTER TABLE ONLY public.users
 -- PostgreSQL database dump complete
 --
 
-\unrestrict f5wiAxsH4R8LoEGlsph2dcUsTYsWUjWxJzfdEj1xolZCIUvXcQ6bgonZG2bkGHd
+\unrestrict dQwnvBDWhsBqHESZMqkC5dgOJs4EILvC55kW2LE2HkWDuQIYqoMkzN44aODmt1U
 
 --
 -- PostgreSQL database dump
 --
 
-\restrict KbhtSeQbPZJ7cdbwzjPIxatwACQ8QGr6911lRoUNLszq4PbYwGrtnVSGsNABh9e
+\restrict dkMpaQNDfRdjMdquaC6ODGUotkGrYzYJWddNy3ckFbQNHg5WPqfGjbTLXEKQ6b5
 
 -- Dumped from database version 18.3
--- Dumped by pg_dump version 18.3 (Ubuntu 18.3-1.pgdg24.04+1)
+-- Dumped by pg_dump version 18.4 (Ubuntu 18.4-1.pgdg24.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1930,7 +2007,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 20	2026_04_07_200800_create_personal_access_tokens_table	1
 21	2026_04_17_154428_create_telescope_entries_table	1
 22	2026_04_27_225928_create_pulse_tables	1
-23	2026_05_27_193741_add_long_term_goal_to_users_table	1
+23	2026_05_15_195421_create_agent_conversations_table	1
 \.
 
 
@@ -1945,5 +2022,5 @@ SELECT pg_catalog.setval('public.migrations_id_seq', 23, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict KbhtSeQbPZJ7cdbwzjPIxatwACQ8QGr6911lRoUNLszq4PbYwGrtnVSGsNABh9e
+\unrestrict dkMpaQNDfRdjMdquaC6ODGUotkGrYzYJWddNy3ckFbQNHg5WPqfGjbTLXEKQ6b5
 
