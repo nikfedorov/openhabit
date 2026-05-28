@@ -112,6 +112,128 @@ vendor/bin/sail artisan horizon       # Queues
 vendor/bin/sail artisan pail          # Live logs
 ```
 
+## Deployment
+
+OpenHabit can be deployed through managed platforms or self-hosted via Docker.
+
+### Managed platforms
+
+| Platform | Notes |
+|---|---|
+| [Laravel Cloud](https://cloud.laravel.com) | Serverless, fully managed — no server to provision |
+| [Laravel Forge](https://forge.laravel.com) | Provisions and manages your server (DigitalOcean, Hetzner, etc.) |
+| [Ploi](https://ploi.io) | Similar to Forge — manages deploys and services on your own VPS |
+
+**Minimum server requirements for Forge / Ploi:**
+
+| Resource | Minimum |
+|---|---|
+| RAM | 1 GB |
+| CPU | 1 vCPU |
+| Disk | 10 GB |
+| PHP | 8.5+ |
+| Database | PostgreSQL 16+ |
+| Cache | Redis 7+ / Valkey 8+ |
+
+The platform handles PHP, database, Redis, and process management — no Docker required.
+
+For Laravel Cloud no server is needed at all.
+
+### Self-hosted via Docker
+
+**Minimum server requirements:**
+
+| Resource | Minimum | Recommended |
+|---|---|---|
+| OS | Ubuntu 22.04 / Debian 12 | — |
+| RAM | 2 GB | 4 GB |
+| CPU | 1 vCPU | 2 vCPU |
+| Disk | 10 GB | 20 GB |
+| Docker | 24+ with Compose v2 | — |
+
+> **Note:** 1 GB RAM is not enough for Docker. The daemon, containers, and build tools (Bun) together peak above 1 GB during deployment. Use a managed platform if your server has only 1 GB.
+
+Docker and Git are required on the server.
+
+### Prerequisites
+
+Before running the deploy script, prepare two things:
+
+**1. Domain**
+
+Point your domain's DNS `A` record to the server IP. Caddy will automatically obtain a TLS certificate from Let's Encrypt once DNS propagates (usually a few minutes).
+
+```
+A   myapp.example.com → 203.0.113.10
+```
+
+The deploy script will ask for the domain name (e.g. `myapp.example.com`) and set `APP_URL=https://myapp.example.com` in `.env`.
+
+**2. Telegram Bot Token**
+
+1. Open Telegram and message [@BotFather](https://t.me/BotFather).
+2. Send `/newbot`, follow the prompts to name your bot.
+3. BotFather replies with a token like `1234567890:ABCdef...` — copy it.
+
+The deploy script will ask for this token and set `TELEGRAM_TOKEN` in `.env`. The webhook is registered automatically at the end of the first run.
+
+**3. Telegram Bot Domain** _(required for the Mini App to open)_
+
+Without this step the landing page shows **"Bot domain invalid"** and the app cannot be launched from Telegram.
+
+1. In BotFather send `/mybots` and select your bot.
+2. Go to **Bot Settings → Domain**.
+3. Enter your domain — e.g. `myapp.example.com` (no `https://`, no trailing slash).
+
+### First-time setup
+
+```bash
+git clone https://github.com/nikfedorov/openhabit.git && cd openhabit
+./scripts/prod.sh
+```
+
+The script will interactively ask for the app URL, Telegram Bot Token, and OpenRouter API key, then handle everything:
+
+1. Create `.env` with production defaults. The database password is generated automatically — check `.env` after the first run.
+2. Install Composer dependencies (`--no-dev`).
+3. Build the production Docker image (`docker/production/Dockerfile`).
+4. Start all containers with `restart: unless-stopped`.
+5. Generate `APP_KEY`, create `storage:link`, run migrations.
+6. Cache config, events, routes, and views.
+7. Build frontend assets via Bun.
+8. Restart workers so they pick up the fresh config cache.
+
+### Subsequent deployments
+
+```bash
+./scripts/prod.sh
+```
+
+On re-runs the `.env` already exists so no prompts appear — it goes straight to `git pull` and redeploy.
+
+### Services running in production
+
+All daemons are managed by Supervisor inside a single container:
+
+| Process | Command |
+|---|---|
+| **Octane** (FrankenPHP) | `artisan octane:start --server=frankenphp --port=80` |
+| **Horizon** | `artisan horizon` |
+| **Pulse** | `artisan pulse:work` |
+| **Scheduler** | `while true; do artisan schedule:run; sleep 60; done` |
+
+### Useful production commands
+
+```bash
+docker compose -f compose.prod.yaml logs -f app               # Tail all logs
+docker compose -f compose.prod.yaml exec app php artisan horizon:status
+docker compose -f compose.prod.yaml exec app php artisan pulse:status
+docker compose -f compose.prod.yaml exec app php artisan migrate --force
+docker compose -f compose.prod.yaml down                      # Stop everything
+```
+
+`scripts/prod.sh --fresh` re-seeds the database and re-registers the Telegram webhook.
+
 ## Testing & code quality
 
 Full run (type coverage, lint, tests, static analysis, API schema, Vue):
