@@ -87,6 +87,13 @@ docker compose -f "$COMPOSE_FILE" build --build-arg WWWGROUP="$WWWGROUP"
 step "docker compose up -d"
 docker compose -f "$COMPOSE_FILE" up -d && sleep 5
 
+# ── Permissions ────────────────────────────────────────────────────────────────
+# Containers run as sail (uid 1337, gid WWWGROUP). Files cloned/mounted from the
+# host may be owned by root, so fix the directories that need write access.
+
+step "fixing file permissions"
+chown -R 1337:"$WWWGROUP" storage public bootstrap/cache
+
 # ── Laravel setup ──────────────────────────────────────────────────────────────
 
 [ -z "$APP_KEY" ] && { step "artisan key:generate"; $ARTISAN key:generate --force; }
