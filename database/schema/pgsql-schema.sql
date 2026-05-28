@@ -2007,6 +2007,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 20	2026_04_07_200800_create_personal_access_tokens_table	1
 21	2026_04_17_154428_create_telescope_entries_table	1
 22	2026_04_27_225928_create_pulse_tables	1
+23	2026_05_15_195421_create_agent_conversations_table	1
 \.
 
 
@@ -2014,7 +2015,7 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 25, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 23, true);
 
 
 --
