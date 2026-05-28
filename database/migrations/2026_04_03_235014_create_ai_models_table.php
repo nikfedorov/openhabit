@@ -14,8 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('base_url');
-            $table->text('api_key')->nullable();
+            $table->string('provider')->default('openrouter');
             $table->unsignedInteger('priority')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamp('disabled_until')->nullable();
