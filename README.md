@@ -64,7 +64,7 @@ Docker is required. All commands run through Laravel Sail.
 ### First-time install
 
 ```bash
-./install.sh
+./scripts/local.sh
 ```
 
 The script will:
@@ -81,7 +81,7 @@ The script will:
 For a full rebuild that wipes volumes:
 
 ```bash
-./install.sh --rebuild
+./scripts/local.sh --rebuild
 ```
 
 The app will be available at <http://localhost>.
