@@ -92,7 +92,8 @@ docker compose -f "$COMPOSE_FILE" up -d && sleep 5
 # host may be owned by root, so fix the directories that need write access.
 
 step "fixing file permissions"
-chown -R 1337:"$WWWGROUP" storage public bootstrap/cache
+docker compose -f "$COMPOSE_FILE" exec -u root app sh -lc \
+    "chown -R 1337:$WWWGROUP /var/www/html/storage /var/www/html/public /var/www/html/bootstrap/cache"
 
 # ── Laravel setup ──────────────────────────────────────────────────────────────
 
