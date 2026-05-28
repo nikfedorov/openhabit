@@ -2007,9 +2007,6 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 20	2026_04_07_200800_create_personal_access_tokens_table	1
 21	2026_04_17_154428_create_telescope_entries_table	1
 22	2026_04_27_225928_create_pulse_tables	1
-23	2026_05_27_193741_add_long_term_goal_to_users_table	1
-24	2026_05_15_195421_create_agent_conversations_table	2
-25	2026_05_15_234559_replace_ai_model_credentials_with_provider	2
 \.
 
 
