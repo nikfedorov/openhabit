@@ -155,6 +155,36 @@ For Laravel Cloud no server is needed at all.
 
 Docker and Git are required on the server.
 
+### Prerequisites
+
+Before running the deploy script, prepare two things:
+
+**1. Domain**
+
+Point your domain's DNS `A` record to the server IP. Caddy will automatically obtain a TLS certificate from Let's Encrypt once DNS propagates (usually a few minutes).
+
+```
+A   myapp.example.com → 203.0.113.10
+```
+
+The deploy script will ask for the domain name (e.g. `myapp.example.com`) and set `APP_URL=https://myapp.example.com` in `.env`.
+
+**2. Telegram Bot Token**
+
+1. Open Telegram and message [@BotFather](https://t.me/BotFather).
+2. Send `/newbot`, follow the prompts to name your bot.
+3. BotFather replies with a token like `1234567890:ABCdef...` — copy it.
+
+The deploy script will ask for this token and set `TELEGRAM_TOKEN` in `.env`. The webhook is registered automatically at the end of the first run.
+
+**3. Telegram Bot Domain** _(required for the Mini App to open)_
+
+Without this step the landing page shows **"Bot domain invalid"** and the app cannot be launched from Telegram.
+
+1. In BotFather send `/mybots` and select your bot.
+2. Go to **Bot Settings → Domain**.
+3. Enter your domain — e.g. `myapp.example.com` (no `https://`, no trailing slash).
+
 ### First-time setup
 
 ```bash
