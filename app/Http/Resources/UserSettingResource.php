@@ -36,6 +36,7 @@ final class UserSettingResource extends JsonResource
      *     birthdate: string|null,
      *     aiDigestTime: string|null,
      *     aiToneId: int|null,
+     *     longTermGoal: string|null,
      *     trial: TrialResource,
      *     telegramBotUsername: string|null,
      * }

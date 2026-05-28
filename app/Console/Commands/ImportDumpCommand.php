@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 
+#[Description('Import a PostgreSQL dump into the current database (drops and recreates the public schema)')]
+#[Signature('app:import-dump
+                            {--file= : Path to the SQL dump file (reads from stdin if omitted)}')]
 final class ImportDumpCommand extends Command
 {
-    protected $signature = 'app:import-dump
-                            {--file= : Path to the SQL dump file (reads from stdin if omitted)}';
-
-    protected $description = 'Import a PostgreSQL dump into the current database (drops and recreates the public schema)';
-
     public function handle(): int
     {
         /** @var array{host: string, port: int|string, database: string, username: string, password: string} $config */

@@ -10,20 +10,20 @@ use App\Models\User;
 use App\Notifications\HabitReminderNotification;
 use App\Services\RRuleService;
 use Carbon\CarbonImmutable;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
+#[Description('Send habit reminder notifications via Telegram')]
+#[Signature('app:send-notifications')]
 final class SendNotificationsCommand extends Command
 {
     /**
      * Notifications are eligible within this window (in minutes) after the scheduled time.
      */
     private const int TIME_WINDOW_MINUTES = 5;
-
-    protected $signature = 'app:send-notifications';
-
-    protected $description = 'Send habit reminder notifications via Telegram';
 
     public function handle(RRuleService $rruleService): int
     {

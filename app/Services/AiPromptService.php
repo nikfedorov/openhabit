@@ -188,7 +188,7 @@ final class AiPromptService
     /**
      * Format a single habit row for the user prompt.
      *
-     * @param  array{name: string, description: string|null, completed: bool, partial: bool, current_iteration: int, iterations_required: int}  $habit
+     * @param  array{name: string, description: string|null, scheduled: bool, completed: bool, partial: bool, current_iteration: int, iterations_required: int}  $habit
      */
     private function formatHabitLine(array $habit): string
     {

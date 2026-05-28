@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * Delete export files older than one day.
  */
+#[Description('Delete export files older than one day')]
+#[Signature('app:clean-export-files')]
 final class CleanExportFilesCommand extends Command
 {
-    protected $signature = 'app:clean-export-files';
-
-    protected $description = 'Delete export files older than one day';
-
     public function handle(): int
     {
         $disk = Storage::disk('local');

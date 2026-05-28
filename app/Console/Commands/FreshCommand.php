@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Description('Initialize the application (reset database and setup)')]
+#[Signature('app:fresh')]
 final class FreshCommand extends Command
 {
-    protected $signature = 'app:fresh';
-
-    protected $description = 'Initialize the application (reset database and setup)';
-
     public function handle(): int
     {
         $this->runMigrations();

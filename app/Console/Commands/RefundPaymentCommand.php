@@ -7,6 +7,8 @@ namespace App\Console\Commands;
 use App\Actions\Payments\RefundPaymentAction;
 use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
@@ -17,12 +19,10 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\search;
 
+#[Description('Cancel a subscription and refund a payment by charge ID')]
+#[Signature('app:refund-payment {charge_id? : Telegram payment charge ID}')]
 final class RefundPaymentCommand extends Command
 {
-    protected $signature = 'app:refund-payment {charge_id? : Telegram payment charge ID}';
-
-    protected $description = 'Cancel a subscription and refund a payment by charge ID';
-
     /**
      * @var array<string, Payment>
      */
