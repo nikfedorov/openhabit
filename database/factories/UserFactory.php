@@ -36,6 +36,7 @@ final class UserFactory extends Factory
             'birthdate' => fake()->dateTimeBetween('-50 years', '-18 years')->format('Y-m-d'),
             'ai_digest_time' => null,
             'ai_tone_id' => AiTone::defaultId(...),
+            'long_term_goal' => null,
             'last_active_at' => null,
             'trial_banner_dismissed_at' => null,
             'remember_token' => Str::random(10),

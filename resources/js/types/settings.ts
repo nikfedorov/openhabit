@@ -28,6 +28,10 @@ export type SettingsTranslations = {
     when_to_send_the_digest: string;
     ai_tone: string;
     tone_of_the_daily_summary: string;
+    long_term_goal: string;
+    long_term_goal_placeholder: string;
+    saving: string;
+    save: string;
     data: string;
     export_data: string;
     export_data_desc: string;

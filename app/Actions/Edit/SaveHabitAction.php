@@ -48,7 +48,7 @@ final readonly class SaveHabitAction
     /**
      * Build RRule string from form data.
      *
-     * @param  array{frequency: string, weekly_days: array<int>, monthly_days: array<int>, monthly_mode: string, monthly_position: int, monthly_weekday: int}  $data
+     * @param  array{frequency: string, weekly_days: array<int>, monthly_days: array<int>, monthly_mode: string, monthly_position: int, monthly_weekday: int, ...}  $data
      */
     private function buildRRule(array $data): string
     {
@@ -63,7 +63,7 @@ final readonly class SaveHabitAction
     }
 
     /**
-     * @param  array{monthly_mode: string, monthly_position: int, monthly_weekday: int, monthly_days: array<int>}  $data
+     * @param  array{monthly_mode: string, monthly_position: int, monthly_weekday: int, monthly_days: array<int>, ...}  $data
      */
     private function buildMonthlyRRule(array $data): string
     {

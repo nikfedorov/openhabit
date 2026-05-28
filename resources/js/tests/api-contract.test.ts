@@ -332,6 +332,7 @@ describe('API contract', () => {
             birthdate: true,
             aiDigestTime: true,
             aiToneId: true,
+            longTermGoal: true,
             trial: true,
             telegramBotUsername: true,
         });

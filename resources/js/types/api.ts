@@ -47,6 +47,7 @@ export type UserSettings = {
     birthdate: string | null;
     aiDigestTime: string | null;
     aiToneId: number | null;
+    longTermGoal: string | null;
     trial: TrialData;
     telegramBotUsername: string | null;
 };

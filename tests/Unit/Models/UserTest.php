@@ -37,6 +37,7 @@ it('has expected keys in toArray', function (): void {
             'birthdate',
             'ai_digest_time',
             'ai_tone_id',
+            'long_term_goal',
             'last_active_at',
             'trial_banner_dismissed_at',
             'created_at',

@@ -2162,6 +2162,15 @@
                         ],
                         "description": "AI tone to use for the digest.",
                         "example": 1
+                    },
+                    "longTermGoal": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's long-term goal.",
+                        "example": "Run a marathon by end of year",
+                        "maxLength": 500
                     }
                 },
                 "title": "UpdateSettingsRequest"
@@ -2234,6 +2243,13 @@
                         ],
                         "description": "ID of the AI tone used for the digest."
                     },
+                    "longTermGoal": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "User's long-term goal used as context for AI digest generation."
+                    },
                     "trial": {
                         "description": "Trial banner and premium modal data.",
                         "$ref": "#/components/schemas/TrialResource"
@@ -2255,6 +2271,7 @@
                     "birthdate",
                     "aiDigestTime",
                     "aiToneId",
+                    "longTermGoal",
                     "trial",
                     "telegramBotUsername"
                 ],

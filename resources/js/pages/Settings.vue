@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTextareaAutosize } from '@vueuse/core';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import PageLoader from '@/components/PageLoader.vue';
@@ -50,6 +51,19 @@ const moveCompletedToEnd = ref(true);
 const aiDigestEnabled = ref(false);
 const aiDigestTime = ref('09:00');
 const aiToneId = ref<number | null>(null);
+const longTermGoal = ref('');
+const goalFocused = ref(false);
+const goalProcessing = ref(false);
+const goalTextareaRef = ref<HTMLTextAreaElement>();
+
+useTextareaAutosize({
+    element: goalTextareaRef,
+    input: computed(() => longTermGoal.value),
+});
+
+const showGoalButton = computed(
+    () => goalFocused.value || goalProcessing.value,
+);
 
 // ─── Dropdown state ──────────────────────────────────────────
 
@@ -161,6 +175,7 @@ async function loadData() {
     aiDigestEnabled.value = s.aiDigestTime !== null;
     aiDigestTime.value = s.aiDigestTime ?? '09:00';
     aiToneId.value = s.aiToneId;
+    longTermGoal.value = s.longTermGoal ?? '';
 
     emit('navigation-translations', response.navigationTranslations);
     emit('settings', s);
@@ -285,6 +300,15 @@ async function updateAiTone(id: number) {
     await saveSetting({ aiToneId: id });
 }
 
+async function saveGoal() {
+    goalProcessing.value = true;
+    try {
+        await saveSetting({ longTermGoal: longTermGoal.value || null });
+    } finally {
+        goalProcessing.value = false;
+    }
+}
+
 function closeTimezoneDropdown() {
     timezoneOpen.value = false;
     timezoneSearch.value = '';
@@ -369,6 +393,23 @@ async function exportData() {
 .dropdown-leave-to {
     opacity: 0;
     transform: scale(0.95);
+}
+
+.save-enter-active,
+.save-leave-active {
+    transition:
+        opacity 200ms ease,
+        max-height 200ms ease,
+        margin-top 200ms ease;
+    overflow: hidden;
+    max-height: 40px;
+}
+
+.save-enter-from,
+.save-leave-to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
 }
 </style>
 
@@ -823,6 +864,68 @@ async function exportData() {
                     @select="updateDayStartsAt"
                 />
             </SettingRow>
+
+            <!-- Long-term goal -->
+            <div>
+                <div class="mb-3 flex items-center gap-3">
+                    <div
+                        class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400"
+                    >
+                        <svg
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <p
+                            class="text-sm font-medium text-neutral-900 dark:text-white"
+                        >
+                            {{ translations.long_term_goal }}
+                        </p>
+                    </div>
+                </div>
+                <textarea
+                    ref="goalTextareaRef"
+                    v-model="longTermGoal"
+                    :placeholder="translations.long_term_goal_placeholder"
+                    rows="1"
+                    maxlength="500"
+                    class="min-h-[4rem] w-full resize-none rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-green-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
+                    @focus="goalFocused = true"
+                    @blur="
+                        goalFocused = false;
+                        saveGoal();
+                    "
+                />
+                <Transition name="save">
+                    <div
+                        v-show="showGoalButton"
+                        class="save-btn mt-2 flex justify-end"
+                    >
+                        <button
+                            type="button"
+                            :disabled="goalProcessing"
+                            class="rounded-lg bg-green-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50 dark:bg-green-500 dark:hover:bg-green-600"
+                            @click="saveGoal"
+                        >
+                            {{
+                                goalProcessing
+                                    ? translations.saving
+                                    : translations.save
+                            }}
+                        </button>
+                    </div>
+                </Transition>
+            </div>
         </section>
 
         <!-- ═══ AI Digest ═══ -->

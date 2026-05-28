@@ -36,6 +36,7 @@ final class UserSettingResource extends JsonResource
      *     birthdate: string|null,
      *     aiDigestTime: string|null,
      *     aiToneId: int|null,
+     *     longTermGoal: string|null,
      *     trial: TrialResource,
      *     telegramBotUsername: string|null,
      * }
@@ -112,6 +113,13 @@ final class UserSettingResource extends JsonResource
              * @var int|null
              */
             'aiToneId' => $this->resource->ai_tone_id,
+
+            /**
+             * User's long-term goal used as context for AI digest generation.
+             *
+             * @var string|null
+             */
+            'longTermGoal' => $this->resource->long_term_goal,
 
             /**
              * Trial banner and premium modal data.

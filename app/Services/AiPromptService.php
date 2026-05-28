@@ -98,12 +98,20 @@ final class AiPromptService
         ?string $dailyNote,
         Collection $recentDigests,
         CarbonImmutable $date,
+        ?string $longTermGoal = null,
     ): string {
         $parts = [
             sprintf('Date: %s (%s)', $date->toDateString(), $date->format('l')),
-            '',
-            '## Habits for this day:',
         ];
+
+        if ($longTermGoal !== null && mb_trim($longTermGoal) !== '') {
+            $parts[] = '';
+            $parts[] = "## User's long-term goal:";
+            $parts[] = sprintf('<user_data>%s</user_data>', self::sanitizeUserContent($longTermGoal, self::MAX_DAILY_NOTE_LENGTH));
+        }
+
+        $parts[] = '';
+        $parts[] = '## Habits for this day:';
 
         $scheduled = array_values(array_filter($habitsData, fn (array $habit): bool => $habit['scheduled']));
         $completed = 0;
@@ -180,7 +188,7 @@ final class AiPromptService
     /**
      * Format a single habit row for the user prompt.
      *
-     * @param  array{name: string, description: string|null, completed: bool, partial: bool, current_iteration: int, iterations_required: int}  $habit
+     * @param  array{name: string, description: string|null, completed: bool, partial: bool, current_iteration: int, iterations_required: int, ...}  $habit
      */
     private function formatHabitLine(array $habit): string
     {
