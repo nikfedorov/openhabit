@@ -5,6 +5,7 @@ LABEL maintainer="Taylor Otwell"
 ARG WWWGROUP=1000
 ARG NODE_VERSION=24
 ARG POSTGRES_VERSION=18
+ARG FRANKENPHP_VERSION=1.5.0
 
 WORKDIR /var/www/html
 
@@ -71,6 +72,14 @@ RUN apt-get update \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then FRANKENPHP_ARCH="x86_64"; \
+    elif [ "$ARCH" = "aarch64" ]; then FRANKENPHP_ARCH="aarch64"; \
+    else echo "Unsupported architecture: $ARCH" && exit 1; fi && \
+    curl -fsSL "https://github.com/dunglas/frankenphp/releases/download/v${FRANKENPHP_VERSION}/frankenphp-linux-${FRANKENPHP_ARCH}" \
+    -o /usr/local/bin/frankenphp && \
+    chmod +x /usr/local/bin/frankenphp
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.5
 

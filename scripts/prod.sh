@@ -87,15 +87,6 @@ docker compose -f "$COMPOSE_FILE" build --build-arg WWWGROUP="$WWWGROUP"
 step "docker compose up -d"
 docker compose -f "$COMPOSE_FILE" up -d && sleep 5
 
-# ── Octane / FrankenPHP ────────────────────────────────────────────────────────
-
-if [ ! -f ./Caddyfile ]; then
-    step "artisan octane:install --server=frankenphp"
-    [ -f ./config/octane.php ] && cp ./config/octane.php ./config/octane.php.bak
-    $ARTISAN octane:install --force --no-interaction --server=frankenphp
-    [ -f ./config/octane.php.bak ] && mv ./config/octane.php.bak ./config/octane.php
-fi
-
 # ── Laravel setup ──────────────────────────────────────────────────────────────
 
 [ -z "$APP_KEY" ] && { step "artisan key:generate"; $ARTISAN key:generate --force; }
