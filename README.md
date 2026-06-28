@@ -6,7 +6,7 @@
 [![PHP Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nikfedorov/092caf1e443783b3fec1ce6486ae02d7/raw/openhabit-php-coverage.json)](https://github.com/nikfedorov/openhabit/actions/workflows/tests.yml)
 [![Vue Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nikfedorov/092caf1e443783b3fec1ce6486ae02d7/raw/openhabit-vue-coverage.json)](https://github.com/nikfedorov/openhabit/actions/workflows/tests.yml)
 
-Habit tracker with AI integration and a Telegram bot.
+The habit tracker for people who quit habit trackers.
 
 </div>
 
@@ -19,13 +19,22 @@ Habit tracker with AI integration and a Telegram bot.
 
 ## About
 
-OpenHabit is a web application for tracking daily habits, keeping notes, and analyzing your progress with the help of AI. It supports notifications, flexible schedules (RRULE), multi-language UI (ar, bn, en, es, hi, pt, ru, zh) and payments through Telegram.
+OpenHabit is a calm, open-source habit tracker built around returning, not perfection. Missed days do not break anything. You can keep notes, use flexible schedules, get gentle daily reflections with AI, and open the app from Telegram or the browser.
+
+It supports notifications, RRULE schedules, a multi-language UI (ar, bn, en, es, hi, pt, ru, zh), Telegram Mini App payments, and self-hosting.
+
+### Philosophy
+
+- No streak anxiety: missing a day is normal.
+- No guilt loops: the product is designed to help you come back.
+- Your data stays portable: export it anytime.
+- Open by default: MIT licensed, no telemetry, no hidden tracking.
 
 ### Key features
 
-- **Habits & templates** — categories, habit templates, flexible schedules powered by `rlanvin/php-rrule`.
-- **AI integration** — `AiDigest`, `AiLog`, `AiModel`, `AiTone`, per-user memory (`UserMemory`).
-- **Telegram bot** — built on `nutgram/laravel` (commands, callbacks, handlers, payments).
+- **Habits & templates** — categories, reusable habit templates, and flexible schedules powered by `rlanvin/php-rrule`.
+- **Daily AI reflections** — gentle summaries, configurable tone, model management, and optional per-user memory.
+- **Telegram + browser** — Telegram Mini App, bot commands, callbacks, notifications, and payments.
 - **Reactive frontend** — Vue 3 (Composition API) + Tailwind v4 + Vite.
 - **Queues & observability** — Laravel Horizon, Pulse, Telescope, Pail.
 - **API** — documented via `dedoc/scramble`, schema in [resources/js/api-schema.json](resources/js/api-schema.json).

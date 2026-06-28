@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => 'অভ্যাস',
-    'manage_routines' => 'আপনার দৈনিক অভ্যাস পরিচালনা করুন',
+    'manage_routines' => 'নতুন করে শুরু না করে ধীরে ধীরে গড়ুন',
     'new_habit' => 'তৈরি করুন',
-    'no_habits_yet' => 'এখনও কোনো অভ্যাস নেই',
-    'create_first_habit' => 'ট্র্যাকিং শুরু করতে আপনার প্রথম অভ্যাস তৈরি করুন',
+    'no_habits_yet' => 'ছোট থেকে শুরু করুন',
+    'create_first_habit' => 'একটি অভ্যাস বেছে নিন, যেটিতে কাল আবার ফিরতে পারবেন',
     'create_a_habit' => 'একটি অভ্যাস তৈরি করুন',
     'franklins_virtues' => 'ফ্রাঙ্কলিনের গুণাবলী',
     'disable_all' => 'সব নিষ্ক্রিয় করুন',

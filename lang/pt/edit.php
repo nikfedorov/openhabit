@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => 'Hábitos',
-    'manage_routines' => 'Gerencie seus hábitos diários',
+    'manage_routines' => 'Construa aos poucos, sem recomeçar',
     'new_habit' => 'Criar',
-    'no_habits_yet' => 'Nenhum hábito ainda',
-    'create_first_habit' => 'Crie seu primeiro hábito para começar o acompanhamento',
+    'no_habits_yet' => 'Comece pequeno',
+    'create_first_habit' => 'Escolha um hábito ao qual você possa voltar amanhã',
     'create_a_habit' => 'Criar um hábito',
     'franklins_virtues' => 'Virtudes de Franklin',
     'disable_all' => 'Desativar todos',

@@ -73,9 +73,11 @@ describe('PremiumModal', () => {
         expect(
             document.body.querySelector('[data-testid="premium-modal"]'),
         ).not.toBeNull();
-        expect(document.body.textContent).toContain('Premium Features');
         expect(document.body.textContent).toContain(
-            'Upgrade to unlock all features',
+            'Peace of mind for your habits',
+        );
+        expect(document.body.textContent).toContain(
+            'More support, without more pressure',
         );
 
         const list = document.body.querySelector(
@@ -83,14 +85,16 @@ describe('PremiumModal', () => {
         );
 
         expect(list?.textContent).toContain('Multiple reminders per habit');
-        expect(list?.textContent).toContain('Daily AI digest of your progress');
+        expect(list?.textContent).toContain(
+            'Gentle reflection on your progress',
+        );
         expect(list?.textContent).toContain('Export all your data as CSV');
 
         const btn = document.body.querySelector(
             '[data-testid="premium-modal-upgrade"]',
         );
 
-        expect(btn?.textContent?.trim()).toBe('Upgrade');
+        expect(btn?.textContent?.trim()).toBe('Build habits you will keep');
     });
 
     it('emits close when the modal is dismissed', () => {

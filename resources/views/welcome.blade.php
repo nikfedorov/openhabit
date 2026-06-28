@@ -552,7 +552,23 @@
 </section>
 
 {{-- ─────────────────────────────────────────────────────────────────────────
-     Features. Editorial 2-column list with hairline dividers — no card grid.
+     Problem. Plain editorial copy before feature details so the homepage leads
+     with the emotional reason OpenHabit exists.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section aria-labelledby="problem-heading" class="max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.problem.eyebrow') }}</p>
+        <h2 id="problem-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-8">{{ __('welcome.problem.title') }}</h2>
+        <div class="space-y-4 text-lg sm:text-xl leading-relaxed text-neutral-500 dark:text-neutral-400">
+            @foreach ((array) __('welcome.problem.body') as $line)
+                <p>{{ $line }}</p>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
+     Philosophy. Editorial 2-column list with hairline dividers — no card grid.
      Icon as a small accent, not a heavy badge. Tighter rhythm than the hero.
    ───────────────────────────────────────────────────────────────────────── --}}
 <section id="features" aria-labelledby="features-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24">
@@ -607,6 +623,21 @@
                         <p class="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">{{ __('welcome.features.items.'.$feature['key'].'.body') }}</p>
                     </div>
                 </div>
+            </li>
+        @endforeach
+    </ul>
+</section>
+
+<section aria-labelledby="philosophy-heading" class="max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal mb-10 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.philosophy.eyebrow') }}</p>
+        <h2 id="philosophy-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.philosophy.title') }}</h2>
+    </div>
+
+    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        @foreach ((array) __('welcome.philosophy.items') as $item)
+            <li class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 p-5 text-[15px] font-medium leading-relaxed text-neutral-700 dark:text-neutral-200" data-reveal-delay="{{ $loop->index * 70 }}">
+                {{ $item }}
             </li>
         @endforeach
     </ul>
@@ -672,13 +703,8 @@
 @endif
 
 {{-- ─────────────────────────────────────────────────────────────────────────
-     Comparison. A plain editorial table — no card wrapper, hairline row
-     dividers, single bordered surface broken by rules. The OpenHabit
-     column is the only one that earns the green accent (header tag,
-     filled checks, mono pill text). Competitor columns stay restrained:
-     muted outlined check icons and a thin dash for absent features.
-     Variant labels ("MIT", "iOS only", "Premium") use the same mono
-     uppercase voice as the open-source section.
+     Comparison. Philosophy-first table: traditional streak pressure against
+     the OpenHabit response. No feature checklist; the distinction is emotional.
    ───────────────────────────────────────────────────────────────────────── --}}
 <section id="compare" aria-labelledby="compare-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
     <div class="reveal mb-12 max-w-2xl">
@@ -689,31 +715,31 @@
 
     <div class="reveal -mx-4 sm:mx-0 overflow-x-auto">
         @php
-            // Truthful, public-info comparison. Cell values:
-            //   'yes' — full check (rendered the same for every column; fair)
-            //   'no'  — small × mark
-            //   ['label' => '…'] — qualifying tag (license, platform, tier, count)
-            //
-            // Columns: OpenHabit, Habitica, Streaks, Productive.
-            // Productive (apploft) is the freemium pick: 3-habit free tier.
             $compareColumns = [
-                ['name' => 'OpenHabit',  'us' => true],
-                ['name' => 'Habitica',   'us' => false],
-                ['name' => 'Streaks',    'us' => false],
-                ['name' => 'Productive', 'us' => false],
+                ['key' => 'traditional', 'us' => false],
+                ['key' => 'openhabit', 'us' => true],
             ];
             $compareRows = [
-                ['key' => 'telegram',    'cells' => ['yes', 'no', 'no', 'no']],
-                ['key' => 'open_source', 'cells' => [['label' => 'MIT'], ['label' => 'GPL'], 'no', 'no']],
-                ['key' => 'free',        'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.paid')], ['label' => __('welcome.compare.cells.freemium')]]],
-                ['key' => 'free_habits', 'cells' => [['label' => '∞'], ['label' => '∞'], ['label' => '24'], ['label' => '3']]],
-                ['key' => 'ai',          'cells' => [['label' => __('welcome.compare.cells.premium')], 'no', 'no', 'no']],
-                ['key' => 'export',      'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.limited')], ['label' => __('welcome.compare.cells.premium')]]],
-                ['key' => 'cross',       'cells' => ['yes', 'yes', ['label' => __('welcome.compare.cells.ios_only')], 'yes']],
+                ['key' => 'miss_day', 'cells' => [
+                    ['tone' => 'negative', 'label' => __('welcome.compare.cells.lose_streak')],
+                    ['tone' => 'positive', 'label' => __('welcome.compare.cells.keep_going')],
+                ]],
+                ['key' => 'feeling', 'cells' => [
+                    ['tone' => 'negative', 'label' => __('welcome.compare.cells.feel_guilty')],
+                    ['tone' => 'positive', 'label' => __('welcome.compare.cells.feel_safe')],
+                ]],
+                ['key' => 'restart', 'cells' => [
+                    ['tone' => 'negative', 'label' => __('welcome.compare.cells.start_over')],
+                    ['tone' => 'positive', 'label' => __('welcome.compare.cells.come_back')],
+                ]],
+                ['key' => 'goal', 'cells' => [
+                    ['tone' => 'negative', 'label' => __('welcome.compare.cells.perfection')],
+                    ['tone' => 'positive', 'label' => __('welcome.compare.cells.steady_progress')],
+                ]],
             ];
         @endphp
 
-        <table class="w-full min-w-[600px] sm:min-w-0 text-sm border-collapse px-4 sm:px-0" role="table">
+        <table class="w-full min-w-[560px] sm:min-w-0 text-sm border-collapse px-4 sm:px-0" role="table">
             <caption class="sr-only">{{ __('welcome.compare.caption') }}</caption>
             <thead>
                 <tr class="text-left align-bottom [&>th:not(:first-child)]:text-center">
@@ -723,7 +749,7 @@
                     @foreach ($compareColumns as $col)
                         <th scope="col" class="pb-5 px-3 sm:px-4 font-normal">
                             <span class="block text-[15px] font-semibold tracking-tight {{ $col['us'] ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400' }}">
-                                {{ $col['name'] }}
+                                {{ __('welcome.compare.cells.'.$col['key']) }}
                             </span>
                         </th>
                     @endforeach
@@ -738,23 +764,18 @@
                         @foreach ($row['cells'] as $i => $cell)
                             @php $isUs = $compareColumns[$i]['us'] ?? false; @endphp
                             <td class="py-4 px-3 sm:px-4 align-middle text-center">
-                                @if ($cell === 'yes')
-                                    {{-- Single, identical green check for every column — fair by default. --}}
-                                    <span class="inline-flex w-5 h-5 rounded-md items-center justify-center bg-green-500 text-white"
-                                          aria-label="{{ __('welcome.compare.a11y.yes') }}">
-                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                                    </span>
-                                @elseif ($cell === 'no')
-                                    {{-- Muted × — not red, not loud. Honest absence, no judgment. --}}
-                                    <span class="inline-flex w-5 h-5 items-center justify-center text-neutral-300 dark:text-neutral-600"
-                                          aria-label="{{ __('welcome.compare.a11y.no') }}">
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-                                    </span>
-                                @elseif (is_array($cell))
-                                    <span class="inline-flex items-center font-mono uppercase tabular-nums {{ $cell['label'] === '∞' ? 'text-[24px] leading-none' : 'text-[11px] tracking-[0.16em]' }} {{ $isUs ? 'text-green-600 dark:text-green-500' : 'text-neutral-500 dark:text-neutral-400' }}">
-                                        {{ $cell['label'] }}
-                                    </span>
-                                @endif
+                                <span class="inline-flex items-center justify-center gap-2 {{ $isUs ? 'text-green-600 dark:text-green-500' : 'text-neutral-500 dark:text-neutral-400' }}">
+                                    @if ($cell['tone'] === 'positive')
+                                        <span class="inline-flex w-5 h-5 rounded-md items-center justify-center bg-green-500 text-white" aria-label="{{ __('welcome.compare.a11y.yes') }}">
+                                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex w-5 h-5 items-center justify-center text-neutral-300 dark:text-neutral-600" aria-label="{{ __('welcome.compare.a11y.no') }}">
+                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                                        </span>
+                                    @endif
+                                    <span class="text-[13px] sm:text-sm font-medium leading-snug">{{ $cell['label'] }}</span>
+                                </span>
                             </td>
                         @endforeach
                     </tr>

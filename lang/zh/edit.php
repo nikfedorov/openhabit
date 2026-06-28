@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => '习惯',
-    'manage_routines' => '管理您的日常习惯',
+    'manage_routines' => '慢慢建立，不必从头开始',
     'new_habit' => '创建',
-    'no_habits_yet' => '暂无习惯',
-    'create_first_habit' => '创建您的第一个习惯以开始追踪',
+    'no_habits_yet' => '从小处开始',
+    'create_first_habit' => '选择一个明天还能回来的习惯',
     'create_a_habit' => '创建习惯',
     'franklins_virtues' => '富兰克林美德',
     'disable_all' => '全部禁用',

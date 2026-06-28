@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => 'Habits',
-    'manage_routines' => 'Manage your daily habits',
+    'manage_routines' => 'Build gradually, without starting over',
     'new_habit' => 'Create',
-    'no_habits_yet' => 'No habits yet',
-    'create_first_habit' => 'Create your first habit to start tracking',
+    'no_habits_yet' => 'Start small',
+    'create_first_habit' => 'Choose one habit you can return to tomorrow',
     'create_a_habit' => 'Create a habit',
     'franklins_virtues' => "Franklin's Virtues",
     'disable_all' => 'Disable all',

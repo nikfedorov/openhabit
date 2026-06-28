@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ActivityGraph from '@/components/track/ActivityGraph.vue';
 import DailyNote from '@/components/track/DailyNote.vue';
+import ProgressBar from '@/components/track/ProgressBar.vue';
 import {
     defaultTrackTranslations,
     deferredPromise,
@@ -194,7 +195,7 @@ describe('Track - Progress Bar', () => {
             completedCount: 0,
             habits: [],
         });
-        expect(emptyWrapper.text()).not.toContain('Progress');
+        expect(emptyWrapper.findComponent(ProgressBar).exists()).toBe(false);
     });
 
     it('renders correct segments with intensity thresholds', async () => {
