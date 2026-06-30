@@ -95,7 +95,9 @@
         ],
         "update:requirements": [
             "composer bump",
-            "bunx npm-check-updates -u"
+            "bunx npm-check-updates -u",
+            "bun install",
+            "bunx impeccable update"
         ],
         "lint": [
             "pint --parallel --format agent",
