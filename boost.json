@@ -1,6 +1,7 @@
 {
     "agents": [
-        "copilot"
+        "copilot",
+        "opencode"
     ],
     "cloud": false,
     "guidelines": true,
