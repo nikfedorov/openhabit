@@ -9,6 +9,12 @@
     $primaryLabel = ($isLoggedIn || !$telegramUrl) ? __('welcome.nav.cta_app') : __('welcome.nav.cta_telegram');
     $callbackUrl = url('/auth/telegram/callback');
     $newsUrl = 'https://t.me/openhabit_news';
+    $githubUrl = 'https://github.com/nikfedorov/openhabit';
+    $authorGithubUrl = 'https://github.com/nikfedorov';
+    $authorTwitterUrl = 'https://x.com/n1kfedorov';
+    $roadmapUrl = $githubUrl . '/issues';
+    $changelogUrl = $githubUrl . '/releases';
+    $privacyUrl = $githubUrl . '#privacy';
 @endphp
 <html lang="{{ str_replace('_', '-', $currentLocale) }}" @if ($isRtl) dir="rtl" @endif>
 <head>
@@ -289,34 +295,51 @@
 <section aria-labelledby="problem-heading" class="relative overflow-hidden">
     <div class="hero-wash absolute inset-x-0 top-0 h-[520px] pointer-events-none" aria-hidden="true"></div>
 
-    <div class="relative max-w-3xl mx-auto px-4 pt-[calc(4rem+72px)] pb-14 sm:pt-24 sm:pb-20">
-        <div class="reveal rounded-[2rem] border border-black/[0.06] dark:border-white/[0.08] bg-white/75 dark:bg-neutral-900/55 backdrop-blur-[2px] p-6 sm:p-8 shadow-[0_1px_0_rgba(255,255,255,0.65)_inset,0_24px_64px_-32px_rgba(15,23,42,0.22)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_64px_-32px_rgba(0,0,0,0.8)]">
-            <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-6">
-                {{ __('welcome.problem.eyebrow') }}
-            </p>
+    <div class="relative max-w-5xl mx-auto px-4 pt-[calc(4rem+72px)] pb-14 sm:pt-24 sm:pb-16">
+        <div class="reveal grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-5 rounded-[2rem] border border-black/[0.06] dark:border-white/[0.08] bg-white/75 dark:bg-neutral-900/55 backdrop-blur-[2px] p-6 sm:p-8 shadow-[0_1px_0_rgba(255,255,255,0.65)_inset,0_24px_64px_-32px_rgba(15,23,42,0.22)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_64px_-32px_rgba(0,0,0,0.8)]">
+            <div class="flex flex-col justify-between gap-8">
+                <div>
+                    <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-5">
+                        {{ __('welcome.problem.eyebrow') }}
+                    </p>
 
-            <div class="space-y-3 sm:space-y-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] leading-[1.08]">
-                <h1 id="problem-heading">{{ __('welcome.problem.title') }}</h1>
-                @foreach ((array) __('welcome.problem.body') as $line)
-                    <p class="text-neutral-500 dark:text-neutral-400">{{ $line }}</p>
-                @endforeach
-            </div>
-
-            <div class="mt-8 sm:mt-10 flex flex-col items-start gap-5">
-                <div class="flex items-center gap-3 text-green-600 dark:text-green-500" aria-hidden="true">
-                    <span class="h-px w-12 bg-current opacity-30"></span>
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 5v14M19 12l-7 7-7-7"/>
-                    </svg>
+                    <div class="space-y-4">
+                        <h1 id="problem-heading" class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] leading-[1.06]">
+                            {{ __('welcome.problem.title') }}
+                        </h1>
+                        @foreach ((array) __('welcome.problem.body') as $line)
+                            <p class="text-base sm:text-lg leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-[48ch]">{{ $line }}</p>
+                        @endforeach
+                    </div>
                 </div>
 
                 <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                   class="inline-flex w-fit items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
                     {{ __('welcome.problem.cta') }}
                     <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
                     </svg>
                 </a>
+            </div>
+
+            <div class="rounded-2xl bg-neutral-100/80 dark:bg-neutral-800/60 p-4 sm:p-5">
+                <ol class="flex flex-col">
+                    @foreach ((array) __('welcome.problem.cycle') as $step)
+                        <li class="relative flex gap-3 pb-4 last:pb-0">
+                            @if (! $loop->last)
+                                <span class="absolute start-[0.5625rem] top-7 bottom-0 w-px bg-neutral-300 dark:bg-neutral-700" aria-hidden="true"></span>
+                            @endif
+                            <span class="relative z-10 mt-1 h-5 w-5 rounded-full bg-white dark:bg-neutral-900 ring-1 ring-neutral-300 dark:ring-neutral-700 flex-shrink-0"></span>
+                            <span class="min-w-0">
+                                <span class="block text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ $step['day'] }}</span>
+                                <span class="block mt-0.5 text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-white">{{ $step['mood'] }}</span>
+                            </span>
+                        </li>
+                    @endforeach
+                </ol>
+                <p class="mt-5 pt-4 border-t rule text-sm font-medium leading-relaxed text-green-700 dark:text-green-400">
+                    {{ __('welcome.problem.closing') }}
+                </p>
             </div>
         </div>
     </div>
@@ -388,6 +411,82 @@
              generous internal padding, the "Today" list and the heatmap share
              a single container, separated by a subtle rule. --}}
         <div role="region" aria-label="{{ __('welcome.a11y.preview') }}" class="mt-16 sm:mt-20 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-neutral-900/60 backdrop-blur-[2px] p-5 sm:p-7 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_24px_48px_-24px_rgba(15,23,42,0.16)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_48px_-24px_rgba(0,0,0,0.7)]">
+            @php
+                $previewWeekDayLetters = [];
+                if (class_exists(IntlDateFormatter::class)) {
+                    $previewWeekDayFormatter = new IntlDateFormatter(str_replace('_', '-', app()->getLocale()), IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'EEEEE');
+                    for ($day = 6; $day <= 12; $day++) {
+                        $previewWeekDayLetters[] = $previewWeekDayFormatter->format(mktime(0, 0, 0, 1, $day, 2025));
+                    }
+                } else {
+                    $previewWeekDayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+                }
+
+                // 20 weeks × 7 days = 140 cells, column-first (week columns, day rows)
+                $intensities = [
+                    0,0,0,1,0,0,0,
+                    0,0,1,1,1,0,0,
+                    0,1,1,2,1,1,0,
+                    0,0,1,1,1,0,0,
+                    0,0,1,2,2,1,0,
+                    0,1,2,3,2,1,0,
+                    1,1,2,3,3,2,1,
+                    0,1,2,3,4,3,1,
+                    0,1,1,2,2,1,0,
+                    0,0,1,2,1,1,0,
+                    1,2,3,4,4,3,2,
+                    1,2,3,3,2,2,1,
+                    0,1,2,2,3,2,1,
+                    1,2,4,4,3,3,2,
+                    2,3,3,4,4,3,1,
+                    1,2,3,3,4,2,1,
+                    2,3,4,4,3,2,1,
+                    1,2,3,4,4,3,2,
+                    2,3,4,4,4,3,2,
+                    0,1,2,3,3,2,1,
+                ];
+                $heatShades = [
+                    'bg-neutral-200 dark:bg-neutral-800',
+                    'bg-green-200 dark:bg-green-900',
+                    'bg-green-400 dark:bg-green-700',
+                    'bg-green-500 dark:bg-green-600',
+                    'bg-green-600 dark:bg-green-500',
+                ];
+            @endphp
+
+            <div class="mb-6 pb-6 border-b rule">
+                <div class="overflow-x-auto pb-1 text-center" aria-hidden="true">
+                    <div class="mx-auto inline-flex items-start justify-center gap-2 min-w-max">
+                        <div class="grid gap-1" style="grid-template-rows: repeat(7, 14px);">
+                            @foreach ($previewWeekDayLetters as $letter)
+                                <span class="flex h-[14px] w-3 items-center justify-center text-[9px] font-medium uppercase text-neutral-400 dark:text-neutral-500 select-none">
+                                    {{ mb_substr((string) $letter, 0, 1) }}
+                                </span>
+                            @endforeach
+                        </div>
+                        <div class="grid gap-1" style="grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px;">
+                            @foreach ($intensities as $i)
+                                <span class="rounded-[3px] {{ $heatShades[$i] }} transition-transform duration-200 hover:scale-[1.6]"></span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center justify-center gap-1">
+                        <span class="me-1 text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.less') }}</span>
+                        @foreach ([0, 1, 2, 3, 4] as $level)
+                            <span class="h-3 w-3 rounded-[3px] {{ $heatShades[$level] }}"></span>
+                        @endforeach
+                        <span class="ms-1 text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.more') }}</span>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-1 text-center">
+                    @foreach ((array) __('welcome.preview.story_lines') as $line)
+                        <p class="text-[15px] sm:text-base font-medium tracking-tight {{ $loop->last ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400' }}">
+                            {{ $line }}
+                        </p>
+                    @endforeach
+                </div>
+            </div>
+
             <div class="flex items-baseline justify-between mb-5">
                 <h2 class="text-sm font-semibold tracking-tight">{{ __('welcome.preview.today') }}</h2>
                 <span class="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.date') }}</span>
@@ -411,59 +510,74 @@
                     </li>
                 @endforeach
             </ul>
+        </div>
 
-            <div class="mt-6 pt-6 border-t rule">
-                @php
-                    // 20 weeks × 7 days = 140 cells, column-first (week columns, day rows)
-                    $intensities = [
-                        0,0,0,1,0,0,0,
-                        0,0,1,1,1,0,0,
-                        0,1,1,2,1,1,0,
-                        0,0,1,1,1,0,0,
-                        0,0,1,2,2,1,0,
-                        0,1,2,3,2,1,0,
-                        1,1,2,3,3,2,1,
-                        0,1,2,3,4,3,1,
-                        0,1,1,2,2,1,0,
-                        0,0,1,2,1,1,0,
-                        1,2,3,4,4,3,2,
-                        1,2,3,3,2,2,1,
-                        0,1,2,2,3,2,1,
-                        1,2,4,4,3,3,2,
-                        2,3,3,4,4,3,1,
-                        1,2,3,3,4,2,1,
-                        2,3,4,4,3,2,1,
-                        1,2,3,4,4,3,2,
-                        2,3,4,4,4,3,2,
-                        0,1,2,3,3,2,1,
-                    ];
-                    $heatShades = [
-                        'bg-neutral-200 dark:bg-neutral-800',
-                        'bg-green-200 dark:bg-green-900',
-                        'bg-green-400 dark:bg-green-700',
-                        'bg-green-500 dark:bg-green-600',
-                        'bg-green-600 dark:bg-green-500',
-                    ];
-                @endphp
-                <div class="flex justify-center mb-3" aria-hidden="true">
-                    <div class="grid gap-1"
-                         style="grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px;">
-                        @foreach ($intensities as $i)
-                            <span class="rounded-[3px] {{ $heatShades[$i] }} transition-transform duration-200 hover:scale-[1.6]"></span>
-                        @endforeach
-                    </div>
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="{{ __('welcome.proof.eyebrow') }}">
+            @foreach ((array) __('welcome.proof.items') as $item)
+                <div class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/60 dark:bg-neutral-900/35 px-4 py-3" data-reveal-delay="{{ $loop->index * 60 }}">
+                    <p class="text-2xl font-semibold tracking-[-0.03em] text-neutral-900 dark:text-white">{{ $item['value'] }}</p>
+                    <p class="mt-1 text-[12px] leading-snug text-neutral-500 dark:text-neutral-400">{{ $item['label'] }}</p>
                 </div>
-                <div class="flex items-center justify-end gap-1" aria-hidden="true">
-                    <span class="me-1 text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.less') }}</span>
-                    @foreach ([0, 1, 2, 3, 4] as $level)
-                        <span class="h-3 w-3 rounded-[3px] {{ $heatShades[$level] }}"></span>
-                    @endforeach
-                    <span class="ms-1 text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">{{ __('welcome.preview.more') }}</span>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
+     AI Digest examples. Premium feature appears early, right after the product
+     preview, so the page shows the app's strongest differentiator sooner.
+   ───────────────────────────────────────────────────────────────────────── --}}
+@php $digestItems = (array) __('welcome.digest_examples.items'); @endphp
+@if (count($digestItems) > 0)
+<section aria-labelledby="digest-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24">
+    <div class="reveal mb-12 max-w-2xl">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.digest_examples.eyebrow') }}</p>
+        <h2 id="digest-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-3">{{ __('welcome.digest_examples.title') }}</h2>
+        <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ __('welcome.digest_examples.subtitle') }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        @foreach ($digestItems as $i => $digest)
+            <article class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 flex flex-col overflow-hidden"
+                     data-reveal-delay="{{ $i * 80 }}">
+                <div class="flex items-center justify-between gap-3 px-5 py-3 border-b rule">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-green-100 dark:bg-green-950/60 text-green-600 dark:text-green-500 flex-shrink-0">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
+                                <path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z"/>
+                            </svg>
+                        </span>
+                        <span class="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">{{ __('welcome.digest_examples.eyebrow') }}</span>
+                    </div>
+                    <time class="text-[11px] font-mono text-neutral-400 dark:text-neutral-500 flex-shrink-0" datetime="{{ $digest['date_machine'] }}">
+                        {{ $digest['date'] }}
+                    </time>
+                </div>
+
+                <div class="px-5 py-4 flex-1 space-y-2">
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_1'] }}</p>
+                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_2'] }}</p>
+                </div>
+
+                @if (!empty($digest['habits']))
+                    <div class="px-5 pb-4 pt-1 border-t rule flex flex-wrap gap-1.5">
+                        @foreach ($digest['habits'] as $habit)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
+                                         {{ $habit['done'] ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400' }}">
+                                @if ($habit['done'])
+                                    <svg class="w-2.5 h-2.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                @endif
+                                <span class="{{ $habit['done'] ? 'line-through opacity-70' : '' }}">{{ $habit['name'] }}</span>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+            </article>
+        @endforeach
+    </div>
+</section>
+@endif
 
 {{-- ─────────────────────────────────────────────────────────────────────────
      Three lenses: Week / Year / Life. Single section heading, three flat
@@ -656,73 +770,27 @@
         <h2 id="philosophy-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1]">{{ __('welcome.philosophy.title') }}</h2>
     </div>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+    <ul class="flex flex-col border-y rule">
         @foreach ((array) __('welcome.philosophy.items') as $item)
-            <li class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 p-5 text-[15px] font-medium leading-relaxed text-neutral-700 dark:text-neutral-200" data-reveal-delay="{{ $loop->index * 70 }}">
-                {{ $item }}
+            <li class="reveal flex items-start gap-4 py-5 border-t rule first:border-t-0" data-reveal-delay="{{ $loop->index * 70 }}">
+                <span class="mt-1.5 h-2 w-2 rounded-full bg-green-500 flex-shrink-0" aria-hidden="true"></span>
+                <span class="text-lg sm:text-xl font-medium tracking-[-0.015em] leading-snug text-neutral-800 dark:text-neutral-100">{{ $item }}</span>
             </li>
         @endforeach
     </ul>
 </section>
 
-{{-- ─────────────────────────────────────────────────────────────────────────
-     AI Digest examples. Two real digest cards side-by-side. Each card shows
-     the AI-written text and a compact habit status strip.
-   ───────────────────────────────────────────────────────────────────────── --}}
-@php $digestItems = (array) __('welcome.digest_examples.items'); @endphp
-@if (count($digestItems) > 0)
-<section aria-labelledby="digest-heading" class="scroll-mt-20 max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
-    <div class="reveal mb-12 max-w-2xl">
-        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.digest_examples.eyebrow') }}</p>
-        <h2 id="digest-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-3">{{ __('welcome.digest_examples.title') }}</h2>
-        <p class="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[52ch]">{{ __('welcome.digest_examples.subtitle') }}</p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        @foreach ($digestItems as $i => $digest)
-            <article class="reveal rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 flex flex-col overflow-hidden"
-                     data-reveal-delay="{{ $i * 80 }}">
-                {{-- Card header --}}
-                <div class="flex items-center justify-between gap-3 px-5 py-3 border-b rule">
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-green-100 dark:bg-green-950/60 text-green-600 dark:text-green-500 flex-shrink-0">
-                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
-                                <path d="M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z"/>
-                            </svg>
-                        </span>
-                        <span class="text-[11px] font-medium uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">{{ __('welcome.digest_examples.eyebrow') }}</span>
-                    </div>
-                    <time class="text-[11px] font-mono text-neutral-400 dark:text-neutral-500 flex-shrink-0" datetime="{{ $digest['date_machine'] }}">
-                        {{ $digest['date'] }}
-                    </time>
-                </div>
-
-                {{-- Digest text --}}
-                <div class="px-5 py-4 flex-1 space-y-2">
-                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_1'] }}</p>
-                    <p class="text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{{ $digest['paragraph_2'] }}</p>
-                </div>
-
-                {{-- Habit status strip --}}
-                @if (!empty($digest['habits']))
-                    <div class="px-5 pb-4 pt-1 border-t rule flex flex-wrap gap-1.5">
-                        @foreach ($digest['habits'] as $habit)
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium
-                                         {{ $habit['done'] ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400' }}">
-                                @if ($habit['done'])
-                                    <svg class="w-2.5 h-2.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                                @endif
-                                <span class="{{ $habit['done'] ? 'line-through opacity-70' : '' }}">{{ $habit['name'] }}</span>
-                            </span>
-                        @endforeach
-                    </div>
-                @endif
-            </article>
-        @endforeach
+<section aria-labelledby="anti-streak-heading" class="max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-neutral-100/80 dark:bg-neutral-800/60 p-6 sm:p-8">
+        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.anti_streak.eyebrow') }}</p>
+        <h2 id="anti-streak-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] max-w-[16ch]">{{ __('welcome.anti_streak.title') }}</h2>
+        <div class="mt-8 space-y-4 text-[15px] sm:text-base leading-relaxed text-neutral-600 dark:text-neutral-300 max-w-[58ch]">
+            @foreach ((array) __('welcome.anti_streak.body') as $paragraph)
+                <p>{{ $paragraph }}</p>
+            @endforeach
+        </div>
     </div>
 </section>
-@endif
 
 {{-- ─────────────────────────────────────────────────────────────────────────
      Comparison. Philosophy-first table: traditional streak pressure against
@@ -900,6 +968,34 @@
     </div>
 </section>
 
+<section aria-labelledby="author-heading" class="max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
+    <div class="reveal grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-6 sm:gap-8 items-start rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-neutral-900/40 p-6 sm:p-8">
+        <img src="https://github.com/nikfedorov.png" alt="{{ __('welcome.author.photo_alt') }}" class="w-20 h-20 rounded-2xl bg-neutral-100 dark:bg-neutral-800 object-cover" loading="lazy">
+
+        <div class="min-w-0">
+            <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.author.eyebrow') }}</p>
+            <h2 id="author-heading" class="text-2xl sm:text-3xl font-semibold tracking-[-0.02em] leading-[1.12]">{{ __('welcome.author.title') }}</h2>
+
+            <div class="mt-5 space-y-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-300">
+                @foreach ((array) __('welcome.author.body') as $paragraph)
+                    <p>{{ $paragraph }}</p>
+                @endforeach
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+                <div>
+                    <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ __('welcome.author.name') }}</p>
+                    <p class="text-[12px] text-neutral-500 dark:text-neutral-400">{{ __('welcome.author.role') }}</p>
+                </div>
+                <div class="flex items-center gap-3 text-sm font-medium">
+                    <a href="{{ $authorGithubUrl }}" target="_blank" rel="noopener noreferrer" class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-150">{{ __('welcome.author.github') }}</a>
+                    <a href="{{ $authorTwitterUrl }}" target="_blank" rel="noopener noreferrer" class="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-150">{{ __('welcome.author.twitter') }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- ─────────────────────────────────────────────────────────────────────────
      FAQ. Accordion with smooth height + padding animation.
    ───────────────────────────────────────────────────────────────────────── --}}
@@ -954,23 +1050,32 @@
 
 {{-- Footer --}}
 <footer class="border-t rule">
-    <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-400 dark:text-neutral-500">
-        <span>{{ __('welcome.footer.tagline', ['year' => date('Y'), 'app' => config('app.name', 'OpenHabit')]) }}</span>
-        <div class="flex items-center gap-4">
+    <div class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 text-xs text-neutral-400 dark:text-neutral-500">
+        <div class="space-y-2">
+            <span class="block">{{ __('welcome.footer.tagline', ['year' => date('Y'), 'app' => config('app.name', 'OpenHabit')]) }}</span>
+            <a href="#anti-streak-heading" class="inline-flex text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-150">
+                {{ __('welcome.footer.why') }}
+            </a>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
             @if ($telegramUrl)
                 <a href="{{ $telegramUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.telegram') }}</a>
             @endif
+            <a href="{{ $roadmapUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.roadmap') }}</a>
+            <a href="{{ $changelogUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.changelog') }}</a>
             <a href="{{ $newsUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.24 3.64 11.95c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
                 </svg>
                 {{ __('welcome.footer.news') }}
             </a>
-            <a href="https://github.com/nikfedorov/openhabit" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">
+            <a href="{{ $privacyUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.privacy') }}</a>
+            <a href="{{ $githubUrl }}" target="_blank" rel="noopener noreferrer" aria-label="{{ __('welcome.footer.github') }}" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                 </svg>
             </a>
+            <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors duration-150">{{ __('welcome.footer.app') }}</a>
         </div>
     </div>
 </footer>
