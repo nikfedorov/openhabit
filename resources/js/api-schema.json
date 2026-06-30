@@ -1235,10 +1235,10 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "integer",
+                        "type": "string",
                         "description": "The AI tone's unique identifier, used for saving the user's selection.",
                         "examples": [
-                            1
+                            "1"
                         ]
                     },
                     "name": {
@@ -1533,33 +1533,28 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Unique habit identifier."
                     },
                     "name": {
-                        "type": "array",
+                        "type": "string",
                         "description": "Display name of the habit.",
                         "examples": [
                             "Morning exercise"
-                        ],
-                        "items": {}
+                        ]
                     },
                     "description": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
+                        "type": "string",
                         "description": "Optional longer description.",
                         "examples": [
                             "Do 30 pushups"
-                        ],
-                        "items": {}
+                        ]
                     },
                     "iterations_required": {
-                        "type": "integer",
+                        "type": "string",
                         "description": "How many iterations are needed to complete.",
                         "examples": [
-                            3
+                            "3"
                         ]
                     },
                     "is_completed": {
@@ -1568,10 +1563,10 @@
                     },
                     "current_iteration": {},
                     "sort_order": {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Position in the habit list.",
                         "examples": [
-                            2
+                            "2"
                         ]
                     }
                 },

@@ -15,25 +15,34 @@ return [
         'og_description' => '一个对人友善的习惯追踪器。',
     ],
     'nav' => [
-        'features' => '宣言',
-        'compare' => '对比',
-        'news' => '新闻',
+        'why' => '为什么',
+        'features' => '功能',
         'menu' => '菜单',
         'how' => '怎么用',
+        'open_source' => '开源',
+        'privacy' => '隐私',
         'faq' => 'FAQ',
-        'cta_telegram' => '无负担地试试',
-        'cta_app' => '无负担地试试',
+        'cta_telegram' => '打开 Telegram 机器人',
+        'cta_web' => '在网页端登录',
+        'cta_app' => '打开网页版追踪器',
         'theme_light' => '切换到浅色主题',
         'theme_dark' => '切换到深色主题',
         'language' => '语言',
     ],
     'hero' => [
-        'badge' => '为回归而设计',
         'title_pre' => '一个',
-        'title_accent' => '对人友善的习惯追踪器。',
+        'title_accent' => '对人友善的习惯追踪器',
         'subtitle' => 'OpenHabit 并不想成为最强大的习惯追踪器。它正在成为人们终于不会放弃的那一个。',
         'login_telegram' => '使用 Telegram 登录',
-        'trial_note' => '轻轻开始。Premium :days 天体验，无需信用卡。',
+        'web_login_note' => '更想用浏览器？在这里用 Telegram 登录。它使用和机器人相同的账号与习惯。',
+        'web_login_js_required' => '浏览器登录需要 JavaScript。没有它，请使用 Telegram 机器人按钮。',
+        'login_fallback' => [
+            'line_1' => 'Telegram 登录没有加载。',
+            'line_2' => '改为打开 Telegram 机器人。',
+        ],
+        'entry_note_telegram' => '机器人或浏览器。相同的 Telegram 账号，相同的习惯。',
+        'entry_note_app' => '你已登录。这里会打开你的网页版追踪器。',
+        'entry_note_no_bot' => '这里没有配置 Telegram，因此会打开网页版追踪器。',
     ],
     'preview' => [
         'today' => '今天',
@@ -55,7 +64,6 @@ return [
         'more' => '多',
     ],
     'features' => [
-        'eyebrow' => 'OpenHabit 有什么不同',
         'title' => '为帮助你继续而设计',
         'premium' => '高级版',
         'items' => [
@@ -80,14 +88,13 @@ return [
                 'body' => '一份安静的总结，发现你可能错过的规律，并帮你选择一个很小的下一步。',
             ],
             'export' => [
-                'title' => '你的历史仍然属于你',
-                'body' => '随时导出你的数据。长期坚持不应该依赖平台锁定。',
+                'title' => '为你的记录导出 CSV',
+                'body' => '托管版的 Premium 包含 CSV 导出，需要时可以下载你的习惯、笔记和设置。',
             ],
         ],
     ],
     'problem' => [
-        'eyebrow' => '循环',
-        'title' => '效率文化把糟糕的一天变成负罪感。',
+        'title' => '效率文化把糟糕的一天变成负罪感',
         'body' => [
             '一开始是动力。然后错过一天。然后负罪感。然后应用消失，直到下一个周一。',
         ],
@@ -99,15 +106,6 @@ return [
             ['day' => '下个月', 'mood' => '新的追踪器'],
         ],
         'closing' => '我们创建 OpenHabit，就是为了打破这个循环。',
-        'cta' => '无负担地试试',
-    ],
-    'proof' => [
-        'eyebrow' => '真实事实',
-        'items' => [
-            ['value' => '1', 'label' => '开发者公开构建'],
-            ['value' => 'MIT', 'label' => '许可证与自托管'],
-            ['value' => '0', 'label' => '应用内分析 SDK'],
-        ],
     ],
     'digest_examples' => [
         'eyebrow' => '复盘',
@@ -145,16 +143,15 @@ return [
         ],
     ],
     'how' => [
-        'eyebrow' => '怎么用',
-        'title' => '三小步，继续下去。',
+        'title' => '三小步，继续下去',
         'steps' => [
             [
-                'title' => '在 Telegram 中打开机器人',
-                'body' => '点下面的按钮。不用账号、邮箱，也没什么密码要记。你已经在里面了。',
+                'title' => '选择 Telegram 或浏览器登录',
+                'body' => '打开机器人，或使用浏览器登录组件。两种方式都使用同一个 Telegram 账号，所以不需要邮箱，也不用记密码。',
             ],
             [
-                'title' => '加一两个习惯',
-                'body' => '从小处开始。一件你确实想几乎每天做的事，需要的话，再顺手加个提醒。',
+                'title' => '保留适合你的习惯',
+                'body' => '无论从哪里进入，你的习惯都会留在同一个账号里。保留合适的，暂停其余的，之后再调整提醒。',
             ],
             [
                 'title' => '明天再回来',
@@ -163,7 +160,6 @@ return [
         ],
     ],
     'philosophy' => [
-        'eyebrow' => '宣言',
         'title' => 'The Anti-Streak Manifesto',
         'items' => [
             '我们不认为习惯应该建立在负罪感之上。',
@@ -174,7 +170,6 @@ return [
         ],
     ],
     'anti_streak' => [
-        'eyebrow' => '为什么没有连续打卡',
         'title' => '为什么我们放弃了连续打卡',
         'body' => [
             '几乎每个习惯应用都围绕连续打卡构建。它们有效，但只在一切完美时有效。',
@@ -183,45 +178,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => '无负担地试试。',
+        'title' => '无负担地试试',
         'subtitle' => '建立你真的能保留下来的习惯，用减少负罪感而不是增加压力的工具。',
-        'trial_note' => 'Premium :days 天免费试用，无需信用卡。',
-    ],
-    'compare' => [
-        'eyebrow' => '对比',
-        'title' => '传统习惯应用奖励完美。',
-        'subtitle' => 'OpenHabit 鼓励你回来。差别不在于更多功能，而在于和进步建立更安心的关系。',
-        'caption' => '传统习惯应用与 OpenHabit 对比',
-        'criterion' => '行为',
-        'us_tag' => '我们的选择',
-        'rows' => [
-            'miss_day' => '错过一天',
-            'feeling' => '经历艰难的一周后',
-            'restart' => '接下来会发生什么',
-            'goal' => '你追求什么',
-        ],
-        'cells' => [
-            'traditional' => '传统习惯应用',
-            'openhabit' => 'OpenHabit',
-            'lose_streak' => '失去连续记录',
-            'keep_going' => '继续前进',
-            'feel_guilty' => '感到内疚',
-            'feel_safe' => '安心继续',
-            'start_over' => '从头开始',
-            'come_back' => '明天回来',
-            'perfection' => '完美',
-            'steady_progress' => '稳定进步',
-        ],
-        'a11y' => [
-            'yes' => '支持',
-            'no' => '不支持',
-        ],
-        'footnote' => '这是理念对比，不是功能清单。OpenHabit 围绕长期持续而建。',
     ],
     'open' => [
-        'eyebrow' => '开源项目',
-        'title' => '公开构建',
-        'body' => 'OpenHabit 的每一行代码都托管在 GitHub，采用 MIT 许可证。随意阅读、fork，或在自己的服务器上运行。没有遥测，也没有锁定。',
+        'title' => '开源项目',
+        'body' => 'OpenHabit 的每一行代码都托管在 GitHub，采用 MIT 许可证。随意阅读、fork，或在自己的服务器上运行。核心追踪保持免费；如果需要完整控制，可以随时自托管。',
         'cta' => '在 GitHub 上查看',
         'license_link' => '阅读许可证',
         'facts' => [
@@ -234,18 +196,17 @@ return [
                 'body' => '一条 Docker 命令，自己部署上线。',
             ],
             'audit' => [
-                'title' => '无需隐瞒',
-                'body' => '没有第三方追踪器或分析 SDK。',
+                'title' => '清楚的隐私边界',
+                'body' => '应用代码不包含分析 SDK。托管方可以在公开页面添加脚本，这些脚本会出现在页面源码中。',
             ],
         ],
     ],
     'author' => [
-        'eyebrow' => '由一名开发者构建',
-        'title' => '你好。我做 OpenHabit，是因为我也总是放弃习惯追踪器。',
+        'title' => '你好！我试过好几种不同的习惯追踪器之后，做了 OpenHabit',
         'body' => [
-            '好几年里，我试过不同的习惯追踪器。每次都发生同样的事。',
-            '错过一天。失去连续记录。负罪感。新的周一。',
-            '所以我做了 OpenHabit：一个更平静的地方，用来记录进步，并且不带羞耻感地回来。',
+            '结果每次都一样。错过一天，断了连续记录，然后干脆不再打开那个应用了。',
+            '后来我意识到，问题不在我身上。我只是不想用一个因为漏掉一天就惩罚你的追踪器。',
+            '所以我做了 OpenHabit——一个无论隔了一天、一周甚至一个月，都可以正常回来继续的应用。',
         ],
         'name' => 'Nik Fedorov',
         'role' => 'OpenHabit 独立开发者',
@@ -276,20 +237,19 @@ return [
         'privacy' => '隐私',
     ],
     'faq' => [
-        'eyebrow' => '常见问题',
-        'title' => '值得一问的问题',
+        'title' => '常见问题',
         'items' => [
             [
                 'q' => 'OpenHabit 收费吗？',
-                'a' => '核心功能完全免费，无时间限制，无习惯数量上限。Premium 增加温和复盘、每个习惯多个 Telegram 提醒和 CSV 导出。新账号会自动获得 :days 天免费试用。',
+                'a' => '核心追踪免费，无时间限制，无习惯数量上限。Premium 增加温和复盘、每个习惯多个 Telegram 提醒，以及托管版的 CSV 导出。新账号会自动获得 :days 天免费试用。',
             ],
             [
-                'q' => '我需要 Telegram 账号吗？',
-                'a' => '是的。OpenHabit 是一个 Telegram 机器人和小程序，所以只需要一个 Telegram 账号即可。无需单独注册，也没有密码需要记忆。',
+                'q' => '我必须从 Telegram 机器人开始吗？',
+                'a' => '不需要。你可以打开机器人，也可以用浏览器登录组件。两种方式都使用你的 Telegram 账号和相同的习惯，并让你在任何设备继续使用。',
             ],
             [
                 'q' => '我可以在浏览器中使用 OpenHabit 吗？',
-                'a' => '可以。在网页上用 Telegram 账号登录一次，完整的应用就会在浏览器里打开。同样的习惯，同样的记录——只是屏幕更大。',
+                'a' => '可以。在网页端使用 Telegram 登录组件，完整追踪器会在浏览器中打开。同样的习惯，同样的记录，只是屏幕更大。',
             ],
             [
                 'q' => 'AI 摘要是什么？',
@@ -297,7 +257,7 @@ return [
             ],
             [
                 'q' => '我的数据安全吗？',
-                'a' => '你的数据存储在我们的数据库中，不包含任何第三方分析 SDK。如果想完全掌控，也可以在自己的服务器上部署整个应用。',
+                'a' => '你的习惯和笔记会存储在 OpenHabit 数据库中，并关联到你的账号。应用代码不包含第三方分析或追踪 SDK。托管方可以在公开页面添加脚本；如果想控制每一次请求，请自托管。',
             ],
             [
                 'q' => '我可以自己部署吗？',

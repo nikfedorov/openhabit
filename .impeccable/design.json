@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-01T00:00:00Z",
+  "title": "Design System: OpenHabit",
+  "extensions": {
+    "colorMeta": {
+      "primary-deep": {
+        "role": "primary",
+        "displayName": "Deep Return Green",
+        "canonical": "#14532d",
+        "tonalRamp": ["oklch(0.18 0.055 150)", "oklch(0.28 0.075 150)", "oklch(0.38 0.095 150)", "oklch(0.48 0.105 150)", "oklch(0.58 0.105 150)", "oklch(0.70 0.090 150)", "oklch(0.82 0.065 150)", "oklch(0.94 0.035 150)"]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Return Green",
+        "canonical": "#16a34a",
+        "tonalRamp": ["#14532d", "#166534", "#15803d", "#16a34a", "#22c55e", "#4ade80", "#86efac", "#dcfce7"]
+      },
+      "primary-bright": {
+        "role": "primary",
+        "displayName": "Bright Return Green",
+        "canonical": "#22c55e",
+        "tonalRamp": ["oklch(0.22 0.060 150)", "oklch(0.34 0.090 150)", "oklch(0.46 0.120 150)", "oklch(0.58 0.150 150)", "oklch(0.70 0.160 150)", "oklch(0.80 0.120 150)", "oklch(0.89 0.080 150)", "oklch(0.96 0.040 150)"]
+      },
+      "welcome-bg": {
+        "role": "neutral",
+        "displayName": "Quiet Welcome Surface",
+        "canonical": "#fafaf7",
+        "tonalRamp": ["#171717", "#262626", "#404040", "#737373", "#a3a3a3", "#d4d4d4", "#f5f5f5", "#fafaf7"]
+      },
+      "welcome-bg-dark": {
+        "role": "neutral",
+        "displayName": "Night Welcome Surface",
+        "canonical": "#0c0d0c",
+        "tonalRamp": ["#0c0d0c", "#171717", "#262626", "#404040", "#525252", "#737373", "#a3a3a3", "#f5f5f5"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "App Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#171717", "#262626", "#404040", "#737373", "#a3a3a3", "#d4d4d4", "#f5f5f5", "#ffffff"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#171717",
+        "tonalRamp": ["#0a0a0a", "#171717", "#262626", "#404040", "#525252", "#737373", "#a3a3a3", "#e5e5e5"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Landing Display",
+        "purpose": "Public landing hero and major brand moments only."
+      },
+      "headline": {
+        "displayName": "Section Headline",
+        "purpose": "Page and section headings that need clear hierarchy without decorative type."
+      },
+      "title": {
+        "displayName": "Product Title",
+        "purpose": "Settings groups, compact section titles, modals, and card headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Everyday interface text, descriptions, and product copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, tabs, metadata, and form labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "menu-shadow",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10)",
+        "purpose": "Floating language menus and small popovers."
+      },
+      {
+        "name": "button-shadow",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Active desktop tab and rare compact controls that need tactile separation."
+      },
+      {
+        "name": "modal-shadow",
+        "value": "0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10)",
+        "purpose": "Confirmation and premium modals."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "150ms ease",
+        "purpose": "Hover, active, and compact control transitions."
+      },
+      {
+        "name": "state-standard",
+        "value": "200ms ease-in-out",
+        "purpose": "Navigation slides, collapse buttons, and modal fade states."
+      },
+      {
+        "name": "state-expressive",
+        "value": "250ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "Rare modal panel entrances and tactile confirmations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "content",
+        "value": "max-width: 672px"
+      },
+      {
+        "name": "landing",
+        "value": "max-width: 1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary CTA",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact pill action used for landing CTAs and primary product actions.",
+      "html": "<button class=\"ds-btn-primary\">Start in Telegram</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 9999px; background: #171717; color: #ffffff; padding: 6px 12px; font: 500 12px/1.33 Instrument Sans, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 150ms ease, color 150ms ease, transform 150ms ease; } .ds-btn-primary:hover { background: #404040; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid #16a34a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Nav Link",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-noise navigation action for public page nav and secondary controls.",
+      "html": "<a class=\"ds-nav-ghost\" href=\"#\">Features</a>",
+      "css": ".ds-nav-ghost { display: inline-flex; align-items: center; border-radius: 9999px; color: #737373; padding: 6px 12px; text-decoration: none; font: 500 14px/1.4 Instrument Sans, ui-sans-serif, system-ui, sans-serif; transition: background-color 150ms ease, color 150ms ease; } .ds-nav-ghost:hover { background: #f5f5f5; color: #171717; } .ds-nav-ghost:focus-visible { outline: 2px solid #16a34a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Habit Row",
+      "kind": "custom",
+      "refersTo": "habit-row",
+      "description": "Signature task row for daily habit completion.",
+      "html": "<div class=\"ds-habit-row\" role=\"checkbox\" aria-checked=\"false\" tabindex=\"0\"><span class=\"ds-habit-box\"></span><span class=\"ds-habit-copy\"><strong>Morning meditation</strong><span>Ten quiet minutes still count.</span></span></div>",
+      "css": ".ds-habit-row { display: flex; gap: 12px; align-items: flex-start; border-radius: 12px; padding: 8px 16px; color: #171717; cursor: pointer; transition: background-color 150ms ease, transform 150ms ease; font-family: Instrument Sans, ui-sans-serif, system-ui, sans-serif; } .ds-habit-row:hover { background: #f5f5f5; } .ds-habit-row:active { transform: scale(0.99); } .ds-habit-row:focus-visible { outline: 2px solid #16a34a; outline-offset: 2px; } .ds-habit-box { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; border: 2px solid #d4d4d4; border-radius: 4px; background: #ffffff; } .ds-habit-copy { display: grid; gap: 2px; min-width: 0; } .ds-habit-copy strong { font-size: 14px; line-height: 20px; font-weight: 500; } .ds-habit-copy span { color: #737373; font-size: 12px; line-height: 1.5; }"
+    },
+    {
+      "name": "Desktop Tab Bar",
+      "kind": "nav",
+      "refersTo": "card-surface",
+      "description": "Segmented navigation used on product screens at desktop widths.",
+      "html": "<nav class=\"ds-tabs\" aria-label=\"Primary\"><a class=\"ds-tab ds-tab-active\" href=\"#\">Track</a><a class=\"ds-tab\" href=\"#\">View</a><a class=\"ds-tab\" href=\"#\">Edit</a><a class=\"ds-tab\" href=\"#\">Settings</a></nav>",
+      "css": ".ds-tabs { display: flex; gap: 4px; border-radius: 12px; background: #f5f5f5; padding: 4px; font-family: Instrument Sans, ui-sans-serif, system-ui, sans-serif; } .ds-tab { flex: 1; display: inline-flex; justify-content: center; align-items: center; border-radius: 8px; padding: 8px 16px; color: #737373; text-decoration: none; font-size: 14px; line-height: 1.4; font-weight: 500; transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease; } .ds-tab:hover { background: #e5e5e5; color: #404040; } .ds-tab-active { background: #ffffff; color: #171717; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-tab:focus-visible { outline: 2px solid #16a34a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tonal Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Flat neutral container for grouped settings, landing facts, or quiet explanatory content.",
+      "html": "<section class=\"ds-card\"><h3>Gentle reminders</h3><p>Small nudges only when you ask for them.</p></section>",
+      "css": ".ds-card { border-radius: 16px; background: #f5f5f5; color: #171717; padding: 16px; font-family: Instrument Sans, ui-sans-serif, system-ui, sans-serif; } .ds-card h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; } .ds-card p { margin: 0; color: #737373; font-size: 14px; line-height: 1.43; } .ds-card:focus-within { outline: 2px solid #16a34a; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Return",
+    "overview": "OpenHabit's visual system should feel like an app that keeps the door open. The public landing page may carry the brand story, but the brand is still restrained: warm off-white in light mode, near-black green-tinted darkness in dark mode, compact typography, and a rare green accent that marks progress without shouting about it.\n\nThe core product UI is quieter than the marketing page. It uses familiar mobile-first app patterns, rounded rows, tab navigation, compact controls, and tonal surfaces. The landing page can use larger type and more generous pacing, but it must not drift into generic SaaS spectacle. The shared tone is calm, forgiving, and open.\n\nThe system rejects streak-pressure apps, generic SaaS landing templates, and gamified dopamine UI. If a design makes a missed day look like failure, it is off-brand. If the surface looks like a template hero with metrics, gradients, and repeated feature cards, it is off-brand. If it rewards simple actions with casino-bright celebration, it is off-brand.",
+    "keyCharacteristics": [
+      "Restrained neutral surfaces with one green progress accent.",
+      "Compact, readable sans typography using Instrument Sans throughout.",
+      "Rounded, touch-friendly controls with minimal decoration.",
+      "Tonal layering over heavy shadows.",
+      "Motion that confirms state and respects reduced-motion preferences."
+    ],
+    "rules": [
+      {
+        "name": "The Green Earns Its Place Rule",
+        "body": "Green is state, progress, or brand, not decoration. If a component uses green but does not signal completion, selection, success, or OpenHabit identity, remove it.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Shame Red Rule",
+        "body": "Avoid red as a default missed-day color. Errors can be red when they are true form or system errors, but missed habits are context, not failure.",
+        "section": "colors"
+      },
+      {
+        "name": "The Product Sans Rule",
+        "body": "Do not introduce display serifs, mono labels, or decorative type for routine UI. OpenHabit's trust comes from clarity, not typographic costume.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Until Floating Rule",
+        "body": "Static content is flat. Floating UI may cast a shadow only when it must visually escape the page layer.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use green for completed, selected, success, and progress states only.",
+      "Do keep product screens compact: 14px body text, 12px labels, 16px page padding, and rounded 12px containers.",
+      "Do preserve dark mode and RTL behavior whenever adding UI.",
+      "Do respect reduced motion with CSS media queries and JS animation gates.",
+      "Do make missed days feel like neutral history, not failure."
+    ],
+    "donts": [
+      "Don't use streak-pressure app patterns: fire streaks, guilt copy, punishment loops, or reset anxiety.",
+      "Don't use generic SaaS landing-page patterns: hero metric templates, gradient hype, repeated feature-card grids, or corporate productivity language.",
+      "Don't use gamified dopamine UI: badges, confetti-first feedback, casino-bright colors, or over-rewarding simple actions.",
+      "Don't add gradient text, colored side-stripe card borders, or glassmorphism as decoration.",
+      "Don't introduce decorative fonts or mono labels to make routine UI feel more designed."
+    ]
+  }
+}

@@ -15,25 +15,34 @@ return [
         'og_description' => 'A gentler habit tracker for people who miss days.',
     ],
     'nav' => [
-        'features' => 'Manifesto',
-        'compare' => 'Compare',
+        'why' => 'Why',
+        'features' => 'Features',
         'how' => 'How it works',
+        'open_source' => 'Open source',
+        'privacy' => 'Privacy',
         'faq' => 'FAQ',
-        'news' => 'News',
         'menu' => 'Menu',
-        'cta_telegram' => 'Start gently',
-        'cta_app' => 'Start gently',
+        'cta_telegram' => 'Open Telegram bot',
+        'cta_web' => 'Sign in on web',
+        'cta_app' => 'Open web tracker',
         'theme_light' => 'Switch to light theme',
         'theme_dark' => 'Switch to dark theme',
         'language' => 'Language',
     ],
     'hero' => [
-        'badge' => 'Made for coming back',
         'title_pre' => 'A habit tracker that',
-        'title_accent' => 'does not push.',
+        'title_accent' => 'does not push',
         'subtitle' => 'OpenHabit helps you notice progress, miss a day, and return without starting over.',
-        'login_telegram' => 'Log in with Telegram',
-        'trial_note' => 'Start gently. :days days of Premium, no card needed.',
+        'login_telegram' => 'Sign in with Telegram',
+        'web_login_note' => 'Prefer the browser? Sign in here with Telegram. It uses the same account and habits as the bot.',
+        'web_login_js_required' => 'Browser sign-in needs JavaScript. Without it, use the Telegram bot button.',
+        'login_fallback' => [
+            'line_1' => 'Telegram sign-in did not load.',
+            'line_2' => 'Open the Telegram bot instead.',
+        ],
+        'entry_note_telegram' => 'Bot or browser. Same Telegram account, same habits.',
+        'entry_note_app' => 'You are signed in. This opens your web tracker.',
+        'entry_note_no_bot' => 'Telegram is not configured here, so this opens the web tracker.',
     ],
     'preview' => [
         'today' => 'Today',
@@ -55,7 +64,6 @@ return [
         'more' => 'More',
     ],
     'features' => [
-        'eyebrow' => 'How OpenHabit is different',
         'title' => 'Built to help you keep going',
         'premium' => 'Premium',
         'items' => [
@@ -80,14 +88,13 @@ return [
                 'body' => 'A quiet summary that notices patterns you might miss and helps you choose one small next step.',
             ],
             'export' => [
-                'title' => 'Your history stays yours',
-                'body' => 'Export your data anytime. Long-term consistency should not depend on being stuck in one app.',
+                'title' => 'CSV export for your records',
+                'body' => 'Premium includes CSV export from the hosted app, so you can download your habits, notes, and settings when you need them.',
             ],
         ],
     ],
     'problem' => [
-        'eyebrow' => 'The loop',
-        'title' => 'A bad day should not become a full reset.',
+        'title' => 'A bad day should not become a full reset',
         'body' => [
             'You start motivated. You miss one day. Guilt builds. Then the app disappears until the next fresh Monday.',
         ],
@@ -99,15 +106,6 @@ return [
             ['day' => 'Next month', 'mood' => 'New tracker'],
         ],
         'closing' => 'OpenHabit is built to make the return easier.',
-        'cta' => 'Start gently',
-    ],
-    'proof' => [
-        'eyebrow' => 'Proof of intent',
-        'items' => [
-            ['value' => '1', 'label' => 'developer building in public'],
-            ['value' => 'MIT', 'label' => 'licensed and self-hostable'],
-            ['value' => '0', 'label' => 'analytics SDKs in the app'],
-        ],
     ],
     'digest_examples' => [
         'eyebrow' => 'Reflection',
@@ -145,16 +143,15 @@ return [
         ],
     ],
     'how' => [
-        'eyebrow' => 'How it works',
-        'title' => 'Three small steps to keep going.',
+        'title' => 'Three small steps to keep going',
         'steps' => [
             [
-                'title' => 'Open the bot in Telegram',
-                'body' => 'Tap the button below. No signup, no email, no password to forget. If you have Telegram, you are already in.',
+                'title' => 'Choose Telegram or browser sign-in',
+                'body' => 'Open the bot or use the browser widget. Both paths use the same Telegram account, so there is no email or password to remember.',
             ],
             [
-                'title' => 'Add a habit or two',
-                'body' => "Start small. Pick one thing you actually want to do most days, and add a reminder if it'll help.",
+                'title' => 'Keep the habits that fit',
+                'body' => 'Your habits stay with the same account either way. Keep what fits, pause the rest, and adjust reminders later.',
             ],
             [
                 'title' => 'Come back tomorrow',
@@ -163,7 +160,6 @@ return [
         ],
     ],
     'philosophy' => [
-        'eyebrow' => 'Manifesto',
         'title' => 'The Anti-Streak Manifesto',
         'items' => [
             'We do not believe habits should be built on guilt.',
@@ -174,7 +170,6 @@ return [
         ],
     ],
     'anti_streak' => [
-        'eyebrow' => 'Why no streaks',
         'title' => 'Why we do not use streaks',
         'body' => [
             'Most habit apps put streaks at the center. They can help, but only while everything goes perfectly.',
@@ -183,45 +178,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Build habits you can come back to.',
+        'title' => 'Build habits you can come back to',
         'subtitle' => 'Use a tracker that keeps the door open after a missed day.',
-        'trial_note' => ':days-day free trial on Premium, no card needed.',
-    ],
-    'compare' => [
-        'eyebrow' => 'Comparison',
-        'title' => 'Traditional habit apps make perfection the goal.',
-        'subtitle' => 'OpenHabit makes it easier to come back. The difference is not more features, but a calmer relationship with progress.',
-        'caption' => 'Comparison of traditional habit apps and OpenHabit',
-        'criterion' => 'Behavior',
-        'us_tag' => 'Our pick',
-        'rows' => [
-            'miss_day' => 'Miss a day',
-            'feeling' => 'After a hard week',
-            'restart' => 'What happens next',
-            'goal' => 'What you chase',
-        ],
-        'cells' => [
-            'traditional' => 'Traditional habit apps',
-            'openhabit' => 'OpenHabit',
-            'lose_streak' => 'Lose streak',
-            'keep_going' => 'Keep going',
-            'feel_guilty' => 'Feel guilty',
-            'feel_safe' => 'Feel safe to continue',
-            'start_over' => 'Start over',
-            'come_back' => 'Come back tomorrow',
-            'perfection' => 'Perfection',
-            'steady_progress' => 'Steady progress',
-        ],
-        'a11y' => [
-            'yes' => 'Supported',
-            'no' => 'Not supported',
-        ],
-        'footnote' => 'A philosophy comparison, not a feature checklist. OpenHabit is built around long-term consistency.',
     ],
     'open' => [
-        'eyebrow' => 'Open source',
-        'title' => 'Built in the open',
-        'body' => 'Every line of OpenHabit is on GitHub under the MIT license. You can read it, fork it, or run it on your own server. There is no telemetry and no lock-in.',
+        'title' => 'Open source',
+        'body' => 'Every line of OpenHabit is on GitHub under the MIT license. You can read it, fork it, or run it on your own server. Core tracking stays free; full control is always available through self-hosting.',
         'cta' => 'View on GitHub',
         'license_link' => 'Read the license',
         'facts' => [
@@ -234,18 +196,17 @@ return [
                 'body' => 'One Docker command and you are running it yourself.',
             ],
             'audit' => [
-                'title' => 'Nothing to hide',
-                'body' => 'No third-party trackers and no analytics SDKs.',
+                'title' => 'Clear privacy boundary',
+                'body' => 'The app code ships without analytics SDKs. A host can add scripts to public pages, and those scripts appear in the page source.',
             ],
         ],
     ],
     'author' => [
-        'eyebrow' => 'Built by one developer',
-        'title' => 'Hi. I made OpenHabit because I kept quitting habit trackers too.',
+        'title' => 'Hi! I made OpenHabit after trying a bunch of different habit trackers',
         'body' => [
-            'For several years I tried to use different habit trackers. Every time the same thing happened.',
-            'One missed day. A lost streak. Guilt. A new Monday.',
-            'So I built OpenHabit: a calmer place to mark progress and come back without shame.',
+            "It always ended the same way. I'd miss a day, lose my streak, and just stop opening the app.",
+            "At some point I realized the problem wasn't me. I just didn't want to use a tracker that punishes you for one missed day.",
+            "So I made OpenHabit — an app it's fine to come back to after a day, a week, or even a month, and just keep going.",
         ],
         'name' => 'Nik Fedorov',
         'role' => 'Independent developer of OpenHabit',
@@ -276,20 +237,19 @@ return [
         'privacy' => 'Privacy',
     ],
     'faq' => [
-        'eyebrow' => 'FAQ',
-        'title' => 'Questions worth asking',
+        'title' => 'FAQ',
         'items' => [
             [
                 'q' => 'How much does OpenHabit cost?',
-                'a' => 'The core features are completely free, with no time limit or habit cap. Premium adds gentle reflection, multiple Telegram reminders per habit, and CSV export. New accounts get a :days-day free trial automatically.',
+                'a' => 'Core tracking is free, with no time limit or habit cap. Premium adds gentle reflection, multiple Telegram reminders per habit, and CSV export from the hosted app. New accounts get a :days-day free trial automatically.',
             ],
             [
-                'q' => 'Do I need a Telegram account?',
-                'a' => 'Yes. OpenHabit is built as a Telegram bot and mini app, so a Telegram account is all you need. No separate sign-up, no password to forget.',
+                'q' => 'Do I have to start in the Telegram bot?',
+                'a' => 'No. You can open the bot or sign in with the browser widget. Both paths use your Telegram account, the same habits, and let you continue on any device.',
             ],
             [
                 'q' => 'Can I use OpenHabit in a browser?',
-                'a' => 'Yes. Log in once with your Telegram account on the web and the full app opens in your browser. Same habits, same history — just a bigger screen.',
+                'a' => 'Yes. Use the Telegram sign-in widget on the web and the full tracker opens in your browser. Same habits, same history, just a bigger screen.',
             ],
             [
                 'q' => 'What is the AI digest?',
@@ -297,7 +257,7 @@ return [
             ],
             [
                 'q' => 'Is my data private?',
-                'a' => 'Your data is stored in our database with no third-party analytics or tracking SDKs. If you prefer complete control, you can self-host the entire app.',
+                'a' => 'Your habits and notes are stored in the OpenHabit database for your account. The app code does not include third-party analytics or tracking SDKs. Hosts can add scripts to public pages, so self-host if you want full control over every request.',
             ],
             [
                 'q' => 'Can I self-host OpenHabit?',

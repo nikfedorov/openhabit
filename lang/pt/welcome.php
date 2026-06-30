@@ -15,25 +15,34 @@ return [
         'og_description' => 'Um app de hábitos gentil com pessoas.',
     ],
     'nav' => [
-        'features' => 'Manifesto',
-        'compare' => 'Comparar',
-        'news' => 'Novidades',
+        'why' => 'Por quê',
+        'features' => 'Recursos',
         'menu' => 'Menu',
         'how' => 'Como funciona',
+        'open_source' => 'Código aberto',
+        'privacy' => 'Privacidade',
         'faq' => 'FAQ',
-        'cta_telegram' => 'Tente sem culpa',
-        'cta_app' => 'Tente sem culpa',
+        'cta_telegram' => 'Abrir bot do Telegram',
+        'cta_web' => 'Entrar na web',
+        'cta_app' => 'Abrir rastreador web',
         'theme_light' => 'Mudar para tema claro',
         'theme_dark' => 'Mudar para tema escuro',
         'language' => 'Idioma',
     ],
     'hero' => [
-        'badge' => 'Feito para voltar',
         'title_pre' => 'Um app de hábitos',
-        'title_accent' => 'gentil com pessoas.',
+        'title_accent' => 'gentil com pessoas',
         'subtitle' => 'O OpenHabit não tenta virar o app de hábitos mais poderoso. Ele está virando o app que as pessoas finalmente não abandonam.',
         'login_telegram' => 'Entrar com o Telegram',
-        'trial_note' => 'Comece com calma. :days dias de Premium, sem cartão.',
+        'web_login_note' => 'Prefere o navegador? Entre aqui com o Telegram. Ele usa a mesma conta e os mesmos hábitos do bot.',
+        'web_login_js_required' => 'O login no navegador precisa de JavaScript. Sem ele, use o botão do bot do Telegram.',
+        'login_fallback' => [
+            'line_1' => 'O login com Telegram não carregou.',
+            'line_2' => 'Abra o bot do Telegram em vez disso.',
+        ],
+        'entry_note_telegram' => 'Bot ou navegador. A mesma conta do Telegram e os mesmos hábitos.',
+        'entry_note_app' => 'Você já entrou. Isto abre seu rastreador web.',
+        'entry_note_no_bot' => 'Telegram não está configurado aqui, então o rastreador web será aberto.',
     ],
     'preview' => [
         'today' => 'Hoje',
@@ -55,7 +64,6 @@ return [
         'more' => 'Mais',
     ],
     'features' => [
-        'eyebrow' => 'Como o OpenHabit é diferente',
         'title' => 'Feito para ajudar você a continuar',
         'premium' => 'Premium',
         'items' => [
@@ -80,14 +88,13 @@ return [
                 'body' => 'Um resumo calmo que percebe padrões que talvez passassem batido e ajuda você a escolher um pequeno próximo passo.',
             ],
             'export' => [
-                'title' => 'Sua história continua sua',
-                'body' => 'Exporte seus dados quando quiser. Constância de longo prazo não deve depender de ficar preso a uma plataforma.',
+                'title' => 'Exportação CSV para seus registros',
+                'body' => 'O Premium inclui exportação CSV no app hospedado, para baixar hábitos, notas e ajustes quando você precisar.',
             ],
         ],
     ],
     'problem' => [
-        'eyebrow' => 'O ciclo',
-        'title' => 'A cultura da produtividade transforma um dia ruim em culpa.',
+        'title' => 'A cultura da produtividade transforma um dia ruim em culpa',
         'body' => [
             'Começa com motivação. Depois vem um dia perdido. Depois culpa. Depois o app desaparece até a próxima segunda.',
         ],
@@ -99,15 +106,6 @@ return [
             ['day' => 'Mês seguinte', 'mood' => 'Novo tracker'],
         ],
         'closing' => 'Criamos o OpenHabit para quebrar esse ciclo.',
-        'cta' => 'Tente sem culpa',
-    ],
-    'proof' => [
-        'eyebrow' => 'Fatos honestos',
-        'items' => [
-            ['value' => '1', 'label' => 'desenvolvedor construindo em público'],
-            ['value' => 'MIT', 'label' => 'licença e self-hosting'],
-            ['value' => '0', 'label' => 'SDKs de análise no app'],
-        ],
     ],
     'digest_examples' => [
         'eyebrow' => 'Reflexão',
@@ -145,16 +143,15 @@ return [
         ],
     ],
     'how' => [
-        'eyebrow' => 'Como funciona',
-        'title' => 'Três passinhos para continuar.',
+        'title' => 'Três passinhos para continuar',
         'steps' => [
             [
-                'title' => 'Abra o bot no Telegram',
-                'body' => 'Toque no botão abaixo. Não tem cadastro, e-mail ou senha pra esquecer. Se você tem Telegram, já está dentro.',
+                'title' => 'Escolha Telegram ou login no navegador',
+                'body' => 'Abra o bot ou use o widget no navegador. Os dois caminhos usam a mesma conta do Telegram, então não há email nem senha para lembrar.',
             ],
             [
-                'title' => 'Adicione um hábito ou dois',
-                'body' => 'Comece pequeno. Algo que você realmente queira fazer quase todo dia. Se ajudar, coloque um lembrete.',
+                'title' => 'Mantenha os hábitos que servirem',
+                'body' => 'Seus hábitos ficam na mesma conta de qualquer forma. Mantenha o que servir, pause o resto e ajuste lembretes depois.',
             ],
             [
                 'title' => 'Volte amanhã',
@@ -163,7 +160,6 @@ return [
         ],
     ],
     'philosophy' => [
-        'eyebrow' => 'Manifesto',
         'title' => 'The Anti-Streak Manifesto',
         'items' => [
             'Não acreditamos que hábitos devam ser construídos com culpa.',
@@ -174,7 +170,6 @@ return [
         ],
     ],
     'anti_streak' => [
-        'eyebrow' => 'Por que sem sequências',
         'title' => 'Por que abrimos mão das sequências',
         'body' => [
             'Quase todo app de hábitos é construído em torno de sequências. Elas funcionam, mas só enquanto tudo está perfeito.',
@@ -183,45 +178,12 @@ return [
         ],
     ],
     'cta' => [
-        'title' => 'Tente sem culpa.',
+        'title' => 'Tente sem culpa',
         'subtitle' => 'Construa hábitos que você realmente vai manter, com ferramentas que reduzem a culpa em vez de aumentar.',
-        'trial_note' => ':days dias de Premium grátis. Sem cartão.',
-    ],
-    'compare' => [
-        'eyebrow' => 'Comparação',
-        'title' => 'Apps tradicionais de hábito recompensam perfeição.',
-        'subtitle' => 'O OpenHabit valoriza a volta. A diferença não é ter mais recursos. É uma relação mais leve com o progresso.',
-        'caption' => 'Comparação entre apps tradicionais de hábitos e OpenHabit',
-        'criterion' => 'Comportamento',
-        'us_tag' => 'Nossa escolha',
-        'rows' => [
-            'miss_day' => 'Perde um dia',
-            'feeling' => 'Depois de uma semana difícil',
-            'restart' => 'O que acontece depois',
-            'goal' => 'O que você persegue',
-        ],
-        'cells' => [
-            'traditional' => 'Apps tradicionais',
-            'openhabit' => 'OpenHabit',
-            'lose_streak' => 'Perde a sequência',
-            'keep_going' => 'Continua',
-            'feel_guilty' => 'Sente culpa',
-            'feel_safe' => 'Sente segurança para continuar',
-            'start_over' => 'Recomeça',
-            'come_back' => 'Volta amanhã',
-            'perfection' => 'Perfeição',
-            'steady_progress' => 'Progresso constante',
-        ],
-        'a11y' => [
-            'yes' => 'Sim',
-            'no' => 'Não',
-        ],
-        'footnote' => 'Uma comparação de filosofia, não uma lista de recursos. O OpenHabit foi feito para constância de longo prazo.',
     ],
     'open' => [
-        'eyebrow' => 'Código aberto',
-        'title' => 'Feito às claras',
-        'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Você pode ler, fazer fork ou rodar no seu próprio servidor. Não tem telemetria nem nada prendendo você aqui.',
+        'title' => 'Código aberto',
+        'body' => 'Cada linha do OpenHabit vive no GitHub sob a licença MIT. Você pode ler, fazer fork ou rodar no seu próprio servidor. O acompanhamento básico continua gratuito; controle total sempre está disponível com self-hosting.',
         'cta' => 'Ver no GitHub',
         'license_link' => 'Ler a licença',
         'facts' => [
@@ -234,18 +196,17 @@ return [
                 'body' => 'Um comando Docker e você está rodando por conta própria.',
             ],
             'audit' => [
-                'title' => 'Nada a esconder',
-                'body' => 'Sem rastreadores de terceiros e sem SDKs de análise.',
+                'title' => 'Limite de privacidade claro',
+                'body' => 'O código do app vem sem SDKs de análise. Um host pode adicionar scripts às páginas públicas, e esses scripts aparecem no código-fonte da página.',
             ],
         ],
     ],
     'author' => [
-        'eyebrow' => 'Feito por um desenvolvedor',
-        'title' => 'Oi. Eu fiz o OpenHabit porque eu também abandonava apps de hábitos.',
+        'title' => 'Oi! Eu fiz o OpenHabit depois de tentar usar vários apps de hábitos diferentes',
         'body' => [
-            'Por vários anos tentei usar diferentes apps de hábitos. Toda vez acontecia a mesma coisa.',
-            'Um dia perdido. Uma sequência perdida. Culpa. Uma nova segunda-feira.',
-            'Por isso fiz o OpenHabit: um lugar mais calmo para marcar progresso e voltar sem vergonha.',
+            'Sempre acabava do mesmo jeito. Eu perdia um dia, perdia a sequência e simplesmente parava de abrir o app.',
+            'Em algum momento percebi que o problema não era eu. Eu só não queria usar um app que te pune por perder um único dia.',
+            'Por isso fiz o OpenHabit — um app para o qual é normal voltar depois de um dia, uma semana ou até um mês, e simplesmente continuar.',
         ],
         'name' => 'Nik Fedorov',
         'role' => 'Desenvolvedor independente do OpenHabit',
@@ -276,20 +237,19 @@ return [
         'privacy' => 'Privacidade',
     ],
     'faq' => [
-        'eyebrow' => 'Perguntas frequentes',
-        'title' => 'Perguntas que vale a pena fazer',
+        'title' => 'Perguntas frequentes',
         'items' => [
             [
                 'q' => 'Quanto custa o OpenHabit?',
-                'a' => 'As funções principais são completamente gratuitas, sem limite de tempo ou de hábitos. O Premium adiciona reflexão leve, vários lembretes por hábito no Telegram e exportação em CSV. Novas contas recebem automaticamente :days dias de teste grátis.',
+                'a' => 'O acompanhamento básico é gratuito, sem limite de tempo ou de hábitos. O Premium adiciona reflexão leve, vários lembretes por hábito no Telegram e exportação CSV no app hospedado. Novas contas recebem automaticamente :days dias de teste grátis.',
             ],
             [
-                'q' => 'Preciso de uma conta no Telegram?',
-                'a' => 'Sim. O OpenHabit funciona como bot e mini app do Telegram, por isso basta ter uma conta no Telegram. Sem cadastro adicional, sem senha para esquecer.',
+                'q' => 'Preciso começar pelo bot do Telegram?',
+                'a' => 'Não. Você pode abrir o bot ou entrar pelo widget no navegador. Os dois caminhos usam sua conta do Telegram e os mesmos hábitos, e deixam você continuar em qualquer dispositivo.',
             ],
             [
                 'q' => 'Posso usar o OpenHabit no navegador?',
-                'a' => 'Sim. Faça login com sua conta do Telegram na web e o app completo abre no navegador. Os mesmos hábitos, o mesmo histórico — só numa tela maior.',
+                'a' => 'Sim. Use o widget de login com Telegram na web e o rastreador completo abrirá no navegador. Os mesmos hábitos, o mesmo histórico, só numa tela maior.',
             ],
             [
                 'q' => 'O que é o resumo de IA?',
@@ -297,7 +257,7 @@ return [
             ],
             [
                 'q' => 'Meus dados são privados?',
-                'a' => 'Seus dados ficam no nosso banco de dados sem SDKs de análise de terceiros. Se quiser controle total, você pode hospedar o app no seu próprio servidor.',
+                'a' => 'Seus hábitos e notas ficam no banco de dados do OpenHabit para sua conta. O código do app não inclui SDKs de análise ou rastreamento de terceiros. Hosts podem adicionar scripts a páginas públicas, então use self-hosting se quiser controlar cada requisição.',
             ],
             [
                 'q' => 'Posso hospedar por conta própria?',
