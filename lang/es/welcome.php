@@ -81,13 +81,14 @@ return [
         ],
     ],
     'problem' => [
-        'eyebrow' => 'El problema',
-        'title' => 'Cada lunes prometes que vas a empezar otra vez.',
+        'eyebrow' => 'El bucle',
+        'title' => 'Cada lunes te dices que esta vez será distinto.',
         'body' => [
-            'Para el jueves ya has fallado un día.',
-            'Para el domingo ya lo dejaste.',
-            'Quizá el problema no eres tú. Quizá es la racha.',
+            'Para el jueves, un día perdido ya se siente como un fracaso.',
+            'Para el domingo, el tracker vuelve a quedar cerrado.',
+            'Quizá el problema no eres tú. Quizá es la racha llevando la cuenta.',
         ],
+        'cta' => 'Prueba otra forma',
     ],
     'digest_examples' => [
         'eyebrow' => 'Reflexión',

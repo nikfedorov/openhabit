@@ -283,14 +283,52 @@
 <main id="main" tabindex="-1" class="focus:outline-none">
 
 {{-- ─────────────────────────────────────────────────────────────────────────
+     Problem setup. A quiet editorial opener that names the user's loop before
+     the rest of the page shows the alternative.
+   ───────────────────────────────────────────────────────────────────────── --}}
+<section aria-labelledby="problem-heading" class="relative overflow-hidden">
+    <div class="hero-wash absolute inset-x-0 top-0 h-[520px] pointer-events-none" aria-hidden="true"></div>
+
+    <div class="relative max-w-3xl mx-auto px-4 pt-[calc(4rem+72px)] pb-14 sm:pt-24 sm:pb-20">
+        <div class="reveal rounded-[2rem] border border-black/[0.06] dark:border-white/[0.08] bg-white/75 dark:bg-neutral-900/55 backdrop-blur-[2px] p-6 sm:p-8 shadow-[0_1px_0_rgba(255,255,255,0.65)_inset,0_24px_64px_-32px_rgba(15,23,42,0.22)] dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_24px_64px_-32px_rgba(0,0,0,0.8)]">
+            <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-6">
+                {{ __('welcome.problem.eyebrow') }}
+            </p>
+
+            <div class="space-y-3 sm:space-y-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.03em] leading-[1.08]">
+                <h1 id="problem-heading">{{ __('welcome.problem.title') }}</h1>
+                @foreach ((array) __('welcome.problem.body') as $line)
+                    <p class="text-neutral-500 dark:text-neutral-400">{{ $line }}</p>
+                @endforeach
+            </div>
+
+            <div class="mt-8 sm:mt-10 flex flex-col items-start gap-5">
+                <div class="flex items-center gap-3 text-green-600 dark:text-green-500" aria-hidden="true">
+                    <span class="h-px w-12 bg-current opacity-30"></span>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                </div>
+
+                <a href="{{ $primaryUrl }}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-all duration-200 hover:-translate-y-0.5 shadow-sm">
+                    {{ __('welcome.problem.cta') }}
+                    <svg class="w-3.5 h-3.5 rtl:scale-x-[-1]" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001" stroke="currentColor" stroke-linecap="square"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ─────────────────────────────────────────────────────────────────────────
      Hero. Generous breathing room. Restrained color: tinted neutrals + a
      single green accent on the title word and the live dot. The preview
      surface beneath uses a single bordered card (no nested cards).
    ───────────────────────────────────────────────────────────────────────── --}}
 <section aria-labelledby="hero-heading" class="relative">
-    <div class="hero-wash absolute inset-x-0 top-0 h-[480px] pointer-events-none" aria-hidden="true"></div>
-
-    <div class="relative max-w-3xl mx-auto px-4 pt-[calc(4rem+72px)] pb-16 sm:pt-24 sm:pb-24">
+    <div class="relative max-w-3xl mx-auto px-4 py-16 sm:py-24">
         <div class="flex flex-col items-start gap-7">
             <span class="inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
                 <span class="relative flex h-1.5 w-1.5">
@@ -300,10 +338,10 @@
                 {{ __('welcome.hero.badge') }}
             </span>
 
-            <h1 id="hero-heading" class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]">
+            <h2 id="hero-heading" class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-[-0.025em] leading-[1.02]">
                 {{ __('welcome.hero.title_pre') }}
                 <span class="text-green-600 dark:text-green-500">{{ __('welcome.hero.title_accent') }}</span>
-            </h1>
+            </h2>
 
             <p class="text-lg sm:text-xl text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-[58ch]">
                 {{ __('welcome.hero.subtitle') }}
@@ -547,22 +585,6 @@
                 </div>
             </div>
             <p class="mt-4 pt-3 border-t rule text-[10px] text-neutral-400 dark:text-neutral-500">{{ __('welcome.views.life_desc') }}</p>
-        </div>
-    </div>
-</section>
-
-{{-- ─────────────────────────────────────────────────────────────────────────
-     Problem. Plain editorial copy before feature details so the homepage leads
-     with the emotional reason OpenHabit exists.
-   ───────────────────────────────────────────────────────────────────────── --}}
-<section aria-labelledby="problem-heading" class="max-w-3xl mx-auto px-4 py-20 sm:py-24 border-t rule">
-    <div class="reveal max-w-2xl">
-        <p class="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400 dark:text-neutral-500 mb-3">{{ __('welcome.problem.eyebrow') }}</p>
-        <h2 id="problem-heading" class="text-3xl sm:text-4xl font-semibold tracking-[-0.02em] leading-[1.1] mb-8">{{ __('welcome.problem.title') }}</h2>
-        <div class="space-y-4 text-lg sm:text-xl leading-relaxed text-neutral-500 dark:text-neutral-400">
-            @foreach ((array) __('welcome.problem.body') as $line)
-                <p>{{ $line }}</p>
-            @endforeach
         </div>
     </div>
 </section>

@@ -81,13 +81,14 @@ return [
         ],
     ],
     'problem' => [
-        'eyebrow' => 'O problema',
-        'title' => 'Toda segunda você promete que vai começar de novo.',
+        'eyebrow' => 'O ciclo',
+        'title' => 'Toda segunda você diz que desta vez vai ser diferente.',
         'body' => [
-            'Na quinta você já perdeu um dia.',
-            'No domingo você já desistiu.',
-            'Talvez o problema não seja você. Talvez seja a sequência.',
+            'Na quinta, um dia perdido já parece fracasso.',
+            'No domingo, o app fica fechado de novo.',
+            'Talvez o problema não seja você. Talvez seja a sequência contando pontos.',
         ],
+        'cta' => 'Tente outro caminho',
     ],
     'digest_examples' => [
         'eyebrow' => 'Reflexão',

@@ -81,13 +81,14 @@ return [
         ],
     ],
     'problem' => [
-        'eyebrow' => 'The problem',
-        'title' => 'Every Monday you promise yourself you will start again.',
+        'eyebrow' => 'The loop',
+        'title' => 'Every Monday you tell yourself this time will be different.',
         'body' => [
-            'By Thursday you have already missed one day.',
-            'By Sunday you have quit.',
-            'Maybe the problem is not you. Maybe it is the streak.',
+            'By Thursday, one missed day already feels like failure.',
+            'By Sunday, the tracker is closed again.',
+            'Maybe the problem is not you. Maybe it is the streak keeping score.',
         ],
+        'cta' => 'Try a different way',
     ],
     'digest_examples' => [
         'eyebrow' => 'Reflection',
