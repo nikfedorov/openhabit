@@ -130,11 +130,12 @@
         ],
         "test:vue": "bun run test:vue",
         "test": [
+            "Composer\\Config::disableProcessTimeout",
             "@test:type-coverage",
             "@lint",
-            "@test:app",
             "@test:types",
             "@test:api-schema",
+            "@test:app",
             "@test:vue"
         ],
         "test-ci": [

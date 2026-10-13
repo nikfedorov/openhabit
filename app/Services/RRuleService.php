@@ -451,9 +451,7 @@ final class RRuleService
             }
         }
 
-        if (! isset($parts['DTSTART'])) {
-            $parts['DTSTART'] = $start?->format('Y-m-d') ?? '2000-01-01';
-        }
+        $parts['DTSTART'] ??= $start?->format('Y-m-d') ?? '2000-01-01';
 
         return new RRule($parts);
     }

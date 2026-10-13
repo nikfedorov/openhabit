@@ -84,7 +84,7 @@ final readonly class GetTrackDataAction
         $habits->each(function (Habit $habit) use ($completions): void {
             /** @var HabitCompletion|null $completion */
             $completion = $completions->get($habit->id);
-            $currentIteration = $completion !== null ? $completion->current_iteration : 0;
+            $currentIteration = $completion->current_iteration ?? 0;
 
             $habit->setAttribute('current_iteration_for_date', $currentIteration);
             $habit->setAttribute('is_completed', $currentIteration >= $habit->iterations_required);

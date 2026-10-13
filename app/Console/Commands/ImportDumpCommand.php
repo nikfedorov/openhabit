@@ -25,7 +25,7 @@ final class ImportDumpCommand extends Command
         $username = (string) $config['username'];
         $password = (string) $config['password'];
 
-        $file = $this->option('file');
+        $file = $this->option('file') === null ? null : $this->input()->string('file')->toString();
         if ($file !== null && ! file_exists($file)) {
             $this->error('File not found: '.$file);
 

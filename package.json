@@ -13,7 +13,7 @@
         "@types/canvas-confetti": "^1.9.0",
         "@types/node": "^26.6.5",
         "@vitejs/plugin-vue": "^6.0.10",
-        "@vitest/coverage-v8": "^5.0.4",
+        "@vitest/coverage-v8": "4.1.5",
         "@vue/compiler-core": "^3.5.44",
         "@vue/test-utils": "^2.5.1",
         "chokidar": "^5.0.0",
@@ -24,14 +24,14 @@
         "playwright": "^1.64.0",
         "tailwindcss": "^4.3.3",
         "typescript": "^7.0.2",
-        "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-        "vite-plus": "latest",
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.1.21",
+        "vite-plus": "0.1.21",
         "vitest": "^5.0.4",
         "vue-tsc": "^3.3.13"
     },
     "overrides": {
-        "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-        "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.1.21",
+        "vitest": "npm:@voidzero-dev/vite-plus-test@0.1.21"
     },
     "dependencies": {
         "@sentry/vue": "^11.7.0",

@@ -1235,10 +1235,10 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "The AI tone's unique identifier, used for saving the user's selection.",
                         "examples": [
-                            "1"
+                            1
                         ]
                     },
                     "name": {
@@ -1391,6 +1391,26 @@
                 ],
                 "title": "HabitActivityDataResource"
             },
+            "HabitDayStatus": {
+                "type": "object",
+                "properties": {
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "partial": {
+                        "type": "boolean"
+                    },
+                    "scheduled": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "completed",
+                    "partial",
+                    "scheduled"
+                ],
+                "title": "HabitDayStatus"
+            },
             "HabitFormResource": {
                 "type": "object",
                 "properties": {
@@ -1533,7 +1553,7 @@
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Unique habit identifier."
                     },
                     "name": {
@@ -1544,29 +1564,37 @@
                         ]
                     },
                     "description": {
-                        "type": "string",
+                        "type": [
+                            "string",
+                            "null"
+                        ],
                         "description": "Optional longer description.",
                         "examples": [
                             "Do 30 pushups"
                         ]
                     },
                     "iterations_required": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "How many iterations are needed to complete.",
                         "examples": [
-                            "3"
+                            3
                         ]
                     },
                     "is_completed": {
                         "type": "boolean",
                         "description": "Whether the habit is fully completed for the day."
                     },
-                    "current_iteration": {},
+                    "current_iteration": {
+                        "description": "Number of iterations completed so far today.",
+                        "examples": [
+                            1
+                        ]
+                    },
                     "sort_order": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Position in the habit list.",
                         "examples": [
-                            "2"
+                            2
                         ]
                     }
                 },
@@ -1743,7 +1771,9 @@
                         "type": "string",
                         "format": "date-time",
                         "description": "Date the note belongs to.",
-                        "example": "2026-04-06"
+                        "examples": [
+                            "2026-04-06"
+                        ]
                     },
                     "content": {
                         "type": [
@@ -1751,7 +1781,9 @@
                             "null"
                         ],
                         "description": "Note text content. Send null to clear.",
-                        "example": "Great day!",
+                        "examples": [
+                            "Great day!"
+                        ],
                         "maxLength": 5000
                     }
                 },
@@ -1807,6 +1839,22 @@
                     "is_active": {
                         "type": "boolean"
                     },
+                    "weekly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 6
+                        }
+                    },
+                    "monthly_days": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 31
+                        }
+                    },
                     "monthly_mode": {
                         "type": "string",
                         "enum": [
@@ -1828,22 +1876,6 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 6
-                    },
-                    "weekly_days": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 6
-                        }
-                    },
-                    "monthly_days": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 31
-                        }
                     },
                     "notifications": {
                         "type": "array",
@@ -1883,7 +1915,9 @@
                     "image": {
                         "type": "string",
                         "description": "Base64-encoded PNG image data URL.",
-                        "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+                        "examples": [
+                            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+                        ]
                     }
                 },
                 "required": [
@@ -1897,7 +1931,9 @@
                     "init_data": {
                         "type": "string",
                         "description": "The init data from Telegram Web App.",
-                        "example": "user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+                        "examples": [
+                            "user_id=123456789&auth_date=1697040000&hash=abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+                        ]
                     }
                 },
                 "required": [
@@ -1911,13 +1947,17 @@
                     "habit_id": {
                         "type": "integer",
                         "description": "The habit to toggle.",
-                        "example": 1
+                        "examples": [
+                            1
+                        ]
                     },
                     "date": {
                         "type": "string",
                         "format": "date-time",
                         "description": "Completion date (must not be in the future).",
-                        "example": "2026-04-06"
+                        "examples": [
+                            "2026-04-06"
+                        ]
                     }
                 },
                 "required": [
@@ -2097,7 +2137,9 @@
                             "dark",
                             "system"
                         ],
-                        "example": "dark"
+                        "examples": [
+                            "dark"
+                        ]
                     },
                     "locale": {
                         "type": "string",
@@ -2112,12 +2154,16 @@
                             "pt",
                             "ar"
                         ],
-                        "example": "en"
+                        "examples": [
+                            "en"
+                        ]
                     },
                     "timezone": {
                         "type": "string",
                         "description": "IANA timezone identifier.",
-                        "example": "Europe/London"
+                        "examples": [
+                            "Europe/London"
+                        ]
                     },
                     "birthdate": {
                         "type": [
@@ -2126,7 +2172,9 @@
                         ],
                         "format": "date-time",
                         "description": "User's date of birth.",
-                        "example": "1990-01-15"
+                        "examples": [
+                            "1990-01-15"
+                        ]
                     },
                     "dayStartsAt": {
                         "type": [
@@ -2135,7 +2183,9 @@
                         ],
                         "description": "Time of day when the \"day\" resets for habit tracking (HH:MM).",
                         "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
-                        "example": "03:00"
+                        "examples": [
+                            "03:00"
+                        ]
                     },
                     "moveCompletedToEnd": {
                         "type": "boolean",
@@ -2148,7 +2198,9 @@
                         ],
                         "description": "Scheduled time for the daily AI digest (HH:MM). Null disables it.",
                         "pattern": "^([01]?\\d|2[0-3]):[0-5]\\d$",
-                        "example": "09:00"
+                        "examples": [
+                            "09:00"
+                        ]
                     },
                     "aiToneId": {
                         "type": [
@@ -2156,7 +2208,9 @@
                             "null"
                         ],
                         "description": "AI tone to use for the digest.",
-                        "example": 1
+                        "examples": [
+                            1
+                        ]
                     },
                     "longTermGoal": {
                         "type": [
@@ -2164,7 +2218,9 @@
                             "null"
                         ],
                         "description": "User's long-term goal.",
-                        "example": "Run a marathon by end of year",
+                        "examples": [
+                            "Run a marathon by end of year"
+                        ],
                         "maxLength": 500
                     }
                 },

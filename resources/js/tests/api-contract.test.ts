@@ -10,6 +10,7 @@ import type { ActivityDay, Habit, TrackData } from '@/types/track';
 import type {
     AiDigestItem,
     GridHabit,
+    HabitDayStatus,
     LifeViewData,
     WeekActivityData,
     WeekDay,
@@ -60,6 +61,7 @@ const TESTED_SCHEMAS = new Set([
     'AiToneResource',
     'EditHabitResource',
     'HabitActivityDataResource',
+    'HabitDayStatus',
     'HabitFormResource',
     'HabitNotificationResource',
     'HabitResource',
@@ -223,6 +225,17 @@ describe('API contract', () => {
             is_weekly_focus: true,
             is_franklin_virtue: true,
             days: true,
+        });
+
+        expect(schema).toEqual(ts);
+    });
+
+    it('HabitDayStatus schema matches HabitDayStatus type', () => {
+        const schema = schemaKeys('HabitDayStatus');
+        const ts = typeKeys<HabitDayStatus>({
+            completed: true,
+            partial: true,
+            scheduled: true,
         });
 
         expect(schema).toEqual(ts);
