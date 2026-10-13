@@ -9,38 +9,38 @@
         "test:vue": "vp test run --typecheck --coverage --reporter=agent"
     },
     "devDependencies": {
-        "@tailwindcss/vite": "^4.3.0",
+        "@tailwindcss/vite": "^4.3.3",
         "@types/canvas-confetti": "^1.9.0",
-        "@types/node": "^25.9.1",
-        "@vitejs/plugin-vue": "^6.0.7",
-        "@vitest/coverage-v8": "^4.1.7",
-        "@vue/compiler-core": "^3.5.35",
-        "@vue/test-utils": "^2.4.10",
+        "@types/node": "^26.6.5",
+        "@vitejs/plugin-vue": "^6.0.10",
+        "@vitest/coverage-v8": "4.1.5",
+        "@vue/compiler-core": "^3.5.44",
+        "@vue/test-utils": "^2.5.1",
         "chokidar": "^5.0.0",
-        "concurrently": "^10.0.0",
-        "jsdom": "^29.1.1",
-        "laravel-vite-plugin": "^3.1.0",
-        "npm-check-updates": "^22.2.1",
-        "playwright": "^1.60.0",
-        "tailwindcss": "^4.3.0",
-        "typescript": "^6.0.3",
-        "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-        "vite-plus": "latest",
-        "vitest": "^4.1.7",
-        "vue-tsc": "^3.3.2"
+        "concurrently": "^10.0.6",
+        "jsdom": "^30.1.2",
+        "laravel-vite-plugin": "^3.2.0",
+        "npm-check-updates": "^23.1.1",
+        "playwright": "^1.64.0",
+        "tailwindcss": "^4.3.3",
+        "typescript": "^7.0.2",
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.1.21",
+        "vite-plus": "0.1.21",
+        "vitest": "^5.0.4",
+        "vue-tsc": "^3.3.13"
     },
     "overrides": {
-        "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-        "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+        "vite": "npm:@voidzero-dev/vite-plus-core@0.1.21",
+        "vitest": "npm:@voidzero-dev/vite-plus-test@0.1.21"
     },
     "dependencies": {
-        "@sentry/vue": "^10.55.0",
-        "@vueuse/core": "^14.3.0",
+        "@sentry/vue": "^11.7.0",
+        "@vueuse/core": "^15.0.0",
         "canvas-confetti": "^1.9.4",
-        "html2canvas-pro": "^2.0.4",
-        "maska": "^3.2.0",
-        "vue": "^3.5.35",
+        "html2canvas-pro": "^2.5.2",
+        "maska": "^3.2.2",
+        "vue": "^3.5.44",
         "vue-draggable-plus": "^0.6.1",
-        "vue-router": "^5.1.0"
+        "vue-router": "^5.4.0"
     }
 }

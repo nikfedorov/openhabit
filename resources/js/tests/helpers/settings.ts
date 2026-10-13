@@ -56,12 +56,12 @@ export const defaultTrial: TrialData = {
     bannerText: '',
     invoiceLink: 'https://t.me/test-invoice',
     learnMore: 'Learn more',
-    featuresTitle: 'Premium Features',
-    featuresSubtitle: 'Upgrade to unlock all features',
+    featuresTitle: 'Peace of mind for your habits',
+    featuresSubtitle: 'More support, without more pressure',
     featureNotifications: 'Multiple reminders per habit',
-    featureAiDigest: 'Daily AI digest of your progress',
+    featureAiDigest: 'Gentle reflection on your progress',
     featureExport: 'Export all your data as CSV',
-    upgradeLabel: 'Upgrade',
+    upgradeLabel: 'Build habits you will keep',
     openInTelegramLabel: 'To upgrade, please open the app in Telegram.',
 };
 

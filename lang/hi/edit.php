@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => 'आदतें',
-    'manage_routines' => 'अपनी दैनिक आदतें प्रबंधित करें',
+    'manage_routines' => 'धीरे-धीरे बनाएँ, फिर से शुरू किए बिना',
     'new_habit' => 'बनाएं',
-    'no_habits_yet' => 'अभी तक कोई आदत नहीं',
-    'create_first_habit' => 'ट्रैकिंग शुरू करने के लिए अपनी पहली आदत बनाएं',
+    'no_habits_yet' => 'छोटे से शुरू करें',
+    'create_first_habit' => 'एक आदत चुनें जिस पर आप कल लौट सकें',
     'create_a_habit' => 'एक आदत बनाएं',
     'franklins_virtues' => 'फ्रैंकलिन के गुण',
     'disable_all' => 'सभी अक्षम करें',

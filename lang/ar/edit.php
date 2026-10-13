@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 return [
     'habits' => 'العادات',
-    'manage_routines' => 'إدارة عاداتك اليومية',
+    'manage_routines' => 'ابنِ تدريجيًا، دون البدء من جديد',
     'new_habit' => 'إنشاء',
-    'no_habits_yet' => 'لا توجد عادات بعد',
-    'create_first_habit' => 'أنشئ أول عادة لبدء التتبع',
+    'no_habits_yet' => 'ابدأ صغيرًا',
+    'create_first_habit' => 'اختر عادة واحدة يمكنك العودة إليها غدًا',
     'create_a_habit' => 'إنشاء عادة',
     'franklins_virtues' => 'فضائل فرانكلين',
     'disable_all' => 'تعطيل الكل',

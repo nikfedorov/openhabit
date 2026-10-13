@@ -41,12 +41,13 @@ export async function tapHabit(
 
 export const defaultTrackTranslations = {
     progress: 'Progress',
-    all_done: '✓ All done!',
-    no_habits_scheduled: 'No habits scheduled',
-    for_this_day: 'for this day',
-    daily_note: 'Daily Note',
+    all_done: '✓ Today counted',
+    no_habits_scheduled: 'Today still counts',
+    for_this_day:
+        'Progress is not erased. Add a habit when you are ready, or just come back tomorrow.',
+    daily_note: 'Daily note',
     saving: 'Saving...',
-    how_was_your_day: 'How was your day?',
+    how_was_your_day: 'What helped today? What got in the way?',
     today: 'Today',
     activity: 'Activity',
     last_n_days: 'Last 140 days',

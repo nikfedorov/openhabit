@@ -1,6 +1,7 @@
 {
     "agents": [
-        "copilot"
+        "copilot",
+        "opencode"
     ],
     "cloud": false,
     "guidelines": true,
@@ -12,18 +13,22 @@
     ],
     "sail": true,
     "skills": [
+        "infer-conventions",
         "ai-sdk-development",
         "laravel-best-practices",
+        "testing-best-practices",
         "configuring-horizon",
+        "octane-development",
         "pulse-development",
         "livewire-development",
-        "pest-testing",
+        "telescope-debugging",
         "tailwindcss-development",
+        "filament-development",
         "translatable-development",
         "design-taste-frontend",
         "humanizer",
-        "impeccable",
         "karpathy-guidelines",
+        "natural",
         "vitest",
         "vue",
         "vue-best-practices",

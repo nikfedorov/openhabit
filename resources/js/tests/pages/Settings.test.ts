@@ -90,8 +90,8 @@ describe('Settings - Premium Upsell Banner', () => {
         expect(
             wrapper.find('[data-testid="premium-upsell-banner"]').exists(),
         ).toBe(true);
-        expect(wrapper.text()).toContain('Upgrade');
-        expect(wrapper.text()).toContain('Upgrade to unlock all features');
+        expect(wrapper.text()).toContain('Build habits you will keep');
+        expect(wrapper.text()).toContain('More support, without more pressure');
     });
 
     it('shows the upsell banner when user is trialing and dismissed the trial banner', async () => {

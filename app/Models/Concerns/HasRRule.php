@@ -55,9 +55,7 @@ trait HasRRule
         /** @var RRuleService|null $service */
         static $service = null;
 
-        if ($service === null) {
-            $service = resolve(RRuleService::class);
-        }
+        $service ??= resolve(RRuleService::class);
 
         return $service;
     }

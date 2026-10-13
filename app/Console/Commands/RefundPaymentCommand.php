@@ -35,7 +35,7 @@ final class RefundPaymentCommand extends Command
         $chargeId = $this->argument('charge_id');
 
         $payment = $chargeId !== null
-            ? $this->findByChargeId((string) $chargeId)
+            ? $this->findByChargeId($this->input()->string('charge_id')->toString())
             : $this->selectInteractively();
 
         if (! $payment instanceof Payment) {

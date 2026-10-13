@@ -718,7 +718,7 @@ final class HabitTemplateSeeder extends Seeder
                 'pt' => 'Reflita sobre o mês passado: conquistas, lições aprendidas, e defina intenções para o próximo mês.', 'ar' => 'تأمل في الشهر الماضي: الإنجازات، الدروس المستفادة، وحدد نواياك للشهر القادم.',
             ],
             rrule: $this->rruleService->buildMonthlyByWeekday(1, 5),
-            sortOrder: $sortOrder++,
+            sortOrder: $sortOrder,
         );
     }
 
